@@ -4,11 +4,25 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
-		<meta name="theme-color" content="#b45309" />
+		<meta name="theme-color" content="#9C4A1F" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 		<link rel="apple-touch-icon" href="/icon.svg" />
 		<link rel="manifest" href="/manifest.webmanifest" />
+		<script>
+			(() => {
+				try {
+					const t = localStorage.getItem('theme') ?? 'system';
+					const eff =
+						t === 'system'
+							? matchMedia('(prefers-color-scheme: dark)').matches
+								? 'dark'
+								: 'light'
+							: t;
+					document.documentElement.setAttribute('data-theme', eff);
+				} catch {}
+			})();
+		</script>
 		<script>
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', () => {

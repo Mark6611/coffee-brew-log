@@ -1,2 +1,66 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
+
+@theme {
+	/* Surfaces */
+	--color-paper: #f4efe6;
+	--color-surface: #fbf8f2;
+	--color-card: #ffffff;
+
+	/* Ink */
+	--color-ink: #1c1814;
+	--color-ink-70: #4a413a;
+	--color-muted: #7a6e63;
+	--color-faint: #a89d90;
+
+	/* Borders */
+	--color-hairline: #e6dfd2;
+	--color-rule: #d9d0bf;
+
+	/* Brand — single accent */
+	--color-copper: #9c4a1f;
+	--color-copper-dk: #7a3915;
+	--color-copper-lt: #f0ddc8;
+
+	/* Semantic */
+	--color-success: #4f6b2e;
+	--color-warning: #b07a14;
+	--color-danger: #a6341b;
+
+	/* Fonts */
+	--font-display: 'Newsreader Variable', Georgia, serif;
+	--font-sans:
+		'Geist Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+	--font-mono: 'Geist Mono Variable', 'JetBrains Mono', ui-monospace, monospace;
+
+	/* Radii */
+	--radius-card: 1.125rem;
+	--radius-input: 0.875rem;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+[data-theme='dark'] {
+	--color-paper: #16120e;
+	--color-surface: #1f1a14;
+	--color-ink: #f2ebdd;
+	--color-ink-70: #c9bfad;
+	--color-muted: #9a8e7e;
+	--color-faint: #6b6052;
+	--color-hairline: #2d261d;
+	--color-rule: #3a3127;
+	--color-copper: #d2825a;
+	--color-copper-dk: #b5683f;
+	--color-copper-lt: rgba(210, 130, 90, 0.1);
+}
+
+@layer base {
+	html,
+	body {
+		background-color: var(--color-paper);
+		color: var(--color-ink);
+	}
+	body {
+		font-family: var(--font-sans);
+	}
+}

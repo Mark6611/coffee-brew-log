@@ -13,8 +13,8 @@ export default defineConfig({
 				name: 'Coffee Brew Log',
 				short_name: 'Brew Log',
 				description: 'Log espresso and pour-over brews.',
-				theme_color: '#b45309',
-				background_color: '#ffffff',
+				theme_color: '#9C4A1F',
+				background_color: '#F4EFE6',
 				display: 'standalone',
 				start_url: '/',
 				icons: [
