@@ -5,10 +5,12 @@
 
 	let {
 		brew,
+		hero = false,
 		ondelete,
 		ontogglefavorite
 	}: {
 		brew: Brew;
+		hero?: boolean;
 		ondelete?: (id: string) => void;
 		ontogglefavorite?: (id: string) => void;
 	} = $props();
@@ -32,8 +34,17 @@
 	</div>
 {/snippet}
 
-<div class="bg-surface border-hairline rounded-[18px] border px-[18px] pt-[16px] pb-[18px]">
-	<div class="mb-2.5 flex items-center justify-between">
+<div
+	class="bg-surface border-hairline relative overflow-hidden border {hero
+		? 'rounded-[22px] p-[22px]'
+		: 'rounded-[18px] px-[18px] pt-[16px] pb-[18px]'}"
+>
+	{#if hero}
+		<div
+			class="bg-copper-lt pointer-events-none absolute -top-[30px] -right-[30px] h-[140px] w-[140px] rounded-full opacity-50"
+		></div>
+	{/if}
+	<div class="relative mb-2.5 flex items-center justify-between">
 		<div class="flex items-center gap-1.5">
 			<Badge>{brew.method}</Badge>
 			{#if ontogglefavorite}

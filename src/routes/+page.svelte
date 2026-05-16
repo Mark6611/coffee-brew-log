@@ -42,7 +42,7 @@
 		{#if lastBrew}
 			<div class="px-[22px]">
 				<Eyebrow class="mb-2.5">Last brew · {formatTimeAgo(lastBrew.brewedAt)}</Eyebrow>
-				<BrewCard brew={lastBrew} />
+				<BrewCard brew={lastBrew} hero />
 			</div>
 		{/if}
 

@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-	<rect width="512" height="512" rx="80" fill="#b45309" />
-	<text
-		x="50%"
-		y="50%"
-		font-size="240"
-		font-weight="700"
-		font-family="system-ui, -apple-system, sans-serif"
-		fill="white"
-		text-anchor="middle"
-		dominant-baseline="central"
-	>BL</text>
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+	<rect width="512" height="512" rx="112" fill="#9C4A1F" />
+	<g transform="translate(256 256) rotate(-18)">
+		<ellipse cx="0" cy="0" rx="125" ry="172" fill="none" stroke="#FBF6EB" stroke-width="22" />
+		<path
+			d="M 0 -150 C 50 -90, -50 -10, 0 60 S 50 130, 0 150"
+			fill="none"
+			stroke="#FBF6EB"
+			stroke-width="22"
+			stroke-linecap="round"
+		/>
+	</g>
 </svg>

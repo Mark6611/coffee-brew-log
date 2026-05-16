@@ -6,7 +6,6 @@
 	import './layout.css';
 
 	import { onMount } from 'svelte';
-	import favicon from '$lib/assets/favicon.svg';
 
 	let { children } = $props();
 
@@ -41,10 +40,6 @@
 		return () => mq.removeEventListener('change', handler);
 	});
 </script>
-
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
 
 <button
 	type="button"

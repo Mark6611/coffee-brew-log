@@ -97,7 +97,7 @@
 		{/snippet}
 	</AppHeader>
 
-	{#if searchOpen}
+	{#if searchOpen && allBrews.length > 0}
 		<div class="px-[22px] pb-3">
 			<input
 				type="search"
@@ -108,23 +108,70 @@
 		</div>
 	{/if}
 
-	<div class="flex gap-2 overflow-x-auto px-[22px] pb-3">
-		<Chip active={filter === 'all'} onclick={() => (filter = 'all')}>All</Chip>
-		<Chip active={filter === 'pour-over'} onclick={() => (filter = 'pour-over')}>Pour-over</Chip>
-		<Chip active={filter === 'espresso'} onclick={() => (filter = 'espresso')}>Espresso</Chip>
-		<Chip active={filter === 'favorites'} onclick={() => (filter = 'favorites')}>Favorites</Chip>
-	</div>
+	{#if allBrews.length > 0}
+		<div class="flex gap-2 overflow-x-auto px-[22px] pb-3">
+			<Chip active={filter === 'all'} onclick={() => (filter = 'all')}>All</Chip>
+			<Chip active={filter === 'pour-over'} onclick={() => (filter = 'pour-over')}>Pour-over</Chip>
+			<Chip active={filter === 'espresso'} onclick={() => (filter = 'espresso')}>Espresso</Chip>
+			<Chip active={filter === 'favorites'} onclick={() => (filter = 'favorites')}>Favorites</Chip>
+		</div>
+	{/if}
 
 	<div class="px-[22px]">
 		{#if loading}
 			<p class="text-muted py-8 text-center text-sm">Loading…</p>
+		{:else if allBrews.length === 0}
+			<!-- Rich empty state -->
+			<div class="flex flex-col items-center px-6 pt-12 pb-20 text-center">
+				<div class="bg-copper-lt text-copper mb-6 grid h-24 w-24 place-items-center rounded-full">
+					<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+						<g transform="translate(28 28) rotate(-18)">
+							<ellipse
+								cx="0"
+								cy="0"
+								rx="14"
+								ry="19"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.4"
+							/>
+							<path
+								d="M 0 -16.5 C 5.5 -10, -5.5 -1, 0 6.5 S 5.5 14, 0 16.5"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2.4"
+								stroke-linecap="round"
+							/>
+						</g>
+					</svg>
+				</div>
+				<h2
+					class="font-display text-ink m-0 text-[26px] font-medium leading-[1.15] tracking-[-0.01em]"
+				>No brews yet.</h2>
+				<p
+					class="font-display text-muted mt-2 mb-7 max-w-[280px] text-[15px] leading-[1.5] italic"
+				>Your first cup of the morning is also the start of a record. Log it and we'll watch the
+					numbers settle.</p>
+				<a
+					href="/brews/new"
+					class="bg-copper text-paper hover:bg-copper-dk inline-flex h-[52px] items-center gap-2.5 rounded-2xl px-5 text-[15px] font-medium transition-colors"
+				>
+					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+						<path
+							d="M9 3v12M3 9h12"
+							stroke="currentColor"
+							stroke-width="1.8"
+							stroke-linecap="round"
+						/>
+					</svg>
+					Log first brew
+				</a>
+			</div>
 		{:else if filtered.length === 0}
 			<p class="text-muted py-8 text-center text-sm">
 				{#if searchQuery}No matches for "{searchQuery}".{:else if filter === 'favorites'}No
-					favorites yet. Tap the star on a brew to favorite it.{:else}No brews. <a
-						href="/brews/new"
-						class="text-copper underline">Log your first</a
-					>.{/if}
+					favorites yet. Tap the star on a brew to favorite it.{:else}No
+					{filter} brews.{/if}
 			</p>
 		{:else}
 			{#each groups as group (group.dayKey)}
