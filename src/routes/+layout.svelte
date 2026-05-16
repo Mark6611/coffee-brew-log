@@ -49,7 +49,7 @@
 <button
 	type="button"
 	onclick={cycle}
-	class="bg-surface border-hairline text-ink hover:bg-paper fixed top-3 right-3 z-50 grid h-9 w-9 place-items-center rounded-full border transition-colors"
+	class="bg-surface border-rule text-ink hover:bg-paper fixed top-3 right-3 z-50 grid h-9 w-9 place-items-center rounded-full border shadow-sm transition-colors"
 	aria-label="Cycle theme (current: {theme})"
 	title="Theme: {theme}"
 >

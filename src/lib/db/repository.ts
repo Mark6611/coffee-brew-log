@@ -26,3 +26,20 @@ export async function updateBrew(brew: Brew): Promise<void> {
 export async function deleteBrew(id: string): Promise<void> {
 	await db.brews.delete(id);
 }
+
+export async function toggleFavorite(id: string): Promise<void> {
+	const row = await db.brews.get(id);
+	if (!row) return;
+	const updated = BrewSchema.parse({ ...row, isFavorite: !row.isFavorite });
+	await db.brews.put(updated);
+}
+
+export async function searchBrews(query: string): Promise<Brew[]> {
+	const q = query.trim().toLowerCase();
+	const all = await listBrews();
+	if (!q) return all;
+	return all.filter((b) => {
+		const hay = [b.coffeeName, b.roaster, b.notes].filter(Boolean).join(' ').toLowerCase();
+		return hay.includes(q);
+	});
+}

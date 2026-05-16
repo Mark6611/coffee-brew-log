@@ -9,6 +9,9 @@ class BrewDatabase extends Dexie {
 		this.version(1).stores({
 			brews: 'id, brewedAt, method'
 		});
+		this.version(2).stores({
+			brews: 'id, brewedAt, method, isFavorite'
+		});
 	}
 }
 
