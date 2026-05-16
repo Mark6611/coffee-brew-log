@@ -1,18 +1,22 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { addBrew, listBrews } from '$lib/db/repository';
-	import { BrewSchema } from '$lib/db/types';
+	import { page } from '$app/state';
+	import { addBrew, listBrews, listBags } from '$lib/db/repository';
+	import { BrewSchema, type Bag } from '$lib/db/types';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
+	import BagPicker from '$lib/components/BagPicker.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 
 	type Method = 'espresso' | 'pour-over';
 	type Balance = '' | 'light' | 'balanced' | 'heavy';
 
+	const DRAFT_KEY = 'brew-form-draft';
+
 	let method = $state<Method>('espresso');
-	let coffeeName = $state('');
-	let roaster = $state('');
+	let bagId = $state<string | undefined>(undefined);
+	let allBags = $state<Bag[]>([]);
 	let doseGrams = $state<number | null>(null);
 	let yieldGrams = $state<number | null>(null);
 	let waterGrams = $state<number | null>(null);
@@ -29,10 +33,66 @@
 	let submitting = $state(false);
 	let brewCount = $state(0);
 
+	const selectedBag = $derived(allBags.find((b) => b.id === bagId) ?? null);
+
 	onMount(async () => {
-		const all = await listBrews();
-		brewCount = all.length;
+		// Restore draft first (so URL bagId can override)
+		const raw = sessionStorage.getItem(DRAFT_KEY);
+		if (raw) {
+			try {
+				const d = JSON.parse(raw);
+				method = d.method ?? method;
+				bagId = d.bagId ?? bagId;
+				doseGrams = d.doseGrams ?? doseGrams;
+				yieldGrams = d.yieldGrams ?? yieldGrams;
+				waterGrams = d.waterGrams ?? waterGrams;
+				waterTempC = d.waterTempC ?? waterTempC;
+				brewTimeSeconds = d.brewTimeSeconds ?? brewTimeSeconds;
+				brewMinutes = d.brewMinutes ?? brewMinutes;
+				brewSecondsPart = d.brewSecondsPart ?? brewSecondsPart;
+				grindSetting = d.grindSetting ?? grindSetting;
+				notes = d.notes ?? notes;
+				rating = d.rating ?? rating;
+				balance = d.balance ?? balance;
+				if (d.brewedAtLocal) brewedAtLocal = d.brewedAtLocal;
+			} catch {}
+			sessionStorage.removeItem(DRAFT_KEY);
+		}
+
+		// URL ?bagId= overrides (after returning from /bags/new)
+		const urlBagId = page.url.searchParams.get('bagId');
+		if (urlBagId) bagId = urlBagId;
+
+		[allBags, brewCount] = await Promise.all([
+			listBags(),
+			listBrews().then((all) => all.length)
+		]);
 	});
+
+	function saveDraft() {
+		const draft = {
+			method,
+			bagId,
+			doseGrams,
+			yieldGrams,
+			waterGrams,
+			waterTempC,
+			brewTimeSeconds,
+			brewMinutes,
+			brewSecondsPart,
+			grindSetting,
+			notes,
+			rating,
+			balance,
+			brewedAtLocal
+		};
+		sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+	}
+
+	function handleCreateNewBag(name: string) {
+		saveDraft();
+		goto(`/bags/new?name=${encodeURIComponent(name)}&returnTo=/brews/new`);
+	}
 
 	function localDatetimeNow(): string {
 		const now = new Date();
@@ -64,6 +124,10 @@
 		submitting = true;
 
 		try {
+			if (!selectedBag) {
+				throw new Error('Pick or create a bag for this brew.');
+			}
+
 			const totalBrewSeconds =
 				method === 'espresso'
 					? (brewTimeSeconds ?? NaN)
@@ -72,8 +136,9 @@
 			const base = {
 				id: crypto.randomUUID(),
 				brewedAt: new Date(brewedAtLocal).toISOString(),
-				coffeeName: coffeeName.trim() || undefined,
-				roaster: roaster.trim() || undefined,
+				bagId: selectedBag.id,
+				coffeeName: selectedBag.name,
+				roaster: selectedBag.roaster,
 				doseGrams: doseGrams ?? NaN,
 				brewTimeSeconds: totalBrewSeconds,
 				grindSetting: grindSetting.trim(),
@@ -153,21 +218,10 @@
 			/>
 		</div>
 
-		<!-- Coffee + Roaster -->
-		<div class="space-y-2">
+		<!-- Coffee (bag) -->
+		<div>
 			<Eyebrow class="mb-2">COFFEE</Eyebrow>
-			<input
-				type="text"
-				bind:value={coffeeName}
-				placeholder="e.g. Ethiopia Worka Sakaro"
-				class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
-			/>
-			<input
-				type="text"
-				bind:value={roaster}
-				placeholder="Roaster"
-				class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
-			/>
+			<BagPicker bind:bagId oncreatenew={handleCreateNewBag} />
 		</div>
 
 		<!-- Dose + Yield/Water (big mono fields) -->

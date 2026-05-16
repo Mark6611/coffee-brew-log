@@ -33,3 +33,35 @@ export function formatRoastedAt(iso: string | undefined, now: Date = new Date())
 	if (days < 30) return `roasted ${days} days ago`;
 	return 'roasted ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
+
+export function daysSinceRoast(
+	iso: string | undefined,
+	now: Date = new Date()
+): number | null {
+	if (!iso) return null;
+	const date = new Date(iso + 'T00:00:00');
+	return Math.floor((now.getTime() - date.getTime()) / 86_400_000);
+}
+
+export function freshnessTone(
+	iso: string | undefined,
+	now: Date = new Date()
+): string | null {
+	const days = daysSinceRoast(iso, now);
+	if (days == null) return null;
+	if (days <= 14) return 'var(--color-success)';
+	if (days <= 21) return 'var(--color-warning)';
+	return 'var(--color-danger)';
+}
+
+export function freshnessLabel(
+	iso: string | undefined,
+	now: Date = new Date()
+): string | null {
+	const days = daysSinceRoast(iso, now);
+	if (days == null) return null;
+	if (days < 0) return 'NOT YET ROASTED';
+	if (days === 0) return 'ROASTED TODAY';
+	if (days === 1) return 'ROASTED YESTERDAY';
+	return `ROASTED ${days} DAYS AGO`;
+}

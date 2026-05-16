@@ -1,15 +1,18 @@
 <script lang="ts">
-	import type { Brew } from '$lib/db/types';
+	import type { Brew, Bag } from '$lib/db/types';
 	import { formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
+	import { freshnessTone, freshnessLabel } from '$lib/bags/compute';
 	import Badge from './Badge.svelte';
 
 	let {
 		brew,
+		bag,
 		hero = false,
 		ondelete,
 		ontogglefavorite
 	}: {
 		brew: Brew;
+		bag?: Bag;
 		hero?: boolean;
 		ondelete?: (id: string) => void;
 		ontogglefavorite?: (id: string) => void;
@@ -19,6 +22,10 @@
 		brew.method === 'espresso' ? `${brew.yieldGrams}g` : `${brew.waterGrams}g`
 	);
 	const outLabel = $derived(brew.method === 'espresso' ? 'YIELD' : 'WATER');
+
+	const tone = $derived(bag ? freshnessTone(bag.roastedAt) : null);
+	const label = $derived(bag ? freshnessLabel(bag.roastedAt) : null);
+	const roasterText = $derived(bag?.roaster ?? brew.roaster);
 </script>
 
 {#snippet metric(label: string, value: string, accent: boolean = false)}
@@ -77,13 +84,52 @@
 		</span>
 	</div>
 
-	{#if brew.coffeeName}
+	{#if brew.coffeeName || bag}
 		<div class="font-display text-ink text-[22px] font-medium leading-[1.15] tracking-[-0.005em]">
-			{brew.coffeeName}
+			{bag?.name ?? brew.coffeeName}
 		</div>
-		{#if brew.roaster}
-			<div class="text-muted mt-0.5 text-[13px]">{brew.roaster}</div>
+		{#if roasterText}
+			{#if bag}
+				<a
+					href="/bags"
+					class="text-copper-dk hover:text-copper mt-1 inline-flex items-center gap-1 text-[13px] transition-colors"
+					style="border-bottom: 1px solid rgba(156,74,31,0.35); padding-bottom: 1px;"
+				>
+					<svg
+						width="11"
+						height="11"
+						viewBox="0 0 18 18"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.4"
+						stroke-linejoin="round"
+						stroke-linecap="round"
+					>
+						<path d="M3.2 5L4.7 3h8.6L14.8 5" />
+						<path d="M3.2 5h11.6v9.2c0 1.2-1 2.1-2.1 2.1H5.3c-1.2 0-2.1-1-2.1-2.1V5z" />
+						<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
+					</svg>
+					{roasterText}
+					{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
+				</a>
+			{:else}
+				<div class="text-muted mt-0.5 text-[13px]">{roasterText}</div>
+			{/if}
 		{/if}
+	{/if}
+
+	{#if bag && label && tone}
+		<div
+			class="mt-2 flex items-center gap-1.5 font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase"
+			style="color: {tone}"
+		>
+			<span
+				class="inline-block h-[5px] w-[5px] rounded-full"
+				style="background: currentColor"
+				aria-hidden="true"
+			></span>
+			{label}
+		</div>
 	{/if}
 
 	<div class="border-hairline mt-[14px] grid grid-cols-4 gap-1 border-t pt-[12px]">

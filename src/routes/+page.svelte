@@ -1,22 +1,26 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Brew } from '$lib/db/types';
-	import { listBrews } from '$lib/db/repository';
+	import type { Brew, Bag } from '$lib/db/types';
+	import { listBrews, listBags } from '$lib/db/repository';
 	import { weekStats, formatTimeAgo } from '$lib/brews/compute';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import BrewCard from '$lib/components/BrewCard.svelte';
 
 	let allBrews = $state<Brew[]>([]);
+	let allBags = $state<Bag[]>([]);
 	let loading = $state(true);
 
 	onMount(async () => {
-		allBrews = await listBrews();
+		[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
 		loading = false;
 	});
 
 	const stats = $derived(weekStats(allBrews));
 	const lastBrew = $derived(allBrews[0]);
+	const lastBrewBag = $derived(
+		lastBrew?.bagId ? allBags.find((b) => b.id === lastBrew.bagId) : undefined
+	);
 
 	const todayEyebrow = (() => {
 		const d = new Date();
@@ -42,7 +46,7 @@
 		{#if lastBrew}
 			<div class="px-[22px]">
 				<Eyebrow class="mb-2.5">Last brew · {formatTimeAgo(lastBrew.brewedAt)}</Eyebrow>
-				<BrewCard brew={lastBrew} hero />
+				<BrewCard brew={lastBrew} bag={lastBrewBag} hero />
 			</div>
 		{/if}
 

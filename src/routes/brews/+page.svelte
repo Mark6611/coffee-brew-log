@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Brew } from '$lib/db/types';
-	import { listBrews, deleteBrew, toggleFavorite } from '$lib/db/repository';
+	import type { Brew, Bag } from '$lib/db/types';
+	import { listBrews, listBags, deleteBrew, toggleFavorite } from '$lib/db/repository';
 	import { groupBrewsByDay } from '$lib/brews/compute';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import DayHeader from '$lib/components/DayHeader.svelte';
@@ -11,14 +11,20 @@
 	type Filter = 'all' | 'espresso' | 'pour-over' | 'favorites';
 
 	let allBrews = $state<Brew[]>([]);
+	let allBags = $state<Bag[]>([]);
 	let loading = $state(true);
 	let filter = $state<Filter>('all');
 	let searchOpen = $state(false);
 	let searchQuery = $state('');
 
 	async function refresh() {
-		allBrews = await listBrews();
+		[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
 		loading = false;
+	}
+
+	function bagFor(brew: Brew): Bag | undefined {
+		if (!brew.bagId) return undefined;
+		return allBags.find((b) => b.id === brew.bagId);
 	}
 
 	onMount(refresh);
@@ -178,7 +184,7 @@
 				<DayHeader>{group.dayKey}</DayHeader>
 				<div class="mb-5 flex flex-col gap-2.5">
 					{#each group.brews as brew (brew.id)}
-						<BrewCard {brew} ondelete={handleDelete} ontogglefavorite={handleFavorite} />
+						<BrewCard {brew} bag={bagFor(brew)} ondelete={handleDelete} ontogglefavorite={handleFavorite} />
 					{/each}
 				</div>
 			{/each}
