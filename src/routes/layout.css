@@ -63,4 +63,27 @@
 	body {
 		font-family: var(--font-sans);
 	}
+
+	/* Inputs inside a .field-wrapper container should inherit the wrapper's styling, not the
+	   @tailwindcss/forms attribute-selector defaults. */
+	.field-wrapper input,
+	.field-wrapper input:focus,
+	.field-wrapper input:focus-visible {
+		background-color: transparent;
+		border: none;
+		padding: 0;
+		box-shadow: none;
+		outline: none;
+	}
+
+	/* Hide number input spinner buttons across the app (we use mono visual style). */
+	input[type='number']::-webkit-inner-spin-button,
+	input[type='number']::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+	input[type='number'] {
+		-moz-appearance: textfield;
+		appearance: textfield;
+	}
 }

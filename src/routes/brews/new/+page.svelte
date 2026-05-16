@@ -128,11 +128,7 @@
 			Cancel
 		</a>
 		<Eyebrow>BREW #{brewCount + 1}</Eyebrow>
-		<button
-			type="submit"
-			disabled={submitting}
-			class="bg-copper text-paper hover:bg-copper-dk h-9 rounded-lg px-3.5 text-[14px] font-semibold transition-colors disabled:opacity-50"
-		>{submitting ? '…' : 'Save'}</button>
+		<span class="h-9 w-[60px]" aria-hidden="true"></span>
 	</div>
 
 	<h1
@@ -179,7 +175,7 @@
 			<div>
 				<Eyebrow class="mb-2">DOSE</Eyebrow>
 				<div
-					class="bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
 				>
 					<input
 						type="number"
@@ -189,7 +185,7 @@
 						required
 						inputmode="decimal"
 						placeholder="0.0"
-						class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent font-mono text-2xl font-medium tracking-[-0.02em] outline-none"
+						class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
 					/>
 					<span class="text-muted font-mono text-[13px]">g</span>
 				</div>
@@ -197,7 +193,7 @@
 			<div>
 				<Eyebrow class="mb-2">{method === 'espresso' ? 'YIELD' : 'WATER'}</Eyebrow>
 				<div
-					class="bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
 				>
 					{#if method === 'espresso'}
 						<input
@@ -208,7 +204,7 @@
 							required
 							inputmode="decimal"
 							placeholder="0.0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent font-mono text-2xl font-medium tracking-[-0.02em] outline-none"
+							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
 						/>
 					{:else}
 						<input
@@ -219,7 +215,7 @@
 							required
 							inputmode="decimal"
 							placeholder="0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent font-mono text-2xl font-medium tracking-[-0.02em] outline-none"
+							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
 						/>
 					{/if}
 					<span class="text-muted font-mono text-[13px]">g</span>
@@ -249,7 +245,7 @@
 			<Eyebrow class="mb-2">BREW TIME</Eyebrow>
 			{#if method === 'espresso'}
 				<div
-					class="bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
 				>
 					<input
 						type="number"
@@ -259,15 +255,16 @@
 						required
 						inputmode="numeric"
 						placeholder="0"
-						class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent font-mono text-2xl font-medium tracking-[-0.02em] outline-none"
+						class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
 					/>
 					<span class="text-muted font-mono text-[13px]">sec</span>
 				</div>
 			{:else}
-				<div class="flex items-center gap-2">
-					<div
-						class="bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 w-24 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
-					>
+				<div class="grid grid-cols-2 gap-2.5">
+					<div>
+						<div
+							class="text-muted mb-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
+						>MIN</div>
 						<input
 							type="number"
 							bind:value={brewMinutes}
@@ -275,14 +272,13 @@
 							min="0"
 							inputmode="numeric"
 							placeholder="0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent font-mono text-2xl font-medium tracking-[-0.02em] outline-none"
+							class="bg-surface border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 font-mono text-2xl font-medium tracking-[-0.02em] transition outline-none focus:ring-2"
 						/>
-						<span class="text-muted font-mono text-[11px]">min</span>
 					</div>
-					<span class="text-muted font-mono">:</span>
-					<div
-						class="bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 w-24 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
-					>
+					<div>
+						<div
+							class="text-muted mb-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
+						>SEC</div>
 						<input
 							type="number"
 							bind:value={brewSecondsPart}
@@ -291,9 +287,8 @@
 							max="59"
 							inputmode="numeric"
 							placeholder="0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent font-mono text-2xl font-medium tracking-[-0.02em] outline-none"
+							class="bg-surface border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 font-mono text-2xl font-medium tracking-[-0.02em] transition outline-none focus:ring-2"
 						/>
-						<span class="text-muted font-mono text-[11px]">sec</span>
 					</div>
 				</div>
 				<div class="mt-2 flex flex-wrap gap-2">
@@ -311,7 +306,7 @@
 			<div>
 				<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
 				<div
-					class="bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-baseline gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+					class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-baseline gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
 				>
 					<input
 						type="number"
@@ -321,7 +316,7 @@
 						max="100"
 						inputmode="numeric"
 						placeholder="0"
-						class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent font-mono text-[16px] tracking-[-0.01em] outline-none"
+						class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
 					/>
 					<span class="text-muted font-mono text-[12px]">°C</span>
 				</div>
@@ -346,7 +341,7 @@
 		<div>
 			<Eyebrow class="mb-2">RATING (1–5, OPTIONAL)</Eyebrow>
 			<div
-				class="bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-baseline gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+				class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-baseline gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
 			>
 				<input
 					type="number"
@@ -356,7 +351,7 @@
 					max="5"
 					inputmode="decimal"
 					placeholder="0.0"
-					class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent font-mono text-[16px] tracking-[-0.01em] outline-none"
+					class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
 				/>
 				<span class="text-muted font-mono text-[12px]">/ 5</span>
 			</div>
@@ -389,5 +384,12 @@
 				class="bg-danger/8 border-danger/20 text-danger rounded-[14px] border p-3 text-sm"
 			>{error}</div>
 		{/if}
+
+		<!-- Save button at bottom -->
+		<button
+			type="submit"
+			disabled={submitting}
+			class="bg-copper text-paper hover:bg-copper-dk flex h-14 w-full items-center justify-center rounded-2xl text-base font-medium transition-colors disabled:opacity-50"
+		>{submitting ? 'Saving…' : 'Save brew'}</button>
 	</div>
 </form>
