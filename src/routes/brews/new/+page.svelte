@@ -272,7 +272,7 @@
 			bind:value={rating}
 			min="1"
 			max="5"
-			step="1"
+			step="0.1"
 			class="w-full rounded border-gray-300"
 		/>
 	</label>

@@ -8,7 +8,7 @@ const BrewBase = z.object({
 	brewTimeSeconds: z.number().positive(),
 	grindSetting: z.string().min(1),
 	notes: z.string().optional(),
-	rating: z.number().int().min(1).max(5).optional(),
+	rating: z.number().min(1).max(5).optional(),
 	balance: z.enum(['light', 'balanced', 'heavy']).optional()
 });
 
