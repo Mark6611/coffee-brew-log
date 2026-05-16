@@ -1,5 +1,5 @@
 import { db } from './database';
-import { BrewSchema, type Brew } from './types';
+import { BrewSchema, BagSchema, type Brew, type Bag } from './types';
 
 export async function addBrew(brew: Brew): Promise<string> {
 	const parsed = BrewSchema.parse(brew);
@@ -41,5 +41,41 @@ export async function searchBrews(query: string): Promise<Brew[]> {
 	return all.filter((b) => {
 		const hay = [b.coffeeName, b.roaster, b.notes].filter(Boolean).join(' ').toLowerCase();
 		return hay.includes(q);
+	});
+}
+
+// ─── Bags ─────────────────────────────────────────────────────────────
+
+export async function listBags(): Promise<Bag[]> {
+	const rows = await db.bags.orderBy('createdAt').reverse().toArray();
+	return rows.map((row) => BagSchema.parse(row));
+}
+
+export async function getBagById(id: string): Promise<Bag | undefined> {
+	const row = await db.bags.get(id);
+	if (!row) return undefined;
+	return BagSchema.parse(row);
+}
+
+export async function addBag(bag: Bag): Promise<string> {
+	const parsed = BagSchema.parse(bag);
+	await db.bags.add(parsed);
+	return parsed.id;
+}
+
+export async function updateBag(bag: Bag): Promise<void> {
+	const parsed = BagSchema.parse(bag);
+	await db.bags.put(parsed);
+}
+
+export async function deleteBag(id: string): Promise<void> {
+	await db.transaction('rw', db.bags, db.brews, async () => {
+		const linked = await db.brews.where('bagId').equals(id).toArray();
+		for (const brew of linked) {
+			const { bagId, ...rest } = brew;
+			void bagId;
+			await db.brews.put(rest);
+		}
+		await db.bags.delete(id);
 	});
 }

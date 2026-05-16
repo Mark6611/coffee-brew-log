@@ -95,11 +95,15 @@
 			</div>
 		{/if}
 
-		<div class="px-[22px] pt-[18px]">
+		<div class="flex gap-5 px-[22px] pt-[18px]">
 			<a
 				href="/brews"
 				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
 			>View all brews →</a>
+			<a
+				href="/bags"
+				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
+			>Bags →</a>
 		</div>
 	{/if}
 </div>
