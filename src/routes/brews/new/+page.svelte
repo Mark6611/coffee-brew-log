@@ -175,7 +175,7 @@
 			<div>
 				<Eyebrow class="mb-2">DOSE</Eyebrow>
 				<div
-					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
 				>
 					<input
 						type="number"
@@ -193,7 +193,7 @@
 			<div>
 				<Eyebrow class="mb-2">{method === 'espresso' ? 'YIELD' : 'WATER'}</Eyebrow>
 				<div
-					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
 				>
 					{#if method === 'espresso'}
 						<input
@@ -245,7 +245,7 @@
 			<Eyebrow class="mb-2">BREW TIME</Eyebrow>
 			{#if method === 'espresso'}
 				<div
-					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-baseline gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+					class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
 				>
 					<input
 						type="number"
@@ -306,7 +306,7 @@
 			<div>
 				<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
 				<div
-					class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-baseline gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+					class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
 				>
 					<input
 						type="number"
@@ -341,7 +341,7 @@
 		<div>
 			<Eyebrow class="mb-2">RATING (1–5, OPTIONAL)</Eyebrow>
 			<div
-				class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-baseline gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+				class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
 			>
 				<input
 					type="number"
