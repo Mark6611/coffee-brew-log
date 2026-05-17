@@ -8,6 +8,7 @@
 	import BagPicker from '$lib/components/BagPicker.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
+	import StarRow from '$lib/components/StarRow.svelte';
 
 	type Method = 'espresso' | 'pour-over';
 	type Balance = '' | 'light' | 'balanced' | 'heavy';
@@ -393,21 +394,19 @@
 
 		<!-- Rating -->
 		<div>
-			<Eyebrow class="mb-2">RATING (1–5, OPTIONAL)</Eyebrow>
-			<div
-				class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
-			>
-				<input
-					type="number"
-					bind:value={rating}
-					step="0.1"
-					min="1"
-					max="5"
-					inputmode="decimal"
-					placeholder="0.0"
-					class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
-				/>
-				<span class="text-muted font-mono text-[12px]">/ 5</span>
+			<Eyebrow class="mb-2">RATING (OPTIONAL)</Eyebrow>
+			<div class="flex items-center gap-4">
+				<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
+				<span class="text-ink font-mono text-[15px] font-medium">
+					{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
+				</span>
+				{#if rating != null}
+					<button
+						type="button"
+						onclick={() => (rating = null)}
+						class="text-muted hover:text-ink ml-auto text-[11px] transition-colors"
+					>Clear</button>
+				{/if}
 			</div>
 		</div>
 

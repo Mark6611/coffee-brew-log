@@ -9,6 +9,7 @@
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
+	import StarRow from '$lib/components/StarRow.svelte';
 
 	type Method = 'espresso' | 'pour-over';
 	type Balance = '' | 'light' | 'balanced' | 'heavy';
@@ -100,21 +101,25 @@
 		brewedAtLocal: 'brewed at'
 	};
 
-	const dirtyFields = $derived.by<string[]>(() => {
+	const dirtyKeys = $derived.by<string[]>(() => {
 		const orig = originalSnapshot;
 		if (!orig) return [];
 		const current = snap() as unknown as Record<string, unknown>;
 		const original = orig as unknown as Record<string, unknown>;
+		return Object.keys(current).filter((k) => current[k] !== original[k]);
+	});
+
+	const dirtyFields = $derived.by<string[]>(() => {
 		const fields = new Set<string>();
-		for (const key of Object.keys(current)) {
-			if (current[key] !== original[key]) {
-				fields.add(FIELD_LABELS[key] ?? key);
-			}
-		}
+		for (const key of dirtyKeys) fields.add(FIELD_LABELS[key] ?? key);
 		return Array.from(fields);
 	});
 
 	const dirty = $derived(dirtyFields.length > 0);
+
+	function isDirty(...keys: string[]): boolean {
+		return keys.some((k) => dirtyKeys.includes(k));
+	}
 
 	onMount(async () => {
 		const found = await getBrewById(brewId);
@@ -374,21 +379,39 @@
 
 		<div class="space-y-[18px] px-[22px] pt-2">
 			<!-- Method -->
-			<div>
-				<Eyebrow class="mb-2">METHOD</Eyebrow>
+			<div class="relative">
+				{#if isDirty('method')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow class="mb-2" dirty={isDirty('method')}>METHOD</Eyebrow>
 				<MethodPicker bind:value={method} />
 			</div>
 
 			<!-- Coffee (bag) -->
-			<div>
-				<Eyebrow class="mb-2">COFFEE</Eyebrow>
+			<div class="relative">
+				{#if isDirty('bagId')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow class="mb-2" dirty={isDirty('bagId')}>COFFEE</Eyebrow>
 				<BagPicker bind:bagId oncreatenew={handleCreateNewBag} />
 			</div>
 
 			<!-- Dose + Yield/Water -->
-			<div class="grid grid-cols-2 gap-2.5">
+			<div class="relative grid grid-cols-2 gap-2.5">
+				{#if isDirty('doseGrams', 'yieldGrams', 'waterGrams')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
 				<div>
-					<Eyebrow class="mb-2">DOSE</Eyebrow>
+					<Eyebrow class="mb-2" dirty={isDirty('doseGrams')}>DOSE</Eyebrow>
 					<div
 						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
 					>
@@ -406,7 +429,10 @@
 					</div>
 				</div>
 				<div>
-					<Eyebrow class="mb-2">{method === 'espresso' ? 'YIELD' : 'WATER'}</Eyebrow>
+					<Eyebrow
+						class="mb-2"
+						dirty={isDirty('yieldGrams', 'waterGrams')}
+					>{method === 'espresso' ? 'YIELD' : 'WATER'}</Eyebrow>
 					<div
 						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
 					>
@@ -456,8 +482,14 @@
 			{/if}
 
 			<!-- Grind -->
-			<div>
-				<Eyebrow class="mb-2">
+			<div class="relative">
+				{#if isDirty('grindSetting')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow class="mb-2" dirty={isDirty('grindSetting')}>
 					GRIND · {method === 'espresso' ? 'LAGOM CASA' : 'FELLOW ODE 2'}
 				</Eyebrow>
 				<input
@@ -471,8 +503,14 @@
 
 			<!-- Water temp (pour-over only) -->
 			{#if method === 'pour-over'}
-				<div>
-					<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
+				<div class="relative">
+					{#if isDirty('waterTempC')}
+						<div
+							class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+							aria-hidden="true"
+						></div>
+					{/if}
+					<Eyebrow class="mb-2" dirty={isDirty('waterTempC')}>WATER TEMP (OPTIONAL)</Eyebrow>
 					<div
 						class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
 					>
@@ -492,8 +530,17 @@
 			{/if}
 
 			<!-- Brew time -->
-			<div>
-				<Eyebrow class="mb-2">BREW TIME</Eyebrow>
+			<div class="relative">
+				{#if isDirty('brewTimeSeconds', 'brewMinutes', 'brewSecondsPart')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow
+					class="mb-2"
+					dirty={isDirty('brewTimeSeconds', 'brewMinutes', 'brewSecondsPart')}
+				>BREW TIME</Eyebrow>
 				{#if method === 'espresso'}
 					<div
 						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
@@ -553,8 +600,14 @@
 			</div>
 
 			<!-- Balance -->
-			<div>
-				<Eyebrow class="mb-2">BALANCE (OPTIONAL)</Eyebrow>
+			<div class="relative">
+				{#if isDirty('balance')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow class="mb-2" dirty={isDirty('balance')}>BALANCE (OPTIONAL)</Eyebrow>
 				<BalanceScale
 					value={balance || undefined}
 					oninput={(v) => (balance = v)}
@@ -569,28 +622,38 @@
 			</div>
 
 			<!-- Rating -->
-			<div>
-				<Eyebrow class="mb-2">RATING (1–5, OPTIONAL)</Eyebrow>
-				<div
-					class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
-				>
-					<input
-						type="number"
-						bind:value={rating}
-						step="0.1"
-						min="1"
-						max="5"
-						inputmode="decimal"
-						placeholder="0.0"
-						class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
-					/>
-					<span class="text-muted font-mono text-[12px]">/ 5</span>
+			<div class="relative">
+				{#if isDirty('rating')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow class="mb-2" dirty={isDirty('rating')}>RATING (OPTIONAL)</Eyebrow>
+				<div class="flex items-center gap-4">
+					<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
+					<span class="text-ink font-mono text-[15px] font-medium">
+						{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
+					</span>
+					{#if rating != null}
+						<button
+							type="button"
+							onclick={() => (rating = null)}
+							class="text-muted hover:text-ink ml-auto text-[11px] transition-colors"
+						>Clear</button>
+					{/if}
 				</div>
 			</div>
 
 			<!-- Brewed at -->
-			<div>
-				<Eyebrow class="mb-2">BREWED AT</Eyebrow>
+			<div class="relative">
+				{#if isDirty('brewedAtLocal')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow class="mb-2" dirty={isDirty('brewedAtLocal')}>BREWED AT</Eyebrow>
 				<input
 					type="datetime-local"
 					bind:value={brewedAtLocal}
@@ -600,8 +663,14 @@
 			</div>
 
 			<!-- Notes -->
-			<div>
-				<Eyebrow class="mb-2">NOTES</Eyebrow>
+			<div class="relative">
+				{#if isDirty('notes')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow class="mb-2" dirty={isDirty('notes')}>NOTES</Eyebrow>
 				<textarea
 					bind:value={notes}
 					rows="3"
