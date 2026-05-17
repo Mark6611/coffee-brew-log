@@ -13,6 +13,7 @@ export const BagSchema = z.object({
 	weightGrams: z.number().positive().optional(),
 	pricePaid: z.number().nonnegative().optional(),
 	notes: z.string().optional(),
+	archived: z.boolean().optional(),
 	createdAt: z.string().datetime()
 });
 

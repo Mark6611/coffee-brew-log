@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/state';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
 	import { bagConsumption, formatRoastedAt } from '$lib/bags/compute';
@@ -9,6 +10,11 @@
 	let bags = $state<Bag[]>([]);
 	let brews = $state<Brew[]>([]);
 	let loading = $state(true);
+
+	const showArchived = $derived(page.url.searchParams.get('show') === 'archived');
+	const visibleBags = $derived(bags.filter((b) => !!b.archived === showArchived));
+	const archivedCount = $derived(bags.filter((b) => b.archived).length);
+	const activeCount = $derived(bags.length - archivedCount);
 
 	async function refresh() {
 		[bags, brews] = await Promise.all([listBags(), listBrews()]);
@@ -34,12 +40,30 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-24">
-	<AppHeader eyebrow="ALL TIME · {bags.length}">Bags</AppHeader>
+	<AppHeader eyebrow={showArchived ? `ARCHIVED · ${archivedCount}` : `ACTIVE · ${activeCount}`}>
+		Bags
+	</AppHeader>
+
+	{#if archivedCount > 0 || showArchived}
+		<div class="px-[22px] pb-3">
+			{#if showArchived}
+				<a
+					href="/bags"
+					class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
+				>← Active</a>
+			{:else}
+				<a
+					href="/bags?show=archived"
+					class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
+				>Show archived ({archivedCount}) →</a>
+			{/if}
+		</div>
+	{/if}
 
 	<div class="px-[22px]">
 		{#if loading}
 			<p class="text-muted py-8 text-center text-sm">Loading…</p>
-		{:else if bags.length === 0}
+		{:else if visibleBags.length === 0 && !bags.length}
 			<div class="flex flex-col items-center px-6 pt-12 pb-20 text-center">
 				<div class="bg-copper-lt text-copper mb-6 grid h-24 w-24 place-items-center rounded-full">
 					<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
@@ -84,12 +108,19 @@
 					Add first bag
 				</a>
 			</div>
+		{:else if visibleBags.length === 0}
+			<p class="text-muted py-12 text-center text-sm">
+				{showArchived ? 'No archived bags.' : 'All bags are archived.'}
+			</p>
 		{:else}
 			<div class="flex flex-col gap-2.5">
-				{#each bags as bag (bag.id)}
+				{#each visibleBags as bag (bag.id)}
 					{@const c = bagConsumption(bag, brews)}
 					<div class="bg-surface border-hairline rounded-[18px] border px-[18px] pt-[16px] pb-[18px]">
-						<div class="mb-2 flex items-start justify-between gap-3">
+						<a
+							href="/bags/{bag.id}"
+							class="mb-2 flex items-start justify-between gap-3 -m-2 p-2 rounded-lg hover:bg-paper/40 transition-colors"
+						>
 							<div class="flex-1">
 								<div
 									class="font-display text-ink text-[22px] font-medium leading-[1.15] tracking-[-0.005em]"
@@ -101,7 +132,7 @@
 							{#if bag.process}
 								<Badge>{bag.process}</Badge>
 							{/if}
-						</div>
+						</a>
 
 						<div class="text-muted flex flex-wrap gap-x-3 gap-y-1 text-[12px]">
 							{#if bag.origin}

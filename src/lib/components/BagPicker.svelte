@@ -33,10 +33,12 @@
 
 	const selectedBag = $derived(allBags.find((b) => b.id === bagId));
 
+	const activeBags = $derived(allBags.filter((b) => !b.archived));
+
 	const filtered = $derived.by(() => {
 		const q = query.trim().toLowerCase();
-		if (!q) return allBags.slice(0, 3);
-		return allBags.filter(
+		if (!q) return activeBags.slice(0, 3);
+		return activeBags.filter(
 			(b) =>
 				b.name.toLowerCase().includes(q) || (b.roaster?.toLowerCase().includes(q) ?? false)
 		);

@@ -91,7 +91,7 @@
 		{#if roasterText}
 			{#if bag}
 				<a
-					href="/bags"
+					href="/bags/{bag.id}"
 					class="text-copper-dk hover:text-copper mt-1 inline-flex items-center gap-1 text-[13px] transition-colors"
 					style="border-bottom: 1px solid rgba(156,74,31,0.35); padding-bottom: 1px;"
 				>

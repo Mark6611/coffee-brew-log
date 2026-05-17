@@ -68,6 +68,13 @@ export async function updateBag(bag: Bag): Promise<void> {
 	await db.bags.put(parsed);
 }
 
+export async function archiveBag(id: string, archived: boolean): Promise<void> {
+	const row = await db.bags.get(id);
+	if (!row) return;
+	const updated = BagSchema.parse({ ...row, archived });
+	await db.bags.put(updated);
+}
+
 export async function deleteBag(id: string): Promise<void> {
 	await db.transaction('rw', db.bags, db.brews, async () => {
 		const linked = await db.brews.where('bagId').equals(id).toArray();

@@ -16,6 +16,7 @@
 	let pricePaid = $state<number | null>(null);
 	let notes = $state('');
 	let createdAt = $state('');
+	let archived = $state<boolean | undefined>(undefined);
 	let error = $state<string | null>(null);
 	let submitting = $state(false);
 	let loading = $state(true);
@@ -39,6 +40,7 @@
 		pricePaid = bag.pricePaid ?? null;
 		notes = bag.notes ?? '';
 		createdAt = bag.createdAt;
+		archived = bag.archived;
 		loading = false;
 	});
 
@@ -58,11 +60,12 @@
 				weightGrams: weightGrams ?? undefined,
 				pricePaid: pricePaid ?? undefined,
 				notes: notes.trim() || undefined,
+				archived,
 				createdAt
 			};
 			const bag = BagSchema.parse(candidate);
 			await updateBag(bag);
-			await goto('/bags');
+			await goto(`/bags/${bagId}`);
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 			submitting = false;
