@@ -3,6 +3,7 @@
 	import type { Bag, Brew } from '$lib/db/types';
 	import { BagSchema, BrewSchema } from '$lib/db/types';
 	import { listBags, listBrews, bulkImport, wipeAllData } from '$lib/db/repository';
+	import { auth, signOut } from '$lib/auth.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 
 	let brewCount = $state(0);
@@ -177,6 +178,53 @@
 
 	{#if !loading}
 		<div class="mt-6 space-y-[18px] px-[22px]">
+			<!-- Account -->
+			<div>
+				<Eyebrow class="mb-2">ACCOUNT</Eyebrow>
+				{#if auth.user}
+					<div
+						class="bg-surface border-hairline flex items-center justify-between gap-3 rounded-2xl border px-4 py-3"
+					>
+						<div class="min-w-0">
+							<div class="text-ink truncate text-[14px]">{auth.user.email}</div>
+							<div
+								class="text-muted mt-0.5 font-mono text-[10.5px] tracking-[0.04em]"
+							>Signed in · syncing</div>
+						</div>
+						<button
+							type="button"
+							onclick={signOut}
+							class="text-muted hover:text-ink shrink-0 text-[12px] transition-colors"
+						>Sign out</button>
+					</div>
+				{:else}
+					<a
+						href="/auth"
+						class="bg-surface border-hairline hover:bg-paper/50 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors"
+					>
+						<div>
+							<div class="text-ink text-[14px]">Sign in</div>
+							<div
+								class="text-muted mt-0.5 text-[12px]"
+							>Sync brews across devices.</div>
+						</div>
+						<svg
+							width="14"
+							height="14"
+							viewBox="0 0 16 16"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="text-faint shrink-0"
+						>
+							<path d="M6 3l5 5-5 5" />
+						</svg>
+					</a>
+				{/if}
+			</div>
+
 			<!-- Counts -->
 			<div class="bg-surface border-hairline grid grid-cols-2 gap-3 rounded-2xl border p-4">
 				<div>
