@@ -18,29 +18,60 @@ function withUserId<T>(row: T, userId: string): T & { userId: string } {
 	return { ...row, userId };
 }
 
-function stripNullsAndUserId(row: Record<string, unknown>): Record<string, unknown> {
+const BAG_NUMERIC_KEYS = new Set(['weightGrams', 'pricePaid']);
+const BREW_NUMERIC_KEYS = new Set([
+	'doseGrams',
+	'brewTimeSeconds',
+	'yieldGrams',
+	'waterGrams',
+	'waterTempC',
+	'rating'
+]);
+
+function normalizeFromServer(
+	row: Record<string, unknown>,
+	numericKeys: Set<string>
+): Record<string, unknown> {
 	const cleaned: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(row)) {
 		if (key === 'userId') continue;
 		if (value === null) continue;
+		// Postgres returns numeric columns as strings. Coerce them back to numbers.
+		if (numericKeys.has(key) && typeof value === 'string') {
+			const num = Number(value);
+			if (!Number.isNaN(num)) {
+				cleaned[key] = num;
+				continue;
+			}
+		}
 		cleaned[key] = value;
 	}
 	return cleaned;
 }
 
 function parseBagFromServer(row: Record<string, unknown>): Bag | null {
-	const result = BagSchema.safeParse(stripNullsAndUserId(row));
+	const cleaned = normalizeFromServer(row, BAG_NUMERIC_KEYS);
+	const result = BagSchema.safeParse(cleaned);
 	if (!result.success) {
-		console.warn('Bag from server failed validation:', result.error.issues[0]?.message);
+		const issue = result.error.issues[0];
+		console.warn(
+			`[sync] Bag from server failed at "${issue?.path.join('.')}": ${issue?.message}`,
+			cleaned
+		);
 		return null;
 	}
 	return result.data;
 }
 
 function parseBrewFromServer(row: Record<string, unknown>): Brew | null {
-	const result = BrewSchema.safeParse(stripNullsAndUserId(row));
+	const cleaned = normalizeFromServer(row, BREW_NUMERIC_KEYS);
+	const result = BrewSchema.safeParse(cleaned);
 	if (!result.success) {
-		console.warn('Brew from server failed validation:', result.error.issues[0]?.message);
+		const issue = result.error.issues[0];
+		console.warn(
+			`[sync] Brew from server failed at "${issue?.path.join('.')}": ${issue?.message}`,
+			cleaned
+		);
 		return null;
 	}
 	return result.data;
