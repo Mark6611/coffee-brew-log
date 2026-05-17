@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel } from '$lib/bags/compute';
@@ -8,13 +9,11 @@
 		brew,
 		bag,
 		hero = false,
-		ondelete,
 		ontogglefavorite
 	}: {
 		brew: Brew;
 		bag?: Bag;
 		hero?: boolean;
-		ondelete?: (id: string) => void;
 		ontogglefavorite?: (id: string) => void;
 	} = $props();
 
@@ -26,6 +25,17 @@
 	const tone = $derived(bag ? freshnessTone(bag.roastedAt) : null);
 	const label = $derived(bag ? freshnessLabel(bag.roastedAt) : null);
 	const roasterText = $derived(bag?.roaster ?? brew.roaster);
+
+	function openDetail() {
+		goto(`/brews/${brew.id}`);
+	}
+
+	function handleCardKeydown(e: KeyboardEvent) {
+		if (e.key === 'Enter' || e.key === ' ') {
+			e.preventDefault();
+			openDetail();
+		}
+	}
 </script>
 
 {#snippet metric(label: string, value: string, accent: boolean = false)}
@@ -42,7 +52,11 @@
 {/snippet}
 
 <div
-	class="bg-surface border-hairline relative overflow-hidden border {hero
+	role="button"
+	tabindex="0"
+	onclick={openDetail}
+	onkeydown={handleCardKeydown}
+	class="bg-surface border-hairline hover:border-rule relative cursor-pointer overflow-hidden border transition-colors {hero
 		? 'rounded-[22px] p-[22px]'
 		: 'rounded-[18px] px-[18px] pt-[16px] pb-[18px]'}"
 >
@@ -57,7 +71,10 @@
 			{#if ontogglefavorite}
 				<button
 					type="button"
-					onclick={() => ontogglefavorite?.(brew.id)}
+					onclick={(e) => {
+						e.stopPropagation();
+						ontogglefavorite?.(brew.id);
+					}}
 					class="grid h-[22px] w-[22px] place-items-center rounded-full transition-colors {brew.isFavorite
 						? 'text-copper hover:bg-copper-lt'
 						: 'text-faint hover:bg-hairline'}"
@@ -92,6 +109,7 @@
 			{#if bag}
 				<a
 					href="/bags/{bag.id}"
+					onclick={(e) => e.stopPropagation()}
 					class="text-copper-dk hover:text-copper mt-1 inline-flex items-center gap-1 text-[13px] transition-colors"
 					style="border-bottom: 1px solid rgba(156,74,31,0.35); padding-bottom: 1px;"
 				>
@@ -143,15 +161,5 @@
 		<div
 			class="border-hairline font-display text-ink-70 mt-3 border-t border-dashed pt-3 text-[14.5px] leading-[1.45] italic"
 		>{brew.notes}</div>
-	{/if}
-
-	{#if ondelete}
-		<div class="mt-3 flex justify-end">
-			<button
-				type="button"
-				onclick={() => ondelete?.(brew.id)}
-				class="text-faint hover:text-danger text-[12px] transition-colors"
-			>Delete</button>
-		</div>
 	{/if}
 </div>

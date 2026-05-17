@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { Brew, Bag } from '$lib/db/types';
-	import { listBrews, listBags, deleteBrew, toggleFavorite } from '$lib/db/repository';
+	import { listBrews, listBags, toggleFavorite } from '$lib/db/repository';
 	import { groupBrewsByDay } from '$lib/brews/compute';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import DayHeader from '$lib/components/DayHeader.svelte';
@@ -48,12 +48,6 @@
 	);
 
 	const groups = $derived(groupBrewsByDay(filtered));
-
-	async function handleDelete(id: string) {
-		if (!confirm('Delete this brew?')) return;
-		await deleteBrew(id);
-		await refresh();
-	}
 
 	async function handleFavorite(id: string) {
 		await toggleFavorite(id);
@@ -184,7 +178,7 @@
 				<DayHeader>{group.dayKey}</DayHeader>
 				<div class="mb-5 flex flex-col gap-2.5">
 					{#each group.brews as brew (brew.id)}
-						<BrewCard {brew} bag={bagFor(brew)} ondelete={handleDelete} ontogglefavorite={handleFavorite} />
+						<BrewCard {brew} bag={bagFor(brew)} ontogglefavorite={handleFavorite} />
 					{/each}
 				</div>
 			{/each}
