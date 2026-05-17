@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { BagSchema, BrewSchema } from '$lib/db/types';
-	import { listBags, listBrews, bulkImport } from '$lib/db/repository';
+	import { listBags, listBrews, bulkImport, wipeAllData } from '$lib/db/repository';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 
 	let brewCount = $state(0);
@@ -46,6 +46,23 @@
 		document.body.removeChild(a);
 		URL.revokeObjectURL(url);
 		message = `Exported ${brews.length} brews + ${bags.length} bags.`;
+	}
+
+	async function handleWipe() {
+		const total = brewCount + bagCount;
+		if (total === 0) return;
+		if (
+			!confirm(
+				`Delete all ${brewCount} brew${brewCount === 1 ? '' : 's'} and ${bagCount} bag${bagCount === 1 ? '' : 's'}? This cannot be undone.`
+			)
+		)
+			return;
+		if (!confirm('Final confirmation — type cancel to abort. Everything will be erased.'))
+			return;
+		await wipeAllData();
+		await loadCounts();
+		message = 'All data wiped.';
+		error = null;
 	}
 
 	async function handleFileChange(e: Event) {
@@ -257,6 +274,35 @@
 					class="bg-danger/8 border-danger/20 text-danger rounded-[14px] border p-3 text-[13px]"
 				>{error}</div>
 			{/if}
+
+			<!-- Danger zone -->
+			<div class="border-hairline mt-8 border-t pt-6">
+				<Eyebrow class="text-danger mb-2">DANGER ZONE</Eyebrow>
+				<p class="text-muted mb-3 text-[13px] leading-[1.5]">
+					Delete every brew and bag from this device. Cannot be undone. Export first if you'd like a
+					safety net.
+				</p>
+				<button
+					type="button"
+					onclick={handleWipe}
+					disabled={brewCount === 0 && bagCount === 0}
+					class="bg-danger/8 text-danger hover:bg-danger/14 inline-flex h-12 items-center gap-2 rounded-2xl px-5 text-[14px] font-medium transition-colors disabled:opacity-50"
+				>
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
+					</svg>
+					Wipe all data
+				</button>
+			</div>
 		</div>
 	{/if}
 </div>

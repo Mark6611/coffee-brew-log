@@ -68,6 +68,13 @@ export async function updateBag(bag: Bag): Promise<void> {
 	await db.bags.put(parsed);
 }
 
+export async function wipeAllData(): Promise<void> {
+	await db.transaction('rw', db.brews, db.bags, async () => {
+		await db.brews.clear();
+		await db.bags.clear();
+	});
+}
+
 export async function bulkImport(brews: Brew[], bags: Bag[]): Promise<void> {
 	const parsedBrews = brews.map((b) => BrewSchema.parse(b));
 	const parsedBags = bags.map((b) => BagSchema.parse(b));
