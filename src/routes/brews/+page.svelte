@@ -27,6 +27,12 @@
 		return allBags.find((b) => b.id === brew.bagId);
 	}
 
+	onMount(() => {
+		const onSynced = () => refresh();
+		window.addEventListener('brewlog:synced', onSynced);
+		return () => window.removeEventListener('brewlog:synced', onSynced);
+	});
+
 	onMount(refresh);
 
 	function matchesSearch(brew: Brew, q: string): boolean {
@@ -60,6 +66,26 @@
 </svelte:head>
 
 <div class="relative mx-auto max-w-2xl pb-24">
+	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
+		<a
+			href="/"
+			class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+		>
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 16 16"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.8"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<path d="M10 3L4 8l6 5" />
+			</svg>
+			Home
+		</a>
+	</div>
 	<AppHeader eyebrow="ALL TIME · {allBrews.length}">
 		Brews
 		{#snippet action()}

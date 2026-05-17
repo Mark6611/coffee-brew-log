@@ -11,9 +11,16 @@
 	let allBags = $state<Bag[]>([]);
 	let loading = $state(true);
 
-	onMount(async () => {
+	async function load() {
 		[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
 		loading = false;
+	}
+
+	onMount(() => {
+		load();
+		const onSynced = () => load();
+		window.addEventListener('brewlog:synced', onSynced);
+		return () => window.removeEventListener('brewlog:synced', onSynced);
 	});
 
 	const stats = $derived(weekStats(allBrews));

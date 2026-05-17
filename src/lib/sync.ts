@@ -179,6 +179,11 @@ export async function fullSync(): Promise<void> {
 		console.info(
 			`[sync] pushed: ${localBags.length} bags + ${localBrews.length} brews; pulled: ${serverBags.length} bags + ${serverBrews.length} brews; pushOk=${pushOk}`
 		);
+
+		// Tell any open pages that local cache has been updated, so they can refetch.
+		if (typeof window !== 'undefined') {
+			window.dispatchEvent(new CustomEvent('brewlog:synced'));
+		}
 	} catch (err) {
 		console.error('Sync failed:', err);
 		lastError = err instanceof Error ? err.message : String(err);
