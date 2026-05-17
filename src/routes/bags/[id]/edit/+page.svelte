@@ -88,7 +88,7 @@
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 		<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
 			<a
-				href="/bags"
+				href="/bags/{bagId}"
 				class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
 			>
 				<svg

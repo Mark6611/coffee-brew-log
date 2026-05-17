@@ -294,6 +294,42 @@
 			</div>
 		{/if}
 
+		<!-- Grind -->
+		<div>
+			<Eyebrow class="mb-2">
+				GRIND · {method === 'espresso' ? 'LAGOM CASA' : 'FELLOW ODE 2'}
+			</Eyebrow>
+			<input
+				type="text"
+				bind:value={grindSetting}
+				required
+				placeholder={method === 'espresso' ? 'e.g. 1.3' : 'e.g. 5.5'}
+				class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 font-mono transition outline-none focus:ring-2"
+			/>
+		</div>
+
+		<!-- Water temp (pour-over only) -->
+		{#if method === 'pour-over'}
+			<div>
+				<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
+				<div
+					class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+				>
+					<input
+						type="number"
+						bind:value={waterTempC}
+						step="1"
+						min="1"
+						max="100"
+						inputmode="numeric"
+						placeholder="0"
+						class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
+					/>
+					<span class="text-muted font-mono text-[12px]">°C</span>
+				</div>
+			</div>
+		{/if}
+
 		<!-- Brew time -->
 		<div>
 			<Eyebrow class="mb-2">BREW TIME</Eyebrow>
@@ -353,42 +389,6 @@
 					{/each}
 				</div>
 			{/if}
-		</div>
-
-		<!-- Water temp (pour-over only) -->
-		{#if method === 'pour-over'}
-			<div>
-				<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
-				<div
-					class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
-				>
-					<input
-						type="number"
-						bind:value={waterTempC}
-						step="1"
-						min="1"
-						max="100"
-						inputmode="numeric"
-						placeholder="0"
-						class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
-					/>
-					<span class="text-muted font-mono text-[12px]">°C</span>
-				</div>
-			</div>
-		{/if}
-
-		<!-- Grind -->
-		<div>
-			<Eyebrow class="mb-2">
-				GRIND · {method === 'espresso' ? 'LAGOM CASA' : 'FELLOW ODE 2'}
-			</Eyebrow>
-			<input
-				type="text"
-				bind:value={grindSetting}
-				required
-				placeholder={method === 'espresso' ? 'e.g. 1.3' : 'e.g. 5.5'}
-				class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 font-mono transition outline-none focus:ring-2"
-			/>
 		</div>
 
 		<!-- Rating -->

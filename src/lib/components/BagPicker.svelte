@@ -45,8 +45,7 @@
 	});
 
 	const hasQuery = $derived(query.length > 0);
-	const showCreateNew = $derived(hasQuery);
-	const totalRows = $derived(filtered.length + (showCreateNew ? 1 : 0));
+	const totalRows = $derived(filtered.length + 1);
 
 	function selectBag(bag: Bag) {
 		bagId = bag.id;
@@ -87,7 +86,7 @@
 			e.preventDefault();
 			if (highlightedIndex < filtered.length) {
 				selectBag(filtered[highlightedIndex]);
-			} else if (showCreateNew) {
+			} else {
 				createNew();
 			}
 		} else if (e.key === 'Escape') {
@@ -293,44 +292,48 @@
 					{/each}
 				</div>
 
-				{#if showCreateNew}
-					<button
-						type="button"
-						onmousedown={(e) => {
-							e.preventDefault();
-							createNew();
-						}}
-						onmouseenter={() => (highlightedIndex = filtered.length)}
-						class="border-hairline block w-full border-t px-4 py-3 text-left transition-colors {highlightedIndex ===
-						filtered.length
-							? 'bg-paper'
-							: 'hover:bg-paper/60'}"
-						role="option"
-						aria-selected={highlightedIndex === filtered.length}
-					>
-						<div class="flex items-center gap-3">
-							<div
-								class="bg-copper text-paper grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg"
+				<button
+					type="button"
+					onmousedown={(e) => {
+						e.preventDefault();
+						createNew();
+					}}
+					onmouseenter={() => (highlightedIndex = filtered.length)}
+					class="border-hairline block w-full border-t px-4 py-3 text-left transition-colors {highlightedIndex ===
+					filtered.length
+						? 'bg-paper'
+						: 'hover:bg-paper/60'}"
+					role="option"
+					aria-selected={highlightedIndex === filtered.length}
+				>
+					<div class="flex items-center gap-3">
+						<div
+							class="bg-copper text-paper grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg"
+						>
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 14 14"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.6"
+								stroke-linecap="round"
 							>
-								<svg
-									width="14"
-									height="14"
-									viewBox="0 0 14 14"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="1.6"
-									stroke-linecap="round"
-								>
-									<path d="M7 2v10M2 7h10" />
-								</svg>
-							</div>
-							<div class="min-w-0 flex-1">
-								<div class="text-copper text-[14px] font-medium">Create new bag</div>
-								<div class="text-muted mt-0.5 truncate text-[12px]">"{query}"</div>
-							</div>
+								<path d="M7 2v10M2 7h10" />
+							</svg>
 						</div>
-					</button>
-				{/if}
+						<div class="min-w-0 flex-1">
+							<div class="text-copper text-[14px] font-medium">
+								{hasQuery ? 'Create new bag' : 'Add a new bag'}
+							</div>
+							{#if hasQuery}
+								<div class="text-muted mt-0.5 truncate text-[12px]">"{query}"</div>
+							{:else}
+								<div class="text-muted mt-0.5 text-[12px]">Open the bag form →</div>
+							{/if}
+						</div>
+					</div>
+				</button>
 
 				<div
 					class="text-muted bg-paper/50 border-hairline border-t px-4 py-2 font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
