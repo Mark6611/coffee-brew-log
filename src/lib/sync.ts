@@ -167,23 +167,18 @@ export async function fullSync(): Promise<void> {
 			.map((r) => parseBrewFromServer(r as Record<string, unknown>))
 			.filter((b): b is Brew => b !== null);
 
-		// 3. Update local cache
+		// 3. Update local cache by MERGING server data in.
+		// Never clear local — that risks data loss if the server is empty/RLS-blocked.
+		// Trade-off: deletes on other devices don't propagate until we add tombstones in a future pass.
 		await db.transaction('rw', db.bags, db.brews, async () => {
-			if (pushOk) {
-				// Push succeeded — server has everything we had + anything from other devices.
-				// Safe to replace local entirely.
-				await db.bags.clear();
-				await db.brews.clear();
-				if (serverBags.length > 0) await db.bags.bulkAdd(serverBags);
-				if (serverBrews.length > 0) await db.brews.bulkAdd(serverBrews);
-			} else {
-				// Push failed — don't clear; merge server data so local-only items survive.
-				if (serverBags.length > 0) await db.bags.bulkPut(serverBags);
-				if (serverBrews.length > 0) await db.brews.bulkPut(serverBrews);
-			}
+			if (serverBags.length > 0) await db.bags.bulkPut(serverBags);
+			if (serverBrews.length > 0) await db.brews.bulkPut(serverBrews);
 		});
 
 		lastSyncAt = new Date().toISOString();
+		console.info(
+			`[sync] pushed: ${localBags.length} bags + ${localBrews.length} brews; pulled: ${serverBags.length} bags + ${serverBrews.length} brews; pushOk=${pushOk}`
+		);
 	} catch (err) {
 		console.error('Sync failed:', err);
 		lastError = err instanceof Error ? err.message : String(err);
