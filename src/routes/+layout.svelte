@@ -4,6 +4,7 @@
 	import '@fontsource-variable/geist/index.css';
 	import '@fontsource-variable/geist-mono/index.css';
 	import './layout.css';
+	import '$lib/sync'; // side effect: registers auth listener for sync
 
 	import { onMount } from 'svelte';
 
