@@ -4,6 +4,7 @@
 	import { BagSchema, BrewSchema } from '$lib/db/types';
 	import { listBags, listBrews, bulkImport, wipeAllData } from '$lib/db/repository';
 	import { auth, signOut } from '$lib/auth.svelte';
+	import { fullSync, getSyncStatus } from '$lib/sync';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 
 	let brewCount = $state(0);
@@ -13,6 +14,34 @@
 	let message = $state<string | null>(null);
 	let error = $state<string | null>(null);
 	let fileInput = $state<HTMLInputElement | undefined>();
+	let syncing = $state(false);
+	let lastSyncAt = $state<string | null>(null);
+	let lastSyncError = $state<string | null>(null);
+
+	function timeAgo(iso: string | null): string {
+		if (!iso) return 'never';
+		const ago = Date.now() - new Date(iso).getTime();
+		const s = Math.max(0, Math.floor(ago / 1000));
+		if (s < 5) return 'just now';
+		if (s < 60) return `${s}s ago`;
+		const m = Math.floor(s / 60);
+		if (m < 60) return `${m} min ago`;
+		const h = Math.floor(m / 60);
+		if (h < 24) return `${h} hr ago`;
+		const d = Math.floor(h / 24);
+		return `${d}d ago`;
+	}
+
+	async function handleSyncNow() {
+		syncing = true;
+		await fullSync();
+		const status = getSyncStatus();
+		lastSyncAt = status.lastSyncAt;
+		lastSyncError = status.lastError;
+		// Refresh local counts after sync
+		await loadCounts();
+		syncing = false;
+	}
 
 	async function loadCounts() {
 		const [brews, bags] = await Promise.all([listBrews(), listBags()]);
@@ -21,7 +50,20 @@
 		loading = false;
 	}
 
-	onMount(loadCounts);
+	onMount(() => {
+		loadCounts();
+		const status = getSyncStatus();
+		lastSyncAt = status.lastSyncAt;
+		lastSyncError = status.lastError;
+		const onSynced = () => {
+			const s = getSyncStatus();
+			lastSyncAt = s.lastSyncAt;
+			lastSyncError = s.lastError;
+			loadCounts();
+		};
+		window.addEventListener('brewlog:synced', onSynced);
+		return () => window.removeEventListener('brewlog:synced', onSynced);
+	});
 
 	async function handleExport() {
 		error = null;
@@ -183,19 +225,58 @@
 				<Eyebrow class="mb-2">ACCOUNT</Eyebrow>
 				{#if auth.user}
 					<div
-						class="bg-surface border-hairline flex items-center justify-between gap-3 rounded-2xl border px-4 py-3"
+						class="bg-surface border-hairline rounded-2xl border px-4 py-3 space-y-3"
 					>
-						<div class="min-w-0">
-							<div class="text-ink truncate text-[14px]">{auth.user.email}</div>
-							<div
-								class="text-muted mt-0.5 font-mono text-[10.5px] tracking-[0.04em]"
-							>Signed in · sync rolling out</div>
+						<div class="flex items-center justify-between gap-3">
+							<div class="min-w-0">
+								<div class="text-ink truncate text-[14px]">{auth.user.email}</div>
+								<div
+									class="text-muted mt-0.5 font-mono text-[10.5px] tracking-[0.04em] uppercase"
+								>Signed in</div>
+							</div>
+							<button
+								type="button"
+								onclick={signOut}
+								class="text-muted hover:text-ink shrink-0 text-[12px] transition-colors"
+							>Sign out</button>
 						</div>
-						<button
-							type="button"
-							onclick={signOut}
-							class="text-muted hover:text-ink shrink-0 text-[12px] transition-colors"
-						>Sign out</button>
+
+						<div class="border-hairline border-t pt-3 flex items-center justify-between gap-3">
+							<div class="min-w-0 flex-1">
+								<div class="text-muted font-mono text-[10px] font-medium tracking-[0.14em] uppercase">SYNC</div>
+								<div class="text-ink mt-0.5 text-[13px]">
+									{#if syncing}
+										<span class="text-copper">Syncing…</span>
+									{:else if lastSyncError}
+										<span class="text-danger">{lastSyncError}</span>
+									{:else}
+										Synced {timeAgo(lastSyncAt)}
+									{/if}
+								</div>
+							</div>
+							<button
+								type="button"
+								onclick={handleSyncNow}
+								disabled={syncing}
+								class="border-hairline hover:bg-paper text-ink shrink-0 inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-[12px] font-medium transition-colors disabled:opacity-50"
+							>
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 16 16"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.6"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class={syncing ? 'animate-spin' : ''}
+								>
+									<path d="M14 4v4h-4M2 12V8h4" />
+									<path d="M2 8a6 6 0 0 1 10.5-4M14 8a6 6 0 0 1-10.5 4" />
+								</svg>
+								Sync now
+							</button>
+						</div>
 					</div>
 				{:else}
 					<a
