@@ -189,7 +189,7 @@
 							<div class="text-ink truncate text-[14px]">{auth.user.email}</div>
 							<div
 								class="text-muted mt-0.5 font-mono text-[10.5px] tracking-[0.04em]"
-							>Signed in · syncing</div>
+							>Signed in · sync rolling out</div>
 						</div>
 						<button
 							type="button"
