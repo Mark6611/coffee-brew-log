@@ -131,12 +131,12 @@
 		{:else}
 			<p class="text-muted font-display mt-3 text-[15px] leading-[1.5] italic">
 				Sent a code to <strong class="text-ink not-italic">{email}</strong>. Open the email and
-				type the 6-digit code below — or tap the link to sign in this browser.
+				type the code below — or tap the link to sign in this browser.
 			</p>
 
 			<form onsubmit={verifyCode} class="mt-6 space-y-[18px]">
 				<div>
-					<Eyebrow class="mb-2">6-DIGIT CODE</Eyebrow>
+					<Eyebrow class="mb-2">CODE FROM EMAIL</Eyebrow>
 					<input
 						type="text"
 						bind:value={otpCode}
@@ -144,9 +144,9 @@
 						inputmode="numeric"
 						autocomplete="one-time-code"
 						pattern="[0-9]*"
-						maxlength="6"
-						placeholder="000000"
-						class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 text-center font-mono text-[26px] font-medium tracking-[0.3em] transition outline-none focus:ring-2"
+						maxlength="10"
+						placeholder="00000000"
+						class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 text-center font-mono text-[24px] font-medium tracking-[0.25em] transition outline-none focus:ring-2"
 					/>
 				</div>
 
