@@ -108,6 +108,10 @@
 				href="/bags"
 				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
 			>Bags →</a>
+			<a
+				href="/stats"
+				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
+			>Stats →</a>
 		</div>
 	{/if}
 </div>

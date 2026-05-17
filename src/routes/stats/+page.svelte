@@ -1,0 +1,433 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { page } from '$app/state';
+	import type { Brew, Bag } from '$lib/db/types';
+	import { listBrews, listBags } from '$lib/db/repository';
+	import {
+		filterByRange,
+		brewsByWeek,
+		avgRatio,
+		avgRating,
+		methodSplit,
+		ratioBuckets,
+		topRatedBrews,
+		mostBrewedBag,
+		freshnessAtBrew,
+		brewsByHour,
+		peakHour,
+		pullQuote,
+		formatHour,
+		type Range
+	} from '$lib/stats/compute';
+	import { formatRatio } from '$lib/brews/compute';
+	import { daysSinceRoast, freshnessTone } from '$lib/bags/compute';
+	import Eyebrow from '$lib/components/Eyebrow.svelte';
+	import StarRow from '$lib/components/StarRow.svelte';
+
+	let allBrews = $state<Brew[]>([]);
+	let allBags = $state<Bag[]>([]);
+	let loading = $state(true);
+
+	const range = $derived(
+		(page.url.searchParams.get('range') as Range | null) ?? '12w'
+	);
+	const filtered = $derived(filterByRange(allBrews, range));
+
+	onMount(async () => {
+		[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
+		loading = false;
+	});
+
+	const totalAll = $derived(allBrews.length);
+	const weekly = $derived(brewsByWeek(filtered, 12));
+	const thisWeek = $derived(weekly[weekly.length - 1] ?? 0);
+	const prevWeek = $derived(weekly[weekly.length - 2] ?? 0);
+	const weekDelta = $derived(thisWeek - prevWeek);
+
+	const avgR = $derived(avgRatio(filtered));
+	const avgRat = $derived(avgRating(filtered));
+	const ms = $derived(methodSplit(filtered));
+	const ratios = $derived(ratioBuckets(filtered));
+	const top3 = $derived(topRatedBrews(filtered, 3));
+	const topBag = $derived(mostBrewedBag(filtered, allBags));
+	const freshness = $derived(freshnessAtBrew(filtered, allBags));
+	const byHour = $derived(brewsByHour(filtered));
+	const peak = $derived(peakHour(byHour));
+	const quote = $derived(pullQuote(allBrews, allBags, range));
+
+	const maxWeek = $derived(Math.max(...weekly, 1));
+	const maxHour = $derived(Math.max(...byHour, 1));
+	const maxRatioBucket = $derived(Math.max(...ratios.counts, 1));
+
+	const medianBucketIdx = $derived.by(() => {
+		if (ratios.median == null) return -1;
+		let best = 0;
+		let bestDist = Math.abs(ratios.ratios[0] - ratios.median);
+		for (let i = 1; i < ratios.ratios.length; i++) {
+			const d = Math.abs(ratios.ratios[i] - ratios.median);
+			if (d < bestDist) {
+				bestDist = d;
+				best = i;
+			}
+		}
+		return best;
+	});
+
+	const rangeOptions: { value: Range; label: string }[] = [
+		{ value: '12w', label: '12 WEEKS' },
+		{ value: '6m', label: '6 MO' },
+		{ value: 'all', label: 'ALL' }
+	];
+</script>
+
+<svelte:head>
+	<title>Stats</title>
+</svelte:head>
+
+<div class="mx-auto max-w-2xl pb-12">
+	<!-- Header row -->
+	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
+		<a
+			href="/"
+			class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+		>
+			<svg
+				width="14"
+				height="14"
+				viewBox="0 0 16 16"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="1.8"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			>
+				<path d="M10 3L4 8l6 5" />
+			</svg>
+			Home
+		</a>
+
+		<div class="flex gap-1.5">
+			{#each rangeOptions as opt (opt.value)}
+				<a
+					href="?range={opt.value}"
+					class="inline-flex h-7 items-center rounded-full px-2.5 font-mono text-[10px] font-medium tracking-[0.1em] transition-colors {range ===
+					opt.value
+						? 'bg-ink text-paper'
+						: 'border-hairline text-muted hover:text-ink border'}"
+				>{opt.label}</a>
+			{/each}
+		</div>
+	</div>
+
+	{#if loading}
+		<p class="text-muted py-8 text-center text-sm">Loading…</p>
+	{:else if totalAll === 0}
+		<div class="px-[22px] pt-12 pb-20 text-center">
+			<h2
+				class="font-display text-ink text-[26px] font-medium leading-[1.15] tracking-[-0.01em]"
+			>Nothing to count yet.</h2>
+			<p class="text-muted font-display mt-2 max-w-[280px] text-[15px] italic">
+				Log a brew or two and stats appear here.
+			</p>
+			<a
+				href="/brews/new"
+				class="bg-copper text-paper hover:bg-copper-dk mt-6 inline-flex h-[44px] items-center gap-2 rounded-2xl px-4 text-[14px] font-medium transition-colors"
+			>Log a brew</a>
+		</div>
+	{:else}
+		<div class="space-y-7 px-[22px]">
+			<!-- Headline -->
+			<div>
+				<Eyebrow>STATS</Eyebrow>
+				<h1
+					class="font-display text-ink mt-1 text-[34px] font-medium leading-[1.05] tracking-[-0.015em]"
+				>
+					{totalAll} {totalAll === 1 ? 'brew' : 'brews'},<br />
+					<span class="text-muted italic">and counting.</span>
+				</h1>
+			</div>
+
+			<!-- Last 12 weeks sparkbar -->
+			<div>
+				<div class="mb-2 flex items-center justify-between">
+					<Eyebrow>LAST 12 WEEKS</Eyebrow>
+					{#if weekDelta !== 0 && prevWeek > 0}
+						<span
+							class="font-mono text-[11px] font-medium tracking-[0.04em]"
+							style="color: {weekDelta > 0 ? 'var(--color-success)' : 'var(--color-danger)'}"
+						>
+							{weekDelta > 0 ? '↑' : '↓'}
+							{Math.abs(weekDelta)} vs last week
+						</span>
+					{/if}
+				</div>
+				<div class="flex h-20 items-end gap-1">
+					{#each weekly as count, i (i)}
+						<div
+							class="flex-1 rounded-sm transition-colors"
+							style="height: {Math.max(8, (count / maxWeek) * 100)}%; background: {i ===
+							weekly.length - 1
+								? 'var(--color-copper)'
+								: '#D9CDB6'}"
+							title="{count} brew{count === 1 ? '' : 's'}"
+						></div>
+					{/each}
+				</div>
+			</div>
+
+			<!-- Quick stats -->
+			<div class="grid grid-cols-3 gap-2.5">
+				<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
+					<div
+						class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
+					>THIS WEEK</div>
+					<div
+						class="text-copper font-display mt-1 text-2xl font-medium tracking-[-0.01em]"
+					>{thisWeek}</div>
+				</div>
+				<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
+					<div
+						class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
+					>AVG RATIO</div>
+					<div
+						class="text-ink font-display mt-1 font-mono text-2xl font-medium tracking-[-0.01em]"
+					>{avgR != null ? `1:${avgR.toFixed(1)}` : '—'}</div>
+				</div>
+				<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
+					<div
+						class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
+					>AVG RATING</div>
+					<div
+						class="text-ink font-display mt-1 text-2xl font-medium tracking-[-0.01em]"
+					>{avgRat != null ? avgRat.toFixed(1) : '—'}</div>
+				</div>
+			</div>
+
+			<!-- Method split -->
+			{#if ms.espresso + ms.pourOver > 0}
+				<div>
+					<Eyebrow class="mb-2">METHOD SPLIT</Eyebrow>
+					<div class="flex items-end justify-between gap-4">
+						<div>
+							<div
+								class="text-copper font-display font-mono text-[28px] font-medium leading-none tracking-[-0.02em]"
+							>{Math.round(ms.pourOverPct)}%</div>
+							<div
+								class="text-muted mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] uppercase"
+							>POUR-OVER · {ms.pourOver}</div>
+						</div>
+						<div class="text-right">
+							<div
+								class="text-copper-dk font-display font-mono text-[28px] font-medium leading-none tracking-[-0.02em]"
+							>{Math.round(ms.espressoPct)}%</div>
+							<div
+								class="text-muted mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] uppercase"
+							>ESPRESSO · {ms.espresso}</div>
+						</div>
+					</div>
+					<div class="mt-3 flex h-2.5 overflow-hidden rounded-full gap-[2px]">
+						{#if ms.pourOverPct > 0}
+							<div class="bg-copper h-full" style="width: {ms.pourOverPct}%"></div>
+						{/if}
+						{#if ms.espressoPct > 0}
+							<div class="bg-copper-dk h-full" style="width: {ms.espressoPct}%"></div>
+						{/if}
+					</div>
+				</div>
+			{/if}
+
+			<!-- Ratio distribution (pour-over only) -->
+			{#if ms.pourOver > 0}
+				<div>
+					<div class="mb-2 flex items-center justify-between">
+						<Eyebrow>RATIO DISTRIBUTION</Eyebrow>
+						{#if ratios.median != null}
+							<span class="text-muted font-mono text-[11px] tracking-[0.04em]">
+								MEDIAN <span class="text-copper">1:{ratios.median.toFixed(1)}</span>
+							</span>
+						{/if}
+					</div>
+					<div class="relative flex h-24 items-end gap-1">
+						{#each ratios.counts as count, i (i)}
+							<div
+								class="flex-1 rounded-sm transition-colors"
+								style="height: {Math.max(count === 0 ? 0 : 6, (count / maxRatioBucket) * 100)}%; background: {i ===
+								medianBucketIdx
+									? 'var(--color-copper)'
+									: '#D9CDB6'}"
+								title="1:{ratios.ratios[i]} · {count} brew{count === 1 ? '' : 's'}"
+							></div>
+						{/each}
+					</div>
+					<div class="text-muted mt-1 flex justify-between font-mono text-[9.5px] tracking-[0.04em]">
+						<span>1:14</span>
+						<span>1:16</span>
+						<span>1:18</span>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Best brews -->
+			{#if top3.length > 0}
+				<div>
+					<Eyebrow class="mb-2">BEST BREWS</Eyebrow>
+					<div
+						class="border-hairline divide-hairline overflow-hidden rounded-2xl border divide-y"
+					>
+						{#each top3 as brew, i (brew.id)}
+							{@const linkedBag = allBags.find((b) => b.id === brew.bagId)}
+							<a
+								href="/brews/{brew.id}"
+								class="bg-surface hover:bg-paper/50 flex items-center justify-between gap-3 px-3.5 py-3 transition-colors"
+							>
+								<div class="flex items-center gap-3">
+									<span
+										class="font-display w-5 text-[20px] font-medium leading-none {i === 0
+											? 'text-copper'
+											: 'text-muted'}"
+									>{i + 1}</span>
+									<div class="min-w-0">
+										<div class="text-ink truncate text-[14px] font-medium">
+											{linkedBag?.name ?? brew.coffeeName ?? 'Untitled'}
+										</div>
+										<div class="text-muted mt-0.5 truncate font-mono text-[11px] tracking-[0.04em]">
+											{brew.method} · <span class="text-copper">{formatRatio(brew)}</span>
+										</div>
+									</div>
+								</div>
+								<div class="flex items-center gap-1.5">
+									<span class="text-ink font-mono text-[13px] font-medium">
+										{brew.rating?.toFixed(1)}
+									</span>
+									<StarRow value={brew.rating ?? 0} size={12} />
+								</div>
+							</a>
+						{/each}
+					</div>
+				</div>
+			{/if}
+
+			<!-- Bag patterns -->
+			{#if topBag.bag || freshness.total > 0}
+				<div>
+					<Eyebrow class="mb-2">BAG PATTERNS</Eyebrow>
+					<div class="space-y-2.5">
+						{#if topBag.bag}
+							<a
+								href="/bags/{topBag.bag.id}"
+								class="bg-copper-lt hover:bg-copper-lt/80 flex items-center gap-3 rounded-[14px] px-3 py-2.5 transition-colors"
+							>
+								<div
+									class="bg-copper text-paper grid h-8 w-8 shrink-0 place-items-center rounded-[9px]"
+								>
+									<svg
+										width="16"
+										height="16"
+										viewBox="0 0 18 18"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.4"
+										stroke-linejoin="round"
+										stroke-linecap="round"
+									>
+										<path d="M3.2 5L4.7 3h8.6L14.8 5" />
+										<path d="M3.2 5h11.6v9.2c0 1.2-1 2.1-2.1 2.1H5.3c-1.2 0-2.1-1-2.1-2.1V5z" />
+										<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
+									</svg>
+								</div>
+								<div class="min-w-0 flex-1">
+									<div
+										class="font-display text-ink truncate text-[15px] font-medium leading-[1.2]"
+									>MOST BREWED · {topBag.bag.name}</div>
+									<div class="text-copper-dk mt-0.5 font-mono text-[11px] tracking-[0.04em]">
+										{topBag.count} brew{topBag.count === 1 ? '' : 's'}
+									</div>
+								</div>
+							</a>
+						{/if}
+
+						{#if freshness.total > 0}
+							<div class="bg-surface border-hairline rounded-[14px] border px-3.5 py-3">
+								<div
+									class="text-muted mb-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
+								>FRESHNESS AT BREW</div>
+								<div class="flex h-2.5 overflow-hidden rounded-full">
+									{#if freshness.fresh > 0}
+										<div
+											class="h-full"
+											style="background: var(--color-success); width: {(freshness.fresh /
+												freshness.total) *
+												100}%"
+											title="{freshness.fresh} fresh"
+										></div>
+									{/if}
+									{#if freshness.careful > 0}
+										<div
+											class="h-full"
+											style="background: var(--color-warning); width: {(freshness.careful /
+												freshness.total) *
+												100}%"
+											title="{freshness.careful} careful"
+										></div>
+									{/if}
+									{#if freshness.old > 0}
+										<div
+											class="h-full"
+											style="background: var(--color-danger); width: {(freshness.old /
+												freshness.total) *
+												100}%"
+											title="{freshness.old} old"
+										></div>
+									{/if}
+								</div>
+								<div
+									class="text-muted mt-2 flex justify-between font-mono text-[10px] tracking-[0.04em]"
+								>
+									<span style="color: var(--color-success)">{freshness.fresh} FRESH</span>
+									<span style="color: var(--color-warning)">{freshness.careful} CAREFUL</span>
+									<span style="color: var(--color-danger)">{freshness.old} OLD</span>
+								</div>
+							</div>
+						{/if}
+					</div>
+				</div>
+			{/if}
+
+			<!-- Time of day -->
+			{#if filtered.length > 0}
+				<div>
+					<div class="mb-2 flex items-center justify-between">
+						<Eyebrow>TIME OF DAY</Eyebrow>
+						{#if peak}
+							<span class="text-muted font-mono text-[11px] tracking-[0.04em]">
+								PEAK <span class="text-copper">{formatHour(peak.hour)}</span>
+							</span>
+						{/if}
+					</div>
+					<div class="grid grid-cols-12 gap-1">
+						{#each byHour as count, hr (hr)}
+							{@const intensity = count === 0 ? 0 : 0.2 + (count / maxHour) * 0.8}
+							<div
+								class="aspect-square rounded-sm"
+								style="background: color-mix(in oklab, var(--color-copper) {(intensity * 100).toFixed(0)}%, var(--color-paper))"
+								title="{count} brew{count === 1 ? '' : 's'} at {formatHour(hr)}"
+								aria-label="{count} brews at {formatHour(hr)}"
+							></div>
+						{/each}
+					</div>
+					<div class="text-muted mt-1.5 flex justify-between font-mono text-[9.5px] tracking-[0.04em]">
+						<span>12 AM</span>
+						<span>6 AM</span>
+						<span>12 PM</span>
+						<span>6 PM</span>
+					</div>
+				</div>
+			{/if}
+
+			<!-- Pull quote -->
+			<div
+				class="bg-surface border-hairline font-display text-ink-70 rounded-[18px] border px-4 py-4 text-center text-[14px] leading-[1.55] italic"
+			>"{quote}"</div>
+		</div>
+	{/if}
+</div>
