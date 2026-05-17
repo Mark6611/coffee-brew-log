@@ -112,6 +112,10 @@
 				href="/stats"
 				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
 			>Stats →</a>
+			<a
+				href="/settings"
+				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
+			>Settings →</a>
 		</div>
 	{/if}
 </div>
