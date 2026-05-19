@@ -18,6 +18,10 @@ const LOOKUP: Record<string, ResolvedOrigin> = {
 	rwanda: { code: 'RW', country: 'Rwanda' },
 	burundi: { code: 'BI', country: 'Burundi' },
 	costa_rica: { code: 'CR', country: 'Costa Rica' },
+	thailand: { code: 'TH', country: 'Thailand' },
+	vietnam: { code: 'VN', country: 'Vietnam' },
+	laos: { code: 'LA', country: 'Laos' },
+	myanmar: { code: 'MM', country: 'Myanmar' },
 
 	// common region / locality aliases
 	yirgacheffe: { code: 'ET', country: 'Ethiopia' },
@@ -31,7 +35,16 @@ const LOOKUP: Record<string, ResolvedOrigin> = {
 	acatenango: { code: 'GT', country: 'Guatemala' },
 	sumatra: { code: 'ID', country: 'Indonesia' },
 	mandheling: { code: 'ID', country: 'Indonesia' },
-	esmeralda: { code: 'PA', country: 'Panama' }
+	esmeralda: { code: 'PA', country: 'Panama' },
+	chiang_mai: { code: 'TH', country: 'Thailand' },
+	chiang_rai: { code: 'TH', country: 'Thailand' },
+	doi_chaang: { code: 'TH', country: 'Thailand' },
+	doi_chang: { code: 'TH', country: 'Thailand' },
+	doi_tung: { code: 'TH', country: 'Thailand' },
+	doi_inthanon: { code: 'TH', country: 'Thailand' },
+	doi_pangkhon: { code: 'TH', country: 'Thailand' },
+	doi_mae_salong: { code: 'TH', country: 'Thailand' },
+	mae_salong: { code: 'TH', country: 'Thailand' }
 };
 
 function lookupTokens(text: string): ResolvedOrigin | null {
