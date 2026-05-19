@@ -10,8 +10,10 @@
 		freshnessLabel
 	} from '$lib/bags/compute';
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
+	import { resolveOrigin } from '$lib/origin/resolve';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ProcessBadge from '$lib/components/ProcessBadge.svelte';
+	import OriginFlag from '$lib/components/OriginFlag.svelte';
 
 	const bagId = $derived(page.params.id as string);
 
@@ -144,7 +146,10 @@
 				{/if}
 				{#if bag.roaster && bag.origin}<span>·</span>{/if}
 				{#if bag.origin}
-					<span>{bag.origin}</span>
+					{@const r = resolveOrigin(bag.origin)}
+					<span>
+						{#if r}<OriginFlag code={r.code} country={r.country} />{/if}{bag.origin}
+					</span>
 				{/if}
 				{#if (bag.roaster || bag.origin) && bag.process}<span>·</span>{/if}
 				{#if bag.process}

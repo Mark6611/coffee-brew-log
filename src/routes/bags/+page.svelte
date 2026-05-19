@@ -4,8 +4,10 @@
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
 	import { bagConsumption, formatRoastedAt } from '$lib/bags/compute';
+	import { resolveOrigin } from '$lib/origin/resolve';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import Badge from '$lib/components/Badge.svelte';
+	import OriginFlag from '$lib/components/OriginFlag.svelte';
 
 	let bags = $state<Bag[]>([]);
 	let brews = $state<Brew[]>([]);
@@ -161,7 +163,10 @@
 
 						<div class="text-muted flex flex-wrap gap-x-3 gap-y-1 text-[12px]">
 							{#if bag.origin}
-								<span>{bag.origin}</span>
+								{@const r = resolveOrigin(bag.origin)}
+								<span>
+									{#if r}<OriginFlag code={r.code} country={r.country} />{/if}{bag.origin}
+								</span>
 							{/if}
 							{#if bag.roastedAt}
 								<span class="font-mono">{formatRoastedAt(bag.roastedAt)}</span>

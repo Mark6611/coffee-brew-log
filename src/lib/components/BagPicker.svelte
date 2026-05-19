@@ -8,7 +8,9 @@
 		freshnessTone,
 		freshnessLabel
 	} from '$lib/bags/compute';
+	import { resolveOrigin } from '$lib/origin/resolve';
 	import ProcessBadge from './ProcessBadge.svelte';
+	import OriginFlag from './OriginFlag.svelte';
 
 	let {
 		bagId = $bindable<string | undefined>(undefined),
@@ -222,6 +224,7 @@
 						{@const c = bagConsumption(bag, allBrews)}
 						{@const days = daysSinceRoast(bag.roastedAt)}
 						{@const tone = freshnessTone(bag.roastedAt)}
+						{@const r = resolveOrigin(bag.origin)}
 						<button
 							type="button"
 							onmousedown={(e) => {
@@ -273,7 +276,15 @@
 											{#if bag.roaster}
 												<span class="truncate">{bag.roaster}</span>
 											{/if}
-											{#if bag.roaster && bag.process}
+											{#if bag.roaster && r}
+												<span>·</span>
+											{/if}
+											{#if r}
+												<span class="whitespace-nowrap">
+													<OriginFlag code={r.code} country={r.country} />{r.country}
+												</span>
+											{/if}
+											{#if (bag.roaster || r) && bag.process}
 												<span>·</span>
 											{/if}
 											{#if bag.process}
