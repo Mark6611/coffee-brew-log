@@ -1,30 +1,40 @@
-// Weekly export of Supabase data to ~/Desktop/CODE/coffee-brew-log-backups/.
-// Run manually via `npm run export`, or scheduled via the launchd plist
-// installed at ~/Library/LaunchAgents/com.coffee-brew-log.export.plist.
+// Weekly export of Supabase data to a local folder.
 //
-// Requires SUPABASE_SERVICE_ROLE_KEY in .env.local and VITE_SUPABASE_URL in .env.
-// Both files are loaded via Node's --env-file flag (see scripts/export.sh).
+// Reads:
+//   - VITE_SUPABASE_URL (from .env or plist EnvironmentVariables)
+//   - SUPABASE_SERVICE_ROLE_KEY (from .env.local or plist EnvironmentVariables)
+//   - BACKUP_DIR (optional override; default: ~/coffee-brew-log/backups)
+//
+// Uses Node's built-in fetch against Supabase's PostgREST endpoint, so no
+// node_modules are required at runtime. The launchd job runs this from a
+// non-TCC location (~/coffee-brew-log/) where macOS doesn't block file access.
 
-import { createClient } from '@supabase/supabase-js';
 import { writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 
 const url = process.env.VITE_SUPABASE_URL;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const outputDir = process.env.BACKUP_DIR ?? join(homedir(), 'coffee-brew-log/backups');
 
 if (!url || !key) {
-	console.error(
-		'Missing VITE_SUPABASE_URL (.env) or SUPABASE_SERVICE_ROLE_KEY (.env.local). Aborting.'
-	);
+	console.error('Missing VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.');
 	process.exit(1);
 }
 
-const OUTPUT_DIR = join(homedir(), 'Desktop/CODE/coffee-brew-log-backups');
-
-const supabase = createClient(url, key, {
-	auth: { autoRefreshToken: false, persistSession: false }
-});
+async function fetchTable(table) {
+	const res = await fetch(`${url}/rest/v1/${table}?select=*`, {
+		headers: {
+			apikey: key,
+			Authorization: `Bearer ${key}`
+		}
+	});
+	if (!res.ok) {
+		const text = await res.text();
+		throw new Error(`Failed to fetch ${table}: ${res.status} ${text}`);
+	}
+	return res.json();
+}
 
 function escapeCsv(value) {
 	if (value == null) return '';
@@ -44,38 +54,23 @@ function toCsv(rows) {
 }
 
 async function main() {
-	await mkdir(OUTPUT_DIR, { recursive: true });
+	await mkdir(outputDir, { recursive: true });
 
-	const { data: bags, error: bagsErr } = await supabase.from('bags').select('*');
-	if (bagsErr) {
-		console.error('Failed to fetch bags:', bagsErr.message);
-		process.exit(1);
-	}
-	const { data: brews, error: brewsErr } = await supabase.from('brews').select('*');
-	if (brewsErr) {
-		console.error('Failed to fetch brews:', brewsErr.message);
-		process.exit(1);
-	}
+	const [bags, brews] = await Promise.all([fetchTable('bags'), fetchTable('brews')]);
 
 	const today = new Date().toISOString().slice(0, 10);
 
-	await writeFile(join(OUTPUT_DIR, 'bags-latest.csv'), toCsv(bags ?? []));
-	await writeFile(join(OUTPUT_DIR, 'brews-latest.csv'), toCsv(brews ?? []));
-	await writeFile(
-		join(OUTPUT_DIR, `bags-${today}.json`),
-		JSON.stringify(bags ?? [], null, 2)
-	);
-	await writeFile(
-		join(OUTPUT_DIR, `brews-${today}.json`),
-		JSON.stringify(brews ?? [], null, 2)
-	);
+	await writeFile(join(outputDir, 'bags-latest.csv'), toCsv(bags));
+	await writeFile(join(outputDir, 'brews-latest.csv'), toCsv(brews));
+	await writeFile(join(outputDir, `bags-${today}.json`), JSON.stringify(bags, null, 2));
+	await writeFile(join(outputDir, `brews-${today}.json`), JSON.stringify(brews, null, 2));
 
 	console.log(
-		`[${new Date().toISOString()}] Exported ${bags?.length ?? 0} bags + ${brews?.length ?? 0} brews to ${OUTPUT_DIR}`
+		`[${new Date().toISOString()}] Exported ${bags.length} bags + ${brews.length} brews to ${outputDir}`
 	);
 }
 
 main().catch((err) => {
-	console.error(err);
+	console.error(err.message ?? err);
 	process.exit(1);
 });
