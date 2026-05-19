@@ -422,7 +422,7 @@
 								class="font-display text-ink truncate text-[17px] font-medium leading-[1.2]"
 							>{bag.name}</div>
 							<div class="text-muted mt-0.5 font-mono text-[11.5px] tracking-[0.04em]">
-								{#if bag.weightGrams != null && bagConsumptionData.remaining != null}
+								{#if resolvedOrigin}<OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} />{resolvedOrigin.country} · {/if}{#if bag.weightGrams != null && bagConsumptionData.remaining != null}
 									{Math.max(0, bagConsumptionData.remaining).toFixed(0)}G LEFT · {bagConsumptionData.brewCount}
 									BREW{bagConsumptionData.brewCount === 1 ? '' : 'S'}
 								{:else}

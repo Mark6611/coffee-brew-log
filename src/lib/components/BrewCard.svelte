@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { Brew, Bag } from '$lib/db/types';
-	import { formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
+	import { formatRatio, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import Badge from './Badge.svelte';
@@ -131,7 +131,7 @@
 						<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
 					</svg>
 					{roasterText}
-					{#if resolvedOrigin}<span class="text-muted"> · <OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} />{resolvedOrigin.country}</span>{/if}
+					{#if resolvedOrigin}<span class="text-muted"> · <OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} /></span>{/if}
 					{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
 				</a>
 			{:else}
@@ -154,10 +154,9 @@
 		</div>
 	{/if}
 
-	<div class="border-hairline mt-[14px] grid grid-cols-4 gap-1 border-t pt-[12px]">
+	<div class="border-hairline mt-[14px] grid grid-cols-3 gap-1 border-t pt-[12px]">
 		{@render metric('DOSE', `${brew.doseGrams}g`)}
 		{@render metric(outLabel, outValue)}
-		{@render metric('TIME', formatBrewTime(brew))}
 		{@render metric('RATIO', formatRatio(brew), true)}
 	</div>
 
