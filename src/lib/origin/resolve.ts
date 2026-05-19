@@ -22,6 +22,31 @@ const LOOKUP: Record<string, ResolvedOrigin> = {
 	vietnam: { code: 'VN', country: 'Vietnam' },
 	laos: { code: 'LA', country: 'Laos' },
 	myanmar: { code: 'MM', country: 'Myanmar' },
+	// Americas
+	honduras: { code: 'HN', country: 'Honduras' },
+	el_salvador: { code: 'SV', country: 'El Salvador' },
+	nicaragua: { code: 'NI', country: 'Nicaragua' },
+	mexico: { code: 'MX', country: 'Mexico' },
+	peru: { code: 'PE', country: 'Peru' },
+	bolivia: { code: 'BO', country: 'Bolivia' },
+	ecuador: { code: 'EC', country: 'Ecuador' },
+	// Africa
+	tanzania: { code: 'TZ', country: 'Tanzania' },
+	uganda: { code: 'UG', country: 'Uganda' },
+	yemen: { code: 'YE', country: 'Yemen' },
+	congo: { code: 'CD', country: 'DR Congo' },
+	drc: { code: 'CD', country: 'DR Congo' },
+	// Asia / Pacific
+	india: { code: 'IN', country: 'India' },
+	china: { code: 'CN', country: 'China' },
+	philippines: { code: 'PH', country: 'Philippines' },
+	east_timor: { code: 'TL', country: 'East Timor' },
+	timor_leste: { code: 'TL', country: 'East Timor' },
+	papua_new_guinea: { code: 'PG', country: 'Papua New Guinea' },
+	// Caribbean
+	jamaica: { code: 'JM', country: 'Jamaica' },
+	dominican_republic: { code: 'DO', country: 'Dominican Republic' },
+	haiti: { code: 'HT', country: 'Haiti' },
 
 	// common region / locality aliases
 	yirgacheffe: { code: 'ET', country: 'Ethiopia' },
@@ -44,7 +69,10 @@ const LOOKUP: Record<string, ResolvedOrigin> = {
 	doi_inthanon: { code: 'TH', country: 'Thailand' },
 	doi_pangkhon: { code: 'TH', country: 'Thailand' },
 	doi_mae_salong: { code: 'TH', country: 'Thailand' },
-	mae_salong: { code: 'TH', country: 'Thailand' }
+	mae_salong: { code: 'TH', country: 'Thailand' },
+	// iconic single-origin region aliases
+	blue_mountain: { code: 'JM', country: 'Jamaica' },
+	marcala: { code: 'HN', country: 'Honduras' }
 };
 
 function lookupTokens(text: string): ResolvedOrigin | null {
