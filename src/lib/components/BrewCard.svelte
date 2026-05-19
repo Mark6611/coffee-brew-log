@@ -3,7 +3,9 @@
 	import type { Brew, Bag } from '$lib/db/types';
 	import { formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel } from '$lib/bags/compute';
+	import { resolveOrigin } from '$lib/origin/resolve';
 	import Badge from './Badge.svelte';
+	import OriginFlag from './OriginFlag.svelte';
 
 	let {
 		brew,
@@ -25,6 +27,7 @@
 	const tone = $derived(bag ? freshnessTone(bag.roastedAt) : null);
 	const label = $derived(bag ? freshnessLabel(bag.roastedAt) : null);
 	const roasterText = $derived(bag?.roaster ?? brew.roaster);
+	const resolvedOrigin = $derived(bag ? resolveOrigin(bag.origin) : null);
 
 	function openDetail() {
 		goto(`/brews/${brew.id}`);
@@ -128,6 +131,7 @@
 						<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
 					</svg>
 					{roasterText}
+					{#if resolvedOrigin}<span class="text-muted"> · <OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} />{resolvedOrigin.country}</span>{/if}
 					{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
 				</a>
 			{:else}

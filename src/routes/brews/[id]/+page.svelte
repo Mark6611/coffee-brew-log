@@ -10,15 +10,18 @@
 		ratio
 	} from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, bagConsumption } from '$lib/bags/compute';
+	import { resolveOrigin } from '$lib/origin/resolve';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
+	import OriginFlag from '$lib/components/OriginFlag.svelte';
 
 	const brewId = $derived(page.params.id as string);
 
 	let brew = $state<Brew | null>(null);
 	let bag = $state<Bag | null>(null);
+	const resolvedOrigin = $derived(bag ? resolveOrigin(bag.origin) : null);
 	let allBrews = $state<Brew[]>([]);
 	let loading = $state(true);
 	let notFound = $state(false);
@@ -190,6 +193,7 @@
 							<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
 						</svg>
 						{bag.roaster ?? bag.name}
+						{#if resolvedOrigin}<span class="text-muted"> · <OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} />{resolvedOrigin.country}</span>{/if}
 						{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
 					</a>
 					{#if bag.roastedAt}
