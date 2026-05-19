@@ -19,6 +19,7 @@ function withUserId<T>(row: T, userId: string): T & { userId: string } {
 }
 
 const BAG_NUMERIC_KEYS = new Set(['weightGrams', 'pricePaid']);
+const BAG_TIMESTAMP_KEYS = new Set(['createdAt']);
 const BREW_NUMERIC_KEYS = new Set([
 	'doseGrams',
 	'brewTimeSeconds',
@@ -27,10 +28,12 @@ const BREW_NUMERIC_KEYS = new Set([
 	'waterTempC',
 	'rating'
 ]);
+const BREW_TIMESTAMP_KEYS = new Set(['brewedAt']);
 
 function normalizeFromServer(
 	row: Record<string, unknown>,
-	numericKeys: Set<string>
+	numericKeys: Set<string>,
+	timestampKeys: Set<string>
 ): Record<string, unknown> {
 	const cleaned: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(row)) {
@@ -44,13 +47,22 @@ function normalizeFromServer(
 				continue;
 			}
 		}
+		// PostgREST returns timestamps with offset (e.g. "2025-01-15T14:32:00+00:00").
+		// Zod's z.string().datetime() requires UTC "Z" suffix, so normalize here.
+		if (timestampKeys.has(key) && typeof value === 'string') {
+			const date = new Date(value);
+			if (!Number.isNaN(date.getTime())) {
+				cleaned[key] = date.toISOString();
+				continue;
+			}
+		}
 		cleaned[key] = value;
 	}
 	return cleaned;
 }
 
 function parseBagFromServer(row: Record<string, unknown>): Bag | null {
-	const cleaned = normalizeFromServer(row, BAG_NUMERIC_KEYS);
+	const cleaned = normalizeFromServer(row, BAG_NUMERIC_KEYS, BAG_TIMESTAMP_KEYS);
 	const result = BagSchema.safeParse(cleaned);
 	if (!result.success) {
 		const issue = result.error.issues[0];
@@ -64,7 +76,7 @@ function parseBagFromServer(row: Record<string, unknown>): Bag | null {
 }
 
 function parseBrewFromServer(row: Record<string, unknown>): Brew | null {
-	const cleaned = normalizeFromServer(row, BREW_NUMERIC_KEYS);
+	const cleaned = normalizeFromServer(row, BREW_NUMERIC_KEYS, BREW_TIMESTAMP_KEYS);
 	const result = BrewSchema.safeParse(cleaned);
 	if (!result.success) {
 		const issue = result.error.issues[0];
