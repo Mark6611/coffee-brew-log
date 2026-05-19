@@ -6,6 +6,7 @@
 	import { BagSchema, type Process } from '$lib/db/types';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
+	import OriginInput from '$lib/components/OriginInput.svelte';
 
 	let name = $state('');
 	let roaster = $state('');
@@ -135,11 +136,7 @@
 
 			<div>
 				<Eyebrow class="mb-2">ORIGIN</Eyebrow>
-				<input
-					type="text"
-					bind:value={origin}
-					class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
-				/>
+				<OriginInput bind:value={origin} />
 			</div>
 
 			<div>
