@@ -6,6 +6,13 @@
 
 set -euo pipefail
 
+# Surface failures via macOS Notification Center so a broken weekly run
+# doesn't sit silently in export.error.log until someone notices.
+notify_failure() {
+	osascript -e 'display notification "Check ~/coffee-brew-log/backups/export.error.log" with title "Coffee brew log: backup failed" sound name "Basso"' || true
+}
+trap notify_failure ERR
+
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 # Source nvm so the right node is on PATH (launchd doesn't inherit a shell env).

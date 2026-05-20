@@ -45,9 +45,20 @@ function escapeCsv(value) {
 	return s;
 }
 
+// CSV is for human reading in Numbers / Excel. The JSON snapshots are the
+// lossless restore format and keep every column.
+//
+// For CSV we drop `userId` (same UUID on every row — pure noise) and shove
+// `id` to the last column (still useful for restore, just out of the way).
+const CSV_HIDDEN = new Set(['userId']);
+const CSV_TAIL = ['id'];
+
 function toCsv(rows) {
 	if (rows.length === 0) return '';
-	const keys = [...new Set(rows.flatMap((r) => Object.keys(r)))];
+	const seen = new Set(rows.flatMap((r) => Object.keys(r)));
+	const mainKeys = [...seen].filter((k) => !CSV_HIDDEN.has(k) && !CSV_TAIL.includes(k));
+	const tailKeys = CSV_TAIL.filter((k) => seen.has(k));
+	const keys = [...mainKeys, ...tailKeys];
 	const header = keys.join(',');
 	const lines = rows.map((r) => keys.map((k) => escapeCsv(r[k])).join(','));
 	return [header, ...lines].join('\n') + '\n';
