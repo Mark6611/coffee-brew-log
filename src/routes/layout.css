@@ -87,3 +87,27 @@
 		appearance: textfield;
 	}
 }
+
+/* Animations used by the blog-publishing UI (LiveDot, publish section reveal).
+   Defined globally so any component can reference them via `animation:` rules. */
+@keyframes brewBreath {
+	0%,
+	100% {
+		box-shadow: 0 0 0 0 currentColor;
+		opacity: 1;
+	}
+	50% {
+		box-shadow: 0 0 0 4px transparent;
+		opacity: 0.55;
+	}
+}
+@keyframes brewSlide {
+	from {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

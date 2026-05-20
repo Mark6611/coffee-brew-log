@@ -3,13 +3,14 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { getBrewById, updateBrew, listBrews, listBags } from '$lib/db/repository';
-	import { BrewSchema, type Bag } from '$lib/db/types';
+	import { BrewSchema, type Bag, type BagSnapshot } from '$lib/db/types';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
+	import PublishToBlogSection from '$lib/components/PublishToBlogSection.svelte';
 
 	type Method = 'espresso' | 'pour-over';
 	type Balance = '' | 'light' | 'balanced' | 'heavy';
@@ -29,6 +30,11 @@
 		rating: number | null;
 		balance: Balance;
 		brewedAtLocal: string;
+		// Blog publishing — user-editable; publishedAt + bagSnapshot are derived
+		// at the repository boundary and intentionally not in the snapshot.
+		published: boolean;
+		blogTitle: string;
+		blogBody: string;
 	};
 
 	const DRAFT_KEY_PREFIX = 'brew-edit-draft-';
@@ -50,6 +56,13 @@
 	let balance = $state<Balance>('');
 	let brewedAtLocal = $state('');
 	let isFavorite = $state<boolean | undefined>(undefined);
+	// Blog publishing state. publishedAt + bagSnapshot are loaded from the
+	// stored brew but only the repository mutates them — never the form.
+	let published = $state(false);
+	let blogTitle = $state('');
+	let blogBody = $state('');
+	let publishedAt = $state<string | undefined>(undefined);
+	let bagSnapshot = $state<BagSnapshot | undefined>(undefined);
 	let originalSnapshot = $state<Snapshot | null>(null);
 	let brewNumber = $state<number | null>(null);
 	let error = $state<string | null>(null);
@@ -74,7 +87,10 @@
 			notes,
 			rating,
 			balance,
-			brewedAtLocal
+			brewedAtLocal,
+			published,
+			blogTitle,
+			blogBody
 		};
 	}
 
@@ -98,7 +114,11 @@
 		notes: 'notes',
 		rating: 'rating',
 		balance: 'balance',
-		brewedAtLocal: 'brewed at'
+		brewedAtLocal: 'brewed at',
+		// All three publish fields collapse to a single "blog" dirty label.
+		published: 'blog',
+		blogTitle: 'blog',
+		blogBody: 'blog'
 	};
 
 	const dirtyKeys = $derived.by<string[]>(() => {
@@ -147,6 +167,11 @@
 		balance = (found.balance ?? '') as Balance;
 		brewedAtLocal = isoToLocal(found.brewedAt);
 		isFavorite = found.isFavorite;
+		published = found.published ?? false;
+		blogTitle = found.blogTitle ?? '';
+		blogBody = found.blogBody ?? '';
+		publishedAt = found.publishedAt;
+		bagSnapshot = found.bagSnapshot;
 
 		originalSnapshot = snap();
 
@@ -169,6 +194,9 @@
 				if (d.rating !== undefined) rating = d.rating;
 				if (d.balance !== undefined) balance = d.balance;
 				if (d.brewedAtLocal !== undefined) brewedAtLocal = d.brewedAtLocal;
+				if (d.published !== undefined) published = d.published;
+				if (d.blogTitle !== undefined) blogTitle = d.blogTitle;
+				if (d.blogBody !== undefined) blogBody = d.blogBody;
 			} catch {}
 			sessionStorage.removeItem(DRAFT_KEY_PREFIX + brewId);
 		}
@@ -220,6 +248,9 @@
 		rating = orig.rating;
 		balance = orig.balance;
 		brewedAtLocal = orig.brewedAtLocal;
+		published = orig.published;
+		blogTitle = orig.blogTitle;
+		blogBody = orig.blogBody;
 	}
 
 	function saveDraft() {
@@ -259,6 +290,11 @@
 					? (brewTimeSeconds ?? NaN)
 					: (brewMinutes ?? 0) * 60 + (brewSecondsPart ?? 0);
 
+			const trimmedTitle = blogTitle.trim();
+			const trimmedBody = blogBody.trim();
+			// Repository.applyPublishTransition does the publishedAt / bagSnapshot
+			// derivation; we just forward what the form holds and the persisted
+			// values for fields the form can't edit.
 			const base = {
 				id: brewId,
 				brewedAt: new Date(brewedAtLocal).toISOString(),
@@ -271,7 +307,12 @@
 				notes: notes.trim() || undefined,
 				rating: rating ?? undefined,
 				balance: balance || undefined,
-				isFavorite
+				isFavorite,
+				published,
+				publishedAt,
+				blogTitle: trimmedTitle || undefined,
+				blogBody: trimmedBody || undefined,
+				bagSnapshot
 			};
 
 			const candidate =
@@ -678,6 +719,15 @@
 					class="bg-paper border-hairline text-ink-70 placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display w-full resize-none rounded-[14px] border px-3.5 py-3.5 text-[15px] leading-[1.45] italic transition outline-none focus:ring-2"
 				></textarea>
 			</div>
+
+			<!-- Publish to blog (Variant B — tinted card) -->
+			<PublishToBlogSection
+				bind:published
+				bind:blogTitle
+				bind:blogBody
+				{publishedAt}
+				dirty={isDirty('published', 'blogTitle', 'blogBody')}
+			/>
 
 			{#if error}
 				<div

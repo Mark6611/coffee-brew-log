@@ -17,6 +17,9 @@
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
 	import MarkdownText from '$lib/components/MarkdownText.svelte';
+	import PublishedBadge from '$lib/components/PublishedBadge.svelte';
+	import OpenPublicPostCard from '$lib/components/OpenPublicPostCard.svelte';
+	import { postUrl } from '$lib/blog/config';
 
 	const brewId = $derived(page.params.id as string);
 
@@ -167,6 +170,9 @@
 							Favorite
 						</span>
 					{/if}
+					{#if brew.published}
+						<PublishedBadge href={postUrl(brew.id)} />
+					{/if}
 				</div>
 
 				<h1
@@ -248,6 +254,14 @@
 							class="font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase hover:underline"
 						>Link →</a>
 					</div>
+				{/if}
+
+				{#if brew.published}
+					<OpenPublicPostCard
+						href={postUrl(brew.id)}
+						title={brew.blogTitle ?? bag?.name ?? brew.coffeeName ?? 'Untitled brew'}
+						publishedAt={brew.publishedAt}
+					/>
 				{/if}
 			</div>
 

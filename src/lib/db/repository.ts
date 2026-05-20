@@ -1,9 +1,60 @@
 import { db } from './database';
-import { BrewSchema, BagSchema, type Brew, type Bag } from './types';
+import { BrewSchema, BagSchema, type Brew, type Bag, type BagSnapshot } from './types';
 import * as sync from '../sync';
 
+// ─── Publish transition ───────────────────────────────────────────────
+// All blog-publish side-effects live here, not in the page component.
+// See project_html_brew_handoff.md, Phase A step 3.
+
+function snapshotBag(bag: Bag): BagSnapshot {
+	return {
+		name: bag.name,
+		roaster: bag.roaster,
+		origin: bag.origin,
+		process: bag.process,
+		roastedAt: bag.roastedAt,
+		weightGrams: bag.weightGrams
+	};
+}
+
+// Returns a brew with publish-related fields normalized:
+// - publishedAt and bagSnapshot are preserved from the existing row if the
+//   caller didn't supply them (so partial form updates don't erase them).
+// - On the false→true transition, publishedAt is stamped to now and the
+//   linked bag (if any) is snapshotted.
+// - Unpublishing (true→false) does NOT clear publishedAt / bagSnapshot —
+//   they're preserved so a later republish keeps the original timestamp.
+async function applyPublishTransition(next: Brew, existing: Brew | undefined): Promise<Brew> {
+	const result: Brew = { ...next };
+
+	if (result.publishedAt === undefined && existing?.publishedAt) {
+		result.publishedAt = existing.publishedAt;
+	}
+	if (result.bagSnapshot === undefined && existing?.bagSnapshot) {
+		result.bagSnapshot = existing.bagSnapshot;
+	}
+
+	const wasPublished = existing?.published === true;
+	const isPublishing = result.published === true;
+
+	if (isPublishing && !wasPublished) {
+		if (result.publishedAt === undefined) {
+			result.publishedAt = new Date().toISOString();
+		}
+		if (result.bagSnapshot === undefined && result.bagId) {
+			const bag = await db.bags.get(result.bagId);
+			if (bag) {
+				result.bagSnapshot = snapshotBag(bag);
+			}
+		}
+	}
+
+	return result;
+}
+
 export async function addBrew(brew: Brew): Promise<string> {
-	const parsed = BrewSchema.parse(brew);
+	const enriched = await applyPublishTransition(brew, undefined);
+	const parsed = BrewSchema.parse(enriched);
 	await db.brews.add(parsed);
 	sync.pushBrew(parsed);
 	return parsed.id;
@@ -25,7 +76,9 @@ export async function listBrews(): Promise<Brew[]> {
 }
 
 export async function updateBrew(brew: Brew): Promise<void> {
-	const parsed = BrewSchema.parse(brew);
+	const existing = (await db.brews.get(brew.id)) as Brew | undefined;
+	const enriched = await applyPublishTransition(brew, existing);
+	const parsed = BrewSchema.parse(enriched);
 	await db.brews.put(parsed);
 	sync.pushBrew(parsed);
 }

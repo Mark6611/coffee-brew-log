@@ -24,6 +24,20 @@ export const BagSchema = z.object({
 
 export type Bag = z.infer<typeof BagSchema>;
 
+// Frozen subset of a bag, embedded into a published brew so the post is
+// self-contained (editing/deleting the bag later doesn't rewrite history).
+// See project_html_brew_handoff.md, "Architecture decisions" #5.
+export const BagSnapshotSchema = z.object({
+	name: z.string().min(1),
+	roaster: z.string().min(1).optional(),
+	origin: z.string().min(1).optional(),
+	process: ProcessSchema.optional(),
+	roastedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+	weightGrams: z.number().positive().optional()
+});
+
+export type BagSnapshot = z.infer<typeof BagSnapshotSchema>;
+
 const BrewBase = z.object({
 	id: z.string().uuid(),
 	brewedAt: z.string().datetime(),
@@ -38,7 +52,15 @@ const BrewBase = z.object({
 	balance: z.enum(['light', 'balanced', 'heavy']).optional(),
 	isFavorite: z.boolean().optional(),
 	// See BagSchema.deletedAt — same semantics.
-	deletedAt: z.string().datetime().optional()
+	deletedAt: z.string().datetime().optional(),
+	// Blog publishing (Phase A) — see project_html_brew_handoff.md.
+	// All optional at the schema level: a brew is fine to exist without any
+	// of these. They become meaningful when `published === true`.
+	published: z.boolean().optional(),
+	publishedAt: z.string().datetime().optional(),
+	blogTitle: z.string().min(1).optional(),
+	blogBody: z.string().min(1).optional(),
+	bagSnapshot: BagSnapshotSchema.optional()
 });
 
 export const EspressoBrewSchema = BrewBase.extend({

@@ -7,6 +7,7 @@
 	import Badge from './Badge.svelte';
 	import OriginFlag from './OriginFlag.svelte';
 	import MarkdownText from './MarkdownText.svelte';
+	import LiveDot from './LiveDot.svelte';
 
 	let {
 		brew,
@@ -98,6 +99,14 @@
 						/>
 					</svg>
 				</button>
+			{/if}
+			{#if brew.published}
+				<span
+					class="bg-copper-lt text-copper-dk inline-flex h-[22px] items-center gap-1.5 rounded-full px-2 font-mono text-[10.5px] font-medium tracking-[0.12em] uppercase"
+				>
+					<LiveDot color="var(--color-copper-dk)" size={4.5} />
+					Public
+				</span>
 			{/if}
 		</div>
 		<span class="text-muted font-mono text-[11px] tracking-[0.04em]">

@@ -7,8 +7,9 @@
 	import DayHeader from '$lib/components/DayHeader.svelte';
 	import BrewCard from '$lib/components/BrewCard.svelte';
 	import Chip from '$lib/components/Chip.svelte';
+	import LiveDot from '$lib/components/LiveDot.svelte';
 
-	type Filter = 'all' | 'espresso' | 'pour-over' | 'favorites';
+	type Filter = 'all' | 'espresso' | 'pour-over' | 'favorites' | 'published';
 
 	let allBrews = $state<Brew[]>([]);
 	let allBags = $state<Bag[]>([]);
@@ -44,11 +45,14 @@
 		return hay.includes(q.toLowerCase().trim());
 	}
 
+	const publishedCount = $derived(allBrews.filter((b) => b.published).length);
+
 	const filtered = $derived(
 		allBrews.filter((b) => {
 			if (!matchesSearch(b, searchQuery)) return false;
 			if (filter === 'all') return true;
 			if (filter === 'favorites') return !!b.isFavorite;
+			if (filter === 'published') return !!b.published;
 			return b.method === filter;
 		})
 	);
@@ -140,6 +144,14 @@
 			<Chip active={filter === 'pour-over'} onclick={() => (filter = 'pour-over')}>Pour-over</Chip>
 			<Chip active={filter === 'espresso'} onclick={() => (filter = 'espresso')}>Espresso</Chip>
 			<Chip active={filter === 'favorites'} onclick={() => (filter = 'favorites')}>Favorites</Chip>
+			{#if publishedCount > 0}
+				<Chip active={filter === 'published'} onclick={() => (filter = 'published')}>
+					<span class="inline-flex items-center gap-1.5">
+						<LiveDot color="var(--color-copper)" size={4.5} />
+						On the blog · {publishedCount}
+					</span>
+				</Chip>
+			{/if}
 		</div>
 	{/if}
 
@@ -196,7 +208,8 @@
 		{:else if filtered.length === 0}
 			<p class="text-muted py-8 text-center text-sm">
 				{#if searchQuery}No matches for "{searchQuery}".{:else if filter === 'favorites'}No
-					favorites yet. Tap the star on a brew to favorite it.{:else}No
+					favorites yet. Tap the star on a brew to favorite it.{:else if filter === 'published'}No
+					brews on the blog yet. Edit a brew and flip Publish to blog.{:else}No
 					{filter} brews.{/if}
 			</p>
 		{:else}

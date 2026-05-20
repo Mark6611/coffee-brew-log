@@ -28,7 +28,7 @@ const BREW_NUMERIC_KEYS = new Set([
 	'waterTempC',
 	'rating'
 ]);
-const BREW_TIMESTAMP_KEYS = new Set(['brewedAt', 'deletedAt']);
+const BREW_TIMESTAMP_KEYS = new Set(['brewedAt', 'deletedAt', 'publishedAt']);
 
 function normalizeFromServer(
 	row: Record<string, unknown>,
