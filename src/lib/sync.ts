@@ -19,7 +19,7 @@ function withUserId<T>(row: T, userId: string): T & { userId: string } {
 }
 
 const BAG_NUMERIC_KEYS = new Set(['weightGrams', 'pricePaid']);
-const BAG_TIMESTAMP_KEYS = new Set(['createdAt']);
+const BAG_TIMESTAMP_KEYS = new Set(['createdAt', 'deletedAt']);
 const BREW_NUMERIC_KEYS = new Set([
 	'doseGrams',
 	'brewTimeSeconds',
@@ -28,7 +28,7 @@ const BREW_NUMERIC_KEYS = new Set([
 	'waterTempC',
 	'rating'
 ]);
-const BREW_TIMESTAMP_KEYS = new Set(['brewedAt']);
+const BREW_TIMESTAMP_KEYS = new Set(['brewedAt', 'deletedAt']);
 
 function normalizeFromServer(
 	row: Record<string, unknown>,
@@ -120,33 +120,9 @@ export function pushBrew(brew: Brew): void {
 		});
 }
 
-export function deleteBagOnServer(id: string): void {
-	if (!auth.user) return;
-	void supabase
-		.from('bags')
-		.delete()
-		.eq('id', id)
-		.then(({ error }) => {
-			if (error) {
-				console.warn('Delete bag failed:', error.message);
-				lastError = error.message;
-			}
-		});
-}
-
-export function deleteBrewOnServer(id: string): void {
-	if (!auth.user) return;
-	void supabase
-		.from('brews')
-		.delete()
-		.eq('id', id)
-		.then(({ error }) => {
-			if (error) {
-				console.warn('Delete brew failed:', error.message);
-				lastError = error.message;
-			}
-		});
-}
+// Hard-delete helpers were removed in favor of soft-delete (deletedAt
+// tombstones). See repository.deleteBag / deleteBrew. Rows are kept on the
+// server so other devices can converge to the deleted state on next pull.
 
 // ─── Full sync (push everything local, then pull all server data) ───
 

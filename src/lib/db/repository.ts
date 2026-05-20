@@ -12,12 +12,16 @@ export async function addBrew(brew: Brew): Promise<string> {
 export async function getBrewById(id: string): Promise<Brew | undefined> {
 	const row = await db.brews.get(id);
 	if (!row) return undefined;
-	return BrewSchema.parse(row);
+	const parsed = BrewSchema.parse(row);
+	// Treat tombstoned rows as not found — same surface area as a hard delete
+	// from the caller's perspective.
+	if (parsed.deletedAt) return undefined;
+	return parsed;
 }
 
 export async function listBrews(): Promise<Brew[]> {
 	const rows = await db.brews.orderBy('brewedAt').reverse().toArray();
-	return rows.map((row) => BrewSchema.parse(row));
+	return rows.map((row) => BrewSchema.parse(row)).filter((b) => !b.deletedAt);
 }
 
 export async function updateBrew(brew: Brew): Promise<void> {
@@ -27,8 +31,14 @@ export async function updateBrew(brew: Brew): Promise<void> {
 }
 
 export async function deleteBrew(id: string): Promise<void> {
-	await db.brews.delete(id);
-	sync.deleteBrewOnServer(id);
+	const row = await db.brews.get(id);
+	if (!row) return;
+	// Soft delete: stamp deletedAt and push the updated row up. Other devices
+	// will see deletedAt on their next pull and filter the brew out via
+	// listBrews / getBrewById.
+	const tombstoned = BrewSchema.parse({ ...row, deletedAt: new Date().toISOString() });
+	await db.brews.put(tombstoned);
+	sync.pushBrew(tombstoned);
 }
 
 export async function toggleFavorite(id: string): Promise<void> {
@@ -53,13 +63,15 @@ export async function searchBrews(query: string): Promise<Brew[]> {
 
 export async function listBags(): Promise<Bag[]> {
 	const rows = await db.bags.orderBy('createdAt').reverse().toArray();
-	return rows.map((row) => BagSchema.parse(row));
+	return rows.map((row) => BagSchema.parse(row)).filter((b) => !b.deletedAt);
 }
 
 export async function getBagById(id: string): Promise<Bag | undefined> {
 	const row = await db.bags.get(id);
 	if (!row) return undefined;
-	return BagSchema.parse(row);
+	const parsed = BagSchema.parse(row);
+	if (parsed.deletedAt) return undefined;
+	return parsed;
 }
 
 export async function addBag(bag: Bag): Promise<string> {
@@ -115,15 +127,26 @@ export async function archiveBag(id: string, archived: boolean): Promise<void> {
 }
 
 export async function deleteBag(id: string): Promise<void> {
+	const now = new Date().toISOString();
+	const row = await db.bags.get(id);
+	if (!row) return;
+	// Soft delete the bag itself, and unlink (bagId = null) any brews that
+	// reference it — we don't want a brew pointing at a tombstoned bag.
+	const tombstoned = BagSchema.parse({ ...row, deletedAt: now });
+	const unlinkedBrews: Brew[] = [];
 	await db.transaction('rw', db.bags, db.brews, async () => {
 		const linked = await db.brews.where('bagId').equals(id).toArray();
 		for (const brew of linked) {
 			const { bagId, ...rest } = brew;
 			void bagId;
-			await db.brews.put(rest);
+			const updated = BrewSchema.parse(rest);
+			await db.brews.put(updated);
+			unlinkedBrews.push(updated);
 		}
-		await db.bags.delete(id);
+		await db.bags.put(tombstoned);
 	});
-	// Server-side: ON DELETE SET NULL on brews.bagId handles the unlinking automatically.
-	sync.deleteBagOnServer(id);
+	// Push the soft-deleted bag + the unlinked brews up so other devices see
+	// the same shape on their next pull.
+	sync.pushBag(tombstoned);
+	for (const brew of unlinkedBrews) sync.pushBrew(brew);
 }

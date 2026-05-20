@@ -14,7 +14,12 @@ export const BagSchema = z.object({
 	pricePaid: z.number().nonnegative().optional(),
 	notes: z.string().optional(),
 	archived: z.boolean().optional(),
-	createdAt: z.string().datetime()
+	createdAt: z.string().datetime(),
+	// Tombstone marker. Set on soft-delete; null/absent means alive. Read paths
+	// in repository.ts filter these out. Kept in the database for cross-device
+	// delete propagation (without it, a delete on one device gets re-pulled
+	// from the server on another).
+	deletedAt: z.string().datetime().optional()
 });
 
 export type Bag = z.infer<typeof BagSchema>;
@@ -31,7 +36,9 @@ const BrewBase = z.object({
 	notes: z.string().optional(),
 	rating: z.number().min(0.5).max(5).optional(),
 	balance: z.enum(['light', 'balanced', 'heavy']).optional(),
-	isFavorite: z.boolean().optional()
+	isFavorite: z.boolean().optional(),
+	// See BagSchema.deletedAt — same semantics.
+	deletedAt: z.string().datetime().optional()
 });
 
 export const EspressoBrewSchema = BrewBase.extend({
