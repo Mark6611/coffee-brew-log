@@ -6,6 +6,7 @@
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import Badge from './Badge.svelte';
 	import OriginFlag from './OriginFlag.svelte';
+	import MarkdownText from './MarkdownText.svelte';
 
 	let {
 		brew,
@@ -163,6 +164,8 @@
 	{#if brew.notes}
 		<div
 			class="border-hairline font-display text-ink-70 mt-3 border-t border-dashed pt-3 text-[14.5px] leading-[1.45] italic"
-		>{brew.notes}</div>
+		>
+			<MarkdownText text={brew.notes} />
+		</div>
 	{/if}
 </div>

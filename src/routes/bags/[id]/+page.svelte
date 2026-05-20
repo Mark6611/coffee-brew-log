@@ -14,6 +14,7 @@
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ProcessBadge from '$lib/components/ProcessBadge.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
+	import MarkdownText from '$lib/components/MarkdownText.svelte';
 
 	const bagId = $derived(page.params.id as string);
 
@@ -231,7 +232,9 @@
 					<Eyebrow class="mb-2">NOTES</Eyebrow>
 					<div
 						class="bg-paper border-hairline font-display text-ink-70 rounded-2xl border px-4 py-3.5 text-[15px] leading-[1.5] italic"
-					>{bag.notes}</div>
+					>
+						<MarkdownText text={bag.notes} />
+					</div>
 				</div>
 			{/if}
 

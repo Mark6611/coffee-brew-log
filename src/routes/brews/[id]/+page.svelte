@@ -16,6 +16,7 @@
 	import StarRow from '$lib/components/StarRow.svelte';
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
+	import MarkdownText from '$lib/components/MarkdownText.svelte';
 
 	const brewId = $derived(page.params.id as string);
 
@@ -377,7 +378,9 @@
 			{#if brew.notes}
 				<div
 					class="bg-surface border-hairline font-display text-ink-70 rounded-[18px] border px-4 py-3.5 text-[15.5px] leading-[1.5] italic"
-				>"{brew.notes}"</div>
+				>
+					<MarkdownText text={brew.notes} />
+				</div>
 			{:else}
 				<a
 					href="/brews/{brew.id}/edit"
