@@ -4,11 +4,22 @@
 
 	let { value = $bindable('') }: { value?: string } = $props();
 	let resolved = $state<ResolvedOrigin | null>(null);
+	// Plain `let` (not `$state`) so it doesn't track in the effect — used only
+	// to skip the 300ms debounce on the very first run. Without this guard, the
+	// edit form flickers "no match" for ~300ms before showing the matched flag
+	// when an existing bag with a known origin is opened.
+	let firstRun = true;
 
 	$effect(() => {
 		const current = value;
 		if (!current) {
 			resolved = null;
+			firstRun = false;
+			return;
+		}
+		if (firstRun) {
+			firstRun = false;
+			resolved = resolveOrigin(current);
 			return;
 		}
 		const timer = setTimeout(() => {
