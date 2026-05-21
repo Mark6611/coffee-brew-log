@@ -54,6 +54,7 @@ const LOOKUP: Record<string, ResolvedOrigin> = {
 	guji: { code: 'ET', country: 'Ethiopia' },
 	gedeb: { code: 'ET', country: 'Ethiopia' },
 	cerrado: { code: 'BR', country: 'Brazil' },
+	santos: { code: 'BR', country: 'Brazil' },
 	huila: { code: 'CO', country: 'Colombia' },
 	nyeri: { code: 'KE', country: 'Kenya' },
 	antigua: { code: 'GT', country: 'Guatemala' },
