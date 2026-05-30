@@ -5,6 +5,7 @@ import { supabase } from './supabase';
 import { auth } from './auth.svelte';
 import { db } from './db/database';
 import { BrewSchema, BagSchema, type Brew, type Bag } from './db/types';
+import { syncStatus } from './syncStatus.svelte';
 
 let syncing = false;
 let lastError: string | null = null;
@@ -132,6 +133,8 @@ export async function fullSync(): Promise<void> {
 	if (syncing) return;
 	syncing = true;
 	lastError = null;
+	syncStatus.syncing = true;
+	syncStatus.lastError = null;
 
 	try {
 		// 1. Push all local rows up
@@ -208,6 +211,10 @@ export async function fullSync(): Promise<void> {
 		lastError = err instanceof Error ? err.message : String(err);
 	} finally {
 		syncing = false;
+		// Mirror the final outcome into the reactive store for UI surfaces.
+		syncStatus.syncing = false;
+		syncStatus.lastError = lastError;
+		syncStatus.lastSyncAt = lastSyncAt;
 	}
 }
 

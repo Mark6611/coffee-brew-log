@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/state';
+	import SyncBanner from '$lib/components/SyncBanner.svelte';
 
 	let { children } = $props();
 
@@ -96,6 +97,8 @@
 		</svg>
 	{/if}
 </button>
+
+<SyncBanner />
 
 {#key page.url.pathname}
 	<div in:fade={{ duration: 120 }}>
