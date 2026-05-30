@@ -20,7 +20,6 @@
 		type Range
 	} from '$lib/stats/compute';
 	import { formatRatio } from '$lib/brews/compute';
-	import { daysSinceRoast, freshnessTone } from '$lib/bags/compute';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
 
