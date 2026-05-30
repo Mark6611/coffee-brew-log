@@ -61,7 +61,7 @@
 	tabindex="0"
 	onclick={openDetail}
 	onkeydown={handleCardKeydown}
-	class="bg-surface border-hairline hover:border-rule relative cursor-pointer overflow-hidden border transition-colors {hero
+	class="bg-surface border-hairline hover:border-rule relative cursor-pointer overflow-hidden border transition duration-[180ms] ease-out active:scale-[0.985] {hero
 		? 'rounded-[22px] p-[22px]'
 		: 'rounded-[18px] px-[18px] pt-[16px] pb-[18px]'}"
 >
@@ -156,7 +156,9 @@
 			style="color: {tone}"
 		>
 			<span
-				class="inline-block h-[5px] w-[5px] rounded-full"
+				class="inline-block h-[5px] w-[5px] rounded-full {tone === 'var(--color-danger)'
+					? 'freshness-pulse'
+					: ''}"
 				style="background: currentColor"
 				aria-hidden="true"
 			></span>

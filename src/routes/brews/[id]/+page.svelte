@@ -212,7 +212,10 @@
 								style="color: {tone}"
 							>
 								<span
-									class="inline-block h-[5px] w-[5px] rounded-full"
+									class="inline-block h-[5px] w-[5px] rounded-full {tone ===
+									'var(--color-danger)'
+										? 'freshness-pulse'
+										: ''}"
 									style="background: currentColor"
 									aria-hidden="true"
 								></span>

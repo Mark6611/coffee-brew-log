@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import { resolveOrigin, type ResolvedOrigin } from '$lib/origin/resolve';
 	import OriginFlag from './OriginFlag.svelte';
 
@@ -35,7 +36,10 @@
 		: 'border-hairline focus-within:border-copper focus-within:ring-copper/25 focus-within:ring-2'}"
 >
 	{#if resolved}
-		<div class="border-hairline flex h-full items-center border-r px-3">
+		<div
+			class="border-hairline flex h-full items-center border-r px-3"
+			transition:fade={{ duration: 180 }}
+		>
 			<OriginFlag code={resolved.code} country={resolved.country} />
 		</div>
 	{/if}
@@ -48,6 +52,7 @@
 	{#if resolved}
 		<span
 			class="text-copper pr-3.5 font-mono text-[12px] font-medium tracking-[0.14em]"
+			transition:fade={{ duration: 180 }}
 		>{resolved.code}</span>
 	{/if}
 </div>

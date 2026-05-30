@@ -7,6 +7,8 @@
 	import '$lib/sync'; // side effect: registers auth listener for sync
 
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { page } from '$app/state';
 
 	let { children } = $props();
 
@@ -95,4 +97,8 @@
 	{/if}
 </button>
 
-{@render children()}
+{#key page.url.pathname}
+	<div in:fade={{ duration: 120 }}>
+		{@render children()}
+	</div>
+{/key}

@@ -4,6 +4,7 @@
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
 	import { bagConsumption, formatRoastedAt } from '$lib/bags/compute';
+	import { fly, slide } from 'svelte/transition';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import Badge from '$lib/components/Badge.svelte';
@@ -141,9 +142,13 @@
 			</p>
 		{:else}
 			<div class="flex flex-col gap-2.5">
-				{#each visibleBags as bag (bag.id)}
+				{#each visibleBags as bag, i (bag.id)}
 					{@const c = bagConsumption(bag, brews)}
-					<div class="bg-surface border-hairline rounded-[18px] border px-[18px] pt-[16px] pb-[18px]">
+					<div
+						in:fly={{ y: 8, duration: 220, delay: i * 30 }}
+						out:slide={{ duration: 220 }}
+						class="bg-surface border-hairline rounded-[18px] border px-[18px] pt-[16px] pb-[18px] has-[a:active]:scale-[0.985] transition-transform duration-[180ms] ease-out"
+					>
 						<a
 							href="/bags/{bag.id}"
 							class="mb-2 flex items-start justify-between gap-3 -m-2 p-2 rounded-lg hover:bg-paper/40 transition-colors"

@@ -86,6 +86,34 @@
 		-moz-appearance: textfield;
 		appearance: textfield;
 	}
+
+	/* Slow, calm pulse used on freshness-stale dots. Opacity-only so it stays
+	   GPU-cheap and reads as breathing, not blinking. ~2.4s feels deliberate. */
+	@keyframes freshness-pulse {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.35;
+		}
+	}
+	.freshness-pulse {
+		animation: freshness-pulse 2.4s ease-in-out infinite;
+	}
+
+	/* Respect the OS-level reduced-motion setting. Animations and transitions
+	   collapse to ~1ms so the end state is preserved without the motion. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 1ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 1ms !important;
+			scroll-behavior: auto !important;
+		}
+	}
 }
 
 /* Animations used by the blog-publishing UI (LiveDot, publish section reveal).

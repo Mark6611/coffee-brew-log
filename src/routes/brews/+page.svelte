@@ -3,6 +3,7 @@
 	import type { Brew, Bag } from '$lib/db/types';
 	import { listBrews, listBags, toggleFavorite } from '$lib/db/repository';
 	import { groupBrewsByDay } from '$lib/brews/compute';
+	import { fly, slide } from 'svelte/transition';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import DayHeader from '$lib/components/DayHeader.svelte';
 	import BrewCard from '$lib/components/BrewCard.svelte';
@@ -216,8 +217,13 @@
 			{#each groups as group (group.dayKey)}
 				<DayHeader>{group.dayKey}</DayHeader>
 				<div class="mb-5 flex flex-col gap-2.5">
-					{#each group.brews as brew (brew.id)}
-						<BrewCard {brew} bag={bagFor(brew)} ontogglefavorite={handleFavorite} />
+					{#each group.brews as brew, i (brew.id)}
+						<div
+							in:fly={{ y: 8, duration: 220, delay: i * 30 }}
+							out:slide={{ duration: 220 }}
+						>
+							<BrewCard {brew} bag={bagFor(brew)} ontogglefavorite={handleFavorite} />
+						</div>
 					{/each}
 				</div>
 			{/each}
