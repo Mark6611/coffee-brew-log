@@ -10,6 +10,7 @@
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/state';
 	import SyncBanner from '$lib/components/SyncBanner.svelte';
+	import PwaUpdatePrompt from '$lib/components/PwaUpdatePrompt.svelte';
 
 	let { children } = $props();
 
@@ -98,6 +99,7 @@
 	{/if}
 </button>
 
+<PwaUpdatePrompt />
 <SyncBanner />
 
 {#key page.url.pathname}
