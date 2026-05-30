@@ -24,3 +24,7 @@ vite.config.ts.timestamp-*
 
 # Claude Code (machine-specific)
 .claude/settings.local.json
+
+# Design handoffs (reference material, not source — kept outside the repo)
+design_handoff_*/
+*_handoff.md
