@@ -9,7 +9,7 @@
 		formatTimeAgo,
 		ratio
 	} from '$lib/brews/compute';
-	import { freshnessTone, freshnessLabel, bagConsumption } from '$lib/bags/compute';
+	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Badge from '$lib/components/Badge.svelte';
@@ -212,10 +212,8 @@
 								style="color: {tone}"
 							>
 								<span
-									class="inline-block h-[5px] w-[5px] rounded-full {tone ===
-									'var(--color-danger)'
-										? 'freshness-pulse'
-										: ''}"
+									class="inline-block h-[5px] w-[5px] rounded-full"
+									class:freshness-pulse={freshnessStale(bag.roastedAt)}
 									style="background: currentColor"
 									aria-hidden="true"
 								></span>

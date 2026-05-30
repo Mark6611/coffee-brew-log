@@ -3,7 +3,8 @@ import {
 	bagConsumption,
 	daysSinceRoast,
 	freshnessTone,
-	freshnessLabel
+	freshnessLabel,
+	freshnessStale
 } from './compute';
 import { bag, espresso, pourOver } from '$lib/test/factories';
 
@@ -68,6 +69,16 @@ describe('freshnessTone', () => {
 	});
 	it('returns null without a roast date', () => {
 		expect(freshnessTone(undefined)).toBeNull();
+	});
+});
+
+describe('freshnessStale', () => {
+	it('is true only past the 21-day careful window', () => {
+		expect(freshnessStale('2026-05-01', new Date('2026-05-22T00:00:00'))).toBe(false); // 21d
+		expect(freshnessStale('2026-05-01', new Date('2026-05-23T00:00:00'))).toBe(true); // 22d
+	});
+	it('is false without a roast date', () => {
+		expect(freshnessStale(undefined)).toBe(false);
 	});
 });
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { page } from '$app/state';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
@@ -19,9 +19,16 @@
 	const archivedCount = $derived(bags.filter((b) => b.archived).length);
 	const activeCount = $derived(bags.length - archivedCount);
 
+	// Stagger only the first reveal; toggling archived view shouldn't replay it.
+	let firstReveal = $state(true);
+
 	async function refresh() {
 		[bags, brews] = await Promise.all([listBags(), listBrews()]);
 		loading = false;
+		if (firstReveal) {
+			await tick();
+			firstReveal = false;
+		}
 	}
 
 	onMount(() => {
@@ -145,7 +152,7 @@
 				{#each visibleBags as bag, i (bag.id)}
 					{@const c = bagConsumption(bag, brews)}
 					<div
-						in:fly={{ y: 8, duration: 220, delay: i * 30 }}
+						in:fly={{ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 }}
 						out:slide={{ duration: 220 }}
 						class="bg-surface border-hairline rounded-[18px] border px-[18px] pt-[16px] pb-[18px] has-[a:active]:scale-[0.985] transition-transform duration-[180ms] ease-out"
 					>

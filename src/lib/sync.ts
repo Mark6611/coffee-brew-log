@@ -7,12 +7,11 @@ import { db } from './db/database';
 import { BrewSchema, BagSchema, type Brew, type Bag } from './db/types';
 import { syncStatus } from './syncStatus.svelte';
 
-let syncing = false;
-let lastError: string | null = null;
-let lastSyncAt: string | null = null;
-
+// `syncStatus` (a rune store) is the single source of truth for sync state.
+// getSyncStatus() exposes it to non-reactive callers; components read the
+// store directly.
 export function getSyncStatus() {
-	return { syncing, lastError, lastSyncAt };
+	return syncStatus;
 }
 
 function withUserId<T>(row: T, userId: string): T & { userId: string } {
@@ -101,7 +100,7 @@ export function pushBag(bag: Bag): void {
 		.then(({ error }) => {
 			if (error) {
 				console.warn('Push bag failed:', error.message);
-				lastError = error.message;
+				syncStatus.lastError = error.message;
 			}
 		});
 }
@@ -116,7 +115,7 @@ export function pushBrew(brew: Brew): void {
 		.then(({ error }) => {
 			if (error) {
 				console.warn('Push brew failed:', error.message);
-				lastError = error.message;
+				syncStatus.lastError = error.message;
 			}
 		});
 }
@@ -130,9 +129,7 @@ export function pushBrew(brew: Brew): void {
 export async function fullSync(): Promise<void> {
 	const user = auth.user;
 	if (!user) return;
-	if (syncing) return;
-	syncing = true;
-	lastError = null;
+	if (syncStatus.syncing) return;
 	syncStatus.syncing = true;
 	syncStatus.lastError = null;
 
@@ -150,7 +147,7 @@ export async function fullSync(): Promise<void> {
 			const { error } = await supabase.from('bags').upsert(payload);
 			if (error) {
 				console.warn('Sync: push bags failed:', error.message);
-				lastError = error.message;
+				syncStatus.lastError = error.message;
 				pushOk = false;
 			}
 		}
@@ -160,7 +157,7 @@ export async function fullSync(): Promise<void> {
 			const { error } = await supabase.from('brews').upsert(payload);
 			if (error) {
 				console.warn('Sync: push brews failed:', error.message);
-				lastError = error.message;
+				syncStatus.lastError = error.message;
 				pushOk = false;
 			}
 		}
@@ -173,12 +170,12 @@ export async function fullSync(): Promise<void> {
 
 		if (bagsRes.error) {
 			console.warn('Sync: pull bags failed:', bagsRes.error.message);
-			lastError = bagsRes.error.message;
+			syncStatus.lastError = bagsRes.error.message;
 			return;
 		}
 		if (brewsRes.error) {
 			console.warn('Sync: pull brews failed:', brewsRes.error.message);
-			lastError = brewsRes.error.message;
+			syncStatus.lastError = brewsRes.error.message;
 			return;
 		}
 
@@ -197,7 +194,7 @@ export async function fullSync(): Promise<void> {
 			if (serverBrews.length > 0) await db.brews.bulkPut(serverBrews);
 		});
 
-		lastSyncAt = new Date().toISOString();
+		syncStatus.lastSyncAt = new Date().toISOString();
 		console.info(
 			`[sync] pushed: ${localBags.length} bags + ${localBrews.length} brews; pulled: ${serverBags.length} bags + ${serverBrews.length} brews; pushOk=${pushOk}`
 		);
@@ -208,13 +205,9 @@ export async function fullSync(): Promise<void> {
 		}
 	} catch (err) {
 		console.error('Sync failed:', err);
-		lastError = err instanceof Error ? err.message : String(err);
+		syncStatus.lastError = err instanceof Error ? err.message : String(err);
 	} finally {
-		syncing = false;
-		// Mirror the final outcome into the reactive store for UI surfaces.
 		syncStatus.syncing = false;
-		syncStatus.lastError = lastError;
-		syncStatus.lastSyncAt = lastSyncAt;
 	}
 }
 

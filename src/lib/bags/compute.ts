@@ -65,3 +65,11 @@ export function freshnessLabel(
 	if (days === 1) return 'ROASTED YESTERDAY';
 	return `ROASTED ${days} DAYS AGO`;
 }
+
+// Past the "careful" window (the danger tier in freshnessTone). The single
+// source of truth for "stale enough to flag", so views don't string-match the
+// CSS var freshnessTone returns.
+export function freshnessStale(iso: string | undefined, now: Date = new Date()): boolean {
+	const days = daysSinceRoast(iso, now);
+	return days != null && days > 21;
+}

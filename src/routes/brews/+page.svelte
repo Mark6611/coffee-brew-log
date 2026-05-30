@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { listBrews, listBags, toggleFavorite } from '$lib/db/repository';
 	import { groupBrewsByDay } from '$lib/brews/compute';
@@ -19,9 +19,17 @@
 	let searchOpen = $state(false);
 	let searchQuery = $state('');
 
+	// Stagger the entrance only on the first reveal; after that, search/filter
+	// re-renders shouldn't replay a staggered cascade on every keystroke.
+	let firstReveal = $state(true);
+
 	async function refresh() {
 		[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
 		loading = false;
+		if (firstReveal) {
+			await tick();
+			firstReveal = false;
+		}
 	}
 
 	function bagFor(brew: Brew): Bag | undefined {
@@ -219,7 +227,7 @@
 				<div class="mb-5 flex flex-col gap-2.5">
 					{#each group.brews as brew, i (brew.id)}
 						<div
-							in:fly={{ y: 8, duration: 220, delay: i * 30 }}
+							in:fly={{ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 }}
 							out:slide={{ duration: 220 }}
 						>
 							<BrewCard {brew} bag={bagFor(brew)} ontogglefavorite={handleFavorite} />

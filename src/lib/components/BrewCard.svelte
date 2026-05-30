@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { formatRatio, formatTimeAgo } from '$lib/brews/compute';
-	import { freshnessTone, freshnessLabel } from '$lib/bags/compute';
+	import { freshnessTone, freshnessLabel, freshnessStale } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import Badge from './Badge.svelte';
 	import OriginFlag from './OriginFlag.svelte';
@@ -28,6 +28,7 @@
 
 	const tone = $derived(bag ? freshnessTone(bag.roastedAt) : null);
 	const label = $derived(bag ? freshnessLabel(bag.roastedAt) : null);
+	const stale = $derived(bag ? freshnessStale(bag.roastedAt) : false);
 	const roasterText = $derived(bag?.roaster ?? brew.roaster);
 	const resolvedOrigin = $derived(bag ? resolveOrigin(bag.origin) : null);
 
@@ -156,9 +157,8 @@
 			style="color: {tone}"
 		>
 			<span
-				class="inline-block h-[5px] w-[5px] rounded-full {tone === 'var(--color-danger)'
-					? 'freshness-pulse'
-					: ''}"
+				class="inline-block h-[5px] w-[5px] rounded-full"
+				class:freshness-pulse={stale}
 				style="background: currentColor"
 				aria-hidden="true"
 			></span>
