@@ -3,16 +3,18 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { getBagById, updateBag } from '$lib/db/repository';
-	import { BagSchema, type Process } from '$lib/db/types';
+	import { BagSchema, type Process, type RoastLevel } from '$lib/db/types';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import OriginInput from '$lib/components/OriginInput.svelte';
+	import RoastChips from '$lib/components/RoastChips.svelte';
 
 	let name = $state('');
 	let roaster = $state('');
 	let origin = $state('');
 	let roastedAt = $state('');
 	let process = $state<Process | ''>('');
+	let roastLevel = $state<RoastLevel | ''>('');
 	let weightGrams = $state<number | null>(null);
 	let pricePaid = $state<number | null>(null);
 	let notes = $state('');
@@ -37,6 +39,7 @@
 		origin = bag.origin ?? '';
 		roastedAt = bag.roastedAt ?? '';
 		process = bag.process ?? '';
+		roastLevel = bag.roastLevel ?? '';
 		weightGrams = bag.weightGrams ?? null;
 		pricePaid = bag.pricePaid ?? null;
 		notes = bag.notes ?? '';
@@ -58,6 +61,7 @@
 				origin: origin.trim() || undefined,
 				roastedAt: roastedAt || undefined,
 				process: process || undefined,
+				roastLevel: roastLevel || undefined,
 				weightGrams: weightGrams ?? undefined,
 				pricePaid: pricePaid ?? undefined,
 				notes: notes.trim() || undefined,
@@ -157,6 +161,11 @@
 					<Chip active={process === 'honey'} onclick={() => (process = 'honey')}>Honey</Chip>
 					<Chip active={process === 'anaerobic'} onclick={() => (process = 'anaerobic')}>Anaerobic</Chip>
 				</div>
+			</div>
+
+			<div>
+				<Eyebrow class="mb-2">ROAST LEVEL</Eyebrow>
+				<RoastChips bind:value={roastLevel} />
 			</div>
 
 			<div class="grid grid-cols-2 gap-2.5">

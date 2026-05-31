@@ -3,7 +3,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { addBrew, listBrews, listBags } from '$lib/db/repository';
-	import { BrewSchema, type Bag } from '$lib/db/types';
+	import { BrewSchema, type Bag, type Brew } from '$lib/db/types';
+	import { resolveGrindSuggestion } from '$lib/brews/grind';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
 	import Chip from '$lib/components/Chip.svelte';
@@ -18,6 +19,7 @@
 	let method = $state<Method>('espresso');
 	let bagId = $state<string | undefined>(undefined);
 	let allBags = $state<Bag[]>([]);
+	let allBrews = $state<Brew[]>([]);
 	let doseGrams = $state<number | null>(null);
 	let yieldGrams = $state<number | null>(null);
 	let waterGrams = $state<number | null>(null);
@@ -64,11 +66,39 @@
 		const urlBagId = page.url.searchParams.get('bagId');
 		if (urlBagId) bagId = urlBagId;
 
-		[allBags, brewCount] = await Promise.all([
-			listBags(),
-			listBrews().then((all) => all.length)
-		]);
+		[allBags, allBrews] = await Promise.all([listBags(), listBrews()]);
+		brewCount = allBrews.length;
 	});
+
+	// Read-time grind suggestion for the selected bag + method (advisory; see grind.ts).
+	const grindSuggestion = $derived(
+		selectedBag ? resolveGrindSuggestion(selectedBag, method, allBrews, allBags) : null
+	);
+	let grindApplied = $state(false);
+
+	// When the bag/method context changes, re-evaluate the same-bag prefill exactly
+	// once for that context (keyed guard, so clearing the field doesn't re-fill it).
+	let grindCtx = '';
+	$effect(() => {
+		const s = grindSuggestion;
+		const key = `${bagId ?? ''}|${method}`;
+		if (key === grindCtx) return;
+		// A bag is chosen but allBags hasn't loaded yet — wait, don't claim the
+		// context, or we'd skip the prefill once the data arrives.
+		if (bagId && !selectedBag) return;
+		grindCtx = key;
+		grindApplied = false;
+		if (s?.kind === 'prefill' && grindSetting.trim() === '') {
+			grindSetting = s.value;
+		}
+	});
+
+	function applyGrind() {
+		if (grindSuggestion) {
+			grindSetting = grindSuggestion.value;
+			grindApplied = true;
+		}
+	}
 
 	function saveDraft() {
 		const draft = {
@@ -307,6 +337,61 @@
 				placeholder={method === 'espresso' ? 'e.g. 1.3' : 'e.g. 5.5'}
 				class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 font-mono transition outline-none focus:ring-2"
 			/>
+
+			{#if grindSuggestion}
+				{@const sug = grindSuggestion}
+				{@const prov =
+					sug.kind === 'history'
+						? `FROM YOUR HISTORY · ${sug.brews} BREW${sug.brews === 1 ? '' : 'S'}`
+						: 'STARTING POINT'}
+				{#if sug.kind === 'prefill'}
+					{#if grindSetting === sug.value}
+						<p class="text-muted mt-1.5 text-[12px]">Prefilled from your last brew of this bag.</p>
+					{/if}
+				{:else if grindSetting.trim() === ''}
+					<button
+						type="button"
+						onclick={applyGrind}
+						class="bg-copper-lt mt-2 flex w-full items-center gap-2.5 rounded-[12px] px-3 py-2.5 text-left transition hover:brightness-[0.98]"
+					>
+						<svg
+							width="18"
+							height="18"
+							viewBox="0 0 18 18"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.3"
+							class="text-copper-dk shrink-0"
+							aria-hidden="true"
+						>
+							<circle cx="9" cy="9" r="6.5" />
+							<circle cx="9" cy="9" r="2.5" />
+						</svg>
+						<span class="min-w-0 flex-1">
+							<span class="text-copper-dk block text-[13px]"
+								>Suggested <span class="font-mono font-medium">{sug.value}</span></span
+							>
+							<span
+								class="text-copper-dk/70 mt-0.5 block font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+								>{prov}</span
+							>
+						</span>
+						<span
+							class="text-copper shrink-0 font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+							>Tap to use</span
+						>
+					</button>
+				{:else if grindApplied && grindSetting === sug.value}
+					<p class="text-copper-dk mt-1.5 text-[12px]">Applied the suggestion.</p>
+				{:else}
+					<button
+						type="button"
+						onclick={applyGrind}
+						class="text-faint hover:text-copper-dk mt-1.5 text-[12px] transition-colors"
+						>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
+					>
+				{/if}
+			{/if}
 		</div>
 
 		<!-- Water temp (pour-over only) -->

@@ -3,6 +3,9 @@ import { z } from 'zod';
 export const ProcessSchema = z.enum(['washed', 'natural', 'honey', 'anaerobic']);
 export type Process = z.infer<typeof ProcessSchema>;
 
+export const RoastLevelSchema = z.enum(['light', 'medium', 'medium-dark', 'dark']);
+export type RoastLevel = z.infer<typeof RoastLevelSchema>;
+
 export const BagSchema = z.object({
 	id: z.string().uuid(),
 	name: z.string().min(1),
@@ -10,6 +13,7 @@ export const BagSchema = z.object({
 	origin: z.string().min(1).optional(),
 	roastedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 	process: ProcessSchema.optional(),
+	roastLevel: RoastLevelSchema.optional(),
 	weightGrams: z.number().positive().optional(),
 	pricePaid: z.number().nonnegative().optional(),
 	notes: z.string().optional(),

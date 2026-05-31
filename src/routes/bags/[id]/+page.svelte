@@ -11,6 +11,8 @@
 	} from '$lib/bags/compute';
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
+	import { resolveGrindSuggestion } from '$lib/brews/grind';
+	import { roastMeta } from '$lib/bags/roast';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ProcessBadge from '$lib/components/ProcessBadge.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
@@ -20,6 +22,7 @@
 
 	let bag = $state<Bag | null>(null);
 	let allBags = $state<Bag[]>([]);
+	let allBrews = $state<Brew[]>([]);
 	let brews = $state<Brew[]>([]);
 	let loading = $state(true);
 	let notFound = $state(false);
@@ -31,7 +34,7 @@
 	async function load(id: string) {
 		loading = true;
 		notFound = false;
-		const [found, bags, allBrews] = await Promise.all([
+		const [found, bags, allBrewsData] = await Promise.all([
 			getBagById(id),
 			listBags(),
 			listBrews()
@@ -42,7 +45,8 @@
 			brews = [];
 		} else {
 			bag = found;
-			brews = allBrews.filter((b) => b.bagId === id);
+			allBrews = allBrewsData;
+			brews = allBrewsData.filter((b) => b.bagId === id);
 			allBags = bags;
 		}
 		loading = false;
@@ -69,6 +73,19 @@
 		for (const b of brews) counts[b.method] = (counts[b.method] ?? 0) + 1;
 		return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
 	});
+
+	// Read-only grind reference, one per method (shown only when roast level is set).
+	const grindPourOver = $derived(
+		bag?.roastLevel ? resolveGrindSuggestion(bag, 'pour-over', allBrews, allBags) : null
+	);
+	const grindEspresso = $derived(
+		bag?.roastLevel ? resolveGrindSuggestion(bag, 'espresso', allBrews, allBags) : null
+	);
+	function provenance(kind: 'prefill' | 'history' | 'seed', brewsN?: number): string {
+		if (kind === 'prefill') return 'YOUR LAST BREW';
+		if (kind === 'history') return `FROM YOUR HISTORY · ${brewsN} BREW${brewsN === 1 ? '' : 'S'}`;
+		return 'STARTING POINT';
+	}
 
 	const roastedDays = $derived(bag ? daysSinceRoast(bag.roastedAt) : null);
 	const roastedTone = $derived(bag ? freshnessTone(bag.roastedAt) : null);
@@ -223,6 +240,41 @@
 							{(consumption.used - bag.weightGrams).toFixed(1)}g over recorded weight
 						</div>
 					{/if}
+				</div>
+			{/if}
+
+			<!-- Roast level + suggested grind (only when roast level is set) -->
+			{#if bag.roastLevel}
+				{@const rm = roastMeta(bag.roastLevel)}
+				<div class="mt-5">
+					<Eyebrow class="mb-2">ROAST LEVEL</Eyebrow>
+					<span
+						class="inline-flex h-[34px] items-center rounded-full px-[14px] font-sans text-[13px] font-medium"
+						style="background:{rm.bg}; color:{rm.fg}">{rm.label}</span
+					>
+				</div>
+
+				<div class="mt-5">
+					<Eyebrow class="mb-2">SUGGESTED GRIND</Eyebrow>
+					<div class="bg-surface border-hairline divide-hairline divide-y overflow-hidden rounded-2xl border">
+						{#each [{ label: 'Pour-over', s: grindPourOver }, { label: 'Espresso', s: grindEspresso }] as row (row.label)}
+							{#if row.s}
+								<div class="flex items-center justify-between gap-3 px-3.5 py-2.5">
+									<span class="text-ink text-[13px]">{row.label}</span>
+									<span class="flex items-center gap-2">
+										<span class="text-copper font-mono text-[13px] font-medium">{row.s.value}</span>
+										<span
+											class="text-muted font-mono text-[9.5px] font-medium tracking-[0.1em] uppercase"
+											>{provenance(
+												row.s.kind,
+												row.s.kind === 'history' ? row.s.brews : undefined
+											)}</span
+										>
+									</span>
+								</div>
+							{/if}
+						{/each}
+					</div>
 				</div>
 			{/if}
 
