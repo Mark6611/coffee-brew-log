@@ -16,17 +16,17 @@ export function grinderFor(method: Method): string {
 	return method === 'espresso' ? 'Lagom Casa' : 'Fellow Ode Gen 2';
 }
 
-// Seed starting points per grinder × roast level. ILLUSTRATIVE — the owner
-// replaces these with their actual dialed-in numbers. Darker roast = more
-// brittle/soluble, ground a touch coarser as a starting point.
+// Seed starting points per grinder × roast level — the cold-start nudge shown
+// until the user has ≥3 brews at a roast level, after which the suggestion
+// switches to the median of their own history (so these only matter early).
+// Direction: lighter/denser roast → finer, darker/more-soluble → coarser.
+//   Fellow Ode Gen 2 (pour-over): anchored on the owner's everyday 4.2, ±0.3.
+//   Lagom Casa (espresso): owner doesn't have it yet — seeded across Option-O's
+//   documented espresso range 0.3.8–0.8.0 (rotation.number.tick notation).
+// Replace both with real dialed-in values once available.
 const SEED_TABLE: Record<string, Partial<Record<RoastLevel, string>>> = {
-	'Fellow Ode Gen 2': { light: 'Ode 8', medium: 'Ode 7', 'medium-dark': 'Ode 6.5', dark: 'Ode 6' },
-	'Lagom Casa': {
-		light: 'Lagom 2.6',
-		medium: 'Lagom 2.4',
-		'medium-dark': 'Lagom 2.2',
-		dark: 'Lagom 2.0'
-	}
+	'Fellow Ode Gen 2': { light: '4.0', medium: '4.2', 'medium-dark': '4.4', dark: '4.5' },
+	'Lagom Casa': { light: '0.4.5', medium: '0.5.5', 'medium-dark': '0.6.5', dark: '0.7.5' }
 };
 
 // Pull the numeric part of a free-text grind ("Ode 7.5" → 7.5). Null if none.
@@ -36,18 +36,6 @@ export function parseGrind(s: string | undefined | null): number | null {
 	if (!m) return null;
 	const n = Number(m[0]);
 	return Number.isNaN(n) ? null : n;
-}
-
-export function median(nums: number[]): number | null {
-	if (nums.length === 0) return null;
-	const sorted = [...nums].sort((a, b) => a - b);
-	const mid = Math.floor(sorted.length / 2);
-	return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
-}
-
-function displayValue(grinder: string, n: number): string {
-	const prefix = grinder === 'Lagom Casa' ? 'Lagom' : 'Ode';
-	return `${prefix} ${n}`;
 }
 
 export function resolveGrindSuggestion(
@@ -74,12 +62,20 @@ export function resolveGrindSuggestion(
 		return bagById.get(b.bagId)?.roastLevel === bag.roastLevel;
 	});
 	if (peers.length >= 3) {
-		const nums = peers
-			.map((p) => parseGrind(p.grindSetting))
-			.filter((n): n is number => n != null);
-		const med = median(nums);
-		if (med != null) {
-			return { kind: 'history', value: displayValue(grinder, med), grinder, brews: peers.length };
+		// Positional median by parsed grind, returning the real logged value
+		// verbatim — preserves notation (the Ode's "4.2", the Lagom's "0.6.5")
+		// rather than reconstructing a number, which would drop the tick.
+		const ranked = peers
+			.map((p) => ({ raw: p.grindSetting as string, n: parseGrind(p.grindSetting) }))
+			.filter((x): x is { raw: string; n: number } => x.n != null)
+			.sort((a, b) => a.n - b.n);
+		if (ranked.length > 0) {
+			return {
+				kind: 'history',
+				value: ranked[Math.floor(ranked.length / 2)].raw,
+				grinder,
+				brews: peers.length
+			};
 		}
 	}
 

@@ -334,7 +334,7 @@
 				type="text"
 				bind:value={grindSetting}
 				required
-				placeholder={method === 'espresso' ? 'e.g. 1.3' : 'e.g. 5.5'}
+				placeholder={method === 'espresso' ? 'e.g. 0.5.5' : 'e.g. 4.2'}
 				class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 font-mono transition outline-none focus:ring-2"
 			/>
 
