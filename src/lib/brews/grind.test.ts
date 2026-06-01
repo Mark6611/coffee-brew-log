@@ -37,6 +37,18 @@ describe('resolveGrindSuggestion — precedence', () => {
 		expect(r).toEqual({ kind: 'prefill', value: 'Ode 9', grinder: 'Fellow Ode Gen 2' });
 	});
 
+	it('RULE 1: is method-scoped — an espresso brew never prefills pour-over', () => {
+		const target = bag({ roastLevel: 'dark' });
+		// The bag was only ever brewed as espresso. Asking for pour-over must NOT
+		// prefill that espresso grind — it falls through to the pour-over seed.
+		const brews = [espresso({ bagId: target.id, grindSetting: '0.5.5' })];
+		expect(resolveGrindSuggestion(target, 'pour-over', brews, [target])).toEqual({
+			kind: 'seed',
+			value: '4.5',
+			grinder: 'Fellow Ode Gen 2'
+		});
+	});
+
 	it('RULE 1: picks the newest same-bag brew', () => {
 		const target = bag({ roastLevel: 'dark' });
 		const brews = [

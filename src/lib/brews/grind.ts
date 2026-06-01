@@ -46,9 +46,11 @@ export function resolveGrindSuggestion(
 ): GrindSuggestion | null {
 	const grinder = grinderFor(method);
 
-	// RULE 1 — a prior brew of THIS bag (with a grind) → prefill, not a suggestion.
+	// RULE 1 — a prior brew of THIS bag ON THIS METHOD (with a grind) → prefill.
+	// Must be method-scoped: grind is grinder-specific, so an espresso grind must
+	// never prefill a pour-over field (different grinder, different scale).
 	const sameBag = allBrews
-		.filter((b) => b.bagId === bag.id && b.grindSetting && !b.deletedAt)
+		.filter((b) => b.bagId === bag.id && b.method === method && b.grindSetting && !b.deletedAt)
 		.sort((a, b) => (a.brewedAt < b.brewedAt ? 1 : -1))[0];
 	if (sameBag) return { kind: 'prefill', value: sameBag.grindSetting, grinder };
 

@@ -76,20 +76,26 @@
 	);
 	let grindApplied = $state(false);
 
-	// When the bag/method context changes, re-evaluate the same-bag prefill exactly
-	// once for that context (keyed guard, so clearing the field doesn't re-fill it).
+	// Keep the grind field in step with the bag/method context.
+	// - First pass (mount / restored draft): only prefill an EMPTY field, never
+	//   clobber a value the user already had.
+	// - Any later change (user actively switches bag or method): reset the grind
+	//   to the new context — a pour-over "4.2" is meaningless once you switch to
+	//   espresso, and bag A's grind shouldn't linger on bag B.
+	// Within one context the effect short-circuits, so typing is never disturbed.
 	let grindCtx = '';
 	$effect(() => {
 		const s = grindSuggestion;
 		const key = `${bagId ?? ''}|${method}`;
 		if (key === grindCtx) return;
-		// A bag is chosen but allBags hasn't loaded yet — wait, don't claim the
-		// context, or we'd skip the prefill once the data arrives.
-		if (bagId && !selectedBag) return;
+		if (bagId && !selectedBag) return; // wait for data to load before claiming
+		const firstInit = grindCtx === '';
 		grindCtx = key;
 		grindApplied = false;
-		if (s?.kind === 'prefill' && grindSetting.trim() === '') {
-			grindSetting = s.value;
+		if (firstInit) {
+			if (s?.kind === 'prefill' && grindSetting.trim() === '') grindSetting = s.value;
+		} else {
+			grindSetting = s?.kind === 'prefill' ? s.value : '';
 		}
 	});
 
