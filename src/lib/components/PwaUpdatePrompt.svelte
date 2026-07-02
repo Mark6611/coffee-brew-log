@@ -1,11 +1,19 @@
 <script lang="ts">
+	import { writable } from 'svelte/store';
+	import { Capacitor } from '@capacitor/core';
 	import { useRegisterSW } from 'virtual:pwa-register/svelte';
 	import Banner from './Banner.svelte';
 
 	// registerType is 'prompt' in vite.config — a freshly deployed service worker
 	// waits instead of auto-activating, and surfaces here so the user chooses when
 	// to reload (rather than assets swapping mid-session).
-	const { needRefresh, updateServiceWorker } = useRegisterSW({});
+	// Inside the Capacitor shell the app is served from capacitor://localhost,
+	// where service workers don't apply — updates ship with the app binary, so
+	// skip SW registration entirely there.
+	const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
+	const { needRefresh, updateServiceWorker } = isNative
+		? { needRefresh: writable(false), updateServiceWorker: async (_reload?: boolean) => {} }
+		: useRegisterSW({});
 
 	function reload() {
 		void updateServiceWorker(true);
