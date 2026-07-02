@@ -62,6 +62,21 @@
 	}
 	body {
 		font-family: var(--font-sans);
+		/* With viewport-fit=cover (native shell + installed PWA) content spans
+		   under the notch / home indicator; these insets pull it back out.
+		   On regular browsers env() is 0 and this is a no-op. */
+		padding-top: env(safe-area-inset-top, 0);
+		padding-bottom: env(safe-area-inset-bottom, 0);
+	}
+
+	/* iOS zooms the page when a focused input's font-size is under 16px.
+	   Clamp form fields to 16px on phones so focusing never triggers zoom. */
+	@media (max-width: 600px) {
+		input,
+		textarea,
+		select {
+			font-size: 16px !important;
+		}
 	}
 
 	/* Inputs inside a .field-wrapper container should inherit the wrapper's styling, not the

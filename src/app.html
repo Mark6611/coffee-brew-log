@@ -2,10 +2,12 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<meta name="text-scale" content="scale" />
 		<meta name="theme-color" content="#9C4A1F" />
+		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-title" content="Coffee Brew Log" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/icon-180.png" />
@@ -24,13 +26,10 @@
 				} catch {}
 			})();
 		</script>
-		<script>
-			if ('serviceWorker' in navigator) {
-				window.addEventListener('load', () => {
-					navigator.serviceWorker.register('/sw.js');
-				});
-			}
-		</script>
+		<!-- Service-worker registration lives in PwaUpdatePrompt via useRegisterSW
+		     (prompt-style updates). A second manual register() here would bypass
+		     that flow — and inside the Capacitor shell a SW can intercept chunk
+		     loads and blank the screen, so the native build ships no SW at all. -->
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

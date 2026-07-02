@@ -3,11 +3,18 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 import { defineConfig } from 'vite';
 
+// The Capacitor build ships the app fully bundled inside the WebView — a
+// service worker only interferes there (it can intercept chunk loads and
+// blank the screen). BUILD_TARGET=capacitor disables the PWA plugin entirely,
+// so the native bundle contains no sw.js/workbox at all.
+const native = process.env.BUILD_TARGET === 'capacitor';
+
 export default defineConfig({
 	plugins: [
 		tailwindcss(),
 		sveltekit(),
 		SvelteKitPWA({
+			disable: native,
 			registerType: 'prompt',
 			manifest: {
 				name: 'Coffee Brew Log',

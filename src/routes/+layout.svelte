@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/state';
+	import { hideSplash, setupNativeChrome } from '$lib/native';
 	import SyncBanner from '$lib/components/SyncBanner.svelte';
 	import PwaUpdatePrompt from '$lib/components/PwaUpdatePrompt.svelte';
 
@@ -23,7 +24,10 @@
 	}
 
 	function apply(t: Theme) {
-		document.documentElement.setAttribute('data-theme', effective(t));
+		const eff = effective(t);
+		document.documentElement.setAttribute('data-theme', eff);
+		// Keep the native status bar's text color in step with the theme.
+		void setupNativeChrome(eff);
 	}
 
 	function cycle() {
@@ -36,6 +40,8 @@
 		const saved = (localStorage.getItem('theme') as Theme | null) ?? 'system';
 		theme = saved;
 		apply(saved);
+		// App has painted with the right theme — fade the native splash out.
+		void hideSplash();
 
 		const mq = window.matchMedia('(prefers-color-scheme: dark)');
 		const handler = () => {
@@ -49,7 +55,8 @@
 <button
 	type="button"
 	onclick={cycle}
-	class="bg-surface border-rule text-ink hover:bg-paper fixed top-3 right-3 z-50 grid h-9 w-9 place-items-center rounded-full border shadow-sm transition-colors"
+	class="bg-surface border-rule text-ink hover:bg-paper fixed right-3 z-50 grid h-9 w-9 place-items-center rounded-full border shadow-sm transition-colors"
+	style="top: calc(0.75rem + env(safe-area-inset-top, 0px))"
 	aria-label="Cycle theme (current: {theme})"
 	title="Theme: {theme}"
 >
