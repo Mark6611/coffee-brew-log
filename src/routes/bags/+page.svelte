@@ -9,6 +9,7 @@
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
+	import DialedBadge from '$lib/components/DialedBadge.svelte';
 
 	let bags = $state<Bag[]>([]);
 	let brews = $state<Brew[]>([]);
@@ -162,8 +163,11 @@
 						>
 							<div class="flex-1">
 								<div
-									class="font-display text-ink text-[22px] font-medium leading-[1.15] tracking-[-0.005em]"
-								>{bag.name}</div>
+									class="font-display text-ink flex flex-wrap items-center gap-2 text-[22px] font-medium leading-[1.15] tracking-[-0.005em]"
+								>
+									{bag.name}
+									{#if bag.dialedRecipe}<DialedBadge />{/if}
+								</div>
 								{#if bag.roaster}
 									<div class="text-muted mt-0.5 text-[13px]">{bag.roaster}</div>
 								{/if}

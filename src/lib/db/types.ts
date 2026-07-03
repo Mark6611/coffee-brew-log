@@ -39,7 +39,9 @@ export const BagSchema = z.object({
 	archived: z.boolean().optional(),
 	createdAt: z.string().datetime(),
 	// Settled espresso recipe (user-declared via "Mark dialed"; JSONB in Supabase).
-	dialedRecipe: DialedRecipeSchema.optional(),
+	// nullish, not optional: RE-OPEN must push an explicit null through the
+	// upsert to clear the server column — an absent key would leave it stale.
+	dialedRecipe: DialedRecipeSchema.nullish(),
 	// Tombstone marker. Set on soft-delete; null/absent means alive. Read paths
 	// in repository.ts filter these out. Kept in the database for cross-device
 	// delete propagation (without it, a delete on one device gets re-pulled

@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import type { Bag, Brew } from '$lib/db/types';
-	import { getBagById, listBags, listBrews, archiveBag } from '$lib/db/repository';
+	import { getBagById, listBags, listBrews, archiveBag, updateBag } from '$lib/db/repository';
 	import {
 		bagConsumption,
 		daysSinceRoast,
@@ -12,11 +12,20 @@
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import { resolveGrindSuggestion } from '$lib/brews/grind';
+	import {
+		espressoShotsFor,
+		resolveNextShot,
+		readyToDial,
+		inWindow,
+		ROAST_TARGETS
+	} from '$lib/brews/dialin';
 	import { roastMeta } from '$lib/bags/roast';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ProcessBadge from '$lib/components/ProcessBadge.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
 	import MarkdownText from '$lib/components/MarkdownText.svelte';
+	import TargetWindowBar from '$lib/components/TargetWindowBar.svelte';
+	import DialedBadge from '$lib/components/DialedBadge.svelte';
 
 	const bagId = $derived(page.params.id as string);
 
@@ -98,6 +107,93 @@
 			: null
 	);
 
+	// ── Espresso dial-in ────────────────────────────────────────────────────
+	const shots = $derived(bag ? espressoShotsFor(bag, allBrews) : []);
+	const lastShot = $derived(shots.length > 0 ? shots[shots.length - 1] : null);
+	// "Espresso bags only" — bags aren't typed by method, so infer: show the
+	// section once espresso shots exist (or a recipe was declared), and show
+	// the empty invite only on a brand-new bag with a roast level and no brews
+	// of any method yet (a pour-over-only bag thus never sees it).
+	const showDialIn = $derived.by(() => {
+		const b = bag;
+		if (!b) return false;
+		if (shots.length > 0) return true;
+		if (b.dialedRecipe) return true;
+		if (brews.length === 0 && b.roastLevel) return true;
+		return false;
+	});
+	const roastTarget = $derived(bag?.roastLevel ? ROAST_TARGETS[bag.roastLevel] : null);
+	const windowShots = $derived(
+		shots.map((s, i) => ({
+			timeS: s.brewTimeSeconds,
+			extraction: s.extraction,
+			latest: i === shots.length - 1
+		}))
+	);
+	const grindPath = $derived(shots.map((s) => s.grindSetting));
+	const canDial = $derived.by(() => {
+		const b = bag;
+		if (!b) return false;
+		if (b.dialedRecipe) return false;
+		return shots.length >= 2;
+	});
+	const dialReady = $derived(bag ? readyToDial(shots, bag.roastLevel ?? undefined) : false);
+	const nextMove = $derived.by(() => {
+		const b = bag;
+		if (!b) return null;
+		if (b.dialedRecipe) return null;
+		if (!lastShot) return null;
+		return resolveNextShot(lastShot, b);
+	});
+	const pullShotHref = $derived.by(() => {
+		const b = bag;
+		if (!b) return '';
+		const base = `/brews/new?bagId=${b.id}&method=espresso&quick=1`;
+		const n = nextMove;
+		if (n?.kind === 'move' && n.target) return `${base}&grind=${encodeURIComponent(n.target)}`;
+		return base;
+	});
+	const settledAtShot = $derived.by(() => {
+		const b = bag;
+		if (!b?.dialedRecipe) return null;
+		const declared = b.dialedRecipe.declaredAt;
+		return shots.filter((s) => s.brewedAt <= declared).length;
+	});
+	function extractionTone(e: string | undefined): string {
+		if (e === 'sour') return 'var(--color-warning)';
+		if (e === 'balanced') return 'var(--color-success)';
+		if (e === 'bitter') return 'var(--color-danger)';
+		return 'var(--color-faint)';
+	}
+
+	async function handleMarkDialed() {
+		const b = bag;
+		const last = lastShot;
+		if (!b || !last) return;
+		const updated: Bag = {
+			...b,
+			dialedRecipe: {
+				grind: last.grindSetting,
+				doseG: last.doseGrams,
+				yieldG: last.yieldGrams,
+				timeS: last.brewTimeSeconds,
+				tempC: last.waterTempC ?? undefined,
+				declaredAt: new Date().toISOString()
+			}
+		};
+		await updateBag(updated);
+		bag = updated;
+	}
+
+	async function handleReopen() {
+		const b = bag;
+		if (!b) return;
+		if (!confirm('Re-open the dial-in? The settled recipe will be cleared.')) return;
+		const updated: Bag = { ...b, dialedRecipe: null };
+		await updateBag(updated);
+		bag = updated;
+	}
+
 	async function handleArchive() {
 		if (!bag) return;
 		const archive = !bag.archived;
@@ -156,8 +252,11 @@
 				<Eyebrow>BAG · #{bagNumber.toString().padStart(2, '0')}{bag.archived ? ' · ARCHIVED' : ''}</Eyebrow>
 			{/if}
 			<h1
-				class="font-display text-ink mt-1 text-[30px] font-medium leading-[1.1] tracking-[-0.015em]"
-			>{bag.name}</h1>
+				class="font-display text-ink mt-1 flex flex-wrap items-center gap-2.5 text-[30px] font-medium leading-[1.1] tracking-[-0.015em]"
+			>
+				{bag.name}
+				{#if bag.dialedRecipe}<DialedBadge />{/if}
+			</h1>
 			<div class="text-muted mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px]">
 				{#if bag.roaster}
 					<span>{bag.roaster}</span>
@@ -275,6 +374,144 @@
 							{/if}
 						{/each}
 					</div>
+				</div>
+			{/if}
+
+			<!-- Espresso dial-in -->
+			{#if showDialIn}
+				<div class="mt-5">
+					<div class="mb-2 flex items-baseline justify-between">
+						<Eyebrow>DIAL-IN</Eyebrow>
+						{#if bag.dialedRecipe}
+							<span
+								class="font-mono text-[10px] font-medium tracking-[0.12em] uppercase"
+								style="color: var(--color-success)"
+							>Settled at shot {settledAtShot}</span>
+						{:else if shots.length > 0}
+							<span
+								class="text-muted font-mono text-[10px] font-medium tracking-[0.12em] uppercase"
+							>Shot {shots.length} · converging</span>
+						{/if}
+					</div>
+
+					{#if roastTarget != null && bag.roastLevel}
+						<div class="bg-surface border-hairline rounded-2xl border p-4">
+							<div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+								<span
+									class="text-muted font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase"
+								>{bag.roastLevel} roast target · 18g dose</span>
+								<span class="text-copper font-mono text-[11.5px] font-medium">
+									{roastTarget.ratio} → {roastTarget.yieldG}
+								</span>
+							</div>
+							<div class="mt-3">
+								<TargetWindowBar window={roastTarget.time} shots={windowShots} />
+							</div>
+							{#if shots.length === 0}
+								<p class="text-muted font-display mt-2.5 text-[13px] leading-[1.45] italic">
+									No shots yet. The window is where {bag.roastLevel} roasts usually land — your
+									dots will appear here as you pull.
+								</p>
+							{/if}
+						</div>
+					{/if}
+
+					{#if bag.dialedRecipe}
+						{@const r = bag.dialedRecipe}
+						<div
+							class="mt-3 rounded-2xl border p-4"
+							style="border-color: color-mix(in oklab, var(--color-success) 25%, transparent); background: color-mix(in oklab, var(--color-success) 6%, transparent)"
+						>
+							<div class="flex items-baseline justify-between">
+								<span
+									class="font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase"
+									style="color: var(--color-success)"
+								>Settled recipe</span>
+								<button
+									type="button"
+									onclick={handleReopen}
+									class="text-muted hover:text-ink font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase transition-colors"
+								>Re-open</button>
+							</div>
+							<div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+								<span
+									class="font-mono text-[24px] font-medium tracking-[-0.01em]"
+									style="color: var(--color-success)"
+								>{r.grind}</span>
+								<span class="text-muted font-mono text-[11.5px] tracking-[0.04em] uppercase">
+									Dose {r.doseG}g · Yield {r.yieldG}g · Time ~{r.timeS}s{r.tempC != null
+										? ` · Temp ${r.tempC}°C`
+										: ''}
+								</span>
+							</div>
+							<p class="text-muted font-display mt-1.5 text-[12.5px] italic">
+								Declared after two consistent shots.
+							</p>
+						</div>
+					{/if}
+
+					{#if shots.length > 0}
+						<div class="mt-3 space-y-1.5">
+							{#each shots as s, i (s.id)}
+								{@const latest = i === shots.length - 1}
+								<a
+									href="/brews/{s.id}"
+									class="flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 transition-colors {latest
+										? 'bg-surface border-hairline border'
+										: 'hover:bg-paper/60'}"
+								>
+									<span class="text-muted w-4 shrink-0 text-right font-mono text-[11px]">{i + 1}</span>
+									<span
+										class="inline-block h-[7px] w-[7px] shrink-0 rounded-full"
+										style="background: {extractionTone(s.extraction)}"
+										aria-hidden="true"
+									></span>
+									<span class="text-ink shrink-0 font-mono text-[14px] font-medium">{s.grindSetting}</span>
+									<span class="text-muted shrink-0 font-mono text-[12px]"
+										>{s.yieldGrams}g · {s.brewTimeSeconds}s</span>
+									<span class="text-muted min-w-0 flex-1 truncate text-[12px]">{s.notes ?? ''}</span>
+									{#if s.rating != null}
+										<span class="text-ink shrink-0 font-mono text-[12px]">{s.rating.toFixed(1)}</span>
+									{/if}
+								</a>
+							{/each}
+						</div>
+
+						{#if grindPath.length >= 2}
+							<div class="text-muted mt-2 px-2.5 font-mono text-[11px] tracking-[0.04em]">
+								<span class="text-[9.5px] font-medium tracking-[0.14em] uppercase">Grind path</span>
+								{#each grindPath as g, i (i)}
+									{#if i > 0}<span class="text-faint"> → </span>{/if}
+									<span class={i === grindPath.length - 1 ? 'text-copper font-semibold' : ''}>{g}</span>
+								{/each}
+							</div>
+						{/if}
+					{/if}
+
+					{#if !bag.dialedRecipe}
+						<div class="mt-3.5 flex flex-wrap items-center gap-2">
+							<a
+								href={pullShotHref}
+								class="bg-copper text-paper hover:bg-copper-dk inline-flex h-10 items-center rounded-xl px-4 text-[13.5px] font-medium transition-colors"
+							>{shots.length === 0 ? 'Pull first shot' : 'Pull next shot'}</a>
+							{#if canDial}
+								<button
+									type="button"
+									onclick={handleMarkDialed}
+									class="inline-flex h-10 items-center rounded-xl border px-4 text-[13.5px] font-medium transition-all {dialReady
+										? 'border-copper text-copper bg-copper-lt'
+										: 'border-hairline text-muted hover:text-ink'}"
+								>Mark dialed</button>
+							{/if}
+						</div>
+					{:else}
+						<div class="mt-3.5">
+							<a
+								href={pullShotHref}
+								class="border-hairline text-ink hover:bg-paper inline-flex h-10 items-center rounded-xl border px-4 text-[13.5px] font-medium transition-colors"
+							>Log a shot</a>
+						</div>
+					{/if}
 				</div>
 			{/if}
 

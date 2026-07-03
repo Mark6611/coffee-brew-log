@@ -11,10 +11,12 @@
 	} from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
+	import { resolveNextShot, espressoShotsFor } from '$lib/brews/dialin';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
+	import ExtractionScale from '$lib/components/ExtractionScale.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
 	import MarkdownText from '$lib/components/MarkdownText.svelte';
 	import PublishedBadge from '$lib/components/PublishedBadge.svelte';
@@ -67,6 +69,43 @@
 	);
 	const outLabel = $derived(!brew ? '' : brew.method === 'espresso' ? 'YIELD' : 'WATER');
 	const verb = $derived(!brew ? '' : brew.method === 'espresso' ? 'espresso' : 'brew');
+
+	// ── NEXT SHOT card (dial-in loop) ──────────────────────────────────────
+	// Shown only when this is the LATEST espresso shot of a bag that isn't
+	// dialed yet — advising from a stale shot would mislead.
+	let nextShotDismissed = $state(false);
+	const nextShot = $derived.by(() => {
+		const b = brew;
+		const theBag = bag;
+		if (!b || !theBag) return null;
+		if (b.method !== 'espresso') return null;
+		if (theBag.dialedRecipe) return null;
+		const shots = espressoShotsFor(theBag, allBrews);
+		const latest = shots.length > 0 ? shots[shots.length - 1] : null;
+		if (latest == null) return null;
+		if (latest.id !== b.id) return null;
+		return resolveNextShot(b, theBag);
+	});
+	const pullNextHref = $derived.by(() => {
+		const b = brew;
+		const n = nextShot;
+		if (!b?.bagId || !n) return null;
+		const grind =
+			n.kind === 'move' && n.target ? n.target : b.grindSetting;
+		return `/brews/new?bagId=${b.bagId}&method=espresso&quick=1&grind=${encodeURIComponent(grind)}`;
+	});
+
+	// Compound booleans live here, not in the template (Svelte 5.55 paren gotcha).
+	const espressoExtraction = $derived(brew?.method === 'espresso' ? brew.extraction : undefined);
+	const showVariables = $derived.by(() => {
+		const b = brew;
+		if (!b) return false;
+		if (b.grindSetting) return true;
+		if (b.waterTempC != null) return true;
+		if (b.balance) return true;
+		if (b.method === 'espresso' && b.extraction) return true;
+		return false;
+	});
 
 	const ratioValue = $derived(brew ? ratio(brew) : null);
 
@@ -319,8 +358,61 @@
 				</div>
 			</div>
 
+			<!-- Next shot (dial-in) card -->
+			{#if nextShot != null && !nextShotDismissed}
+				{@const isHold = nextShot.kind === 'hold'}
+				<div
+					class="rounded-[18px] border px-4 py-[16px] {isHold
+						? 'border-success/25 bg-success/[0.07]'
+						: 'border-copper/25 bg-copper-lt'}"
+				>
+					<div
+						class="font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] {isHold
+							? 'text-success'
+							: 'text-copper-dk'}"
+					>NEXT SHOT</div>
+					<div
+						class="font-display text-ink mt-1.5 text-[18px] font-medium leading-[1.25]"
+					>{nextShot.headline}</div>
+					{#if nextShot.kind === 'move'}
+						<div class="mt-2 flex items-baseline gap-2.5">
+							<span class="text-copper font-mono text-[26px] font-medium tracking-[-0.02em]">
+								{nextShot.target ?? '—'}
+							</span>
+							<span
+								class="text-copper-dk font-mono text-[10.5px] font-medium tracking-[0.12em] uppercase"
+							>
+								{nextShot.deltaTicks < 0 ? '−' : '+'}{Math.abs(nextShot.deltaTicks)} ticks · {nextShot.direction}
+							</span>
+						</div>
+					{/if}
+					<p class="text-ink-70 mt-2 text-[13px] leading-[1.5]">{nextShot.prose}</p>
+					<div class="mt-3.5 flex flex-wrap items-center gap-2">
+						{#if pullNextHref}
+							<a
+								href={pullNextHref}
+								class="{isHold
+									? 'bg-success text-paper'
+									: 'bg-copper text-paper hover:bg-copper-dk'} inline-flex h-10 items-center rounded-xl px-4 text-[13.5px] font-medium transition-colors"
+							>
+								{#if isHold}
+									Repeat this shot
+								{:else}
+									Pull next shot at {nextShot.kind === 'move' ? (nextShot.target ?? 'adjusted grind') : ''}
+								{/if}
+							</a>
+						{/if}
+						<button
+							type="button"
+							onclick={() => (nextShotDismissed = true)}
+							class="text-muted hover:text-ink px-2 text-[13px] transition-colors"
+						>Done</button>
+					</div>
+				</div>
+			{/if}
+
 			<!-- Variables card -->
-			{#if brew.grindSetting || (brew.method === 'pour-over' && brew.waterTempC != null) || brew.balance}
+			{#if showVariables}
 				<div class="bg-surface border-hairline rounded-[18px] border px-4 py-[14px]">
 					<div class="grid grid-cols-2 gap-4">
 						{#if brew.grindSetting}
@@ -336,17 +428,26 @@
 								</div>
 							</div>
 						{/if}
-						{#if brew.method === 'pour-over' && brew.waterTempC != null}
+						{#if brew.waterTempC != null}
 							<div>
 								<div
 									class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-								>WATER TEMP</div>
+								>{brew.method === 'espresso' ? 'BREW TEMP' : 'WATER TEMP'}</div>
 								<div class="text-ink mt-1 font-mono text-[19px] font-medium tracking-[-0.01em]">
 									{brew.waterTempC}°C
 								</div>
 							</div>
 						{/if}
 					</div>
+
+					{#if espressoExtraction}
+						<div class="mt-4">
+							<div
+								class="text-muted mb-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
+							>TASTE</div>
+							<ExtractionScale value={espressoExtraction} readonly />
+						</div>
+					{/if}
 
 					{#if brew.balance}
 						<div class="mt-4">

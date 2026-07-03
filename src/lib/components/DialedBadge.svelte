@@ -1,0 +1,20 @@
+<!-- Olive tonal pill marking a bag with a settled (user-declared) espresso recipe. -->
+<span
+	class="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-[3px] font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
+	style="background: color-mix(in oklab, var(--color-success) 14%, transparent); color: var(--color-success)"
+>
+	<svg
+		width="9"
+		height="9"
+		viewBox="0 0 10 10"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.8"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M1.5 5.5l2.5 2.5L8.5 2.5" />
+	</svg>
+	Dialed
+</span>
