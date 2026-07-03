@@ -6,6 +6,25 @@ export type Process = z.infer<typeof ProcessSchema>;
 export const RoastLevelSchema = z.enum(['light', 'medium', 'medium-dark', 'dark']);
 export type RoastLevel = z.infer<typeof RoastLevelSchema>;
 
+// Espresso extraction verdict (sour ↔ balanced ↔ bitter) — the actionable
+// dial-in taste axis. Distinct from `balance` (light/balanced/heavy), which
+// measures body: a shot can be heavy AND sour.
+export const ExtractionSchema = z.enum(['sour', 'balanced', 'bitter']);
+export type Extraction = z.infer<typeof ExtractionSchema>;
+
+// A settled espresso recipe, snapshotted onto the bag when the user taps
+// "Mark dialed". The one sanctioned exception to "computed at read time,
+// never stored": it's a user declaration, not a computation.
+export const DialedRecipeSchema = z.object({
+	grind: z.string().min(1),
+	doseG: z.number().positive(),
+	yieldG: z.number().positive(),
+	timeS: z.number().positive(),
+	tempC: z.number().positive().optional(),
+	declaredAt: z.string().datetime()
+});
+export type DialedRecipe = z.infer<typeof DialedRecipeSchema>;
+
 export const BagSchema = z.object({
 	id: z.string().uuid(),
 	name: z.string().min(1),
@@ -19,6 +38,8 @@ export const BagSchema = z.object({
 	notes: z.string().optional(),
 	archived: z.boolean().optional(),
 	createdAt: z.string().datetime(),
+	// Settled espresso recipe (user-declared via "Mark dialed"; JSONB in Supabase).
+	dialedRecipe: DialedRecipeSchema.optional(),
 	// Tombstone marker. Set on soft-delete; null/absent means alive. Read paths
 	// in repository.ts filter these out. Kept in the database for cross-device
 	// delete propagation (without it, a delete on one device gets re-pulled
@@ -69,7 +90,12 @@ const BrewBase = z.object({
 
 export const EspressoBrewSchema = BrewBase.extend({
 	method: z.literal('espresso'),
-	yieldGrams: z.number().positive()
+	yieldGrams: z.number().positive(),
+	// Dial-in taste axis (espresso-only; drives resolveNextShot()).
+	extraction: ExtractionSchema.optional(),
+	// Brew temp as set on the machine (Series 1 profiles) — optional, espresso
+	// reuses the same column name pour-over already has.
+	waterTempC: z.number().positive().optional()
 });
 
 export const PourOverBrewSchema = BrewBase.extend({
