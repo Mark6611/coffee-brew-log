@@ -124,11 +124,13 @@ export function resolveNextShot(shot: EspressoBrew, bag: Bag): NextShot | null {
 
 // ─── Dial-in helpers for the UI layer ────────────────────────────────────
 
-/** This bag's espresso shots, oldest → newest (dial-in progression order). */
+/** This bag's espresso shots, oldest → newest (dial-in progression order).
+ * Ties on brewedAt (minute-precision manual entry) break on id so "latest"
+ * is deterministic. */
 export function espressoShotsFor(bag: Bag, allBrews: Brew[]): EspressoBrew[] {
 	return allBrews
 		.filter((b): b is EspressoBrew => b.method === 'espresso' && b.bagId === bag.id && !b.deletedAt)
-		.sort((a, b) => (a.brewedAt < b.brewedAt ? -1 : 1));
+		.sort((a, b) => a.brewedAt.localeCompare(b.brewedAt) || a.id.localeCompare(b.id));
 }
 
 /** Whether a shot landed inside its roast window. Null when no roast level. */

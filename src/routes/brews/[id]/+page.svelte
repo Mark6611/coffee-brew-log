@@ -124,7 +124,7 @@
 			doseGrams: brew.doseGrams,
 			yieldGrams: brew.method === 'espresso' ? brew.yieldGrams : null,
 			waterGrams: brew.method === 'pour-over' ? brew.waterGrams : null,
-			waterTempC: brew.method === 'pour-over' ? brew.waterTempC ?? null : null,
+			waterTempC: brew.waterTempC ?? null,
 			brewTimeSeconds: brew.method === 'espresso' ? brew.brewTimeSeconds : null,
 			brewMinutes:
 				brew.method === 'pour-over' ? Math.floor(brew.brewTimeSeconds / 60) : null,

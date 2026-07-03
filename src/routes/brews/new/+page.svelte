@@ -48,37 +48,41 @@
 	const selectedBag = $derived(allBags.find((b) => b.id === bagId) ?? null);
 
 	onMount(async () => {
-		// Restore draft first (so URL bagId can override)
+		// URL params first: a quick-log entry (dial-in CTA) must never inherit a
+		// stale draft — the draft belongs to whatever form run left it behind.
+		const params = page.url.searchParams;
+		quickMode = params.get('quick') === '1';
+		urlGrind = params.get('grind');
+		const urlBagId = params.get('bagId');
+		if (params.get('method') === 'espresso') method = 'espresso';
+
 		const raw = sessionStorage.getItem(DRAFT_KEY);
 		if (raw) {
-			try {
-				const d = JSON.parse(raw);
-				method = d.method ?? method;
-				bagId = d.bagId ?? bagId;
-				doseGrams = d.doseGrams ?? doseGrams;
-				yieldGrams = d.yieldGrams ?? yieldGrams;
-				waterGrams = d.waterGrams ?? waterGrams;
-				waterTempC = d.waterTempC ?? waterTempC;
-				brewTimeSeconds = d.brewTimeSeconds ?? brewTimeSeconds;
-				brewMinutes = d.brewMinutes ?? brewMinutes;
-				brewSecondsPart = d.brewSecondsPart ?? brewSecondsPart;
-				grindSetting = d.grindSetting ?? grindSetting;
-				notes = d.notes ?? notes;
-				rating = d.rating ?? rating;
-				balance = d.balance ?? balance;
-				extraction = d.extraction ?? extraction;
-				if (d.brewedAtLocal) brewedAtLocal = d.brewedAtLocal;
-			} catch {}
+			if (!quickMode) {
+				try {
+					const d = JSON.parse(raw);
+					method = d.method ?? method;
+					bagId = d.bagId ?? bagId;
+					doseGrams = d.doseGrams ?? doseGrams;
+					yieldGrams = d.yieldGrams ?? yieldGrams;
+					waterGrams = d.waterGrams ?? waterGrams;
+					waterTempC = d.waterTempC ?? waterTempC;
+					brewTimeSeconds = d.brewTimeSeconds ?? brewTimeSeconds;
+					brewMinutes = d.brewMinutes ?? brewMinutes;
+					brewSecondsPart = d.brewSecondsPart ?? brewSecondsPart;
+					grindSetting = d.grindSetting ?? grindSetting;
+					notes = d.notes ?? notes;
+					rating = d.rating ?? rating;
+					balance = d.balance ?? balance;
+					extraction = d.extraction ?? extraction;
+					if (d.brewedAtLocal) brewedAtLocal = d.brewedAtLocal;
+				} catch {}
+			}
 			sessionStorage.removeItem(DRAFT_KEY);
 		}
 
-		// URL params override (returning from /bags/new, or a dial-in CTA)
-		const params = page.url.searchParams;
-		const urlBagId = params.get('bagId');
+		// URL bagId overrides the draft (returning from /bags/new, or a CTA)
 		if (urlBagId) bagId = urlBagId;
-		if (params.get('method') === 'espresso') method = 'espresso';
-		quickMode = params.get('quick') === '1';
-		urlGrind = params.get('grind');
 
 		[allBags, allBrews] = await Promise.all([listBags(), listBrews()]);
 		brewCount = allBrews.length;
@@ -94,23 +98,42 @@
 	// Staged grind for espresso — the dial-in precedence layer that outranks
 	// the plain grind engine while a dial-in is active:
 	//   dialedRecipe > next-shot move (from the LAST shot) > existing engine.
-	type Stage = { value: string; provenance: string; deltaTicks: number | null };
+	// Only 'dialed' auto-fills the field. A computed 'move'/'hold' is NEVER
+	// auto-applied (handoff constraint) — it surfaces as a tap-to-use chip;
+	// tapping (or arriving via a CTA's ?grind=) is the user applying it.
+	type Stage = {
+		kind: 'dialed' | 'move' | 'hold';
+		value: string;
+		provenance: string;
+		deltaTicks: number | null;
+	};
 	const espressoStage = $derived.by<Stage | null>(() => {
 		if (method !== 'espresso' || !selectedBag) return null;
 		if (selectedBag.dialedRecipe) {
-			return { value: selectedBag.dialedRecipe.grind, provenance: 'DIALED RECIPE', deltaTicks: null };
+			return {
+				kind: 'dialed',
+				value: selectedBag.dialedRecipe.grind,
+				provenance: 'DIALED RECIPE',
+				deltaTicks: null
+			};
 		}
 		if (!lastShot) return null;
 		const next = resolveNextShot(lastShot, selectedBag);
 		if (next?.kind === 'move' && next.target) {
 			return {
+				kind: 'move',
 				value: next.target,
 				provenance: `NEXT-SHOT MOVE · ${Math.abs(next.deltaTicks)} TICKS ${next.direction.toUpperCase()}`,
 				deltaTicks: next.deltaTicks
 			};
 		}
 		if (next?.kind === 'hold') {
-			return { value: lastShot.grindSetting, provenance: 'ON TARGET — REPEAT', deltaTicks: 0 };
+			return {
+				kind: 'hold',
+				value: lastShot.grindSetting,
+				provenance: 'ON TARGET — REPEAT',
+				deltaTicks: 0
+			};
 		}
 		return null;
 	});
@@ -135,13 +158,29 @@
 		const firstInit = grindCtx === '';
 		grindCtx = key;
 		grindApplied = false;
-		if (method === 'espresso' && doseGrams == null) doseGrams = ESPRESSO_DEFAULT_DOSE;
-		const staged = urlGrind ?? stage?.value ?? (s?.kind === 'prefill' ? s.value : null);
+		if (method === 'espresso') {
+			if (quickMode && lastShot) {
+				// Carry over what the strip advertises: last shot's dose + temp.
+				doseGrams = lastShot.doseGrams;
+				waterTempC = lastShot.waterTempC ?? null;
+			} else if (doseGrams == null) {
+				doseGrams = ESPRESSO_DEFAULT_DOSE;
+			}
+		} else if (doseGrams === ESPRESSO_DEFAULT_DOSE) {
+			// Don't leak the espresso default into the pour-over form.
+			doseGrams = null;
+		}
+		// Auto-fill sources only: an explicit URL handoff (user tapped a CTA),
+		// the bag's settled recipe, or — when no dial-in stage exists — the
+		// engine's same-bag prefill. Computed moves are chip-only.
+		let autoFill: string | null = urlGrind;
+		if (autoFill == null && stage?.kind === 'dialed') autoFill = stage.value;
+		if (autoFill == null && stage == null && s?.kind === 'prefill') autoFill = s.value;
 		urlGrind = null; // one-shot
 		if (firstInit) {
-			if (staged != null && grindSetting.trim() === '') grindSetting = staged;
+			if (autoFill != null && grindSetting.trim() === '') grindSetting = autoFill;
 		} else {
-			grindSetting = staged ?? '';
+			grindSetting = autoFill ?? '';
 		}
 	});
 
@@ -156,6 +195,14 @@
 	function applyGrind() {
 		if (grindSuggestion) {
 			grindSetting = grindSuggestion.value;
+			grindApplied = true;
+		}
+	}
+
+	function applyStage() {
+		const stage = espressoStage;
+		if (stage) {
+			grindSetting = stage.value;
 			grindApplied = true;
 		}
 	}
@@ -223,6 +270,12 @@
 		try {
 			if (!selectedBag) {
 				throw new Error('Pick or create a bag for this brew.');
+			}
+			// The espresso DOSE input lives inside the collapsed group, where
+			// native form validation can't reach it when closed.
+			if (method === 'espresso' && (doseGrams == null || doseGrams <= 0)) {
+				moreOpen = true;
+				throw new Error('Dose is missing — set it under "Rating, balance, notes, temp".');
 			}
 
 			const totalBrewSeconds =
@@ -395,6 +448,47 @@
 							{grindStaged.provenance}
 						{/if}
 					</p>
+				{:else if espressoStage != null && grindSetting.trim() === ''}
+					<!-- Computed dial-in move/hold: chip-only, never auto-applied -->
+					<button
+						type="button"
+						onclick={applyStage}
+						class="bg-copper-lt mt-2 flex w-full items-center gap-2.5 rounded-[12px] px-3 py-2.5 text-left transition hover:brightness-[0.98]"
+					>
+						<svg
+							width="18"
+							height="18"
+							viewBox="0 0 18 18"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.3"
+							class="text-copper-dk shrink-0"
+							aria-hidden="true"
+						>
+							<circle cx="9" cy="9" r="6.5" />
+							<circle cx="9" cy="9" r="2.5" />
+						</svg>
+						<span class="min-w-0 flex-1">
+							<span class="text-copper-dk block text-[13px]"
+								>Suggested <span class="font-mono font-medium">{espressoStage.value}</span></span
+							>
+							<span
+								class="text-copper-dk/70 mt-0.5 block font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+								>{espressoStage.provenance}</span
+							>
+						</span>
+						<span
+							class="text-copper shrink-0 font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+							>Tap to use</span
+						>
+					</button>
+				{:else if espressoStage != null}
+					<button
+						type="button"
+						onclick={applyStage}
+						class="text-faint hover:text-copper-dk mt-1.5 text-[12px] transition-colors"
+						>Suggested <span class="font-mono">{espressoStage.value}</span> · use instead</button
+					>
 				{:else if grindSuggestion}
 					{@const sug = grindSuggestion}
 					{@const prov =

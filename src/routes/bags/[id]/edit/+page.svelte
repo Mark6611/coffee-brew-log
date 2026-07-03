@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { getBagById, updateBag } from '$lib/db/repository';
-	import { BagSchema, type Process, type RoastLevel } from '$lib/db/types';
+	import { BagSchema, type Bag, type Process, type RoastLevel } from '$lib/db/types';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import OriginInput from '$lib/components/OriginInput.svelte';
@@ -20,6 +20,7 @@
 	let notes = $state('');
 	let createdAt = $state('');
 	let archived = $state<boolean | undefined>(undefined);
+	let dialedRecipeStash: Bag['dialedRecipe'] = undefined;
 	let error = $state<string | null>(null);
 	let submitting = $state(false);
 	let loading = $state(true);
@@ -45,6 +46,9 @@
 		notes = bag.notes ?? '';
 		createdAt = bag.createdAt;
 		archived = bag.archived;
+		// Settled dial-in recipe: no edit UI here — pass through untouched so an
+		// edit-save never strips it (whole-row put + upsert).
+		dialedRecipeStash = bag.dialedRecipe;
 		loading = false;
 	});
 
@@ -66,7 +70,8 @@
 				pricePaid: pricePaid ?? undefined,
 				notes: notes.trim() || undefined,
 				archived,
-				createdAt
+				createdAt,
+				dialedRecipe: dialedRecipeStash
 			};
 			const bag = BagSchema.parse(candidate);
 			await updateBag(bag);

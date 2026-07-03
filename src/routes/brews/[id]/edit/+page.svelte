@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { getBrewById, updateBrew, listBrews, listBags } from '$lib/db/repository';
-	import { BrewSchema, type Bag, type BagSnapshot } from '$lib/db/types';
+	import { BrewSchema, type Bag, type BagSnapshot, type Extraction } from '$lib/db/types';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
 	import Chip from '$lib/components/Chip.svelte';
@@ -47,6 +47,8 @@
 	let yieldGrams = $state<number | null>(null);
 	let waterGrams = $state<number | null>(null);
 	let waterTempC = $state<number | null>(null);
+	// Espresso dial-in taste verdict — carried through edits, no UI here.
+	let extractionStash: Extraction | undefined = undefined;
 	let brewTimeSeconds = $state<number | null>(null);
 	let brewMinutes = $state<number | null>(null);
 	let brewSecondsPart = $state<number | null>(null);
@@ -155,6 +157,10 @@
 		if (found.method === 'espresso') {
 			yieldGrams = found.yieldGrams;
 			brewTimeSeconds = found.brewTimeSeconds;
+			// Dial-in fields: no edit UI here (yet) — pass through untouched so
+			// an edit-save never strips them (whole-row put + upsert).
+			waterTempC = found.waterTempC ?? null;
+			extractionStash = found.extraction;
 		} else {
 			waterGrams = found.waterGrams;
 			waterTempC = found.waterTempC ?? null;
@@ -317,7 +323,13 @@
 
 			const candidate =
 				method === 'espresso'
-					? { ...base, method: 'espresso' as const, yieldGrams: yieldGrams ?? NaN }
+					? {
+							...base,
+							method: 'espresso' as const,
+							yieldGrams: yieldGrams ?? NaN,
+							extraction: extractionStash,
+							waterTempC: waterTempC ?? undefined
+						}
 					: {
 							...base,
 							method: 'pour-over' as const,
