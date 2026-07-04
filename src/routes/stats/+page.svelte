@@ -20,8 +20,15 @@
 		type Range
 	} from '$lib/stats/compute';
 	import { formatRatio } from '$lib/brews/compute';
+	import { costSummary } from '$lib/stats/cost';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
+
+	// No currency is stored — figures are in whatever the owner paid. Group
+	// thousands; keep cents only for small (per-cup) numbers.
+	function money(n: number, dp = 0): string {
+		return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: dp });
+	}
 
 	let allBrews = $state<Brew[]>([]);
 	let allBags = $state<Bag[]>([]);
@@ -53,6 +60,9 @@
 	const byHour = $derived(brewsByHour(filtered));
 	const peak = $derived(peakHour(byHour));
 	const quote = $derived(pullQuote(allBrews, allBags, range));
+	// Per-cup economics respect the range; bean spend is lifetime (a purchase
+	// isn't dated to a brew). Section hides entirely when no prices are logged.
+	const cost = $derived(costSummary(allBags, filtered));
 
 	const maxWeek = $derived(Math.max(...weekly, 1));
 	const maxHour = $derived(Math.max(...byHour, 1));
@@ -232,6 +242,36 @@
 							<div class="bg-copper-dk h-full" style="width: {ms.espressoPct}%"></div>
 						{/if}
 					</div>
+				</div>
+			{/if}
+
+			<!-- Cost — only when prices have been logged -->
+			{#if cost.costPerCup != null || cost.totalBeanSpend > 0}
+				<div>
+					<Eyebrow class="mb-2">COST</Eyebrow>
+					<div class="flex items-end justify-between gap-4">
+						<div>
+							<div class="text-copper font-display font-mono text-[28px] font-medium leading-none tracking-[-0.02em]">
+								{cost.costPerCup != null ? money(cost.costPerCup, 1) : '—'}
+							</div>
+							<div class="text-muted mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] uppercase">
+								PER CUP{#if cost.cupsWithCost > 0} · {cost.cupsWithCost} counted{/if}
+							</div>
+						</div>
+						<div class="text-right">
+							<div class="text-copper-dk font-display font-mono text-[28px] font-medium leading-none tracking-[-0.02em]">
+								{money(cost.totalBrewedValue)}
+							</div>
+							<div class="text-muted mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] uppercase">
+								BREWED THIS RANGE
+							</div>
+						</div>
+					</div>
+					{#if cost.totalBeanSpend > 0}
+						<p class="text-faint mt-2.5 font-mono text-[10.5px] tracking-[0.04em]">
+							{money(cost.totalBeanSpend)} spent on beans all-time
+						</p>
+					{/if}
 				</div>
 			{/if}
 

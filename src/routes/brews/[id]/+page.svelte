@@ -12,6 +12,7 @@
 	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import { resolveNextShot, espressoShotsFor } from '$lib/brews/dialin';
+	import { stageBrewAgain } from '$lib/brews/repeat';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
@@ -118,31 +119,7 @@
 
 	function handleDuplicate() {
 		if (!brew) return;
-		const draft = {
-			method: brew.method,
-			bagId: brew.bagId,
-			doseGrams: brew.doseGrams,
-			yieldGrams: brew.method === 'espresso' ? brew.yieldGrams : null,
-			waterGrams: brew.method === 'pour-over' ? brew.waterGrams : null,
-			waterTempC: brew.waterTempC ?? null,
-			brewTimeSeconds: brew.method === 'espresso' ? brew.brewTimeSeconds : null,
-			brewMinutes:
-				brew.method === 'pour-over' ? Math.floor(brew.brewTimeSeconds / 60) : null,
-			brewSecondsPart: brew.method === 'pour-over' ? brew.brewTimeSeconds % 60 : null,
-			grindSetting: brew.grindSetting,
-			notes: brew.notes ?? '',
-			rating: null,
-			balance: '',
-			brewedAtLocal: localDatetimeNow()
-		};
-		sessionStorage.setItem('brew-form-draft', JSON.stringify(draft));
-		goto('/brews/new');
-	}
-
-	function localDatetimeNow(): string {
-		const now = new Date();
-		const tz = now.getTimezoneOffset() * 60_000;
-		return new Date(now.getTime() - tz).toISOString().slice(0, 16);
+		goto(stageBrewAgain(brew));
 	}
 
 	const bagConsumptionData = $derived(
@@ -304,6 +281,13 @@
 					/>
 				{/if}
 			</div>
+
+			<!-- Photo -->
+			{#if brew.photo}
+				<div class="border-hairline bg-surface overflow-hidden rounded-[22px] border">
+					<img src={brew.photo} alt="This brew" class="max-h-[340px] w-full object-cover" />
+				</div>
+			{/if}
 
 			<!-- Hero ratio block -->
 			<div
@@ -580,10 +564,10 @@
 						stroke-linejoin="round"
 						stroke-linecap="round"
 					>
-						<rect x="2.5" y="2.5" width="9" height="9" rx="1.5" />
-						<path d="M5.5 5.5h9v9h-9V11" />
+						<path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />
+						<path d="M13.5 2.5V5H11" />
 					</svg>
-					Duplicate
+					Brew again
 				</button>
 				<button
 					type="button"

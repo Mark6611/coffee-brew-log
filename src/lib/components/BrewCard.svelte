@@ -4,6 +4,7 @@
 	import { formatRatio, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
+	import { stageBrewAgain } from '$lib/brews/repeat';
 	import Badge from './Badge.svelte';
 	import OriginFlag from './OriginFlag.svelte';
 	import MarkdownText from './MarkdownText.svelte';
@@ -34,6 +35,11 @@
 
 	function openDetail() {
 		goto(`/brews/${brew.id}`);
+	}
+
+	function brewAgain(e: MouseEvent) {
+		e.stopPropagation();
+		goto(stageBrewAgain(brew));
 	}
 
 	function handleCardKeydown(e: KeyboardEvent) {
@@ -110,9 +116,32 @@
 				</span>
 			{/if}
 		</div>
-		<span class="text-muted font-mono text-[11px] tracking-[0.04em]">
-			{formatTimeAgo(brew.brewedAt)}
-		</span>
+		<div class="flex items-center gap-1.5">
+			<span class="text-muted font-mono text-[11px] tracking-[0.04em]">
+				{formatTimeAgo(brew.brewedAt)}
+			</span>
+			<button
+				type="button"
+				onclick={brewAgain}
+				class="text-faint hover:text-copper hover:bg-copper-lt grid h-[22px] w-[22px] place-items-center rounded-full transition-colors"
+				aria-label="Brew this again"
+				title="Brew again"
+			>
+				<svg
+					width="13"
+					height="13"
+					viewBox="0 0 16 16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.6"
+					stroke-linejoin="round"
+					stroke-linecap="round"
+				>
+					<path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />
+					<path d="M13.5 2.5V5H11" />
+				</svg>
+			</button>
+		</div>
 	</div>
 
 	{#if brew.coffeeName || bag}
@@ -177,6 +206,12 @@
 			class="border-hairline font-display text-ink-70 mt-3 border-t border-dashed pt-3 text-[14.5px] leading-[1.45] italic"
 		>
 			<MarkdownText text={brew.notes} />
+		</div>
+	{/if}
+
+	{#if brew.photo}
+		<div class="border-hairline mt-3 overflow-hidden rounded-[12px] border">
+			<img src={brew.photo} alt="" class="max-h-[160px] w-full object-cover" />
 		</div>
 	{/if}
 </div>

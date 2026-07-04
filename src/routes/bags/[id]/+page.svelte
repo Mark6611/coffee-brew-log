@@ -20,6 +20,7 @@
 		ROAST_TARGETS
 	} from '$lib/brews/dialin';
 	import { roastMeta } from '$lib/bags/roast';
+	import { costPerGram, costPerCupForBag } from '$lib/stats/cost';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ProcessBadge from '$lib/components/ProcessBadge.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
@@ -62,6 +63,17 @@
 	}
 
 	const consumption = $derived(bag ? bagConsumption(bag, brews) : null);
+	const costPerCup = $derived(bag ? costPerCupForBag(bag, brews) : null);
+	const perGram = $derived(bag ? costPerGram(bag) : null);
+	// Estimated value of coffee still in the bag (remaining grams × cost/gram).
+	const remainingValue = $derived(
+		perGram != null && consumption?.remaining != null
+			? perGram * Math.max(0, consumption.remaining)
+			: null
+	);
+	function money(n: number, dp = 0): string {
+		return n.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: dp });
+	}
 
 	const bagNumber = $derived.by(() => {
 		const current = bag;
@@ -274,6 +286,13 @@
 				{/if}
 			</div>
 
+			<!-- Label photo -->
+			{#if bag.photo}
+				<div class="border-hairline bg-surface mt-5 overflow-hidden rounded-2xl border">
+					<img src={bag.photo} alt="{bag.name} label" class="max-h-[320px] w-full object-cover" />
+				</div>
+			{/if}
+
 			<!-- Key facts card -->
 			<div class="bg-surface border-hairline mt-5 grid grid-cols-3 gap-3 rounded-2xl border p-4">
 				<div>
@@ -339,6 +358,23 @@
 							{(consumption.used - bag.weightGrams).toFixed(1)}g over recorded weight
 						</div>
 					{/if}
+				</div>
+			{/if}
+
+			<!-- Cost (only when a price is logged for this bag) -->
+			{#if perGram != null}
+				<div class="mt-3 flex items-center justify-between">
+					<div class="text-muted font-mono text-[10.5px] font-medium uppercase tracking-[0.14em]">
+						COST{#if costPerCup != null} · {money(costPerCup, 1)}/cup{/if}
+					</div>
+					<div class="font-mono text-[12px]">
+						{#if remainingValue != null}
+							<span class="text-copper">{money(remainingValue)}</span>
+							<span class="text-muted"> left</span>
+						{:else}
+							<span class="text-muted">{money(perGram, 2)}/g</span>
+						{/if}
+					</div>
 				</div>
 			{/if}
 

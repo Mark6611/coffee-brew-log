@@ -13,6 +13,7 @@
 	import StarRow from '$lib/components/StarRow.svelte';
 	import ExtractionScale from '$lib/components/ExtractionScale.svelte';
 	import ScaleAssist from '$lib/components/ScaleAssist.svelte';
+	import PhotoInput from '$lib/components/PhotoInput.svelte';
 	import { scale } from '$lib/scale/scale.svelte';
 
 	type Method = 'espresso' | 'pour-over';
@@ -34,6 +35,7 @@
 	let brewSecondsPart = $state<number | null>(null);
 	let grindSetting = $state('');
 	let notes = $state('');
+	let photo = $state<string | null | undefined>(undefined);
 	let rating = $state<number | null>(null);
 	let balance = $state<Balance>('');
 	let extraction = $state<Extraction | ''>('');
@@ -295,6 +297,7 @@
 				brewTimeSeconds: totalBrewSeconds,
 				grindSetting: grindSetting.trim(),
 				notes: notes.trim() || undefined,
+				photo: photo ?? undefined,
 				rating: rating ?? undefined,
 				balance: balance || undefined
 			};
@@ -709,6 +712,11 @@
 								class="bg-paper border-hairline text-ink-70 placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display w-full resize-none rounded-[14px] border px-3.5 py-3.5 text-[15px] leading-[1.45] italic transition outline-none focus:ring-2"
 							></textarea>
 						</div>
+
+						<div>
+							<Eyebrow class="mb-2">PHOTO</Eyebrow>
+							<PhotoInput bind:photo label="photo" />
+						</div>
 					</div>
 				{/if}
 			</div>
@@ -936,6 +944,12 @@
 					placeholder="Stone fruit, jasmine on cool-down…"
 					class="bg-paper border-hairline text-ink-70 placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display w-full resize-none rounded-[14px] border px-3.5 py-3.5 text-[15px] leading-[1.45] italic transition outline-none focus:ring-2"
 				></textarea>
+			</div>
+
+			<!-- Photo -->
+			<div>
+				<Eyebrow class="mb-2">PHOTO</Eyebrow>
+				<PhotoInput bind:photo label="photo" />
 			</div>
 		{/if}
 

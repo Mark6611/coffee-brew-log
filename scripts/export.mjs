@@ -50,7 +50,9 @@ function escapeCsv(value) {
 //
 // For CSV we drop `userId` (same UUID on every row — pure noise) and shove
 // `id` to the last column (still useful for restore, just out of the way).
-const CSV_HIDDEN = new Set(['userId']);
+// `photo` is a multi-KB base64 data URL — kept in the lossless JSON, dropped
+// from the human-readable CSV so it doesn't blow out a spreadsheet column.
+const CSV_HIDDEN = new Set(['userId', 'photo']);
 const CSV_TAIL = ['id'];
 
 function toCsv(rows) {

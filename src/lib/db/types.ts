@@ -37,6 +37,10 @@ export const BagSchema = z.object({
 	pricePaid: z.number().nonnegative().optional(),
 	notes: z.string().optional(),
 	archived: z.boolean().optional(),
+	// Bag-label photo, stored inline as a downscaled JPEG data URL (see
+	// $lib/photo/resize). nullish, not optional: clearing the photo must push an
+	// explicit null through the upsert to blank the server column.
+	photo: z.string().nullish(),
 	createdAt: z.string().datetime(),
 	// Settled espresso recipe (user-declared via "Mark dialed"; JSONB in Supabase).
 	// nullish, not optional: RE-OPEN must push an explicit null through the
@@ -78,6 +82,9 @@ const BrewBase = z.object({
 	rating: z.number().min(0.5).max(5).optional(),
 	balance: z.enum(['light', 'balanced', 'heavy']).optional(),
 	isFavorite: z.boolean().optional(),
+	// Photo of the cup/setup, stored inline as a downscaled JPEG data URL. See
+	// BagSchema.photo — nullish for the same clear-on-remove reason.
+	photo: z.string().nullish(),
 	// See BagSchema.deletedAt — same semantics.
 	deletedAt: z.string().datetime().optional(),
 	// Blog publishing (Phase A) — see project_html_brew_handoff.md.

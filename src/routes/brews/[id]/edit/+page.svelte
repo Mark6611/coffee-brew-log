@@ -10,6 +10,7 @@
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
+	import PhotoInput from '$lib/components/PhotoInput.svelte';
 	import PublishToBlogSection from '$lib/components/PublishToBlogSection.svelte';
 
 	type Method = 'espresso' | 'pour-over';
@@ -27,6 +28,7 @@
 		brewSecondsPart: number | null;
 		grindSetting: string;
 		notes: string;
+		photo: string | null | undefined;
 		rating: number | null;
 		balance: Balance;
 		brewedAtLocal: string;
@@ -54,6 +56,7 @@
 	let brewSecondsPart = $state<number | null>(null);
 	let grindSetting = $state('');
 	let notes = $state('');
+	let photo = $state<string | null | undefined>(undefined);
 	let rating = $state<number | null>(null);
 	let balance = $state<Balance>('');
 	let brewedAtLocal = $state('');
@@ -87,6 +90,7 @@
 			brewSecondsPart,
 			grindSetting,
 			notes,
+			photo,
 			rating,
 			balance,
 			brewedAtLocal,
@@ -114,6 +118,7 @@
 		brewSecondsPart: 'brew time',
 		grindSetting: 'grind',
 		notes: 'notes',
+		photo: 'photo',
 		rating: 'rating',
 		balance: 'balance',
 		brewedAtLocal: 'brewed at',
@@ -169,6 +174,7 @@
 		}
 		grindSetting = found.grindSetting;
 		notes = found.notes ?? '';
+		photo = found.photo ?? undefined;
 		rating = found.rating ?? null;
 		balance = (found.balance ?? '') as Balance;
 		brewedAtLocal = isoToLocal(found.brewedAt);
@@ -197,6 +203,7 @@
 				if (d.brewSecondsPart !== undefined) brewSecondsPart = d.brewSecondsPart;
 				if (d.grindSetting !== undefined) grindSetting = d.grindSetting;
 				if (d.notes !== undefined) notes = d.notes;
+				if (d.photo !== undefined) photo = d.photo;
 				if (d.rating !== undefined) rating = d.rating;
 				if (d.balance !== undefined) balance = d.balance;
 				if (d.brewedAtLocal !== undefined) brewedAtLocal = d.brewedAtLocal;
@@ -251,6 +258,7 @@
 		brewSecondsPart = orig.brewSecondsPart;
 		grindSetting = orig.grindSetting;
 		notes = orig.notes;
+		photo = orig.photo;
 		rating = orig.rating;
 		balance = orig.balance;
 		brewedAtLocal = orig.brewedAtLocal;
@@ -311,6 +319,7 @@
 				brewTimeSeconds: totalBrewSeconds,
 				grindSetting: grindSetting.trim(),
 				notes: notes.trim() || undefined,
+				photo,
 				rating: rating ?? undefined,
 				balance: balance || undefined,
 				isFavorite,
@@ -730,6 +739,18 @@
 					placeholder="Stone fruit, jasmine on cool-down…"
 					class="bg-paper border-hairline text-ink-70 placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display w-full resize-none rounded-[14px] border px-3.5 py-3.5 text-[15px] leading-[1.45] italic transition outline-none focus:ring-2"
 				></textarea>
+			</div>
+
+			<!-- Photo -->
+			<div class="relative">
+				{#if isDirty('photo')}
+					<div
+						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						aria-hidden="true"
+					></div>
+				{/if}
+				<Eyebrow class="mb-2" dirty={isDirty('photo')}>PHOTO</Eyebrow>
+				<PhotoInput bind:photo label="photo" />
 			</div>
 
 			<!-- Publish to blog (Variant B — tinted card) -->

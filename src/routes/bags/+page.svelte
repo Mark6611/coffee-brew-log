@@ -161,7 +161,14 @@
 							href="/bags/{bag.id}"
 							class="mb-2 flex items-start justify-between gap-3 -m-2 p-2 rounded-lg hover:bg-paper/40 transition-colors"
 						>
-							<div class="flex-1">
+							{#if bag.photo}
+								<img
+									src={bag.photo}
+									alt=""
+									class="border-hairline h-[46px] w-[46px] shrink-0 rounded-[11px] border object-cover"
+								/>
+							{/if}
+							<div class="min-w-0 flex-1">
 								<div
 									class="font-display text-ink flex flex-wrap items-center gap-2 text-[22px] font-medium leading-[1.15] tracking-[-0.005em]"
 								>

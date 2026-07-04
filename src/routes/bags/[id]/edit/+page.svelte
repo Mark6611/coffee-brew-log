@@ -8,8 +8,10 @@
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import OriginInput from '$lib/components/OriginInput.svelte';
 	import RoastChips from '$lib/components/RoastChips.svelte';
+	import PhotoInput from '$lib/components/PhotoInput.svelte';
 
 	let name = $state('');
+	let photo = $state<string | null | undefined>(undefined);
 	let roaster = $state('');
 	let origin = $state('');
 	let roastedAt = $state('');
@@ -36,6 +38,7 @@
 			return;
 		}
 		name = bag.name;
+		photo = bag.photo ?? undefined;
 		roaster = bag.roaster ?? '';
 		origin = bag.origin ?? '';
 		roastedAt = bag.roastedAt ?? '';
@@ -69,6 +72,7 @@
 				weightGrams: weightGrams ?? undefined,
 				pricePaid: pricePaid ?? undefined,
 				notes: notes.trim() || undefined,
+				photo,
 				archived,
 				createdAt,
 				dialedRecipe: dialedRecipeStash
@@ -132,6 +136,11 @@
 					required
 					class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
 				/>
+			</div>
+
+			<div>
+				<Eyebrow class="mb-2">LABEL PHOTO</Eyebrow>
+				<PhotoInput bind:photo label="label photo" />
 			</div>
 
 			<div>
