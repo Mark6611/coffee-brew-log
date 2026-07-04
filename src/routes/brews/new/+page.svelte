@@ -12,6 +12,8 @@
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
 	import ExtractionScale from '$lib/components/ExtractionScale.svelte';
+	import ScaleAssist from '$lib/components/ScaleAssist.svelte';
+	import { scale } from '$lib/scale/scale.svelte';
 
 	type Method = 'espresso' | 'pour-over';
 	type Balance = '' | 'light' | 'balanced' | 'heavy';
@@ -331,6 +333,8 @@
 	});
 	const isEspresso = $derived(method === 'espresso');
 	const showQuickChrome = $derived.by(() => quickMode && lastShot != null);
+	// The assist-ready notches on YIELD/SHOT TIME light up when the scale streams.
+	const scaleReceiving = $derived(scale.status === 'connected' && scale.weightG != null);
 </script>
 
 <svelte:head>
@@ -545,6 +549,9 @@
 				{/if}
 			</div>
 
+			<!-- Live scale assist — fills the yield/time fields below -->
+			<ScaleAssist {doseGrams} bind:yieldGrams bind:brewTimeSeconds />
+
 			<!-- Yield + Shot time (the two manual fields; assist-ready notches) -->
 			<div class="grid grid-cols-2 gap-2.5">
 				<div>
@@ -553,7 +560,7 @@
 						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 relative flex h-14 items-center gap-1.5 overflow-hidden rounded-[14px] border px-4 transition focus-within:ring-2"
 					>
 						<span
-							class="bg-hairline absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r"
+							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving ? 'bg-copper freshness-pulse' : 'bg-hairline'}"
 							aria-hidden="true"
 						></span>
 						<input
@@ -575,7 +582,7 @@
 						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 relative flex h-14 items-center gap-1.5 overflow-hidden rounded-[14px] border px-4 transition focus-within:ring-2"
 					>
 						<span
-							class="bg-hairline absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r"
+							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving ? 'bg-copper freshness-pulse' : 'bg-hairline'}"
 							aria-hidden="true"
 						></span>
 						<input
