@@ -28,4 +28,21 @@ if (typeof window !== 'undefined') {
 
 export async function signOut() {
 	await supabase.auth.signOut();
+	// Wipe the local copy so a signed-in user's data doesn't linger on a shared
+	// device (matches the privacy policy). The server keeps it; it re-pulls on
+	// next sign-in. Dynamic import breaks the repository→sync→auth import cycle.
+	try {
+		const { clearLocalCache } = await import('./db/repository');
+		await clearLocalCache();
+		// Reset the sync indicator so it doesn't show a stale "synced 2m ago".
+		const { syncStatus } = await import('./syncStatus.svelte');
+		syncStatus.syncing = false;
+		syncStatus.lastError = null;
+		syncStatus.lastSyncAt = null;
+		if (typeof window !== 'undefined') {
+			window.dispatchEvent(new Event('brewlog:synced'));
+		}
+	} catch (e) {
+		console.warn('Local cache clear on sign-out failed:', e);
+	}
 }

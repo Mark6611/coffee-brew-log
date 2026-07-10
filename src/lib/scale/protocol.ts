@@ -113,6 +113,9 @@ function parseWeight(p: number[]): WeightEvent | null {
 	const divisor = exp >= 1 && exp <= 6 ? 10 ** exp : 1;
 	let grams = magnitude / divisor;
 	if (p[5] & 0x02) grams = -grams;
+	// Drop physically implausible readings — a corrupt/misframed packet must not
+	// write a garbage weight into the yield field. Acaia scales top out ~2 kg.
+	if (!Number.isFinite(grams) || Math.abs(grams) >= 5000) return null;
 	return { kind: 'weight', grams };
 }
 

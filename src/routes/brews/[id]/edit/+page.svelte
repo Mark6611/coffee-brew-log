@@ -12,6 +12,7 @@
 	import StarRow from '$lib/components/StarRow.svelte';
 	import PhotoInput from '$lib/components/PhotoInput.svelte';
 	import PublishToBlogSection from '$lib/components/PublishToBlogSection.svelte';
+	import { BLOG_ENABLED } from '$lib/blog/config';
 
 	type Method = 'espresso' | 'pour-over';
 	type Balance = '' | 'light' | 'balanced' | 'heavy';
@@ -753,14 +754,17 @@
 				<PhotoInput bind:photo label="photo" />
 			</div>
 
-			<!-- Publish to blog (Variant B — tinted card) -->
-			<PublishToBlogSection
-				bind:published
-				bind:blogTitle
-				bind:blogBody
-				{publishedAt}
-				dirty={isDirty('published', 'blogTitle', 'blogBody')}
-			/>
+			<!-- Publish to blog (Variant B — tinted card). Hidden until the public
+			     blog is live — see BLOG_ENABLED in $lib/blog/config. -->
+			{#if BLOG_ENABLED}
+				<PublishToBlogSection
+					bind:published
+					bind:blogTitle
+					bind:blogBody
+					{publishedAt}
+					dirty={isDirty('published', 'blogTitle', 'blogBody')}
+				/>
+			{/if}
 
 			{#if error}
 				<div

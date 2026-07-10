@@ -9,6 +9,7 @@
 	import BrewCard from '$lib/components/BrewCard.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import LiveDot from '$lib/components/LiveDot.svelte';
+	import { BLOG_ENABLED } from '$lib/blog/config';
 
 	type Filter = 'all' | 'espresso' | 'pour-over' | 'favorites' | 'published';
 
@@ -153,7 +154,7 @@
 			<Chip active={filter === 'pour-over'} onclick={() => (filter = 'pour-over')}>Pour-over</Chip>
 			<Chip active={filter === 'espresso'} onclick={() => (filter = 'espresso')}>Espresso</Chip>
 			<Chip active={filter === 'favorites'} onclick={() => (filter = 'favorites')}>Favorites</Chip>
-			{#if publishedCount > 0}
+			{#if BLOG_ENABLED && publishedCount > 0}
 				<Chip active={filter === 'published'} onclick={() => (filter = 'published')}>
 					<span class="inline-flex items-center gap-1.5">
 						<LiveDot color="var(--color-copper)" size={4.5} />

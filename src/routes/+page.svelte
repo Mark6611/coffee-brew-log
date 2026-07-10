@@ -10,10 +10,18 @@
 	let allBrews = $state<Brew[]>([]);
 	let allBags = $state<Bag[]>([]);
 	let loading = $state(true);
+	let loadError = $state(false);
 
 	async function load() {
-		[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
-		loading = false;
+		try {
+			loadError = false;
+			[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
+		} catch (e) {
+			console.error('Home load failed:', e);
+			loadError = true;
+		} finally {
+			loading = false;
+		}
 	}
 
 	onMount(() => {
@@ -35,6 +43,13 @@
 		const md = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' }).toUpperCase();
 		return `${day} · ${md}`;
 	})();
+
+	const greeting = (() => {
+		const h = new Date().getHours();
+		if (h < 12) return 'Good morning.';
+		if (h < 18) return 'Good afternoon.';
+		return 'Good evening.';
+	})();
 </script>
 
 <svelte:head>
@@ -42,9 +57,23 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-10">
-	{#if !loading}
+	{#if loading}
+		<div class="px-[22px] pt-16 text-center">
+			<p class="text-muted text-sm">Loading…</p>
+		</div>
+	{:else if loadError}
+		<div class="px-[22px] pt-16 text-center">
+			<p class="font-display text-ink text-[20px] font-medium">Couldn't load your brews.</p>
+			<p class="text-muted mt-2 text-[14px]">Something went wrong reading your data on this device.</p>
+			<button
+				type="button"
+				onclick={load}
+				class="bg-copper text-paper hover:bg-copper-dk mt-5 inline-flex h-11 items-center rounded-2xl px-5 text-[14px] font-medium transition-colors"
+			>Try again</button>
+		</div>
+	{:else}
 		<AppHeader eyebrow={todayEyebrow}>
-			Good morning.<br />
+			{greeting}<br />
 			<span class="text-muted italic">
 				{#if allBrews.length === 0}Your first brew.{:else}Brew #{allBrews.length + 1}.{/if}
 			</span>

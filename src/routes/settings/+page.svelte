@@ -2,10 +2,13 @@
 	import { onMount } from 'svelte';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { BagSchema, BrewSchema } from '$lib/db/types';
-	import { listBags, listBrews, bulkImport, wipeAllData } from '$lib/db/repository';
+	import { listBags, listBrews, bulkImport, wipeAllData, deleteAccount } from '$lib/db/repository';
 	import { auth, signOut } from '$lib/auth.svelte';
 	import { fullSync, getSyncStatus } from '$lib/sync';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
+
+	// Marketing version — mirror ios/App CFBundleShortVersionString (MARKETING_VERSION).
+	const APP_VERSION = '1.0';
 
 	let brewCount = $state(0);
 	let bagCount = $state(0);
@@ -94,18 +97,40 @@
 	async function handleWipe() {
 		const total = brewCount + bagCount;
 		if (total === 0) return;
+		const where = auth.user ? 'this device and your synced account' : 'this device';
 		if (
 			!confirm(
-				`Delete all ${brewCount} brew${brewCount === 1 ? '' : 's'} and ${bagCount} bag${bagCount === 1 ? '' : 's'}? This cannot be undone.`
+				`Delete all ${brewCount} brew${brewCount === 1 ? '' : 's'} and ${bagCount} bag${bagCount === 1 ? '' : 's'} from ${where}? This permanently erases them and cannot be undone.`
 			)
 		)
-			return;
-		if (!confirm('Final confirmation — type cancel to abort. Everything will be erased.'))
 			return;
 		await wipeAllData();
 		await loadCounts();
 		message = 'All data wiped.';
 		error = null;
+	}
+
+	let deletingAccount = $state(false);
+	async function handleDeleteAccount() {
+		if (!auth.user) return;
+		if (
+			!confirm(
+				`Delete your account (${auth.user.email}) and everything in it? This removes your account and all synced data permanently and cannot be undone.`
+			)
+		)
+			return;
+		deletingAccount = true;
+		error = null;
+		message = null;
+		try {
+			await deleteAccount();
+			await loadCounts();
+			message = 'Your account and all data were deleted.';
+		} catch (err) {
+			error = `Could not delete your account: ${err instanceof Error ? err.message : String(err)}. Please email us and we'll remove it.`;
+		} finally {
+			deletingAccount = false;
+		}
 	}
 
 	async function handleFileChange(e: Event) {
@@ -214,7 +239,8 @@
 			class="font-display text-ink mt-1 text-[30px] font-medium leading-[1.05] tracking-[-0.015em]"
 		>Data</h1>
 		<p class="text-muted font-display mt-2 text-[15px] italic">
-			Everything lives on this device. Back up regularly.
+			Your brews live on this device, and sync to your account when you're signed in. Back up
+			regularly.
 		</p>
 	</div>
 
@@ -276,6 +302,32 @@
 								</svg>
 								Sync now
 							</button>
+						</div>
+
+						<div class="border-hairline border-t pt-3">
+							<button
+								type="button"
+								onclick={handleDeleteAccount}
+								disabled={deletingAccount}
+								class="text-danger hover:text-danger inline-flex items-center gap-1.5 text-[12px] font-medium transition-opacity disabled:opacity-50"
+							>
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 16 16"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.6"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
+								</svg>
+								{deletingAccount ? 'Deleting account…' : 'Delete account'}
+							</button>
+							<p class="text-faint mt-1.5 text-[11px] leading-[1.4]">
+								Permanently deletes your account and all synced data.
+							</p>
 						</div>
 					</div>
 				{:else}
@@ -408,8 +460,14 @@
 			<div class="border-hairline mt-8 border-t pt-6">
 				<Eyebrow class="text-danger mb-2">DANGER ZONE</Eyebrow>
 				<p class="text-muted mb-3 text-[13px] leading-[1.5]">
-					Delete every brew and bag from this device. Cannot be undone. Export first if you'd like a
-					safety net.
+					{#if auth.user}
+						Delete every brew and bag — from this device <strong class="text-ink-70">and your
+						account</strong> — but keep your account itself. Cannot be undone. Export first if you'd
+						like a safety net. To remove your account entirely, use “Delete account” above.
+					{:else}
+						Delete every brew and bag from this device. Cannot be undone. Export first if you'd like a
+						safety net.
+					{/if}
 				</p>
 				<button
 					type="button"
@@ -429,8 +487,35 @@
 					>
 						<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
 					</svg>
-					Wipe all data
+					{auth.user ? 'Delete all data' : 'Wipe all data'}
 				</button>
+			</div>
+
+			<!-- About -->
+			<div class="border-hairline mt-8 border-t pt-6">
+				<Eyebrow class="mb-2">ABOUT</Eyebrow>
+				<a
+					href="/privacy"
+					class="bg-surface border-hairline hover:bg-paper/50 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors"
+				>
+					<span class="text-ink text-[14px]">Privacy Policy</span>
+					<svg
+						width="14"
+						height="14"
+						viewBox="0 0 16 16"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="text-faint shrink-0"
+					>
+						<path d="M6 3l5 5-5 5" />
+					</svg>
+				</a>
+				<p class="text-faint mt-3 text-center font-mono text-[11px] tracking-[0.04em]">
+					Coffee Brew Log · v{APP_VERSION}
+				</p>
 			</div>
 		</div>
 	{/if}

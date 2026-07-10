@@ -63,16 +63,29 @@ export async function addBrew(brew: Brew): Promise<string> {
 export async function getBrewById(id: string): Promise<Brew | undefined> {
 	const row = await db.brews.get(id);
 	if (!row) return undefined;
-	const parsed = BrewSchema.parse(row);
+	const r = BrewSchema.safeParse(row);
+	if (!r.success) {
+		console.warn('[repository] unparseable brew row:', r.error.issues[0]?.message);
+		return undefined;
+	}
 	// Treat tombstoned rows as not found — same surface area as a hard delete
 	// from the caller's perspective.
-	if (parsed.deletedAt) return undefined;
-	return parsed;
+	if (r.data.deletedAt) return undefined;
+	return r.data;
 }
 
 export async function listBrews(): Promise<Brew[]> {
 	const rows = await db.brews.orderBy('brewedAt').reverse().toArray();
-	return rows.map((row) => BrewSchema.parse(row)).filter((b) => !b.deletedAt);
+	// safeParse + skip: one malformed row (e.g. a future-schema row pulled from
+	// the server) must not throw and blank the whole list — matches the sync layer.
+	return rows.flatMap((row) => {
+		const r = BrewSchema.safeParse(row);
+		if (!r.success) {
+			console.warn('[repository] skipping unparseable brew row:', r.error.issues[0]?.message);
+			return [];
+		}
+		return r.data.deletedAt ? [] : [r.data];
+	});
 }
 
 export async function updateBrew(brew: Brew): Promise<void> {
@@ -116,15 +129,26 @@ export async function searchBrews(query: string): Promise<Brew[]> {
 
 export async function listBags(): Promise<Bag[]> {
 	const rows = await db.bags.orderBy('createdAt').reverse().toArray();
-	return rows.map((row) => BagSchema.parse(row)).filter((b) => !b.deletedAt);
+	return rows.flatMap((row) => {
+		const r = BagSchema.safeParse(row);
+		if (!r.success) {
+			console.warn('[repository] skipping unparseable bag row:', r.error.issues[0]?.message);
+			return [];
+		}
+		return r.data.deletedAt ? [] : [r.data];
+	});
 }
 
 export async function getBagById(id: string): Promise<Bag | undefined> {
 	const row = await db.bags.get(id);
 	if (!row) return undefined;
-	const parsed = BagSchema.parse(row);
-	if (parsed.deletedAt) return undefined;
-	return parsed;
+	const r = BagSchema.safeParse(row);
+	if (!r.success) {
+		console.warn('[repository] unparseable bag row:', r.error.issues[0]?.message);
+		return undefined;
+	}
+	if (r.data.deletedAt) return undefined;
+	return r.data;
 }
 
 export async function addBag(bag: Bag): Promise<string> {
@@ -158,6 +182,37 @@ export async function wipeAllData(): Promise<void> {
 		if (e1) console.warn('Wipe brews on server failed:', e1.message);
 		if (e2) console.warn('Wipe bags on server failed:', e2.message);
 	})();
+}
+
+/**
+ * Clear ONLY the local IndexedDB cache — used on sign-out so a signed-in user's
+ * data doesn't linger on a shared device (matches the privacy policy). Unlike
+ * wipeAllData this does NOT touch the server: the account keeps its synced data
+ * and re-pulls it on the next sign-in.
+ */
+export async function clearLocalCache(): Promise<void> {
+	await db.transaction('rw', db.brews, db.bags, async () => {
+		await db.brews.clear();
+		await db.bags.clear();
+	});
+}
+
+/**
+ * Delete the signed-in user's account and ALL of their data — required by App
+ * Review 5.1.1(v) for any app that offers account creation. Calls the
+ * `delete_account` Postgres RPC (SECURITY DEFINER: removes the user's rows and
+ * their auth.users record in one transaction, scoped to auth.uid()), then wipes
+ * the local cache and ends the session. Throws if the RPC fails.
+ */
+export async function deleteAccount(): Promise<void> {
+	const { supabase } = await import('$lib/supabase');
+	const { error } = await supabase.rpc('delete_account');
+	if (error) throw new Error(error.message);
+	await clearLocalCache();
+	await supabase.auth.signOut();
+	if (typeof window !== 'undefined') {
+		window.dispatchEvent(new Event('brewlog:synced'));
+	}
 }
 
 export async function bulkImport(brews: Brew[], bags: Bag[]): Promise<void> {

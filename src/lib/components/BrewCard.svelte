@@ -5,6 +5,7 @@
 	import { freshnessTone, freshnessLabel, freshnessStale } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import { stageBrewAgain } from '$lib/brews/repeat';
+	import { BLOG_ENABLED } from '$lib/blog/config';
 	import Badge from './Badge.svelte';
 	import OriginFlag from './OriginFlag.svelte';
 	import MarkdownText from './MarkdownText.svelte';
@@ -107,7 +108,7 @@
 					</svg>
 				</button>
 			{/if}
-			{#if brew.published}
+			{#if BLOG_ENABLED && brew.published}
 				<span
 					class="bg-copper-lt text-copper-dk inline-flex h-[22px] items-center gap-1.5 rounded-full px-2 font-mono text-[10.5px] font-medium tracking-[0.12em] uppercase"
 				>

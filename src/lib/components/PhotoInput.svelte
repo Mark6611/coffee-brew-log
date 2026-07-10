@@ -60,15 +60,15 @@
 		<div class="border-hairline bg-surface relative overflow-hidden rounded-2xl border">
 			<!-- svelte-ignore a11y_img_redundant_alt -->
 			<img src={photo} alt="{label} photo" class="max-h-[220px] w-full object-cover" />
-			<div class="absolute right-2 top-2 flex gap-1.5">
+			<div class="absolute right-1.5 top-1.5 flex gap-1">
 				<button
 					type="button"
 					onclick={pick}
-					class="bg-ink/55 text-paper hover:bg-ink/70 grid h-8 w-8 place-items-center rounded-full backdrop-blur-sm transition-colors"
+					class="bg-ink/55 text-paper hover:bg-ink/70 grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm transition-colors"
 					aria-label="Replace {label.toLowerCase()}"
 					title="Replace"
 				>
-					<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />
 						<path d="M13.5 2.5V5H11" />
 					</svg>
@@ -76,11 +76,11 @@
 				<button
 					type="button"
 					onclick={remove}
-					class="bg-ink/55 text-paper hover:bg-danger grid h-8 w-8 place-items-center rounded-full backdrop-blur-sm transition-colors"
+					class="bg-ink/55 text-paper hover:bg-danger grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm transition-colors"
 					aria-label="Remove {label.toLowerCase()}"
 					title="Remove"
 				>
-					<svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
 						<path d="M4 4l8 8M12 4l-8 8" />
 					</svg>
 				</button>

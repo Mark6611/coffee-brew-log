@@ -126,6 +126,27 @@ export function pushBrew(brew: Brew): void {
 
 // ─── Full sync (push everything local, then pull all server data) ───
 
+// Push in small batches. Brew/bag rows now carry an inline base64 photo (up to
+// a few hundred KB each), so a single upsert of the whole library can exceed the
+// request-body limit and fail wholesale. Chunking keeps each request small and
+// lets most data through even if one batch fails.
+const PUSH_CHUNK = 15;
+async function upsertChunked(
+	table: 'bags' | 'brews',
+	rows: Record<string, unknown>[]
+): Promise<boolean> {
+	for (let i = 0; i < rows.length; i += PUSH_CHUNK) {
+		const batch = rows.slice(i, i + PUSH_CHUNK);
+		const { error } = await supabase.from(table).upsert(batch as never);
+		if (error) {
+			console.warn(`Sync: push ${table} batch @${i} failed:`, error.message);
+			syncStatus.lastError = error.message;
+			return false;
+		}
+	}
+	return true;
+}
+
 export async function fullSync(): Promise<void> {
 	const user = auth.user;
 	if (!user) return;
@@ -143,23 +164,19 @@ export async function fullSync(): Promise<void> {
 		let pushOk = true;
 
 		if (localBags.length > 0) {
-			const payload = localBags.map((b) => withUserId(b, user.id));
-			const { error } = await supabase.from('bags').upsert(payload);
-			if (error) {
-				console.warn('Sync: push bags failed:', error.message);
-				syncStatus.lastError = error.message;
-				pushOk = false;
-			}
+			const ok = await upsertChunked(
+				'bags',
+				localBags.map((b) => withUserId(b, user.id))
+			);
+			pushOk = pushOk && ok;
 		}
 
 		if (localBrews.length > 0) {
-			const payload = localBrews.map((b) => withUserId(b, user.id)) as never;
-			const { error } = await supabase.from('brews').upsert(payload);
-			if (error) {
-				console.warn('Sync: push brews failed:', error.message);
-				syncStatus.lastError = error.message;
-				pushOk = false;
-			}
+			const ok = await upsertChunked(
+				'brews',
+				localBrews.map((b) => withUserId(b, user.id))
+			);
+			pushOk = pushOk && ok;
 		}
 
 		// 2. Pull all server rows

@@ -22,7 +22,7 @@
 	import MarkdownText from '$lib/components/MarkdownText.svelte';
 	import PublishedBadge from '$lib/components/PublishedBadge.svelte';
 	import OpenPublicPostCard from '$lib/components/OpenPublicPostCard.svelte';
-	import { postUrl } from '$lib/blog/config';
+	import { postUrl, BLOG_ENABLED } from '$lib/blog/config';
 
 	const brewId = $derived(page.params.id as string);
 
@@ -186,7 +186,7 @@
 							Favorite
 						</span>
 					{/if}
-					{#if brew.published}
+					{#if BLOG_ENABLED && brew.published}
 						<PublishedBadge href={postUrl(brew.id)} />
 					{/if}
 				</div>
@@ -273,7 +273,7 @@
 					</div>
 				{/if}
 
-				{#if brew.published}
+				{#if BLOG_ENABLED && brew.published}
 					<OpenPublicPostCard
 						href={postUrl(brew.id)}
 						title={brew.blogTitle ?? bag?.name ?? brew.coffeeName ?? 'Untitled brew'}
