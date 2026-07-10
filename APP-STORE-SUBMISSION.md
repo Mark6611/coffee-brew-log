@@ -132,9 +132,10 @@ Captured this session with seeded sample data; see `appstore-screenshots/` and
 | Signed **build 4** attached | ✅ via API |
 | Screenshots — 5× iPhone 6.9" + 5× iPad 12.9" | ✅ via API |
 | Export compliance (`ITSAppUsesNonExemptEncryption=false`) | ✅ auto |
-| **Free pricing** | ⬜ **USER, web UI** — Pricing and Availability → Price → Free |
-| **App Privacy data usages** (§3) | ⬜ **USER, web UI** — no public API; publish answers per §3 |
-| Submit for review | ⬜ after the two above — via API (re-add version item + `submitted:true`) or the web UI button |
+| **Free pricing** ($0.00, all 175 regions) | ✅ web UI |
+| **App Privacy data usages** (§3) | ✅ web UI (published) |
+| **Submit for review** | ✅ **WAITING_FOR_REVIEW** (build 4, submitted 2026-07-10) |
 
-Everything except Free pricing and the App Privacy questionnaire is done. Those two are the only
-App Store steps Apple exposes web-UI-only. Once both are set, submission goes through.
+**SUBMITTED.** Version 1.0 (build 4) is in App Review — status "Waiting for Review", like Buffy
+and Chawan. Remaining: run `supabase/…delete_account` SQL before the reviewer tests account
+deletion (5.1.1(v)); device-test the Acaia BLE against a real scale via TestFlight.
