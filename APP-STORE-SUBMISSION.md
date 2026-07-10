@@ -14,7 +14,7 @@ Everything to paste into App Store Connect for the 1.0 public release. Listing n
   label a hardware connection, not as displayed third-party content.)*
 - **Age rating:** 4+ — no objectionable content. 2026 questionnaire: answer "None" to every content
   category → results in 4+.
-- **Privacy Policy URL:** `https://coffee-brew-log-git-main-kornkran-s-projects.vercel.app/privacy`
+- **Privacy Policy URL:** `https://coffee-brew-log-git-main-kornkran-s-projects.vercel.app/privacy-policy.html`
   ✅ (page built this session; also linked in-app under Settings → About).
 
 ## 2. Version 1.0 metadata (ASC → the 1.0 version)
@@ -103,7 +103,7 @@ Optional, and the app is fully functional without them:
   “Connect” state; this does not affect any core feature. Screen recording available on request.
 
 No ads, no analytics, no tracking. Privacy policy:
-https://coffee-brew-log-git-main-kornkran-s-projects.vercel.app/privacy
+https://coffee-brew-log-git-main-kornkran-s-projects.vercel.app/privacy-policy.html
 ```
 
 ## 5. Screenshots
