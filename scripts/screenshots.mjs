@@ -292,8 +292,10 @@ const SCREENS = [
 ];
 
 const DEVICES = [
+	// iPhone 6.9" → 1320×2868 (APP_IPHONE_67 slot)
 	{ dir: 'appstore-screenshots', viewport: { width: 440, height: 956 }, dsf: 3 },
-	{ dir: 'appstore-screenshots-ipad13', viewport: { width: 1032, height: 1376 }, dsf: 2 }
+	// iPad 12.9" → 2048×2732 (APP_IPAD_PRO_3GEN_129 — the reliably-accepted iPad size)
+	{ dir: 'appstore-screenshots-ipad13', viewport: { width: 1024, height: 1366 }, dsf: 2 }
 ];
 
 const HIDE_CSS = `

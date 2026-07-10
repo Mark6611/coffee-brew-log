@@ -120,17 +120,21 @@ Captured this session with seeded sample data; see `appstore-screenshots/` and
   build 3 would crash when picking a photo). Submit **build 4+**.
 - Export compliance: `ITSAppUsesNonExemptEncryption = false` ✅
 
-## Status snapshot
+## Status snapshot — filled via ASC API (scripts/asc-*.mjs), 2026-07-04
 | Requirement | Status |
 |---|---|
-| Photo permission strings (camera/library) | ✅ added this session |
-| Sign-out wipes local copy | ✅ added this session |
-| In-app data deletion (local + server) | ✅ Settings → Danger zone |
-| Privacy policy (URL + in-app link) | ✅ built (deploys with web push) |
-| Export compliance | ✅ `ITSAppUsesNonExemptEncryption = false` |
-| Age rating (4+) | ⬜ complete questionnaire |
-| App Privacy label | ⬜ enter per §3 |
-| Category / subtitle / description / keywords / support URL | ⬜ paste from above |
-| Screenshots (6.9" + iPad 13") | ⬜ capture + upload |
-| Review notes | ⬜ paste from §4 |
-| Signed build 4 attached | ⬜ build + attach |
+| Description / keywords / subtitle / promo / support URL | ✅ via API |
+| Privacy Policy URL (`/privacy-policy.html`) | ✅ via API + live |
+| Category (Food & Drink / Lifestyle) | ✅ via API |
+| Age rating → **4+** (FOUR_PLUS) | ✅ via API |
+| Review notes + contact (no demo account) | ✅ via API |
+| Copyright + content-rights (no third-party) | ✅ via API |
+| Signed **build 4** attached | ✅ via API |
+| Screenshots — 5× iPhone 6.9" + 5× iPad 12.9" | ✅ via API |
+| Export compliance (`ITSAppUsesNonExemptEncryption=false`) | ✅ auto |
+| **Free pricing** | ⬜ **USER, web UI** — Pricing and Availability → Price → Free |
+| **App Privacy data usages** (§3) | ⬜ **USER, web UI** — no public API; publish answers per §3 |
+| Submit for review | ⬜ after the two above — via API (re-add version item + `submitted:true`) or the web UI button |
+
+Everything except Free pricing and the App Privacy questionnaire is done. Those two are the only
+App Store steps Apple exposes web-UI-only. Once both are set, submission goes through.
