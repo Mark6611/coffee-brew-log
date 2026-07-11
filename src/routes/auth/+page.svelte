@@ -73,7 +73,7 @@
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
 		<a
 			href="/"
-			class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -94,13 +94,15 @@
 	<div class="px-[22px]">
 		<Eyebrow>ACCOUNT</Eyebrow>
 		<h1
-			class="font-display text-ink mt-1 text-[30px] font-medium leading-[1.05] tracking-[-0.015em]"
-		>{phase === 'email' ? 'Sign in.' : 'Enter the code.'}</h1>
+			class="mt-1 font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+		>
+			{phase === 'email' ? 'Sign in.' : 'Enter the code.'}
+		</h1>
 
 		{#if phase === 'email'}
-			<p class="text-muted font-display mt-3 text-[15px] leading-[1.5] italic">
-				Sign in lets you sync brews across devices. Your existing brews on this device stay
-				right here — they'll migrate to your account on first sign-in.
+			<p class="mt-3 font-display text-[15px] leading-[1.5] text-muted italic">
+				Sign in lets you sync brews across devices. Your existing brews on this device stay right
+				here — they'll migrate to your account on first sign-in.
 			</p>
 
 			<form onsubmit={sendCode} class="mt-6 space-y-[18px]">
@@ -112,26 +114,29 @@
 						required
 						autocomplete="email"
 						placeholder="you@example.com"
-						class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
+						class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				{#if error}
 					<div
-						class="bg-danger/8 border-danger/20 text-danger rounded-[14px] border p-3 text-[13px]"
-					>{error}</div>
+						class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[13px] text-danger"
+					>
+						{error}
+					</div>
 				{/if}
 
 				<button
 					type="submit"
 					disabled={sending || !email.trim()}
-					class="bg-copper text-paper hover:bg-copper-dk flex h-14 w-full items-center justify-center rounded-2xl text-base font-medium transition-colors disabled:opacity-50"
-				>{sending ? 'Sending…' : 'Send code'}</button>
+					class="press glass-cta flex h-14 w-full items-center justify-center rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk disabled:opacity-50"
+					>{sending ? 'Sending…' : 'Send code'}</button
+				>
 			</form>
 		{:else}
-			<p class="text-muted font-display mt-3 text-[15px] leading-[1.5] italic">
-				Sent a code to <strong class="text-ink not-italic">{email}</strong>. Open the email and
-				type the code below — or tap the link to sign in this browser.
+			<p class="mt-3 font-display text-[15px] leading-[1.5] text-muted italic">
+				Sent a code to <strong class="text-ink not-italic">{email}</strong>. Open the email and type
+				the code below — or tap the link to sign in this browser.
 			</p>
 
 			<form onsubmit={verifyCode} class="mt-6 space-y-[18px]">
@@ -146,27 +151,31 @@
 						pattern="[0-9]*"
 						maxlength="10"
 						placeholder="00000000"
-						class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 text-center font-mono text-[24px] font-medium tracking-[0.25em] transition outline-none focus:ring-2"
+						class="h-14 w-full rounded-[14px] border border-hairline bg-paper px-4 text-center font-mono text-[24px] font-medium tracking-[0.25em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				{#if error}
 					<div
-						class="bg-danger/8 border-danger/20 text-danger rounded-[14px] border p-3 text-[13px]"
-					>{error}</div>
+						class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[13px] text-danger"
+					>
+						{error}
+					</div>
 				{/if}
 
 				<button
 					type="submit"
 					disabled={verifying || otpCode.trim().length < 6}
-					class="bg-copper text-paper hover:bg-copper-dk flex h-14 w-full items-center justify-center rounded-2xl text-base font-medium transition-colors disabled:opacity-50"
-				>{verifying ? 'Verifying…' : 'Verify code'}</button>
+					class="press glass-cta flex h-14 w-full items-center justify-center rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk disabled:opacity-50"
+					>{verifying ? 'Verifying…' : 'Verify code'}</button
+				>
 
 				<button
 					type="button"
 					onclick={back}
-					class="text-copper hover:text-copper-dk font-mono text-[11px] font-medium tracking-[0.14em] uppercase transition-colors"
-				>← Use a different email</button>
+					class="font-mono text-[11px] font-medium tracking-[0.14em] text-copper uppercase transition-colors hover:text-copper-dk"
+					>← Use a different email</button
+				>
 			</form>
 		{/if}
 	</div>

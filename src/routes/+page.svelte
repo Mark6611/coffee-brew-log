@@ -89,7 +89,7 @@
 		<div class="px-[22px] pt-[18px]">
 			<a
 				href="/brews/new"
-				class="bg-copper text-paper hover:bg-copper-dk flex h-14 w-full items-center justify-center gap-2.5 rounded-2xl text-base font-medium transition-colors"
+				class="press glass-cta flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk"
 			>
 				<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 					<path
@@ -107,29 +107,29 @@
 			<div class="px-[22px] pt-[18px]">
 				<Eyebrow class="mb-2.5">This week</Eyebrow>
 				<div class="grid grid-cols-3 gap-2.5">
-					<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
-						<div
-							class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-						>BREWS</div>
-						<div
-							class="font-display text-ink mt-1 text-2xl font-medium tracking-[-0.01em]"
-						>{stats.count}</div>
+					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+						<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+							BREWS
+						</div>
+						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
+							{stats.count}
+						</div>
 					</div>
-					<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
-						<div
-							class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-						>AVG RATIO</div>
-						<div
-							class="font-display text-ink mt-1 text-2xl font-medium tracking-[-0.01em]"
-						>{stats.avgRatio ?? '—'}</div>
+					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+						<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+							AVG RATIO
+						</div>
+						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
+							{stats.avgRatio ?? '—'}
+						</div>
 					</div>
-					<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
-						<div
-							class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-						>FAVORITES</div>
-						<div
-							class="font-display text-ink mt-1 text-2xl font-medium tracking-[-0.01em]"
-						>{stats.favoritesCount}</div>
+					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+						<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+							FAVORITES
+						</div>
+						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
+							{stats.favoritesCount}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -138,20 +138,24 @@
 		<div class="flex gap-5 px-[22px] pt-[18px]">
 			<a
 				href="/brews"
-				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
-			>View all brews →</a>
+				class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+				>View all brews →</a
+			>
 			<a
 				href="/bags"
-				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
-			>Bags →</a>
+				class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+				>Bags →</a
+			>
 			<a
 				href="/stats"
-				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
-			>Stats →</a>
+				class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+				>Stats →</a
+			>
 			<a
 				href="/settings"
-				class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
-			>Settings →</a>
+				class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+				>Settings →</a
+			>
 		</div>
 	{/if}
 </div>

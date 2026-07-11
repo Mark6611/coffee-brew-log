@@ -34,9 +34,7 @@
 	let allBags = $state<Bag[]>([]);
 	let loading = $state(true);
 
-	const range = $derived(
-		(page.url.searchParams.get('range') as Range | null) ?? '12w'
-	);
+	const range = $derived((page.url.searchParams.get('range') as Range | null) ?? '12w');
 	const filtered = $derived(filterByRange(allBrews, range));
 
 	onMount(async () => {
@@ -98,7 +96,7 @@
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
 		<a
 			href="/"
-			class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -122,26 +120,27 @@
 					class="inline-flex h-7 items-center rounded-full px-2.5 font-mono text-[10px] font-medium tracking-[0.1em] transition-colors {range ===
 					opt.value
 						? 'bg-ink text-paper'
-						: 'border-hairline text-muted hover:text-ink border'}"
-				>{opt.label}</a>
+						: 'border border-hairline text-muted hover:text-ink'}">{opt.label}</a
+				>
 			{/each}
 		</div>
 	</div>
 
 	{#if loading}
-		<p class="text-muted py-8 text-center text-sm">Loading…</p>
+		<p class="py-8 text-center text-sm text-muted">Loading…</p>
 	{:else if totalAll === 0}
 		<div class="px-[22px] pt-12 pb-20 text-center">
-			<h2
-				class="font-display text-ink text-[26px] font-medium leading-[1.15] tracking-[-0.01em]"
-			>Nothing to count yet.</h2>
-			<p class="text-muted font-display mt-2 max-w-[280px] text-[15px] italic">
+			<h2 class="font-display text-[26px] leading-[1.15] font-medium tracking-[-0.01em] text-ink">
+				Nothing to count yet.
+			</h2>
+			<p class="mt-2 max-w-[280px] font-display text-[15px] text-muted italic">
 				Log a brew or two and stats appear here.
 			</p>
 			<a
 				href="/brews/new"
-				class="bg-copper text-paper hover:bg-copper-dk mt-6 inline-flex h-[44px] items-center gap-2 rounded-2xl px-4 text-[14px] font-medium transition-colors"
-			>Log a brew</a>
+				class="press glass-cta mt-6 inline-flex h-[44px] items-center gap-2 rounded-full bg-copper px-4 text-[14px] font-medium text-paper hover:bg-copper-dk"
+				>Log a brew</a
+			>
 		</div>
 	{:else}
 		<div class="space-y-7 px-[22px]">
@@ -149,9 +148,10 @@
 			<div>
 				<Eyebrow>STATS</Eyebrow>
 				<h1
-					class="font-display text-ink mt-1 text-[34px] font-medium leading-[1.05] tracking-[-0.015em]"
+					class="mt-1 font-display text-[34px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 				>
-					{totalAll} {totalAll === 1 ? 'brew' : 'brews'},<br />
+					{totalAll}
+					{totalAll === 1 ? 'brew' : 'brews'},<br />
 					<span class="text-muted italic">and counting.</span>
 				</h1>
 			</div>
@@ -186,29 +186,29 @@
 
 			<!-- Quick stats -->
 			<div class="grid grid-cols-3 gap-2.5">
-				<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
-					<div
-						class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-					>THIS WEEK</div>
-					<div
-						class="text-copper font-display mt-1 text-2xl font-medium tracking-[-0.01em]"
-					>{thisWeek}</div>
+				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+					<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+						THIS WEEK
+					</div>
+					<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-copper">
+						{thisWeek}
+					</div>
 				</div>
-				<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
-					<div
-						class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-					>AVG RATIO</div>
-					<div
-						class="text-ink font-display mt-1 font-mono text-2xl font-medium tracking-[-0.01em]"
-					>{avgR != null ? `1:${avgR.toFixed(1)}` : '—'}</div>
+				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+					<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+						AVG RATIO
+					</div>
+					<div class="mt-1 font-display font-mono text-2xl font-medium tracking-[-0.01em] text-ink">
+						{avgR != null ? `1:${avgR.toFixed(1)}` : '—'}
+					</div>
 				</div>
-				<div class="bg-surface border-hairline rounded-2xl border px-3.5 pt-3.5 pb-4">
-					<div
-						class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-					>AVG RATING</div>
-					<div
-						class="text-ink font-display mt-1 text-2xl font-medium tracking-[-0.01em]"
-					>{avgRat != null ? avgRat.toFixed(1) : '—'}</div>
+				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+					<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+						AVG RATING
+					</div>
+					<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
+						{avgRat != null ? avgRat.toFixed(1) : '—'}
+					</div>
 				</div>
 			</div>
 
@@ -219,27 +219,35 @@
 					<div class="flex items-end justify-between gap-4">
 						<div>
 							<div
-								class="text-copper font-display font-mono text-[28px] font-medium leading-none tracking-[-0.02em]"
-							>{Math.round(ms.pourOverPct)}%</div>
+								class="font-display font-mono text-[28px] leading-none font-medium tracking-[-0.02em] text-copper"
+							>
+								{Math.round(ms.pourOverPct)}%
+							</div>
 							<div
-								class="text-muted mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] uppercase"
-							>POUR-OVER · {ms.pourOver}</div>
+								class="mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								POUR-OVER · {ms.pourOver}
+							</div>
 						</div>
 						<div class="text-right">
 							<div
-								class="text-copper-dk font-display font-mono text-[28px] font-medium leading-none tracking-[-0.02em]"
-							>{Math.round(ms.espressoPct)}%</div>
+								class="font-display font-mono text-[28px] leading-none font-medium tracking-[-0.02em] text-copper-dk"
+							>
+								{Math.round(ms.espressoPct)}%
+							</div>
 							<div
-								class="text-muted mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] uppercase"
-							>ESPRESSO · {ms.espresso}</div>
+								class="mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								ESPRESSO · {ms.espresso}
+							</div>
 						</div>
 					</div>
-					<div class="mt-3 flex h-2.5 overflow-hidden rounded-full gap-[2px]">
+					<div class="mt-3 flex h-2.5 gap-[2px] overflow-hidden rounded-full">
 						{#if ms.pourOverPct > 0}
-							<div class="bg-copper h-full" style="width: {ms.pourOverPct}%"></div>
+							<div class="h-full bg-copper" style="width: {ms.pourOverPct}%"></div>
 						{/if}
 						{#if ms.espressoPct > 0}
-							<div class="bg-copper-dk h-full" style="width: {ms.espressoPct}%"></div>
+							<div class="h-full bg-copper-dk" style="width: {ms.espressoPct}%"></div>
 						{/if}
 					</div>
 				</div>
@@ -281,7 +289,7 @@
 					<div class="mb-2 flex items-center justify-between">
 						<Eyebrow>RATIO DISTRIBUTION</Eyebrow>
 						{#if ratios.median != null}
-							<span class="text-muted font-mono text-[11px] tracking-[0.04em]">
+							<span class="font-mono text-[11px] tracking-[0.04em] text-muted">
 								MEDIAN <span class="text-copper">1:{ratios.median.toFixed(1)}</span>
 							</span>
 						{/if}
@@ -290,15 +298,17 @@
 						{#each ratios.counts as count, i (i)}
 							<div
 								class="flex-1 rounded-sm transition-colors"
-								style="height: {Math.max(count === 0 ? 0 : 6, (count / maxRatioBucket) * 100)}%; background: {i ===
-								medianBucketIdx
-									? 'var(--color-copper)'
-									: '#D9CDB6'}"
+								style="height: {Math.max(
+									count === 0 ? 0 : 6,
+									(count / maxRatioBucket) * 100
+								)}%; background: {i === medianBucketIdx ? 'var(--color-copper)' : '#D9CDB6'}"
 								title="1:{ratios.ratios[i]} · {count} brew{count === 1 ? '' : 's'}"
 							></div>
 						{/each}
 					</div>
-					<div class="text-muted mt-1 flex justify-between font-mono text-[9.5px] tracking-[0.04em]">
+					<div
+						class="mt-1 flex justify-between font-mono text-[9.5px] tracking-[0.04em] text-muted"
+					>
 						<span>1:14</span>
 						<span>1:16</span>
 						<span>1:18</span>
@@ -310,32 +320,30 @@
 			{#if top3.length > 0}
 				<div>
 					<Eyebrow class="mb-2">BEST BREWS</Eyebrow>
-					<div
-						class="border-hairline divide-hairline overflow-hidden rounded-2xl border divide-y"
-					>
+					<div class="divide-y divide-hairline overflow-hidden rounded-2xl border border-hairline">
 						{#each top3 as brew, i (brew.id)}
 							{@const linkedBag = allBags.find((b) => b.id === brew.bagId)}
 							<a
 								href="/brews/{brew.id}"
-								class="bg-surface hover:bg-paper/50 flex items-center justify-between gap-3 px-3.5 py-3 transition-colors"
+								class="flex items-center justify-between gap-3 bg-surface px-3.5 py-3 transition-colors hover:bg-paper/50"
 							>
 								<div class="flex items-center gap-3">
 									<span
-										class="font-display w-5 text-[20px] font-medium leading-none {i === 0
+										class="w-5 font-display text-[20px] leading-none font-medium {i === 0
 											? 'text-copper'
-											: 'text-muted'}"
-									>{i + 1}</span>
+											: 'text-muted'}">{i + 1}</span
+									>
 									<div class="min-w-0">
-										<div class="text-ink truncate text-[14px] font-medium">
+										<div class="truncate text-[14px] font-medium text-ink">
 											{linkedBag?.name ?? brew.coffeeName ?? 'Untitled'}
 										</div>
-										<div class="text-muted mt-0.5 truncate font-mono text-[11px] tracking-[0.04em]">
+										<div class="mt-0.5 truncate font-mono text-[11px] tracking-[0.04em] text-muted">
 											{brew.method} · <span class="text-copper">{formatRatio(brew)}</span>
 										</div>
 									</div>
 								</div>
 								<div class="flex items-center gap-1.5">
-									<span class="text-ink font-mono text-[13px] font-medium">
+									<span class="font-mono text-[13px] font-medium text-ink">
 										{brew.rating?.toFixed(1)}
 									</span>
 									<StarRow value={brew.rating ?? 0} size={12} />
@@ -354,10 +362,10 @@
 						{#if topBag.bag}
 							<a
 								href="/bags/{topBag.bag.id}"
-								class="bg-copper-lt hover:bg-copper-lt/80 flex items-center gap-3 rounded-[14px] px-3 py-2.5 transition-colors"
+								class="flex items-center gap-3 rounded-[14px] bg-copper-lt px-3 py-2.5 transition-colors hover:bg-copper-lt/80"
 							>
 								<div
-									class="bg-copper text-paper grid h-8 w-8 shrink-0 place-items-center rounded-[9px]"
+									class="grid h-8 w-8 shrink-0 place-items-center rounded-[9px] bg-copper text-paper"
 								>
 									<svg
 										width="16"
@@ -375,10 +383,10 @@
 									</svg>
 								</div>
 								<div class="min-w-0 flex-1">
-									<div
-										class="font-display text-ink truncate text-[15px] font-medium leading-[1.2]"
-									>MOST BREWED · {topBag.bag.name}</div>
-									<div class="text-copper-dk mt-0.5 font-mono text-[11px] tracking-[0.04em]">
+									<div class="truncate font-display text-[15px] leading-[1.2] font-medium text-ink">
+										MOST BREWED · {topBag.bag.name}
+									</div>
+									<div class="mt-0.5 font-mono text-[11px] tracking-[0.04em] text-copper-dk">
 										{topBag.count} brew{topBag.count === 1 ? '' : 's'}
 									</div>
 								</div>
@@ -386,10 +394,12 @@
 						{/if}
 
 						{#if freshness.total > 0}
-							<div class="bg-surface border-hairline rounded-[14px] border px-3.5 py-3">
+							<div class="rounded-[14px] border border-hairline bg-surface px-3.5 py-3">
 								<div
-									class="text-muted mb-2 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-								>FRESHNESS AT BREW</div>
+									class="mb-2 font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								>
+									FRESHNESS AT BREW
+								</div>
 								<div class="flex h-2.5 overflow-hidden rounded-full">
 									{#if freshness.fresh > 0}
 										<div
@@ -420,7 +430,7 @@
 									{/if}
 								</div>
 								<div
-									class="text-muted mt-2 flex justify-between font-mono text-[10px] tracking-[0.04em]"
+									class="mt-2 flex justify-between font-mono text-[10px] tracking-[0.04em] text-muted"
 								>
 									<span style="color: var(--color-success)">{freshness.fresh} FRESH</span>
 									<span style="color: var(--color-warning)">{freshness.careful} CAREFUL</span>
@@ -438,7 +448,7 @@
 					<div class="mb-2 flex items-center justify-between">
 						<Eyebrow>TIME OF DAY</Eyebrow>
 						{#if peak}
-							<span class="text-muted font-mono text-[11px] tracking-[0.04em]">
+							<span class="font-mono text-[11px] tracking-[0.04em] text-muted">
 								PEAK <span class="text-copper">{formatHour(peak.hour)}</span>
 							</span>
 						{/if}
@@ -448,13 +458,17 @@
 							{@const intensity = count === 0 ? 0 : 0.2 + (count / maxHour) * 0.8}
 							<div
 								class="aspect-square rounded-sm"
-								style="background: color-mix(in oklab, var(--color-copper) {(intensity * 100).toFixed(0)}%, var(--color-paper))"
+								style="background: color-mix(in oklab, var(--color-copper) {(
+									intensity * 100
+								).toFixed(0)}%, var(--color-paper))"
 								title="{count} brew{count === 1 ? '' : 's'} at {formatHour(hr)}"
 								aria-label="{count} brews at {formatHour(hr)}"
 							></div>
 						{/each}
 					</div>
-					<div class="text-muted mt-1.5 flex justify-between font-mono text-[9.5px] tracking-[0.04em]">
+					<div
+						class="mt-1.5 flex justify-between font-mono text-[9.5px] tracking-[0.04em] text-muted"
+					>
 						<span>12 AM</span>
 						<span>6 AM</span>
 						<span>12 PM</span>
@@ -465,8 +479,10 @@
 
 			<!-- Pull quote -->
 			<div
-				class="bg-surface border-hairline font-display text-ink-70 rounded-[18px] border px-4 py-4 text-center text-[14px] leading-[1.55] italic"
-			>"{quote}"</div>
+				class="rounded-[18px] border border-hairline bg-surface px-4 py-4 text-center font-display text-[14px] leading-[1.55] text-ink-70 italic"
+			>
+				"{quote}"
+			</div>
 		</div>
 	{/if}
 </div>

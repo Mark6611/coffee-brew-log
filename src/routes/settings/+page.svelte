@@ -152,12 +152,7 @@
 				throw new Error('File is not valid JSON.');
 			}
 
-			if (
-				!parsed ||
-				typeof parsed !== 'object' ||
-				!('brews' in parsed) ||
-				!('bags' in parsed)
-			) {
+			if (!parsed || typeof parsed !== 'object' || !('brews' in parsed) || !('bags' in parsed)) {
 				throw new Error('Not a valid Coffee Brew Log export.');
 			}
 
@@ -215,7 +210,7 @@
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
 		<a
 			href="/"
-			class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -236,9 +231,11 @@
 	<div class="px-[22px]">
 		<Eyebrow>SETTINGS</Eyebrow>
 		<h1
-			class="font-display text-ink mt-1 text-[30px] font-medium leading-[1.05] tracking-[-0.015em]"
-		>Data</h1>
-		<p class="text-muted font-display mt-2 text-[15px] italic">
+			class="mt-1 font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+		>
+			Data
+		</h1>
+		<p class="mt-2 font-display text-[15px] text-muted italic">
 			Your brews live on this device, and sync to your account when you're signed in. Back up
 			regularly.
 		</p>
@@ -250,27 +247,30 @@
 			<div>
 				<Eyebrow class="mb-2">ACCOUNT</Eyebrow>
 				{#if auth.user}
-					<div
-						class="bg-surface border-hairline rounded-2xl border px-4 py-3 space-y-3"
-					>
+					<div class="space-y-3 rounded-2xl border border-hairline bg-surface px-4 py-3">
 						<div class="flex items-center justify-between gap-3">
 							<div class="min-w-0">
-								<div class="text-ink truncate text-[14px]">{auth.user.email}</div>
-								<div
-									class="text-muted mt-0.5 font-mono text-[10.5px] tracking-[0.04em] uppercase"
-								>Signed in</div>
+								<div class="truncate text-[14px] text-ink">{auth.user.email}</div>
+								<div class="mt-0.5 font-mono text-[10.5px] tracking-[0.04em] text-muted uppercase">
+									Signed in
+								</div>
 							</div>
 							<button
 								type="button"
 								onclick={signOut}
-								class="text-muted hover:text-ink shrink-0 text-[12px] transition-colors"
-							>Sign out</button>
+								class="shrink-0 text-[12px] text-muted transition-colors hover:text-ink"
+								>Sign out</button
+							>
 						</div>
 
-						<div class="border-hairline border-t pt-3 flex items-center justify-between gap-3">
+						<div class="flex items-center justify-between gap-3 border-t border-hairline pt-3">
 							<div class="min-w-0 flex-1">
-								<div class="text-muted font-mono text-[10px] font-medium tracking-[0.14em] uppercase">SYNC</div>
-								<div class="text-ink mt-0.5 text-[13px]">
+								<div
+									class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+								>
+									SYNC
+								</div>
+								<div class="mt-0.5 text-[13px] text-ink">
 									{#if syncing}
 										<span class="text-copper">Syncing…</span>
 									{:else if lastSyncError}
@@ -284,7 +284,7 @@
 								type="button"
 								onclick={handleSyncNow}
 								disabled={syncing}
-								class="border-hairline hover:bg-paper text-ink shrink-0 inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-[12px] font-medium transition-colors disabled:opacity-50"
+								class="press-sm inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-hairline px-3 text-[12px] font-medium text-ink hover:bg-paper disabled:opacity-50"
 							>
 								<svg
 									width="12"
@@ -304,12 +304,12 @@
 							</button>
 						</div>
 
-						<div class="border-hairline border-t pt-3">
+						<div class="border-t border-hairline pt-3">
 							<button
 								type="button"
 								onclick={handleDeleteAccount}
 								disabled={deletingAccount}
-								class="text-danger hover:text-danger inline-flex items-center gap-1.5 text-[12px] font-medium transition-opacity disabled:opacity-50"
+								class="inline-flex items-center gap-1.5 text-[12px] font-medium text-danger transition-opacity hover:text-danger disabled:opacity-50"
 							>
 								<svg
 									width="12"
@@ -325,7 +325,7 @@
 								</svg>
 								{deletingAccount ? 'Deleting account…' : 'Delete account'}
 							</button>
-							<p class="text-faint mt-1.5 text-[11px] leading-[1.4]">
+							<p class="mt-1.5 text-[11px] leading-[1.4] text-faint">
 								Permanently deletes your account and all synced data.
 							</p>
 						</div>
@@ -333,13 +333,11 @@
 				{:else}
 					<a
 						href="/auth"
-						class="bg-surface border-hairline hover:bg-paper/50 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors"
+						class="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 transition-colors hover:bg-paper/50"
 					>
 						<div>
-							<div class="text-ink text-[14px]">Sign in</div>
-							<div
-								class="text-muted mt-0.5 text-[12px]"
-							>Sync brews across devices.</div>
+							<div class="text-[14px] text-ink">Sign in</div>
+							<div class="mt-0.5 text-[12px] text-muted">Sync brews across devices.</div>
 						</div>
 						<svg
 							width="14"
@@ -350,7 +348,7 @@
 							stroke-width="1.6"
 							stroke-linecap="round"
 							stroke-linejoin="round"
-							class="text-faint shrink-0"
+							class="shrink-0 text-faint"
 						>
 							<path d="M6 3l5 5-5 5" />
 						</svg>
@@ -358,62 +356,24 @@
 				{/if}
 			</div>
 
-			<!-- Counts -->
-			<div class="bg-surface border-hairline grid grid-cols-2 gap-3 rounded-2xl border p-4">
-				<div>
-					<div
-						class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-					>BREWS</div>
-					<div
-						class="font-display text-ink mt-1 text-2xl font-medium tracking-[-0.01em]"
-					>{brewCount}</div>
-				</div>
-				<div>
-					<div
-						class="text-muted font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-					>BAGS</div>
-					<div
-						class="font-display text-ink mt-1 text-2xl font-medium tracking-[-0.01em]"
-					>{bagCount}</div>
+			<!-- Counts — grouped inset rows: label left, value right -->
+			<div>
+				<Eyebrow class="mb-2">ON THIS DEVICE</Eyebrow>
+				<div class="divide-y divide-hairline rounded-2xl border border-hairline bg-surface">
+					<div class="flex h-12 items-center justify-between px-4">
+						<span class="text-[14px] text-ink">Brews</span>
+						<span class="font-mono text-[13px] text-muted">{brewCount}</span>
+					</div>
+					<div class="flex h-12 items-center justify-between px-4">
+						<span class="text-[14px] text-ink">Bags</span>
+						<span class="font-mono text-[13px] text-muted">{bagCount}</span>
+					</div>
 				</div>
 			</div>
 
-			<!-- Export -->
+			<!-- Backup — grouped inset action rows (iOS: tinted action rows in one group) -->
 			<div>
-				<Eyebrow class="mb-2">EXPORT</Eyebrow>
-				<p class="text-muted mb-3 text-[13px] leading-[1.5]">
-					Download all brews and bags as JSON. Drop the file onto Import to restore.
-				</p>
-				<button
-					type="button"
-					onclick={handleExport}
-					disabled={brewCount === 0 && bagCount === 0}
-					class="bg-copper text-paper hover:bg-copper-dk inline-flex h-12 items-center gap-2 rounded-2xl px-5 text-[14px] font-medium transition-colors disabled:opacity-50"
-				>
-					<svg
-						width="16"
-						height="16"
-						viewBox="0 0 16 16"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.6"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M8 2v8" />
-						<path d="M4 6l4 4 4-4" />
-						<path d="M2.5 11.5v1c0 .8.7 1.5 1.5 1.5h8c.8 0 1.5-.7 1.5-1.5v-1" />
-					</svg>
-					Download backup
-				</button>
-			</div>
-
-			<!-- Import -->
-			<div>
-				<Eyebrow class="mb-2">IMPORT</Eyebrow>
-				<p class="text-muted mb-3 text-[13px] leading-[1.5]">
-					Restore from a previous export. Items with matching IDs are replaced; others are added.
-				</p>
+				<Eyebrow class="mb-2">BACKUP</Eyebrow>
 				<input
 					type="file"
 					accept=".json,application/json"
@@ -421,84 +381,116 @@
 					onchange={handleFileChange}
 					class="hidden"
 				/>
-				<button
-					type="button"
-					onclick={() => fileInput?.click()}
-					disabled={importing}
-					class="bg-ink/[0.04] text-ink hover:bg-ink/[0.08] inline-flex h-12 items-center gap-2 rounded-2xl px-5 text-[14px] font-medium transition-colors disabled:opacity-50"
+				<div
+					class="divide-y divide-hairline overflow-hidden rounded-2xl border border-hairline bg-surface"
 				>
-					<svg
-						width="16"
-						height="16"
-						viewBox="0 0 16 16"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.6"
-						stroke-linecap="round"
-						stroke-linejoin="round"
+					<button
+						type="button"
+						onclick={handleExport}
+						disabled={brewCount === 0 && bagCount === 0}
+						class="flex h-12 w-full items-center gap-2.5 px-4 text-left text-[14px] font-medium text-copper transition-colors hover:bg-paper/60 active:bg-paper disabled:opacity-50"
 					>
-						<path d="M8 14V6" />
-						<path d="M4 10l4-4 4 4" />
-						<path d="M2.5 3.5v-1C2.5 1.7 3.2 1 4 1h8c.8 0 1.5.7 1.5 1.5v1" />
-					</svg>
-					{importing ? 'Importing…' : 'Restore from file'}
-				</button>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 16 16"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M8 2v8" />
+							<path d="M4 6l4 4 4-4" />
+							<path d="M2.5 11.5v1c0 .8.7 1.5 1.5 1.5h8c.8 0 1.5-.7 1.5-1.5v-1" />
+						</svg>
+						Download backup
+					</button>
+					<button
+						type="button"
+						onclick={() => fileInput?.click()}
+						disabled={importing}
+						class="flex h-12 w-full items-center gap-2.5 px-4 text-left text-[14px] font-medium text-ink transition-colors hover:bg-paper/60 active:bg-paper disabled:opacity-50"
+					>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 16 16"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M8 14V6" />
+							<path d="M4 10l4-4 4 4" />
+							<path d="M2.5 3.5v-1C2.5 1.7 3.2 1 4 1h8c.8 0 1.5.7 1.5 1.5v1" />
+						</svg>
+						{importing ? 'Importing…' : 'Restore from file'}
+					</button>
+				</div>
+				<p class="mt-2 px-4 text-[12.5px] leading-[1.5] text-muted">
+					Backups are plain JSON with every brew and bag. Restoring replaces items with matching IDs
+					and adds the rest.
+				</p>
 			</div>
 
 			{#if message}
-				<div
-					class="bg-success/10 text-success rounded-[14px] px-3 py-2.5 text-[13px]"
-				>{message}</div>
+				<div class="rounded-[14px] bg-success/10 px-3 py-2.5 text-[13px] text-success">
+					{message}
+				</div>
 			{/if}
 			{#if error}
-				<div
-					class="bg-danger/8 border-danger/20 text-danger rounded-[14px] border p-3 text-[13px]"
-				>{error}</div>
+				<div class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[13px] text-danger">
+					{error}
+				</div>
 			{/if}
 
-			<!-- Danger zone -->
-			<div class="border-hairline mt-8 border-t pt-6">
-				<Eyebrow class="text-danger mb-2">DANGER ZONE</Eyebrow>
-				<p class="text-muted mb-3 text-[13px] leading-[1.5]">
+			<!-- Danger zone — lone destructive row in its own inset group -->
+			<div class="mt-8">
+				<Eyebrow class="mb-2 text-danger">DANGER ZONE</Eyebrow>
+				<div class="overflow-hidden rounded-2xl border border-hairline bg-surface">
+					<button
+						type="button"
+						onclick={handleWipe}
+						disabled={brewCount === 0 && bagCount === 0}
+						class="flex h-12 w-full items-center gap-2.5 px-4 text-left text-[14px] font-medium text-danger transition-colors hover:bg-danger/6 active:bg-danger/8 disabled:opacity-50"
+					>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 16 16"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
+						</svg>
+						{auth.user ? 'Delete all data' : 'Wipe all data'}
+					</button>
+				</div>
+				<p class="mt-2 px-4 text-[12.5px] leading-[1.5] text-muted">
 					{#if auth.user}
-						Delete every brew and bag — from this device <strong class="text-ink-70">and your
-						account</strong> — but keep your account itself. Cannot be undone. Export first if you'd
-						like a safety net. To remove your account entirely, use “Delete account” above.
+						Deletes every brew and bag — from this device <strong class="text-ink-70"
+							>and your account</strong
+						> — but keeps the account itself. Cannot be undone; download a backup first. To remove your
+						account entirely, use “Delete account” above.
 					{:else}
-						Delete every brew and bag from this device. Cannot be undone. Export first if you'd like a
-						safety net.
+						Deletes every brew and bag from this device. Cannot be undone — download a backup first.
 					{/if}
 				</p>
-				<button
-					type="button"
-					onclick={handleWipe}
-					disabled={brewCount === 0 && bagCount === 0}
-					class="bg-danger/8 text-danger hover:bg-danger/14 inline-flex h-12 items-center gap-2 rounded-2xl px-5 text-[14px] font-medium transition-colors disabled:opacity-50"
-				>
-					<svg
-						width="16"
-						height="16"
-						viewBox="0 0 16 16"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.6"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-					>
-						<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
-					</svg>
-					{auth.user ? 'Delete all data' : 'Wipe all data'}
-				</button>
 			</div>
 
 			<!-- About -->
-			<div class="border-hairline mt-8 border-t pt-6">
+			<div class="mt-8 border-t border-hairline pt-6">
 				<Eyebrow class="mb-2">ABOUT</Eyebrow>
 				<a
 					href="/privacy"
-					class="bg-surface border-hairline hover:bg-paper/50 flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 transition-colors"
+					class="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 transition-colors hover:bg-paper/50"
 				>
-					<span class="text-ink text-[14px]">Privacy Policy</span>
+					<span class="text-[14px] text-ink">Privacy Policy</span>
 					<svg
 						width="14"
 						height="14"
@@ -508,12 +500,12 @@
 						stroke-width="1.6"
 						stroke-linecap="round"
 						stroke-linejoin="round"
-						class="text-faint shrink-0"
+						class="shrink-0 text-faint"
 					>
 						<path d="M6 3l5 5-5 5" />
 					</svg>
 				</a>
-				<p class="text-faint mt-3 text-center font-mono text-[11px] tracking-[0.04em]">
+				<p class="mt-3 text-center font-mono text-[11px] tracking-[0.04em] text-faint">
 					Coffee Brew Log · v{APP_VERSION}
 				</p>
 			</div>

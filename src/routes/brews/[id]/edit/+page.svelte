@@ -362,14 +362,14 @@
 </svelte:head>
 
 <!-- Mode chrome: 3px copper bar fixed at top -->
-<div class="bg-copper fixed inset-x-0 top-0 z-[100] h-[3px]" aria-hidden="true"></div>
+<div class="fixed inset-x-0 top-0 z-[100] h-[3px] bg-copper" aria-hidden="true"></div>
 
 {#if loading}
-	<p class="text-muted py-8 text-center text-sm">Loading…</p>
+	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound}
 	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
 		<p class="text-muted">Brew not found.</p>
-		<a href="/brews" class="text-copper mt-3 inline-block underline">Back to brews</a>
+		<a href="/brews" class="mt-3 inline-block text-copper underline">Back to brews</a>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
@@ -378,7 +378,7 @@
 			<a
 				href="/brews/{brewId}"
 				onclick={handleCancel}
-				class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -396,13 +396,15 @@
 			</a>
 
 			<div class="text-center">
-				<div
-					class="text-copper font-mono text-[10px] font-semibold uppercase tracking-[0.18em]"
-				>EDITING</div>
+				<div class="font-mono text-[10px] font-semibold tracking-[0.18em] text-copper uppercase">
+					EDITING
+				</div>
 				{#if brewNumber != null}
 					<div
-						class="text-muted mt-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.14em]"
-					>BREW · #{brewNumber}</div>
+						class="mt-0.5 font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase"
+					>
+						BREW · #{brewNumber}
+					</div>
 				{/if}
 			</div>
 
@@ -410,21 +412,19 @@
 				type="submit"
 				disabled={!dirty || submitting}
 				class={dirty
-					? 'bg-copper text-paper hover:bg-copper-dk h-9 rounded-lg px-3.5 text-[13px] font-semibold transition-colors'
-					: 'bg-ink/[0.08] text-muted h-9 cursor-not-allowed rounded-lg px-3.5 text-[13px] font-semibold'}
-			>{submitting ? 'Saving…' : 'Save changes'}</button>
+					? 'press h-9 rounded-full bg-copper px-3.5 text-[13px] font-semibold text-paper hover:bg-copper-dk'
+					: 'h-9 cursor-not-allowed rounded-full bg-ink/[0.08] px-3.5 text-[13px] font-semibold text-muted'}
+				>{submitting ? 'Saving…' : 'Save changes'}</button
+			>
 		</div>
 
 		<!-- Reset bar when dirty -->
 		{#if dirty}
 			<div
-				class="bg-copper-lt text-copper-dk mx-[22px] mb-2.5 flex items-center justify-between gap-3 rounded-[10px] px-3 py-2"
+				class="mx-[22px] mb-2.5 flex items-center justify-between gap-3 rounded-[10px] bg-copper-lt px-3 py-2 text-copper-dk"
 			>
 				<div class="flex items-center gap-2 text-[12.5px]">
-					<span
-						class="bg-copper inline-block h-1.5 w-1.5 rounded-full"
-						aria-hidden="true"
-					></span>
+					<span class="inline-block h-1.5 w-1.5 rounded-full bg-copper" aria-hidden="true"></span>
 					<span
 						><strong>{dirtyFields.length}</strong> unsaved change{dirtyFields.length === 1
 							? ''
@@ -435,8 +435,9 @@
 				<button
 					type="button"
 					onclick={reset}
-					class="text-copper hover:text-copper-dk font-mono text-[10.5px] font-medium tracking-[0.1em] uppercase transition-colors"
-				>Reset</button>
+					class="font-mono text-[10.5px] font-medium tracking-[0.1em] text-copper uppercase transition-colors hover:text-copper-dk"
+					>Reset</button
+				>
 			</div>
 		{/if}
 
@@ -445,7 +446,7 @@
 			<div class="relative">
 				{#if isDirty('method')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -457,7 +458,7 @@
 			<div class="relative">
 				{#if isDirty('bagId')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -469,14 +470,14 @@
 			<div class="relative grid grid-cols-2 gap-2.5">
 				{#if isDirty('doseGrams', 'yieldGrams', 'waterGrams')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
 				<div>
 					<Eyebrow class="mb-2" dirty={isDirty('doseGrams')}>DOSE</Eyebrow>
 					<div
-						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+						class="field-wrapper flex h-14 items-center gap-1.5 rounded-[14px] border border-hairline bg-surface px-4 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -486,18 +487,17 @@
 							required
 							inputmode="decimal"
 							placeholder="0.0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
 						/>
-						<span class="text-muted font-mono text-[13px]">g</span>
+						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
 				</div>
 				<div>
-					<Eyebrow
-						class="mb-2"
-						dirty={isDirty('yieldGrams', 'waterGrams')}
-					>{method === 'espresso' ? 'YIELD' : 'WATER'}</Eyebrow>
+					<Eyebrow class="mb-2" dirty={isDirty('yieldGrams', 'waterGrams')}
+						>{method === 'espresso' ? 'YIELD' : 'WATER'}</Eyebrow
+					>
 					<div
-						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+						class="field-wrapper flex h-14 items-center gap-1.5 rounded-[14px] border border-hairline bg-surface px-4 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						{#if method === 'espresso'}
 							<input
@@ -508,7 +508,7 @@
 								required
 								inputmode="decimal"
 								placeholder="0.0"
-								class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
+								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
 							/>
 						{:else}
 							<input
@@ -519,10 +519,10 @@
 								required
 								inputmode="decimal"
 								placeholder="0"
-								class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
+								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
 							/>
 						{/if}
-						<span class="text-muted font-mono text-[13px]">g</span>
+						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
 				</div>
 			</div>
@@ -537,8 +537,9 @@
 						{/each}
 						{#if actualRatio !== null}
 							<span
-								class="bg-copper-lt text-copper inline-flex h-9 items-center rounded-full px-2.5 font-mono text-[12px] tracking-[-0.01em]"
-							>= 1:{actualRatio.toFixed(1)} actual</span>
+								class="inline-flex h-9 items-center rounded-full bg-copper-lt px-2.5 font-mono text-[12px] tracking-[-0.01em] text-copper"
+								>= 1:{actualRatio.toFixed(1)} actual</span
+							>
 						{/if}
 					</div>
 				</div>
@@ -548,7 +549,7 @@
 			<div class="relative">
 				{#if isDirty('grindSetting')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -560,7 +561,7 @@
 					bind:value={grindSetting}
 					required
 					placeholder={method === 'espresso' ? 'e.g. 1.3' : 'e.g. 5.5'}
-					class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 font-mono transition outline-none focus:ring-2"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -569,13 +570,13 @@
 				<div class="relative">
 					{#if isDirty('waterTempC')}
 						<div
-							class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+							class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 							aria-hidden="true"
 						></div>
 					{/if}
 					<Eyebrow class="mb-2" dirty={isDirty('waterTempC')}>WATER TEMP (OPTIONAL)</Eyebrow>
 					<div
-						class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+						class="field-wrapper flex h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -585,9 +586,9 @@
 							max="100"
 							inputmode="numeric"
 							placeholder="0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
+							class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
 						/>
-						<span class="text-muted font-mono text-[12px]">°C</span>
+						<span class="font-mono text-[12px] text-muted">°C</span>
 					</div>
 				</div>
 			{/if}
@@ -596,17 +597,16 @@
 			<div class="relative">
 				{#if isDirty('brewTimeSeconds', 'brewMinutes', 'brewSecondsPart')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
-				<Eyebrow
-					class="mb-2"
-					dirty={isDirty('brewTimeSeconds', 'brewMinutes', 'brewSecondsPart')}
-				>BREW TIME</Eyebrow>
+				<Eyebrow class="mb-2" dirty={isDirty('brewTimeSeconds', 'brewMinutes', 'brewSecondsPart')}
+					>BREW TIME</Eyebrow
+				>
 				{#if method === 'espresso'}
 					<div
-						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+						class="field-wrapper flex h-14 items-center gap-1.5 rounded-[14px] border border-hairline bg-surface px-4 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -616,16 +616,18 @@
 							required
 							inputmode="numeric"
 							placeholder="0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
 						/>
-						<span class="text-muted font-mono text-[13px]">sec</span>
+						<span class="font-mono text-[13px] text-muted">sec</span>
 					</div>
 				{:else}
 					<div class="grid grid-cols-2 gap-2.5">
 						<div>
 							<div
-								class="text-muted mb-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-							>MIN</div>
+								class="mb-1.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								MIN
+							</div>
 							<input
 								type="number"
 								bind:value={brewMinutes}
@@ -633,13 +635,15 @@
 								min="0"
 								inputmode="numeric"
 								placeholder="0"
-								class="bg-surface border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 font-mono text-2xl font-medium tracking-[-0.02em] transition outline-none focus:ring-2"
+								class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 							/>
 						</div>
 						<div>
 							<div
-								class="text-muted mb-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-							>SEC</div>
+								class="mb-1.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								SEC
+							</div>
 							<input
 								type="number"
 								bind:value={brewSecondsPart}
@@ -648,7 +652,7 @@
 								max="59"
 								inputmode="numeric"
 								placeholder="0"
-								class="bg-surface border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 font-mono text-2xl font-medium tracking-[-0.02em] transition outline-none focus:ring-2"
+								class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 							/>
 						</div>
 					</div>
@@ -666,21 +670,18 @@
 			<div class="relative">
 				{#if isDirty('balance')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
 				<Eyebrow class="mb-2" dirty={isDirty('balance')}>BALANCE (OPTIONAL)</Eyebrow>
-				<BalanceScale
-					value={balance || undefined}
-					oninput={(v) => (balance = v)}
-				/>
+				<BalanceScale value={balance || undefined} oninput={(v) => (balance = v)} />
 				{#if balance}
 					<button
 						type="button"
 						onclick={() => (balance = '')}
-						class="text-muted hover:text-ink mt-1 text-[11px] transition-colors"
-					>Clear</button>
+						class="mt-1 text-[11px] text-muted transition-colors hover:text-ink">Clear</button
+					>
 				{/if}
 			</div>
 
@@ -688,22 +689,22 @@
 			<div class="relative">
 				{#if isDirty('rating')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
 				<Eyebrow class="mb-2" dirty={isDirty('rating')}>RATING (OPTIONAL)</Eyebrow>
 				<div class="flex items-center gap-4">
 					<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
-					<span class="text-ink font-mono text-[15px] font-medium">
+					<span class="font-mono text-[15px] font-medium text-ink">
 						{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
 					</span>
 					{#if rating != null}
 						<button
 							type="button"
 							onclick={() => (rating = null)}
-							class="text-muted hover:text-ink ml-auto text-[11px] transition-colors"
-						>Clear</button>
+							class="ml-auto text-[11px] text-muted transition-colors hover:text-ink">Clear</button
+						>
 					{/if}
 				</div>
 			</div>
@@ -712,7 +713,7 @@
 			<div class="relative">
 				{#if isDirty('brewedAtLocal')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -721,7 +722,7 @@
 					type="datetime-local"
 					bind:value={brewedAtLocal}
 					required
-					class="bg-paper border-hairline text-ink focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -729,7 +730,7 @@
 			<div class="relative">
 				{#if isDirty('notes')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}
@@ -738,7 +739,7 @@
 					bind:value={notes}
 					rows="3"
 					placeholder="Stone fruit, jasmine on cool-down…"
-					class="bg-paper border-hairline text-ink-70 placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display w-full resize-none rounded-[14px] border px-3.5 py-3.5 text-[15px] leading-[1.45] italic transition outline-none focus:ring-2"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 
@@ -767,9 +768,9 @@
 			{/if}
 
 			{#if error}
-				<div
-					class="bg-danger/8 border-danger/20 text-danger rounded-[14px] border p-3 text-sm"
-				>{error}</div>
+				<div class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
+					{error}
+				</div>
 			{/if}
 		</div>
 	</form>

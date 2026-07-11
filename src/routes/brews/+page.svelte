@@ -48,10 +48,7 @@
 
 	function matchesSearch(brew: Brew, q: string): boolean {
 		if (!q) return true;
-		const hay = [brew.coffeeName, brew.roaster, brew.notes]
-			.filter(Boolean)
-			.join(' ')
-			.toLowerCase();
+		const hay = [brew.coffeeName, brew.roaster, brew.notes].filter(Boolean).join(' ').toLowerCase();
 		return hay.includes(q.toLowerCase().trim());
 	}
 
@@ -83,7 +80,7 @@
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
 		<a
 			href="/"
-			class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -106,7 +103,7 @@
 			<button
 				type="button"
 				onclick={() => (searchOpen = !searchOpen)}
-				class="bg-surface border-hairline hover:bg-paper grid h-[38px] w-[38px] place-items-center rounded-full border transition-colors"
+				class="press-sm grid h-[38px] w-[38px] place-items-center rounded-full border border-hairline bg-surface hover:bg-paper"
 				aria-label={searchOpen ? 'Close search' : 'Open search'}
 			>
 				{#if searchOpen}
@@ -143,7 +140,7 @@
 				type="search"
 				bind:value={searchQuery}
 				placeholder="Search coffee, roaster, notes…"
-				class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
+				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 			/>
 		</div>
 	{/if}
@@ -167,11 +164,11 @@
 
 	<div class="px-[22px]">
 		{#if loading}
-			<p class="text-muted py-8 text-center text-sm">Loading…</p>
+			<p class="py-8 text-center text-sm text-muted">Loading…</p>
 		{:else if allBrews.length === 0}
 			<!-- Rich empty state -->
 			<div class="flex flex-col items-center px-6 pt-12 pb-20 text-center">
-				<div class="bg-copper-lt text-copper mb-6 grid h-24 w-24 place-items-center rounded-full">
+				<div class="mb-6 grid h-24 w-24 place-items-center rounded-full bg-copper-lt text-copper">
 					<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
 						<g transform="translate(28 28) rotate(-18)">
 							<ellipse
@@ -194,15 +191,17 @@
 					</svg>
 				</div>
 				<h2
-					class="font-display text-ink m-0 text-[26px] font-medium leading-[1.15] tracking-[-0.01em]"
-				>No brews yet.</h2>
-				<p
-					class="font-display text-muted mt-2 mb-7 max-w-[280px] text-[15px] leading-[1.5] italic"
-				>Your first cup of the morning is also the start of a record. Log it and we'll watch the
-					numbers settle.</p>
+					class="m-0 font-display text-[26px] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
+				>
+					No brews yet.
+				</h2>
+				<p class="mt-2 mb-7 max-w-[280px] font-display text-[15px] leading-[1.5] text-muted italic">
+					Your first cup of the morning is also the start of a record. Log it and we'll watch the
+					numbers settle.
+				</p>
 				<a
 					href="/brews/new"
-					class="bg-copper text-paper hover:bg-copper-dk inline-flex h-[52px] items-center gap-2.5 rounded-2xl px-5 text-[15px] font-medium transition-colors"
+					class="press glass-cta inline-flex h-[52px] items-center gap-2.5 rounded-full bg-copper px-5 text-[15px] font-medium text-paper hover:bg-copper-dk"
 				>
 					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 						<path
@@ -216,7 +215,7 @@
 				</a>
 			</div>
 		{:else if filtered.length === 0}
-			<p class="text-muted py-8 text-center text-sm">
+			<p class="py-8 text-center text-sm text-muted">
 				{#if searchQuery}No matches for "{searchQuery}".{:else if filter === 'favorites'}No
 					favorites yet. Tap the star on a brew to favorite it.{:else if filter === 'published'}No
 					brews on the blog yet. Edit a brew and flip Publish to blog.{:else}No
@@ -241,7 +240,7 @@
 
 	<a
 		href="/brews/new"
-		class="bg-copper text-paper hover:bg-copper-dk fixed right-6 bottom-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full shadow-[0_8px_24px_rgba(156,74,31,0.35),0_2px_6px_rgba(0,0,0,0.12)] transition-colors"
+		class="press glass-cta fixed right-6 bottom-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full bg-copper text-paper hover:bg-copper-dk"
 		aria-label="New brew"
 	>
 		<svg width="20" height="20" viewBox="0 0 20 20" fill="none">

@@ -16,7 +16,8 @@
 <button
 	type="button"
 	{onclick}
-	class="h-9 rounded-full px-3.5 font-mono text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap transition-colors {active
+	class="press-sm h-9 rounded-full px-3.5 font-mono text-[13px] font-medium tracking-[-0.01em] whitespace-nowrap {active
 		? 'bg-ink text-paper'
-		: 'bg-paper border-hairline text-ink-70 hover:bg-surface border'} {cls}"
->{@render children()}</button>
+		: 'border border-hairline bg-paper text-ink-70 hover:bg-surface'} {cls}"
+	>{@render children()}</button
+>

@@ -92,18 +92,18 @@
 </svelte:head>
 
 {#if loading}
-	<p class="text-muted py-8 text-center text-sm">Loading…</p>
+	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound}
 	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
 		<p class="text-muted">Bag not found.</p>
-		<a href="/bags" class="text-copper mt-3 inline-block underline">Back to bags</a>
+		<a href="/bags" class="mt-3 inline-block text-copper underline">Back to bags</a>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 		<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
 			<a
 				href="/bags/{bagId}"
-				class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -124,8 +124,10 @@
 		</div>
 
 		<h1
-			class="font-display text-ink mx-[22px] mt-1.5 mb-[18px] text-[30px] font-medium leading-[1.05] tracking-[-0.015em]"
-		>Edit bag</h1>
+			class="mx-[22px] mt-1.5 mb-[18px] font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+		>
+			Edit bag
+		</h1>
 
 		<div class="space-y-[18px] px-[22px]">
 			<div>
@@ -134,7 +136,7 @@
 					type="text"
 					bind:value={name}
 					required
-					class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -148,7 +150,7 @@
 				<input
 					type="text"
 					bind:value={roaster}
-					class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -162,7 +164,7 @@
 				<input
 					type="date"
 					bind:value={roastedAt}
-					class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -173,7 +175,9 @@
 					<Chip active={process === 'washed'} onclick={() => (process = 'washed')}>Washed</Chip>
 					<Chip active={process === 'natural'} onclick={() => (process = 'natural')}>Natural</Chip>
 					<Chip active={process === 'honey'} onclick={() => (process = 'honey')}>Honey</Chip>
-					<Chip active={process === 'anaerobic'} onclick={() => (process = 'anaerobic')}>Anaerobic</Chip>
+					<Chip active={process === 'anaerobic'} onclick={() => (process = 'anaerobic')}
+						>Anaerobic</Chip
+					>
 				</div>
 			</div>
 
@@ -186,7 +190,7 @@
 				<div>
 					<Eyebrow class="mb-2">WEIGHT (G)</Eyebrow>
 					<div
-						class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+						class="field-wrapper flex h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -194,9 +198,9 @@
 							step="1"
 							min="1"
 							inputmode="decimal"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
+							class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
 						/>
-						<span class="text-muted font-mono text-[12px]">g</span>
+						<span class="font-mono text-[12px] text-muted">g</span>
 					</div>
 				</div>
 				<div>
@@ -207,7 +211,7 @@
 						step="0.01"
 						min="0"
 						inputmode="decimal"
-						class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 font-mono transition outline-none focus:ring-2"
+						class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 			</div>
@@ -217,19 +221,22 @@
 				<textarea
 					bind:value={notes}
 					rows="3"
-					class="bg-paper border-hairline text-ink-70 placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display w-full resize-none rounded-[14px] border px-3.5 py-3.5 text-[15px] leading-[1.45] italic transition outline-none focus:ring-2"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 
 			{#if error}
-				<div class="bg-danger/8 border-danger/20 text-danger rounded-[14px] border p-3 text-sm">{error}</div>
+				<div class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
+					{error}
+				</div>
 			{/if}
 
 			<button
 				type="submit"
 				disabled={submitting}
-				class="bg-copper text-paper hover:bg-copper-dk flex h-14 w-full items-center justify-center rounded-2xl text-base font-medium transition-colors disabled:opacity-50"
-			>{submitting ? 'Saving…' : 'Save'}</button>
+				class="press glass-cta flex h-14 w-full items-center justify-center rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk disabled:opacity-50"
+				>{submitting ? 'Saving…' : 'Save'}</button
+			>
 		</div>
 	</form>
 {/if}

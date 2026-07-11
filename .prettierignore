@@ -7,3 +7,10 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Generated output (same gate-tripping gotcha as chawan)
+/.svelte-kit/
+/build/
+/ios/
+/android/
+/.claude/

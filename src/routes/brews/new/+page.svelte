@@ -349,7 +349,7 @@
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
 		<a
 			href="/brews"
-			class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -371,8 +371,10 @@
 
 	{#if !quickMode}
 		<h1
-			class="font-display text-ink mx-[22px] mt-1.5 mb-[18px] text-[30px] font-medium leading-[1.05] tracking-[-0.015em]"
-		>New brew</h1>
+			class="mx-[22px] mt-1.5 mb-[18px] font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+		>
+			New brew
+		</h1>
 	{/if}
 
 	<div class="space-y-[18px] px-[22px] {quickMode ? 'pt-2' : ''}">
@@ -390,7 +392,7 @@
 					type="datetime-local"
 					bind:value={brewedAtLocal}
 					required
-					class="bg-paper border-hairline text-ink focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 transition outline-none focus:ring-2"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -404,9 +406,9 @@
 		{#if showQuickChrome && lastShot}
 			<!-- Carried-over strip -->
 			<div
-				class="border-hairline bg-surface text-muted flex flex-wrap items-center gap-x-2 rounded-[12px] border px-3 py-2 font-mono text-[11px] tracking-[0.04em]"
+				class="flex flex-wrap items-center gap-x-2 rounded-[12px] border border-hairline bg-surface px-3 py-2 font-mono text-[11px] tracking-[0.04em] text-muted"
 			>
-				<span class="text-ink font-medium uppercase">Same as shot {shotNumber - 1}</span>
+				<span class="font-medium text-ink uppercase">Same as shot {shotNumber - 1}</span>
 				<span aria-hidden="true">·</span>
 				<span>{doseGrams ?? ESPRESSO_DEFAULT_DOSE}g dose</span>
 				{#if carriedTempC != null}
@@ -426,9 +428,9 @@
 				<div class="mb-2 flex items-baseline justify-between">
 					<Eyebrow>GRIND · LAGOM CASA</Eyebrow>
 					{#if grindStaged}
-						<span
-							class="text-copper font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
-						>Staged from suggestion</span>
+						<span class="font-mono text-[9.5px] font-medium tracking-[0.12em] text-copper uppercase"
+							>Staged from suggestion</span
+						>
 					{/if}
 				</div>
 				<div class="relative">
@@ -437,20 +439,22 @@
 						bind:value={grindSetting}
 						required
 						placeholder="e.g. 0.5.5"
-						class="text-ink placeholder:text-faint h-12 w-full rounded-[14px] border px-3.5 font-mono transition outline-none {grindStaged
-							? 'border-copper ring-copper/[0.18] bg-paper ring-[3px]'
-							: 'bg-paper border-hairline focus:border-copper focus:ring-copper/25 focus:ring-2'}"
+						class="h-12 w-full rounded-[14px] border px-3.5 font-mono text-ink transition outline-none placeholder:text-faint {grindStaged
+							? 'border-copper bg-paper ring-[3px] ring-copper/[0.18]'
+							: 'border-hairline bg-paper focus:border-copper focus:ring-2 focus:ring-copper/25'}"
 					/>
 				</div>
 				{#if grindStaged}
 					{@const d = grindStaged.deltaTicks}
-					<p class="text-copper-dk mt-1.5 flex items-center gap-1.5 font-mono text-[10.5px] font-medium tracking-[0.1em] uppercase">
-						<span
-							class="bg-copper inline-block h-[5px] w-[5px] rounded-full"
-							aria-hidden="true"
+					<p
+						class="mt-1.5 flex items-center gap-1.5 font-mono text-[10.5px] font-medium tracking-[0.1em] text-copper-dk uppercase"
+					>
+						<span class="inline-block h-[5px] w-[5px] rounded-full bg-copper" aria-hidden="true"
 						></span>
 						{#if d != null && d !== 0}
-							{d < 0 ? '−' : '+'}{Math.abs(d)} ticks {d < 0 ? 'finer' : 'coarser'} · {grindStaged.provenance.split(' · ')[0]}
+							{d < 0 ? '−' : '+'}{Math.abs(d)} ticks {d < 0 ? 'finer' : 'coarser'} · {grindStaged.provenance.split(
+								' · '
+							)[0]}
 						{:else}
 							{grindStaged.provenance}
 						{/if}
@@ -460,7 +464,7 @@
 					<button
 						type="button"
 						onclick={applyStage}
-						class="bg-copper-lt mt-2 flex w-full items-center gap-2.5 rounded-[12px] px-3 py-2.5 text-left transition hover:brightness-[0.98]"
+						class="mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left transition hover:brightness-[0.98]"
 					>
 						<svg
 							width="18"
@@ -469,23 +473,23 @@
 							fill="none"
 							stroke="currentColor"
 							stroke-width="1.3"
-							class="text-copper-dk shrink-0"
+							class="shrink-0 text-copper-dk"
 							aria-hidden="true"
 						>
 							<circle cx="9" cy="9" r="6.5" />
 							<circle cx="9" cy="9" r="2.5" />
 						</svg>
 						<span class="min-w-0 flex-1">
-							<span class="text-copper-dk block text-[13px]"
+							<span class="block text-[13px] text-copper-dk"
 								>Suggested <span class="font-mono font-medium">{espressoStage.value}</span></span
 							>
 							<span
-								class="text-copper-dk/70 mt-0.5 block font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+								class="mt-0.5 block font-mono text-[10px] font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
 								>{espressoStage.provenance}</span
 							>
 						</span>
 						<span
-							class="text-copper shrink-0 font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+							class="shrink-0 font-mono text-[10px] font-medium tracking-[0.1em] text-copper uppercase"
 							>Tap to use</span
 						>
 					</button>
@@ -493,7 +497,7 @@
 					<button
 						type="button"
 						onclick={applyStage}
-						class="text-faint hover:text-copper-dk mt-1.5 text-[12px] transition-colors"
+						class="mt-1.5 text-[12px] text-faint transition-colors hover:text-copper-dk"
 						>Suggested <span class="font-mono">{espressoStage.value}</span> · use instead</button
 					>
 				{:else if grindSuggestion}
@@ -504,13 +508,15 @@
 							: 'STARTING POINT'}
 					{#if sug.kind === 'prefill'}
 						{#if grindSetting === sug.value}
-							<p class="text-muted mt-1.5 text-[12px]">Prefilled from your last brew of this bag.</p>
+							<p class="mt-1.5 text-[12px] text-muted">
+								Prefilled from your last brew of this bag.
+							</p>
 						{/if}
 					{:else if grindSetting.trim() === ''}
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="bg-copper-lt mt-2 flex w-full items-center gap-2.5 rounded-[12px] px-3 py-2.5 text-left transition hover:brightness-[0.98]"
+							class="mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left transition hover:brightness-[0.98]"
 						>
 							<svg
 								width="18"
@@ -519,33 +525,33 @@
 								fill="none"
 								stroke="currentColor"
 								stroke-width="1.3"
-								class="text-copper-dk shrink-0"
+								class="shrink-0 text-copper-dk"
 								aria-hidden="true"
 							>
 								<circle cx="9" cy="9" r="6.5" />
 								<circle cx="9" cy="9" r="2.5" />
 							</svg>
 							<span class="min-w-0 flex-1">
-								<span class="text-copper-dk block text-[13px]"
+								<span class="block text-[13px] text-copper-dk"
 									>Suggested <span class="font-mono font-medium">{sug.value}</span></span
 								>
 								<span
-									class="text-copper-dk/70 mt-0.5 block font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+									class="mt-0.5 block font-mono text-[10px] font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
 									>{prov}</span
 								>
 							</span>
 							<span
-								class="text-copper shrink-0 font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+								class="shrink-0 font-mono text-[10px] font-medium tracking-[0.1em] text-copper uppercase"
 								>Tap to use</span
 							>
 						</button>
 					{:else if grindApplied && grindSetting === sug.value}
-						<p class="text-copper-dk mt-1.5 text-[12px]">Applied the suggestion.</p>
+						<p class="mt-1.5 text-[12px] text-copper-dk">Applied the suggestion.</p>
 					{:else}
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="text-faint hover:text-copper-dk mt-1.5 text-[12px] transition-colors"
+							class="mt-1.5 text-[12px] text-faint transition-colors hover:text-copper-dk"
 							>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
 						>
 					{/if}
@@ -560,10 +566,12 @@
 				<div>
 					<Eyebrow class="mb-2">YIELD</Eyebrow>
 					<div
-						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 relative flex h-14 items-center gap-1.5 overflow-hidden rounded-[14px] border px-4 transition focus-within:ring-2"
+						class="field-wrapper relative flex h-14 items-center gap-1.5 overflow-hidden rounded-[14px] border border-hairline bg-surface px-4 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<span
-							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving ? 'bg-copper freshness-pulse' : 'bg-hairline'}"
+							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving
+								? 'freshness-pulse bg-copper'
+								: 'bg-hairline'}"
 							aria-hidden="true"
 						></span>
 						<input
@@ -574,18 +582,20 @@
 							required
 							inputmode="decimal"
 							placeholder="0.0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
 						/>
-						<span class="text-muted font-mono text-[13px]">g</span>
+						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
 				</div>
 				<div>
 					<Eyebrow class="mb-2">SHOT TIME</Eyebrow>
 					<div
-						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 relative flex h-14 items-center gap-1.5 overflow-hidden rounded-[14px] border px-4 transition focus-within:ring-2"
+						class="field-wrapper relative flex h-14 items-center gap-1.5 overflow-hidden rounded-[14px] border border-hairline bg-surface px-4 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<span
-							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving ? 'bg-copper freshness-pulse' : 'bg-hairline'}"
+							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving
+								? 'freshness-pulse bg-copper'
+								: 'bg-hairline'}"
 							aria-hidden="true"
 						></span>
 						<input
@@ -596,9 +606,9 @@
 							required
 							inputmode="numeric"
 							placeholder="0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
 						/>
-						<span class="text-muted font-mono text-[13px]">sec</span>
+						<span class="font-mono text-[13px] text-muted">sec</span>
 					</div>
 				</div>
 			</div>
@@ -613,11 +623,11 @@
 			</div>
 
 			<!-- Collapsed group: dose, temp, rating, balance, notes -->
-			<div class="border-hairline rounded-[14px] border border-dashed">
+			<div class="rounded-[14px] border border-dashed border-hairline">
 				<button
 					type="button"
 					onclick={() => (moreOpen = !moreOpen)}
-					class="text-muted hover:text-ink flex w-full items-center justify-between px-3.5 py-3 font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase transition-colors"
+					class="flex w-full items-center justify-between px-3.5 py-3 font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 					aria-expanded={moreOpen}
 				>
 					Rating, balance, notes, temp
@@ -641,7 +651,7 @@
 							<div>
 								<Eyebrow class="mb-2">DOSE</Eyebrow>
 								<div
-									class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+									class="field-wrapper flex h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 								>
 									<input
 										type="number"
@@ -650,15 +660,15 @@
 										min="0.1"
 										required
 										inputmode="decimal"
-										class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
+										class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
 									/>
-									<span class="text-muted font-mono text-[12px]">g</span>
+									<span class="font-mono text-[12px] text-muted">g</span>
 								</div>
 							</div>
 							<div>
 								<Eyebrow class="mb-2">TEMP (OPTIONAL)</Eyebrow>
 								<div
-									class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+									class="field-wrapper flex h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 								>
 									<input
 										type="number"
@@ -668,9 +678,9 @@
 										max="100"
 										inputmode="decimal"
 										placeholder="0"
-										class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
+										class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
 									/>
-									<span class="text-muted font-mono text-[12px]">°C</span>
+									<span class="font-mono text-[12px] text-muted">°C</span>
 								</div>
 							</div>
 						</div>
@@ -679,15 +689,16 @@
 							<Eyebrow class="mb-2">RATING (OPTIONAL)</Eyebrow>
 							<div class="flex items-center gap-4">
 								<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
-								<span class="text-ink font-mono text-[15px] font-medium">
+								<span class="font-mono text-[15px] font-medium text-ink">
 									{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
 								</span>
 								{#if rating != null}
 									<button
 										type="button"
 										onclick={() => (rating = null)}
-										class="text-muted hover:text-ink ml-auto text-[11px] transition-colors"
-									>Clear</button>
+										class="ml-auto text-[11px] text-muted transition-colors hover:text-ink"
+										>Clear</button
+									>
 								{/if}
 							</div>
 						</div>
@@ -698,7 +709,8 @@
 								<Chip active={balance === ''} onclick={() => (balance = '')}>—</Chip>
 								<Chip active={balance === 'light'} onclick={() => (balance = 'light')}>Light</Chip>
 								<Chip active={balance === 'balanced'} onclick={() => (balance = 'balanced')}
-									>Balanced</Chip>
+									>Balanced</Chip
+								>
 								<Chip active={balance === 'heavy'} onclick={() => (balance = 'heavy')}>Heavy</Chip>
 							</div>
 						</div>
@@ -709,7 +721,7 @@
 								bind:value={notes}
 								rows="3"
 								placeholder="Syrupy, chocolate finish…"
-								class="bg-paper border-hairline text-ink-70 placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display w-full resize-none rounded-[14px] border px-3.5 py-3.5 text-[15px] leading-[1.45] italic transition outline-none focus:ring-2"
+								class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 							></textarea>
 						</div>
 
@@ -726,7 +738,7 @@
 				<div>
 					<Eyebrow class="mb-2">DOSE</Eyebrow>
 					<div
-						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+						class="field-wrapper flex h-14 items-center gap-1.5 rounded-[14px] border border-hairline bg-surface px-4 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -736,15 +748,15 @@
 							required
 							inputmode="decimal"
 							placeholder="0.0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
 						/>
-						<span class="text-muted font-mono text-[13px]">g</span>
+						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
 				</div>
 				<div>
 					<Eyebrow class="mb-2">WATER</Eyebrow>
 					<div
-						class="field-wrapper bg-surface border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-14 items-center gap-1.5 rounded-[14px] border px-4 transition focus-within:ring-2"
+						class="field-wrapper flex h-14 items-center gap-1.5 rounded-[14px] border border-hairline bg-surface px-4 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -754,9 +766,9 @@
 							required
 							inputmode="decimal"
 							placeholder="0"
-							class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em]"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
 						/>
-						<span class="text-muted font-mono text-[13px]">g</span>
+						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
 				</div>
 			</div>
@@ -770,8 +782,9 @@
 					{/each}
 					{#if actualRatio !== null}
 						<span
-							class="bg-copper-lt text-copper inline-flex h-9 items-center rounded-full px-2.5 font-mono text-[12px] tracking-[-0.01em]"
-						>= 1:{actualRatio.toFixed(1)} actual</span>
+							class="inline-flex h-9 items-center rounded-full bg-copper-lt px-2.5 font-mono text-[12px] tracking-[-0.01em] text-copper"
+							>= 1:{actualRatio.toFixed(1)} actual</span
+						>
 					{/if}
 				</div>
 			</div>
@@ -784,7 +797,7 @@
 					bind:value={grindSetting}
 					required
 					placeholder="e.g. 4.2"
-					class="bg-paper border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-12 w-full rounded-[14px] border px-3.5 font-mono transition outline-none focus:ring-2"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 
 				{#if grindSuggestion}
@@ -795,13 +808,15 @@
 							: 'STARTING POINT'}
 					{#if sug.kind === 'prefill'}
 						{#if grindSetting === sug.value}
-							<p class="text-muted mt-1.5 text-[12px]">Prefilled from your last brew of this bag.</p>
+							<p class="mt-1.5 text-[12px] text-muted">
+								Prefilled from your last brew of this bag.
+							</p>
 						{/if}
 					{:else if grindSetting.trim() === ''}
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="bg-copper-lt mt-2 flex w-full items-center gap-2.5 rounded-[12px] px-3 py-2.5 text-left transition hover:brightness-[0.98]"
+							class="mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left transition hover:brightness-[0.98]"
 						>
 							<svg
 								width="18"
@@ -810,33 +825,33 @@
 								fill="none"
 								stroke="currentColor"
 								stroke-width="1.3"
-								class="text-copper-dk shrink-0"
+								class="shrink-0 text-copper-dk"
 								aria-hidden="true"
 							>
 								<circle cx="9" cy="9" r="6.5" />
 								<circle cx="9" cy="9" r="2.5" />
 							</svg>
 							<span class="min-w-0 flex-1">
-								<span class="text-copper-dk block text-[13px]"
+								<span class="block text-[13px] text-copper-dk"
 									>Suggested <span class="font-mono font-medium">{sug.value}</span></span
 								>
 								<span
-									class="text-copper-dk/70 mt-0.5 block font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+									class="mt-0.5 block font-mono text-[10px] font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
 									>{prov}</span
 								>
 							</span>
 							<span
-								class="text-copper shrink-0 font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+								class="shrink-0 font-mono text-[10px] font-medium tracking-[0.1em] text-copper uppercase"
 								>Tap to use</span
 							>
 						</button>
 					{:else if grindApplied && grindSetting === sug.value}
-						<p class="text-copper-dk mt-1.5 text-[12px]">Applied the suggestion.</p>
+						<p class="mt-1.5 text-[12px] text-copper-dk">Applied the suggestion.</p>
 					{:else}
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="text-faint hover:text-copper-dk mt-1.5 text-[12px] transition-colors"
+							class="mt-1.5 text-[12px] text-faint transition-colors hover:text-copper-dk"
 							>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
 						>
 					{/if}
@@ -847,7 +862,7 @@
 			<div>
 				<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
 				<div
-					class="field-wrapper bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-1.5 rounded-[14px] border px-3.5 transition focus-within:ring-2"
+					class="field-wrapper flex h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 				>
 					<input
 						type="number"
@@ -857,9 +872,9 @@
 						max="100"
 						inputmode="numeric"
 						placeholder="0"
-						class="text-ink placeholder:text-faint min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em]"
+						class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
 					/>
-					<span class="text-muted font-mono text-[12px]">°C</span>
+					<span class="font-mono text-[12px] text-muted">°C</span>
 				</div>
 			</div>
 
@@ -869,8 +884,10 @@
 				<div class="grid grid-cols-2 gap-2.5">
 					<div>
 						<div
-							class="text-muted mb-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-						>MIN</div>
+							class="mb-1.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+						>
+							MIN
+						</div>
 						<input
 							type="number"
 							bind:value={brewMinutes}
@@ -878,13 +895,15 @@
 							min="0"
 							inputmode="numeric"
 							placeholder="0"
-							class="bg-surface border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 font-mono text-2xl font-medium tracking-[-0.02em] transition outline-none focus:ring-2"
+							class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 						/>
 					</div>
 					<div>
 						<div
-							class="text-muted mb-1.5 font-mono text-[10px] font-medium uppercase tracking-[0.14em]"
-						>SEC</div>
+							class="mb-1.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+						>
+							SEC
+						</div>
 						<input
 							type="number"
 							bind:value={brewSecondsPart}
@@ -893,7 +912,7 @@
 							max="59"
 							inputmode="numeric"
 							placeholder="0"
-							class="bg-surface border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 h-14 w-full rounded-[14px] border px-4 font-mono text-2xl font-medium tracking-[-0.02em] transition outline-none focus:ring-2"
+							class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 						/>
 					</div>
 				</div>
@@ -911,15 +930,15 @@
 				<Eyebrow class="mb-2">RATING (OPTIONAL)</Eyebrow>
 				<div class="flex items-center gap-4">
 					<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
-					<span class="text-ink font-mono text-[15px] font-medium">
+					<span class="font-mono text-[15px] font-medium text-ink">
 						{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
 					</span>
 					{#if rating != null}
 						<button
 							type="button"
 							onclick={() => (rating = null)}
-							class="text-muted hover:text-ink ml-auto text-[11px] transition-colors"
-						>Clear</button>
+							class="ml-auto text-[11px] text-muted transition-colors hover:text-ink">Clear</button
+						>
 					{/if}
 				</div>
 			</div>
@@ -930,7 +949,9 @@
 				<div class="flex flex-wrap gap-2">
 					<Chip active={balance === ''} onclick={() => (balance = '')}>—</Chip>
 					<Chip active={balance === 'light'} onclick={() => (balance = 'light')}>Light</Chip>
-					<Chip active={balance === 'balanced'} onclick={() => (balance = 'balanced')}>Balanced</Chip>
+					<Chip active={balance === 'balanced'} onclick={() => (balance = 'balanced')}
+						>Balanced</Chip
+					>
 					<Chip active={balance === 'heavy'} onclick={() => (balance = 'heavy')}>Heavy</Chip>
 				</div>
 			</div>
@@ -942,7 +963,7 @@
 					bind:value={notes}
 					rows="3"
 					placeholder="Stone fruit, jasmine on cool-down…"
-					class="bg-paper border-hairline text-ink-70 placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display w-full resize-none rounded-[14px] border px-3.5 py-3.5 text-[15px] leading-[1.45] italic transition outline-none focus:ring-2"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 
@@ -954,16 +975,17 @@
 		{/if}
 
 		{#if error}
-			<div
-				class="bg-danger/8 border-danger/20 text-danger rounded-[14px] border p-3 text-sm"
-			>{error}</div>
+			<div class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
+				{error}
+			</div>
 		{/if}
 
 		<!-- Save button at bottom -->
 		<button
 			type="submit"
 			disabled={submitting}
-			class="bg-copper text-paper hover:bg-copper-dk flex h-14 w-full items-center justify-center rounded-2xl text-base font-medium transition-colors disabled:opacity-50"
-		>{submitting ? 'Saving…' : quickMode ? 'Save shot' : 'Save brew'}</button>
+			class="press glass-cta flex h-14 w-full items-center justify-center rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk disabled:opacity-50"
+			>{submitting ? 'Saving…' : quickMode ? 'Save shot' : 'Save brew'}</button
+		>
 	</div>
 </form>

@@ -59,7 +59,7 @@
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
 		<a
 			href="/"
-			class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -85,23 +85,25 @@
 			{#if showArchived}
 				<a
 					href="/bags"
-					class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
-				>← Active</a>
+					class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+					>← Active</a
+				>
 			{:else}
 				<a
 					href="/bags?show=archived"
-					class="text-muted hover:text-ink font-mono text-[11px] font-medium uppercase tracking-[0.14em] transition-colors"
-				>Show archived ({archivedCount}) →</a>
+					class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+					>Show archived ({archivedCount}) →</a
+				>
 			{/if}
 		</div>
 	{/if}
 
 	<div class="px-[22px]">
 		{#if loading}
-			<p class="text-muted py-8 text-center text-sm">Loading…</p>
+			<p class="py-8 text-center text-sm text-muted">Loading…</p>
 		{:else if visibleBags.length === 0 && !bags.length}
 			<div class="flex flex-col items-center px-6 pt-12 pb-20 text-center">
-				<div class="bg-copper-lt text-copper mb-6 grid h-24 w-24 place-items-center rounded-full">
+				<div class="mb-6 grid h-24 w-24 place-items-center rounded-full bg-copper-lt text-copper">
 					<svg width="56" height="56" viewBox="0 0 56 56" fill="none">
 						<g transform="translate(28 28) rotate(-18)">
 							<ellipse
@@ -124,14 +126,16 @@
 					</svg>
 				</div>
 				<h2
-					class="font-display text-ink m-0 text-[26px] font-medium leading-[1.15] tracking-[-0.01em]"
-				>No bags yet.</h2>
-				<p
-					class="font-display text-muted mt-2 mb-7 max-w-[280px] text-[15px] leading-[1.5] italic"
-				>Add a bag once and reach for it across all the brews you make from it.</p>
+					class="m-0 font-display text-[26px] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
+				>
+					No bags yet.
+				</h2>
+				<p class="mt-2 mb-7 max-w-[280px] font-display text-[15px] leading-[1.5] text-muted italic">
+					Add a bag once and reach for it across all the brews you make from it.
+				</p>
 				<a
 					href="/bags/new"
-					class="bg-copper text-paper hover:bg-copper-dk inline-flex h-[52px] items-center gap-2.5 rounded-2xl px-5 text-[15px] font-medium transition-colors"
+					class="press glass-cta inline-flex h-[52px] items-center gap-2.5 rounded-full bg-copper px-5 text-[15px] font-medium text-paper hover:bg-copper-dk"
 				>
 					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 						<path
@@ -145,7 +149,7 @@
 				</a>
 			</div>
 		{:else if visibleBags.length === 0}
-			<p class="text-muted py-12 text-center text-sm">
+			<p class="py-12 text-center text-sm text-muted">
 				{showArchived ? 'No archived bags.' : 'All bags are archived.'}
 			</p>
 		{:else}
@@ -155,28 +159,28 @@
 					<div
 						in:fly={{ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 }}
 						out:slide={{ duration: 220 }}
-						class="bg-surface border-hairline rounded-[18px] border px-[18px] pt-[16px] pb-[18px] has-[a:active]:scale-[0.985] transition-transform duration-[180ms] ease-out"
+						class="rounded-[18px] border border-hairline bg-surface px-[18px] pt-[16px] pb-[18px] transition-transform duration-[180ms] ease-out has-[a:active]:scale-[0.985]"
 					>
 						<a
 							href="/bags/{bag.id}"
-							class="mb-2 flex items-start justify-between gap-3 -m-2 p-2 rounded-lg hover:bg-paper/40 transition-colors"
+							class="-m-2 mb-2 flex items-start justify-between gap-3 rounded-lg p-2 transition-colors hover:bg-paper/40"
 						>
 							{#if bag.photo}
 								<img
 									src={bag.photo}
 									alt=""
-									class="border-hairline h-[46px] w-[46px] shrink-0 rounded-[11px] border object-cover"
+									class="h-[46px] w-[46px] shrink-0 rounded-[11px] border border-hairline object-cover"
 								/>
 							{/if}
 							<div class="min-w-0 flex-1">
 								<div
-									class="font-display text-ink flex flex-wrap items-center gap-2 text-[22px] font-medium leading-[1.15] tracking-[-0.005em]"
+									class="flex flex-wrap items-center gap-2 font-display text-[22px] leading-[1.15] font-medium tracking-[-0.005em] text-ink"
 								>
 									{bag.name}
 									{#if bag.dialedRecipe}<DialedBadge />{/if}
 								</div>
 								{#if bag.roaster}
-									<div class="text-muted mt-0.5 text-[13px]">{bag.roaster}</div>
+									<div class="mt-0.5 text-[13px] text-muted">{bag.roaster}</div>
 								{/if}
 							</div>
 							{#if bag.process}
@@ -184,7 +188,7 @@
 							{/if}
 						</a>
 
-						<div class="text-muted flex flex-wrap gap-x-3 gap-y-1 text-[12px]">
+						<div class="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-muted">
 							{#if bag.origin}
 								{@const r = resolveOrigin(bag.origin)}
 								<span>
@@ -197,37 +201,49 @@
 						</div>
 
 						{#if bag.weightGrams != null}
-							<div class="border-hairline mt-3 grid grid-cols-3 gap-2 border-t pt-3">
+							<div class="mt-3 grid grid-cols-3 gap-2 border-t border-hairline pt-3">
 								<div>
-									<div class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]">USED</div>
-									<div class="text-ink mt-0.5 font-mono text-[15px] font-medium">
+									<div
+										class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+									>
+										USED
+									</div>
+									<div class="mt-0.5 font-mono text-[15px] font-medium text-ink">
 										{c.used.toFixed(1)}g
 									</div>
 								</div>
 								<div>
-									<div class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]">REMAINING</div>
-									<div class="text-copper mt-0.5 font-mono text-[15px] font-medium">
+									<div
+										class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+									>
+										REMAINING
+									</div>
+									<div class="mt-0.5 font-mono text-[15px] font-medium text-copper">
 										{c.remaining != null ? c.remaining.toFixed(1) + 'g' : '—'}
 									</div>
 								</div>
 								<div>
-									<div class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]">BREWS</div>
-									<div class="text-ink mt-0.5 font-mono text-[15px] font-medium">
+									<div
+										class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+									>
+										BREWS
+									</div>
+									<div class="mt-0.5 font-mono text-[15px] font-medium text-ink">
 										{c.brewCount}
 									</div>
 								</div>
 							</div>
 							{#if c.percentUsed != null}
-								<div class="bg-hairline mt-3 h-1 overflow-hidden rounded-full">
+								<div class="mt-3 h-1 overflow-hidden rounded-full bg-hairline">
 									<div
-										class="bg-copper h-full transition-all"
+										class="h-full bg-copper transition-all"
 										style="width: {Math.min(100, c.percentUsed)}%"
 									></div>
 								</div>
 							{/if}
 						{:else if c.brewCount > 0}
-							<div class="border-hairline mt-3 border-t pt-3">
-								<div class="text-muted text-[13px]">
+							<div class="mt-3 border-t border-hairline pt-3">
+								<div class="text-[13px] text-muted">
 									{c.brewCount} brew{c.brewCount === 1 ? '' : 's'}
 									{#if c.used > 0}· {c.used.toFixed(1)}g used{/if}
 								</div>
@@ -237,13 +253,13 @@
 						<div class="mt-3 flex items-center justify-end gap-4">
 							<a
 								href="/bags/{bag.id}/edit"
-								class="text-muted hover:text-ink text-[12px] transition-colors"
-							>Edit</a>
+								class="text-[12px] text-muted transition-colors hover:text-ink">Edit</a
+							>
 							<button
 								type="button"
 								onclick={() => handleDelete(bag)}
-								class="text-faint hover:text-danger text-[12px] transition-colors"
-							>Delete</button>
+								class="text-[12px] text-faint transition-colors hover:text-danger">Delete</button
+							>
 						</div>
 					</div>
 				{/each}
@@ -254,7 +270,7 @@
 	{#if bags.length > 0}
 		<a
 			href="/bags/new"
-			class="bg-copper text-paper hover:bg-copper-dk fixed right-6 bottom-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full shadow-[0_8px_24px_rgba(156,74,31,0.35),0_2px_6px_rgba(0,0,0,0.12)] transition-colors"
+			class="press glass-cta fixed right-6 bottom-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full bg-copper text-paper hover:bg-copper-dk"
 			aria-label="New bag"
 		>
 			<svg width="20" height="20" viewBox="0 0 20 20" fill="none">

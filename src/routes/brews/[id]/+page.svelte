@@ -3,12 +3,7 @@
 	import { page } from '$app/state';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { getBrewById, getBagById, listBrews, deleteBrew } from '$lib/db/repository';
-	import {
-		formatRatio,
-		formatBrewTime,
-		formatTimeAgo,
-		ratio
-	} from '$lib/brews/compute';
+	import { formatRatio, formatBrewTime, formatTimeAgo, ratio } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import { resolveNextShot, espressoShotsFor } from '$lib/brews/dialin';
@@ -91,8 +86,7 @@
 		const b = brew;
 		const n = nextShot;
 		if (!b?.bagId || !n) return null;
-		const grind =
-			n.kind === 'move' && n.target ? n.target : b.grindSetting;
+		const grind = n.kind === 'move' && n.target ? n.target : b.grindSetting;
 		return `/brews/new?bagId=${b.bagId}&method=espresso&quick=1&grind=${encodeURIComponent(grind)}`;
 	});
 
@@ -122,9 +116,7 @@
 		goto(stageBrewAgain(brew));
 	}
 
-	const bagConsumptionData = $derived(
-		bag && brew ? bagConsumption(bag, allBrews) : null
-	);
+	const bagConsumptionData = $derived(bag && brew ? bagConsumption(bag, allBrews) : null);
 </script>
 
 <svelte:head>
@@ -132,11 +124,11 @@
 </svelte:head>
 
 {#if loading}
-	<p class="text-muted py-8 text-center text-sm">Loading…</p>
+	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound || !brew}
 	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
 		<p class="text-muted">Brew not found.</p>
-		<a href="/brews" class="text-copper mt-3 inline-block underline">Back to brews</a>
+		<a href="/brews" class="mt-3 inline-block text-copper underline">Back to brews</a>
 	</div>
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
@@ -144,7 +136,7 @@
 		<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
 			<a
 				href="/brews"
-				class="text-muted hover:text-ink flex h-9 items-center gap-1 text-[15px] transition-colors"
+				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -162,8 +154,8 @@
 			</a>
 			<a
 				href="/brews/{brew.id}/edit"
-				class="text-muted hover:text-ink h-9 px-2 text-[14px] transition-colors"
-			>Edit</a>
+				class="h-9 px-2 text-[14px] text-muted transition-colors hover:text-ink">Edit</a
+			>
 		</div>
 
 		<div class="space-y-5 px-[22px]">
@@ -176,7 +168,7 @@
 					<Badge>{brew.method}</Badge>
 					{#if brew.isFavorite}
 						<span
-							class="bg-success/10 text-success inline-flex h-[22px] items-center gap-1 rounded-full px-2 font-mono text-[10.5px] font-medium tracking-[0.12em] uppercase"
+							class="inline-flex h-[22px] items-center gap-1 rounded-full bg-success/10 px-2 font-mono text-[10.5px] font-medium tracking-[0.12em] text-success uppercase"
 						>
 							<svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
 								<polygon
@@ -192,13 +184,15 @@
 				</div>
 
 				<h1
-					class="font-display text-ink mt-3 text-[30px] font-medium leading-[1.05] tracking-[-0.015em]"
-				>{bag?.name ?? brew.coffeeName ?? 'Untitled brew'}</h1>
+					class="mt-3 font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+				>
+					{bag?.name ?? brew.coffeeName ?? 'Untitled brew'}
+				</h1>
 
 				{#if bag}
 					<a
 						href="/bags/{bag.id}"
-						class="text-copper-dk hover:text-copper mt-1.5 inline-flex items-center gap-1 text-[13px] transition-colors"
+						class="mt-1.5 inline-flex items-center gap-1 text-[13px] text-copper-dk transition-colors hover:text-copper"
 						style="border-bottom: 1px solid rgba(156,74,31,0.35); padding-bottom: 1px;"
 					>
 						<svg
@@ -216,7 +210,12 @@
 							<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
 						</svg>
 						{bag.roaster ?? bag.name}
-						{#if resolvedOrigin}<span class="text-muted"> · <OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} />{resolvedOrigin.country}</span>{/if}
+						{#if resolvedOrigin}<span class="text-muted">
+								· <OriginFlag
+									code={resolvedOrigin.code}
+									country={resolvedOrigin.country}
+								/>{resolvedOrigin.country}</span
+							>{/if}
 						{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
 					</a>
 					{#if bag.roastedAt}
@@ -238,16 +237,16 @@
 						{/if}
 					{/if}
 				{:else if brew.roaster || brew.coffeeName}
-					<div class="text-muted mt-1.5 text-[13px]">{brew.roaster ?? ''}</div>
+					<div class="mt-1.5 text-[13px] text-muted">{brew.roaster ?? ''}</div>
 				{/if}
 
-				<div class="text-muted mt-2 font-mono text-[12px] tracking-[0.04em]">
+				<div class="mt-2 font-mono text-[12px] tracking-[0.04em] text-muted">
 					{formatTimeAgo(brew.brewedAt)}
 				</div>
 
 				{#if !brew.bagId}
 					<div
-						class="bg-copper-lt text-copper-dk mt-3 flex items-center justify-between gap-3 rounded-[14px] px-3.5 py-2.5 text-[12.5px]"
+						class="mt-3 flex items-center justify-between gap-3 rounded-[14px] bg-copper-lt px-3.5 py-2.5 text-[12.5px] text-copper-dk"
 					>
 						<div class="flex items-center gap-2">
 							<svg
@@ -269,7 +268,8 @@
 						<a
 							href="/brews/{brew.id}/edit"
 							class="font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase hover:underline"
-						>Link →</a>
+							>Link →</a
+						>
 					</div>
 				{/if}
 
@@ -284,57 +284,67 @@
 
 			<!-- Photo -->
 			{#if brew.photo}
-				<div class="border-hairline bg-surface overflow-hidden rounded-[22px] border">
+				<div class="overflow-hidden rounded-[22px] border border-hairline bg-surface">
 					<img src={brew.photo} alt="This brew" class="max-h-[340px] w-full object-cover" />
 				</div>
 			{/if}
 
 			<!-- Hero ratio block -->
 			<div
-				class="bg-surface border-hairline relative overflow-hidden rounded-[22px] border px-[22px] py-[24px]"
+				class="relative overflow-hidden rounded-[22px] border border-hairline bg-surface px-[22px] py-[24px]"
 			>
 				<div
-					class="bg-copper-lt pointer-events-none absolute -top-[30px] -right-[30px] h-[140px] w-[140px] rounded-full opacity-40"
+					class="pointer-events-none absolute -top-[30px] -right-[30px] h-[140px] w-[140px] rounded-full bg-copper-lt opacity-40"
 				></div>
 				<div class="relative">
 					<Eyebrow>RATIO</Eyebrow>
 					<div
-						class="text-copper mt-1 font-mono text-[56px] font-medium leading-none tracking-[-0.04em]"
-					>{formatRatio(brew)}</div>
-					<p class="text-muted mt-3 text-[13px] leading-[1.5]">
+						class="mt-1 font-mono text-[56px] leading-none font-medium tracking-[-0.04em] text-copper"
+					>
+						{formatRatio(brew)}
+					</div>
+					<p class="mt-3 text-[13px] leading-[1.5] text-muted">
 						{brew.doseGrams}g of coffee yielded {outValue} of {verb} in {formatBrewTime(brew)}.
 					</p>
 
-					<div class="border-hairline mt-4 grid grid-cols-4 gap-1 border-t pt-4">
+					<div class="mt-4 grid grid-cols-4 gap-1 border-t border-hairline pt-4">
 						<div>
 							<div
-								class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-							>DOSE</div>
-							<div class="text-ink mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em]">
+								class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								DOSE
+							</div>
+							<div class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] text-ink">
 								{brew.doseGrams}g
 							</div>
 						</div>
 						<div>
 							<div
-								class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-							>{outLabel}</div>
-							<div class="text-ink mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em]">
+								class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								{outLabel}
+							</div>
+							<div class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] text-ink">
 								{outValue}
 							</div>
 						</div>
 						<div>
 							<div
-								class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-							>TIME</div>
-							<div class="text-ink mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em]">
+								class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								TIME
+							</div>
+							<div class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] text-ink">
 								{formatBrewTime(brew)}
 							</div>
 						</div>
 						<div>
 							<div
-								class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-							>RATIO</div>
-							<div class="text-copper mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em]">
+								class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								RATIO
+							</div>
+							<div class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] text-copper">
 								{formatRatio(brew)}
 							</div>
 						</div>
@@ -351,26 +361,28 @@
 						: 'border-copper/25 bg-copper-lt'}"
 				>
 					<div
-						class="font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] {isHold
+						class="font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase {isHold
 							? 'text-success'
 							: 'text-copper-dk'}"
-					>NEXT SHOT</div>
-					<div
-						class="font-display text-ink mt-1.5 text-[18px] font-medium leading-[1.25]"
-					>{nextShot.headline}</div>
+					>
+						NEXT SHOT
+					</div>
+					<div class="mt-1.5 font-display text-[18px] leading-[1.25] font-medium text-ink">
+						{nextShot.headline}
+					</div>
 					{#if nextShot.kind === 'move'}
 						<div class="mt-2 flex items-baseline gap-2.5">
-							<span class="text-copper font-mono text-[26px] font-medium tracking-[-0.02em]">
+							<span class="font-mono text-[26px] font-medium tracking-[-0.02em] text-copper">
 								{nextShot.target ?? '—'}
 							</span>
 							<span
-								class="text-copper-dk font-mono text-[10.5px] font-medium tracking-[0.12em] uppercase"
+								class="font-mono text-[10.5px] font-medium tracking-[0.12em] text-copper-dk uppercase"
 							>
 								{nextShot.deltaTicks < 0 ? '−' : '+'}{Math.abs(nextShot.deltaTicks)} ticks · {nextShot.direction}
 							</span>
 						</div>
 					{/if}
-					<p class="text-ink-70 mt-2 text-[13px] leading-[1.5]">{nextShot.prose}</p>
+					<p class="mt-2 text-[13px] leading-[1.5] text-ink-70">{nextShot.prose}</p>
 					<div class="mt-3.5 flex flex-wrap items-center gap-2">
 						{#if pullNextHref}
 							<a
@@ -382,32 +394,36 @@
 								{#if isHold}
 									Repeat this shot
 								{:else}
-									Pull next shot at {nextShot.kind === 'move' ? (nextShot.target ?? 'adjusted grind') : ''}
+									Pull next shot at {nextShot.kind === 'move'
+										? (nextShot.target ?? 'adjusted grind')
+										: ''}
 								{/if}
 							</a>
 						{/if}
 						<button
 							type="button"
 							onclick={() => (nextShotDismissed = true)}
-							class="text-muted hover:text-ink px-2 text-[13px] transition-colors"
-						>Done</button>
+							class="px-2 text-[13px] text-muted transition-colors hover:text-ink">Done</button
+						>
 					</div>
 				</div>
 			{/if}
 
 			<!-- Variables card -->
 			{#if showVariables}
-				<div class="bg-surface border-hairline rounded-[18px] border px-4 py-[14px]">
+				<div class="rounded-[18px] border border-hairline bg-surface px-4 py-[14px]">
 					<div class="grid grid-cols-2 gap-4">
 						{#if brew.grindSetting}
 							<div>
 								<div
-									class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-								>GRIND</div>
-								<div class="text-ink mt-1 font-mono text-[19px] font-medium tracking-[-0.01em]">
+									class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								>
+									GRIND
+								</div>
+								<div class="mt-1 font-mono text-[19px] font-medium tracking-[-0.01em] text-ink">
 									{brew.grindSetting}
 								</div>
-								<div class="text-muted mt-0.5 text-[11.5px]">
+								<div class="mt-0.5 text-[11.5px] text-muted">
 									{brew.method === 'espresso' ? 'Lagom Casa' : 'Fellow Ode 2'}
 								</div>
 							</div>
@@ -415,9 +431,11 @@
 						{#if brew.waterTempC != null}
 							<div>
 								<div
-									class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-								>{brew.method === 'espresso' ? 'BREW TEMP' : 'WATER TEMP'}</div>
-								<div class="text-ink mt-1 font-mono text-[19px] font-medium tracking-[-0.01em]">
+									class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								>
+									{brew.method === 'espresso' ? 'BREW TEMP' : 'WATER TEMP'}
+								</div>
+								<div class="mt-1 font-mono text-[19px] font-medium tracking-[-0.01em] text-ink">
 									{brew.waterTempC}°C
 								</div>
 							</div>
@@ -427,8 +445,10 @@
 					{#if espressoExtraction}
 						<div class="mt-4">
 							<div
-								class="text-muted mb-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-							>TASTE</div>
+								class="mb-1.5 font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								TASTE
+							</div>
 							<ExtractionScale value={espressoExtraction} readonly />
 						</div>
 					{/if}
@@ -436,8 +456,10 @@
 					{#if brew.balance}
 						<div class="mt-4">
 							<div
-								class="text-muted mb-1.5 font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]"
-							>BALANCE</div>
+								class="mb-1.5 font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								BALANCE
+							</div>
 							<BalanceScale value={brew.balance} readonly />
 						</div>
 					{/if}
@@ -446,15 +468,19 @@
 
 			<!-- Rating card -->
 			{#if brew.rating != null}
-				<div class="bg-surface border-hairline rounded-[18px] border px-4 py-[16px]">
+				<div class="rounded-[18px] border border-hairline bg-surface px-4 py-[16px]">
 					<div class="flex items-end justify-between gap-4">
 						<div>
 							<div
-								class="text-copper font-display font-mono text-[36px] font-medium leading-none tracking-[-0.02em]"
-							>{brew.rating.toFixed(1)}</div>
+								class="font-display font-mono text-[36px] leading-none font-medium tracking-[-0.02em] text-copper"
+							>
+								{brew.rating.toFixed(1)}
+							</div>
 							<div
-								class="text-muted mt-1 font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase"
-							>out of 5</div>
+								class="mt-1 font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								out of 5
+							</div>
 						</div>
 						<StarRow value={brew.rating} size={18} />
 					</div>
@@ -462,36 +488,34 @@
 			{:else}
 				<a
 					href="/brews/{brew.id}/edit"
-					class="border-hairline hover:border-copper/50 group flex items-center justify-between gap-3 rounded-[18px] border border-dashed px-4 py-[16px] transition-colors"
+					class="group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] transition-colors hover:border-copper/50"
 				>
 					<div class="flex items-center gap-3">
 						<StarRow value={0} size={16} />
-						<div class="text-muted text-[13px]">Rate this brew</div>
+						<div class="text-[13px] text-muted">Rate this brew</div>
 					</div>
-					<span
-						class="text-copper font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase"
-					>Add →</span>
+					<span class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-copper uppercase"
+						>Add →</span
+					>
 				</a>
 			{/if}
 
 			<!-- Notes card -->
 			{#if brew.notes}
 				<div
-					class="bg-surface border-hairline font-display text-ink-70 rounded-[18px] border px-4 py-3.5 text-[15.5px] leading-[1.5] italic"
+					class="rounded-[18px] border border-hairline bg-surface px-4 py-3.5 font-display text-[15.5px] leading-[1.5] text-ink-70 italic"
 				>
 					<MarkdownText text={brew.notes} />
 				</div>
 			{:else}
 				<a
 					href="/brews/{brew.id}/edit"
-					class="border-hairline hover:border-copper/50 group flex items-center justify-between gap-3 rounded-[18px] border border-dashed px-4 py-[16px] transition-colors"
+					class="group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] transition-colors hover:border-copper/50"
 				>
-					<div class="text-muted font-display text-[14px] italic">
-						What did it taste like?
-					</div>
-					<span
-						class="text-copper font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase"
-					>Add →</span>
+					<div class="font-display text-[14px] text-muted italic">What did it taste like?</div>
+					<span class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-copper uppercase"
+						>Add →</span
+					>
 				</a>
 			{/if}
 
@@ -499,11 +523,11 @@
 			{#if bag && bagConsumptionData}
 				<a
 					href="/bags/{bag.id}"
-					class="bg-surface border-hairline hover:bg-paper/50 block rounded-[18px] border px-4 py-[14px] transition-colors"
+					class="block rounded-[18px] border border-hairline bg-surface px-4 py-[14px] transition-colors hover:bg-paper/50"
 				>
 					<div class="flex items-start gap-3">
 						<div
-							class="bg-copper text-paper grid h-[44px] w-[44px] shrink-0 place-items-center rounded-[10px]"
+							class="grid h-[44px] w-[44px] shrink-0 place-items-center rounded-[10px] bg-copper text-paper"
 						>
 							<svg
 								width="22"
@@ -521,23 +545,25 @@
 							</svg>
 						</div>
 						<div class="min-w-0 flex-1">
-							<div
-								class="font-display text-ink truncate text-[17px] font-medium leading-[1.2]"
-							>{bag.name}</div>
-							<div class="text-muted mt-0.5 font-mono text-[11.5px] tracking-[0.04em]">
-								{#if resolvedOrigin}<OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} />{resolvedOrigin.country} · {/if}{#if bag.weightGrams != null && bagConsumptionData.remaining != null}
+							<div class="truncate font-display text-[17px] leading-[1.2] font-medium text-ink">
+								{bag.name}
+							</div>
+							<div class="mt-0.5 font-mono text-[11.5px] tracking-[0.04em] text-muted">
+								{#if resolvedOrigin}<OriginFlag
+										code={resolvedOrigin.code}
+										country={resolvedOrigin.country}
+									/>{resolvedOrigin.country} ·
+								{/if}{#if bag.weightGrams != null && bagConsumptionData.remaining != null}
 									{Math.max(0, bagConsumptionData.remaining).toFixed(0)}G LEFT · {bagConsumptionData.brewCount}
 									BREW{bagConsumptionData.brewCount === 1 ? '' : 'S'}
 								{:else}
-									{bagConsumptionData.brewCount} BREW{bagConsumptionData.brewCount === 1
-										? ''
-										: 'S'}
+									{bagConsumptionData.brewCount} BREW{bagConsumptionData.brewCount === 1 ? '' : 'S'}
 								{/if}
 							</div>
 							{#if bag.weightGrams != null && bagConsumptionData.percentUsed != null}
 								<div class="mt-2 h-1 overflow-hidden rounded-full bg-[#EDE5D4]">
 									<div
-										class="bg-copper h-full"
+										class="h-full bg-copper"
 										style="width: {Math.max(0, 100 - bagConsumptionData.percentUsed)}%"
 									></div>
 								</div>
@@ -552,7 +578,7 @@
 				<button
 					type="button"
 					onclick={handleDuplicate}
-					class="bg-ink/[0.04] text-ink hover:bg-ink/[0.08] flex items-center justify-center gap-2 rounded-2xl py-3 text-[14px] font-medium transition-colors"
+					class="press flex items-center justify-center gap-2 rounded-full bg-ink/[0.04] py-3 text-[14px] font-medium text-ink hover:bg-ink/[0.08]"
 				>
 					<svg
 						width="14"
@@ -572,7 +598,7 @@
 				<button
 					type="button"
 					onclick={handleDelete}
-					class="bg-danger/8 text-danger hover:bg-danger/14 flex items-center justify-center gap-2 rounded-2xl py-3 text-[14px] font-medium transition-colors"
+					class="press flex items-center justify-center gap-2 rounded-full bg-danger/8 py-3 text-[14px] font-medium text-danger hover:bg-danger/14"
 				>
 					<svg
 						width="14"
