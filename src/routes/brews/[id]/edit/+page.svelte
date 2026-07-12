@@ -305,6 +305,12 @@
 					? (brewTimeSeconds ?? NaN)
 					: (brewMinutes ?? 0) * 60 + (brewSecondsPart ?? 0);
 
+			// Switching an espresso brew to pour-over leaves MIN/SEC null; guard the empty
+			// time here so it doesn't surface as a raw ZodError dump.
+			if (method === 'pour-over' && (!Number.isFinite(totalBrewSeconds) || totalBrewSeconds <= 0)) {
+				throw new Error('Enter the brew time (minutes and/or seconds).');
+			}
+
 			const trimmedTitle = blogTitle.trim();
 			const trimmedBody = blogBody.trim();
 			// Repository.applyPublishTransition does the publishedAt / bagSnapshot
@@ -351,7 +357,14 @@
 			await updateBrew(brew);
 			await goto(`/brews/${brewId}`);
 		} catch (err) {
-			error = err instanceof Error ? err.message : String(err);
+			// A ZodError's .message is a JSON dump of all issues — show the first issue's
+			// human message instead. (ZodError is an Error, so check .issues first.)
+			if (err && typeof err === 'object' && 'issues' in err) {
+				const issues = (err as { issues?: Array<{ message?: string }> }).issues;
+				error = Array.isArray(issues) && issues[0]?.message ? issues[0].message : 'Please check the form and try again.';
+			} else {
+				error = err instanceof Error ? err.message : String(err);
+			}
 			submitting = false;
 		}
 	}

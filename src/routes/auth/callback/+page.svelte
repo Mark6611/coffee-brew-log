@@ -7,6 +7,18 @@
 	let errorMsg = $state<string | null>(null);
 
 	onMount(() => {
+		// An expired/used magic link comes back as #error=...&error_description=... in the
+		// hash — known synchronously at load. Surface it immediately with its real message
+		// instead of showing a 4-second "Confirming…" spinner and then a generic error.
+		const hash = new URLSearchParams(window.location.hash.slice(1));
+		if (hash.get('error')) {
+			status = 'error';
+			errorMsg =
+				hash.get('error_description') /* URLSearchParams decodes + → space */ ??
+				'Sign-in link is invalid or expired. Try again.';
+			return;
+		}
+
 		// Supabase auto-detects the session in URL on init. Listen for the SIGNED_IN event
 		// and redirect home. Fallback: if a session is already present (e.g. user revisited
 		// the callback URL), redirect immediately.

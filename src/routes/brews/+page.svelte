@@ -18,6 +18,18 @@
 	let loading = $state(true);
 	let filter = $state<Filter>('all');
 	let searchOpen = $state(false);
+	let searchInputEl = $state<HTMLInputElement | undefined>();
+
+	async function toggleSearch() {
+		searchOpen = !searchOpen;
+		if (!searchOpen) return;
+		// The input mounts in normal flow near the top of the document, NOT inside the
+		// pinned header — so tapping the icon while scrolled down opens a field offscreen.
+		// Bring it into view and focus it.
+		window.scrollTo({ top: 0, behavior: 'smooth' });
+		await tick();
+		searchInputEl?.focus();
+	}
 	let searchQuery = $state('');
 
 	// Stagger the entrance only on the first reveal; after that, search/filter
@@ -102,7 +114,7 @@
 		{#snippet action()}
 			<button
 				type="button"
-				onclick={() => (searchOpen = !searchOpen)}
+				onclick={toggleSearch}
 				class="press-sm grid h-[38px] w-[38px] place-items-center rounded-full border border-hairline bg-surface hover:bg-paper"
 				aria-label={searchOpen ? 'Close search' : 'Open search'}
 			>
@@ -138,6 +150,7 @@
 		<div class="px-[22px] pb-3">
 			<input
 				type="search"
+				bind:this={searchInputEl}
 				bind:value={searchQuery}
 				placeholder="Search coffee, roaster, notes…"
 				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"

@@ -49,6 +49,16 @@
 	const hasQuery = $derived(query.length > 0);
 	const totalRows = $derived(filtered.length + 1);
 
+	// Reset the keyboard highlight whenever the query changes or the dropdown reopens.
+	// Hovering sets highlightedIndex (even onto the "create new" row); if the query then
+	// shrinks the list, that stale index made Enter fire createNew() — tearing down the
+	// brew form mid-entry — instead of selecting the match the user could see.
+	$effect(() => {
+		void query;
+		void isOpen;
+		highlightedIndex = 0;
+	});
+
 	function selectBag(bag: Bag) {
 		bagId = bag.id;
 		onselect?.(bag);
@@ -86,7 +96,7 @@
 		} else if (e.key === 'Enter') {
 			if (totalRows === 0) return;
 			e.preventDefault();
-			if (highlightedIndex < filtered.length) {
+			if (highlightedIndex >= 0 && highlightedIndex < filtered.length) {
 				selectBag(filtered[highlightedIndex]);
 			} else {
 				createNew();

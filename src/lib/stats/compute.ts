@@ -25,8 +25,13 @@ export function brewsByWeek(brews: Brew[], weeks = 12, now: Date = new Date()): 
 }
 
 export function avgRatio(brews: Brew[]): number | null {
-	if (brews.length === 0) return null;
-	return brews.reduce((s, b) => s + ratio(b), 0) / brews.length;
+	// A ratio only compares within a method (espresso dose:yield ~1:2 vs pour-over
+	// dose:water ~1:16); averaging across methods yields a number no brew has and that
+	// swings with the espresso/pour-over mix rather than with dialing-in. Restrict to
+	// pour-overs, matching ratioBuckets below.
+	const pourovers = brews.filter((b) => b.method === 'pour-over');
+	if (pourovers.length === 0) return null;
+	return pourovers.reduce((s, b) => s + ratio(b), 0) / pourovers.length;
 }
 
 export function avgRating(brews: Brew[]): number | null {

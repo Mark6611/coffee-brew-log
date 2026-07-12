@@ -9,7 +9,13 @@
 
 	onMount(() => {
 		online = navigator.onLine;
-		const goOnline = () => (online = true);
+		const goOnline = () => {
+			online = true;
+			// The offline banner promises changes "sync when you reconnect" — nothing
+			// else triggers that, so push a sync here when signed in (fullSync no-ops if
+			// already running or signed out).
+			if (auth.user) void fullSync();
+		};
 		const goOffline = () => (online = false);
 		window.addEventListener('online', goOnline);
 		window.addEventListener('offline', goOffline);

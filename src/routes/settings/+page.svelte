@@ -104,10 +104,17 @@
 			)
 		)
 			return;
-		await wipeAllData();
+		try {
+			await wipeAllData();
+			message = 'All data wiped.';
+			error = null;
+		} catch (e) {
+			// wipeAllData now awaits the server tombstones and throws if they don't land —
+			// don't claim success for a wipe that didn't reach the account.
+			error = e instanceof Error ? `Couldn’t wipe your account — ${e.message}` : 'Wipe failed.';
+			message = null;
+		}
 		await loadCounts();
-		message = 'All data wiped.';
-		error = null;
 	}
 
 	let deletingAccount = $state(false);

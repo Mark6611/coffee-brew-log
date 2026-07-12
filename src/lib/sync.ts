@@ -124,6 +124,33 @@ export function pushBrew(brew: Brew): void {
 // tombstones). See repository.deleteBag / deleteBrew. Rows are kept on the
 // server so other devices can converge to the deleted state on next pull.
 
+/**
+ * Wipe: tombstone EVERY current row on the server (stamp deletedAt + upsert), the
+ * same mechanism as a single delete. A plain hard-delete is silently undone the
+ * moment another signed-in device runs fullSync — that blind-pushes its full local
+ * copy back and the wiping device re-pulls it. This is awaited and THROWS on
+ * failure so the caller never reports a wipe that didn't actually reach the server.
+ */
+export async function pushWipeTombstones(bags: Bag[], brews: Brew[]): Promise<void> {
+	const user = auth.user;
+	if (!user) return; // signed out ⇒ no server data of ours to wipe
+	const now = new Date().toISOString();
+	const bagRows = bags
+		.filter((b) => !b.deletedAt)
+		.map((b) => withUserId(BagSchema.parse({ ...b, deletedAt: now }), user.id));
+	const brewRows = brews
+		.filter((b) => !b.deletedAt)
+		.map((b) => withUserId(BrewSchema.parse({ ...b, deletedAt: now }), user.id));
+	if (bagRows.length) {
+		const { error } = await supabase.from('bags').upsert(bagRows as never);
+		if (error) throw new Error(error.message);
+	}
+	if (brewRows.length) {
+		const { error } = await supabase.from('brews').upsert(brewRows as never);
+		if (error) throw new Error(error.message);
+	}
+}
+
 // ─── Full sync (push everything local, then pull all server data) ───
 
 // Push in small batches. Brew/bag rows now carry an inline base64 photo (up to

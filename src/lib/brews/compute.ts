@@ -91,10 +91,11 @@ export function weekStats(brews: Brew[], now: Date = new Date()): WeekStats {
 	const recent = brews.filter((b) => new Date(b.brewedAt) >= weekAgo);
 
 	const count = recent.length;
+	// Average the ratio over pour-overs only — blending in espresso's ~1:2 makes the
+	// figure meaningless (see stats/compute.avgRatio).
+	const pourOvers = recent.filter((b) => b.method === 'pour-over');
 	const avgRatioNum =
-		recent.length === 0
-			? null
-			: recent.reduce((sum, b) => sum + ratio(b), 0) / recent.length;
+		pourOvers.length === 0 ? null : pourOvers.reduce((sum, b) => sum + ratio(b), 0) / pourOvers.length;
 	const avgRatio = avgRatioNum === null ? null : `1:${avgRatioNum.toFixed(1)}`;
 	const favoritesCount = recent.filter((b) => b.isFavorite).length;
 

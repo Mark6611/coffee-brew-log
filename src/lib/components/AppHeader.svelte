@@ -12,11 +12,18 @@
 	} = $props();
 
 	// iOS large-title behaviour: the bar is flush with the page at rest, then
-	// gains a translucent material blur + hairline once content scrolls beneath
-	// it. Threshold is a few px so the frost only appears after a real scroll.
+	// gains a translucent material blur + hairline once it PINS and content scrolls
+	// beneath it. Derive "pinned" from the element itself, not window.scrollY: on
+	// pages where the header sits below a "Home" link row (/brews, /bags) a fixed
+	// scrollY threshold frosted the bar ~40px before it actually stuck. `rect.top <= 0`
+	// means it's stuck to the top; `scrollY > 0` keeps a header that's naturally at the
+	// top (home) flush at rest instead of frosting immediately.
+	let el = $state<HTMLDivElement | undefined>();
 	let scrolled = $state(false);
 	onMount(() => {
-		const onScroll = () => (scrolled = window.scrollY > 6);
+		const onScroll = () => {
+			scrolled = !!el && el.getBoundingClientRect().top <= 0.5 && window.scrollY > 0;
+		};
 		onScroll();
 		window.addEventListener('scroll', onScroll, { passive: true });
 		return () => window.removeEventListener('scroll', onScroll);
@@ -24,6 +31,7 @@
 </script>
 
 <div
+	bind:this={el}
 	class="header sticky top-0 z-30 px-[22px] pt-[14px] pb-[18px] transition-[background-color,border-color] duration-300 {scrolled
 		? 'is-scrolled border-b'
 		: 'border-b border-transparent'}"
@@ -40,7 +48,10 @@
 			{@render children()}
 		</h1>
 		{#if action}
-			<div>{@render action()}</div>
+			<!-- pe-11 on phone clears the app's fixed theme toggle (top-3 right-3, z-50),
+			     which otherwise overlaps and steals taps from this action button once the
+			     header pins; no clearance needed once the column has side margins (sm+). -->
+			<div class="pe-11 sm:pe-0">{@render action()}</div>
 		{/if}
 	</div>
 </div>

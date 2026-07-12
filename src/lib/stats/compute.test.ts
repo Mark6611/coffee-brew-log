@@ -44,12 +44,12 @@ describe('methodSplit', () => {
 });
 
 describe('avgRatio / avgRating', () => {
-	it('averages ratios across methods', () => {
+	it('averages pour-over ratios only (espresso ratio is a different metric)', () => {
 		const brews = [
 			pourOver({ doseGrams: 20, waterGrams: 320 }), // 16
-			espresso({ doseGrams: 18, yieldGrams: 36 }) // 2
+			espresso({ doseGrams: 18, yieldGrams: 36 }) // 2 — excluded from the mean
 		];
-		expect(avgRatio(brews)).toBe(9);
+		expect(avgRatio(brews)).toBe(16);
 	});
 	it('returns null ratio for an empty list', () => {
 		expect(avgRatio([])).toBeNull();

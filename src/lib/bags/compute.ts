@@ -24,9 +24,12 @@ export function bagConsumption(bag: Bag, brews: Brew[]): BagConsumption {
 }
 
 export function formatRoastedAt(iso: string | undefined, now: Date = new Date()): string {
-	if (!iso) return '';
+	// Derive the day count from daysSinceRoast (floor) so this label, freshnessLabel,
+	// and freshnessStale all agree — rounding here made the list read "22 days ago"
+	// while the detail page said "21" and never flagged stale, at the same moment.
+	const days = daysSinceRoast(iso, now);
+	if (days == null) return '';
 	const date = new Date(iso + 'T00:00:00');
-	const days = Math.round((now.getTime() - date.getTime()) / 86_400_000);
 	if (days < 0) return 'roasted ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 	if (days === 0) return 'roasted today';
 	if (days === 1) return 'roasted yesterday';

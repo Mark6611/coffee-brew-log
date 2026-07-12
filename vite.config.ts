@@ -16,6 +16,16 @@ export default defineConfig({
 		SvelteKitPWA({
 			disable: native,
 			registerType: 'prompt',
+			kit: {
+				// adapter-static writes the SPA fallback to build/index.html, which sits
+				// OUTSIDE the plugin's glob dir, so it never entered the precache manifest —
+				// and the default navigateFallback ('/') then bound the NavigationRoute to a
+				// non-precached URL, which workbox rejects synchronously. Result: the SW
+				// registered but handled NO navigations, so every offline launch white-screened
+				// despite all assets being cached. Naming the fallback precaches it and wires
+				// navigateFallback to it. (Verify: rebuild and grep build/sw.js for index.html.)
+				adapterFallback: 'index.html'
+			},
 			manifest: {
 				name: 'Coffee Brew Log',
 				short_name: 'Brew Log',

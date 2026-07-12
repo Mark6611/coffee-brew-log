@@ -65,6 +65,11 @@
 			if (!quickMode) {
 				try {
 					const d = JSON.parse(raw);
+					// Only restore a FRESH draft (the /bags/new round-trip takes seconds). A
+					// draft abandoned for longer is discarded so a New Brew opened days later
+					// isn't silently prefilled — and, critically, backdated to the old brewedAt.
+					const FRESH_MS = 30 * 60 * 1000;
+					if (!d.savedAt || Date.now() - d.savedAt > FRESH_MS) throw new Error('stale draft');
 					method = d.method ?? method;
 					bagId = d.bagId ?? bagId;
 					doseGrams = d.doseGrams ?? doseGrams;
@@ -232,7 +237,8 @@
 			rating,
 			balance,
 			extraction,
-			brewedAtLocal
+			brewedAtLocal,
+			savedAt: Date.now()
 		};
 		sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
 	}
@@ -266,6 +272,16 @@
 		return null;
 	});
 
+	// A ZodError IS an Error, but its .message is a multi-line JSON dump of the issues.
+	// Surface the first issue's human message instead of that blob.
+	function firstIssueMessage(err: unknown): string {
+		if (err && typeof err === 'object' && 'issues' in err) {
+			const issues = (err as { issues?: Array<{ message?: string }> }).issues;
+			if (Array.isArray(issues) && issues[0]?.message) return issues[0].message;
+		}
+		return err instanceof Error ? err.message : String(err);
+	}
+
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		error = null;
@@ -286,6 +302,13 @@
 				method === 'espresso'
 					? (brewTimeSeconds ?? NaN)
 					: (brewMinutes ?? 0) * 60 + (brewSecondsPart ?? 0);
+
+			// Pour-over MIN/SEC can't both be blank — an empty time otherwise reaches
+			// BrewSchema and surfaces as a raw ZodError JSON blob. (Not `required` on the
+			// inputs: a valid 0:45 brew legitimately leaves MIN empty.)
+			if (method === 'pour-over' && (!Number.isFinite(totalBrewSeconds) || totalBrewSeconds <= 0)) {
+				throw new Error('Enter the brew time (minutes and/or seconds).');
+			}
 
 			const base = {
 				id: crypto.randomUUID(),
@@ -323,7 +346,7 @@
 			// Espresso lands on the shot detail (home of the NEXT SHOT card).
 			await goto(method === 'espresso' ? `/brews/${brew.id}` : '/brews');
 		} catch (err) {
-			error = err instanceof Error ? err.message : String(err);
+			error = firstIssueMessage(err);
 			submitting = false;
 		}
 	}

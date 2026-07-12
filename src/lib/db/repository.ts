@@ -165,23 +165,20 @@ export async function updateBag(bag: Bag): Promise<void> {
 }
 
 export async function wipeAllData(): Promise<void> {
+	// Read current rows first, then TOMBSTONE them on the server (awaited, throws on
+	// failure) BEFORE clearing local. A hard delete used to be fire-and-forget: the UI
+	// reported success even when the server delete failed offline, and any other
+	// signed-in device would re-push its copy on the next fullSync, silently undoing
+	// the "permanent" wipe. Tombstones ride the normal soft-delete path so every device
+	// converges to deleted.
+	const [localBags, localBrews] = await Promise.all([db.bags.toArray(), db.brews.toArray()]);
+	await sync.pushWipeTombstones(localBags, localBrews);
+	// Clear local only after the server tombstones are in — a mid-op failure must not
+	// have already wiped the device while leaving the account intact.
 	await db.transaction('rw', db.brews, db.bags, async () => {
 		await db.brews.clear();
 		await db.bags.clear();
 	});
-	// Best-effort: wipe server-side too. RLS scopes deletes to the current user.
-	void (async () => {
-		const { error: e1 } = await (await import('$lib/supabase')).supabase
-			.from('brews')
-			.delete()
-			.neq('id', '00000000-0000-0000-0000-000000000000');
-		const { error: e2 } = await (await import('$lib/supabase')).supabase
-			.from('bags')
-			.delete()
-			.neq('id', '00000000-0000-0000-0000-000000000000');
-		if (e1) console.warn('Wipe brews on server failed:', e1.message);
-		if (e2) console.warn('Wipe bags on server failed:', e2.message);
-	})();
 }
 
 /**

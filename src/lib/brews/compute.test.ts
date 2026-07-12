@@ -40,12 +40,12 @@ describe('weekStats', () => {
 		expect(weekStats(brews, now).count).toBe(2);
 	});
 
-	it('averages the ratio across in-window brews', () => {
+	it('averages the pour-over ratio across in-window brews', () => {
 		const brews = [
 			pourOver({ doseGrams: 20, waterGrams: 320, brewedAt: '2026-05-05T08:00:00.000Z' }), // 16
-			espresso({ doseGrams: 18, yieldGrams: 36, brewedAt: '2026-05-06T08:00:00.000Z' }) // 2
+			espresso({ doseGrams: 18, yieldGrams: 36, brewedAt: '2026-05-06T08:00:00.000Z' }) // excluded
 		];
-		expect(weekStats(brews, now).avgRatio).toBe('1:9.0');
+		expect(weekStats(brews, now).avgRatio).toBe('1:16.0');
 	});
 
 	it('counts favorites in-window only', () => {

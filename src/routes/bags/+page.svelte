@@ -219,7 +219,7 @@
 										REMAINING
 									</div>
 									<div class="mt-0.5 font-mono text-[15px] font-medium text-copper">
-										{c.remaining != null ? c.remaining.toFixed(1) + 'g' : '—'}
+										{c.remaining != null ? Math.max(0, c.remaining).toFixed(1) + 'g' : '—'}
 									</div>
 								</div>
 								<div>

@@ -77,9 +77,13 @@ const LOOKUP: Record<string, ResolvedOrigin> = {
 };
 
 function lookupTokens(text: string): ResolvedOrigin | null {
+	// Strip diacritics so native spellings resolve too — "México"/"Perú"/"Panamá",
+	// as printed on many bags, previously returned null (no flag/chip) while the
+	// ASCII "Mexico"/"Peru"/"Panama" resolved fine. LOOKUP keys are ASCII.
+	const norm = text.normalize('NFD').replace(/\p{M}/gu, '');
 	const tokens = [
-		text.toLowerCase().replace(/\s+/g, '_'),
-		...text
+		norm.toLowerCase().replace(/\s+/g, '_'),
+		...norm
 			.toLowerCase()
 			.split(/[,\s]+/)
 			.map((t) => t.trim().replace(/\s/g, '_'))

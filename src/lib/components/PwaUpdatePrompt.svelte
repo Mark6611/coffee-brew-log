@@ -13,7 +13,19 @@
 	const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
 	const { needRefresh, updateServiceWorker } = isNative
 		? { needRefresh: writable(false), updateServiceWorker: async (_reload?: boolean) => {} }
-		: useRegisterSW({});
+		: useRegisterSW({
+				// Browsers only check for a new SW on a real navigation, which this SPA
+				// never performs after load — so without polling, a deploy is never noticed
+				// during a long-lived installed session and needRefresh never fires ("still
+				// broken" syndrome). Poll hourly and whenever the app is resumed.
+				onRegisteredSW(_swUrl, r) {
+					if (!r) return;
+					setInterval(() => void r.update(), 60 * 60 * 1000);
+					document.addEventListener('visibilitychange', () => {
+						if (document.visibilityState === 'visible') void r.update();
+					});
+				}
+			});
 
 	function reload() {
 		void updateServiceWorker(true);
