@@ -1,0 +1,37 @@
+name: Supabase keep-alive
+
+# Free-tier Supabase pauses a project after ~7 days without API activity.
+# A weekly ping once sat exactly on that boundary (2026-06: one missed run
+# → pause warning), so this runs twice a week. Cloud cron so it fires even
+# when the laptop is asleep — the Sun+Wed launchd backup job stays as a
+# second, independent ping.
+#
+# The publishable key is the same public key the client bundle ships (safe
+# to embed); RLS hides all rows from anon, so the response is always [] —
+# the query itself is the activity that resets the pause timer.
+#
+# NOTE: GitHub disables cron workflows after ~60 days without repo activity
+# (it emails first). The push trigger below also makes edits to this file
+# run it once immediately — a built-in smoke test.
+
+on:
+  schedule:
+    - cron: '0 1 * * 1,4' # Mon + Thu 01:00 UTC = 08:00 ICT
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/supabase-keepalive.yml']
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_URL: https://ujlykuaegbborzsscrqp.supabase.co
+      SUPABASE_KEY: sb_publishable_KL8fNgcPQ9R9rIaq5r3l6w_tfwCY_4n
+    steps:
+      - name: Query REST endpoint (real DB read = project activity)
+        run: |
+          code=$(curl -s -o body.json -w '%{http_code}' \
+            "$SUPABASE_URL/rest/v1/bags?select=id&limit=1" \
+            -H "apikey: $SUPABASE_KEY")
+          echo "HTTP $code — body: $(cat body.json)"
+          test "$code" = "200"
