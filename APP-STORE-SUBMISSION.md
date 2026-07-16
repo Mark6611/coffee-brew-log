@@ -133,6 +133,10 @@ Captured this session with seeded sample data; see `appstore-screenshots/` and
 | **App Privacy data usages** (§3) | ✅ web UI (published) |
 | **Submit for review** | ✅ **WAITING_FOR_REVIEW** (build 4, submitted 2026-07-10) |
 
-**SUBMITTED.** Version 1.0 (build 4) is in App Review — status "Waiting for Review", like Buffy
-and Chawan. Remaining: run `supabase/…delete_account` SQL before the reviewer tests account
-deletion (5.1.1(v)); device-test the Acaia BLE against a real scale via TestFlight.
+**REJECTED 2026-07-16 → RESUBMITTED same day (build 5).** Sole citation: 2.3.8 Accurate
+Metadata — listing "BrewLog by KK" vs device "Coffee Brew Log". Fixes in the resubmission:
+- Listing renamed **"Coffee Brew Log by KK"** (ASC API; device name unchanged — prefix match).
+- Build 5: local-first + iCloud (CloudKit), **no login/no Supabase on iOS** — which also made
+  the App Privacy label **"Data Not Collected"** (re-published) and removed any demo-account
+  surface. Signed with the manual "BrewLog App Store" profile carrying the iCloud entitlement.
+Remaining after approval: device-test iCloud sync + Acaia BLE from TestFlight build 5.
