@@ -46,6 +46,10 @@ export const BagSchema = z.object({
 	// nullish, not optional: RE-OPEN must push an explicit null through the
 	// upsert to clear the server column — an absent key would leave it stale.
 	dialedRecipe: DialedRecipeSchema.nullish(),
+	// Last local write, stamped by the repository on every mutation. Drives the
+	// iCloud last-write-wins merge (native). LOCAL-ONLY: stripped before the
+	// Supabase upsert (no such column in prod) — see sync.toServerRow.
+	updatedAt: z.string().datetime().optional(),
 	// Tombstone marker. Set on soft-delete; null/absent means alive. Read paths
 	// in repository.ts filter these out. Kept in the database for cross-device
 	// delete propagation (without it, a delete on one device gets re-pulled
@@ -85,6 +89,8 @@ const BrewBase = z.object({
 	// Photo of the cup/setup, stored inline as a downscaled JPEG data URL. See
 	// BagSchema.photo — nullish for the same clear-on-remove reason.
 	photo: z.string().nullish(),
+	// Last local write — iCloud LWW clock; local-only (see BagSchema.updatedAt).
+	updatedAt: z.string().datetime().optional(),
 	// See BagSchema.deletedAt — same semantics.
 	deletedAt: z.string().datetime().optional(),
 	// Blog publishing (Phase A) — see project_html_brew_handoff.md.

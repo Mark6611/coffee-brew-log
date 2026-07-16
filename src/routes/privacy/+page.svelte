@@ -1,8 +1,9 @@
 <script lang="ts">
 	// Privacy policy — required by App Review 5.1.1 (a URL in App Store Connect
 	// AND an in-app link, under Settings). Reachable at /privacy. Kept honest to
-	// the actual data model: unlike the sibling Chawan (photos device-only), Brew
-	// Log photos sync to your account, so the policy says so explicitly.
+	// the split architecture: iOS = on-device + the user's private iCloud (no
+	// accounts at all); web = optional email sign-in sync. Mirror any edits in
+	// static/privacy-policy.html (the raw-fetchable App Store URL).
 	const updated = 'July 2026';
 	const CONTACT = 'kornkranmarwin@gmail.com';
 </script>
@@ -23,8 +24,9 @@
 
 	<p class="text-ink-70 text-[15px] leading-[1.6]">
 		Coffee Brew Log is a personal log for your coffee brewing. It is built to be private by
-		default: your data lives on your device, and — only if you choose to sign in — in your own
-		private account. The developer of Coffee Brew Log cannot see your data.
+		default: your data lives on your device, and syncs only through your own private iCloud (on
+			iPhone) or your own private account (optional, web). The developer of Coffee Brew Log cannot
+			see your data.
 	</p>
 
 	<h2>What the app stores, and where</h2>
@@ -36,23 +38,30 @@
 		</li>
 		<li>
 			<strong>Photos</strong> you attach to a bag or brew are downscaled and stored with that item.
-			If you are signed in, your photos are synced along with the rest of your data to your own
-			private account (see below), so they are available on your other devices.
+			Photos sync along with the rest of your data (see below), so they are available on your
+			other devices.
 		</li>
 		<li>
-			<strong>Cloud sync (optional, off until you sign in):</strong> if you sign in, your bags,
-			brews, and their photos are mirrored to your own private database so your devices stay in
-			sync. Access is scoped to your account by row-level security — other users cannot read it,
-			and the developer does not access it.
+			<strong>iPhone app — iCloud sync:</strong> the iOS app has no accounts and no
+				sign-in. If your device is signed into iCloud, your bags, brews, and photos sync between
+				your own devices through your private iCloud (CloudKit) database. This uses your Apple ID;
+				the developer has no access to it and runs no server for the iOS app.
+			</li>
+			<li>
+				<strong>Web app — optional account sync:</strong> on the web version only, you can sign
+				in to mirror your data to your own private database so browsers stay in sync. Access is
+				scoped to your account by row-level security — other users cannot read it, and the
+				developer does not access it.
 		</li>
 	</ul>
 
 	<h2>Account &amp; email</h2>
 	<p>
-		Signing in is optional and only needed for cross-device sync. It uses a one-time code sent to
-		your email address (magic-link sign-in). Your email is used solely to send that code and to
-		identify your account — never for marketing, advertising, or profiling. If you never sign in,
-		Coffee Brew Log collects no personal information at all.
+		The iPhone app has no accounts — it never asks for or collects your email. On the web app,
+			signing in is optional and only needed for cross-browser sync; it uses a one-time code sent
+			to your email address (magic-link sign-in), used solely to send that code and to identify
+			your account — never for marketing, advertising, or profiling. If you never sign in, Coffee
+			Brew Log collects no personal information at all.
 	</p>
 
 	<h2>Scale &amp; Bluetooth</h2>
@@ -71,8 +80,8 @@
 
 	<h2>Your control &amp; data deletion</h2>
 	<ul>
-		<li>Delete any bag or brew inside the app; deletions propagate to your other devices if you are signed in.</li>
-		<li>Sign out at any time — this wipes the app's local copy of your data from that device.</li>
+		<li>Delete any bag or brew inside the app; deletions propagate to your other synced devices.</li>
+		<li>On the web app, sign out at any time — this wipes the local copy of your data from that browser.</li>
 		<li>Export a full backup (JSON) of your bags and brews from Settings whenever you like.</li>
 		<li>To delete all of your synced account data, use the delete option in Settings or email us at the address below and we will remove it.</li>
 		<li>Deleting the app removes all on-device data.</li>

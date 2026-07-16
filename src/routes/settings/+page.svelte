@@ -5,7 +5,26 @@
 	import { listBags, listBrews, bulkImport, wipeAllData, deleteAccount } from '$lib/db/repository';
 	import { auth, signOut } from '$lib/auth.svelte';
 	import { fullSync, getSyncStatus } from '$lib/sync';
+	import { isNative } from '$lib/native';
+	import { cloudSyncIsAvailable } from '$lib/native';
+	import { runCloudSync, LAST_CLOUD_SYNC_KEY } from '$lib/cloudSync';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
+
+	// ── iCloud sync state (native only) ────────────────────────────────
+	let cloudAvailable = $state<boolean | null>(null); // null = still checking
+	let cloudSyncing = $state(false);
+	let cloudLastSyncAt = $state<string | null>(null);
+	let cloudError = $state<string | null>(null);
+
+	async function handleCloudSyncNow() {
+		cloudSyncing = true;
+		cloudError = null;
+		const result = await runCloudSync();
+		if (!result.ok) cloudError = result.reason ?? 'Sync failed.';
+		cloudLastSyncAt = localStorage.getItem(LAST_CLOUD_SYNC_KEY);
+		await loadCounts();
+		cloudSyncing = false;
+	}
 
 	// Marketing version — mirror ios/App CFBundleShortVersionString (MARKETING_VERSION).
 	const APP_VERSION = '1.0';
@@ -58,10 +77,15 @@
 		const status = getSyncStatus();
 		lastSyncAt = status.lastSyncAt;
 		lastSyncError = status.lastError;
+		if (isNative) {
+			cloudLastSyncAt = localStorage.getItem(LAST_CLOUD_SYNC_KEY);
+			void cloudSyncIsAvailable().then((a) => (cloudAvailable = a));
+		}
 		const onSynced = () => {
 			const s = getSyncStatus();
 			lastSyncAt = s.lastSyncAt;
 			lastSyncError = s.lastError;
+			if (isNative) cloudLastSyncAt = localStorage.getItem(LAST_CLOUD_SYNC_KEY);
 			loadCounts();
 		};
 		window.addEventListener('brewlog:synced', onSynced);
@@ -243,14 +267,68 @@
 			Data
 		</h1>
 		<p class="mt-2 font-display text-[15px] text-muted italic">
-			Your brews live on this device, and sync to your account when you're signed in. Back up
-			regularly.
+			{#if isNative}
+				Your brews live on this device, and sync through your own iCloud. Back up regularly.
+			{:else}
+				Your brews live on this device, and sync to your account when you're signed in. Back up
+				regularly.
+			{/if}
 		</p>
 	</div>
 
 	{#if !loading}
 		<div class="mt-6 space-y-[18px] px-[22px]">
-			<!-- Account -->
+			{#if isNative}
+				<!-- iCloud sync (native): no account, no login — the device's own
+				     iCloud moves the data between the user's devices. -->
+				<div>
+					<Eyebrow class="mb-2">ICLOUD SYNC</Eyebrow>
+					<div class="rounded-2xl border border-hairline bg-surface px-4 py-3">
+						<div class="flex items-center justify-between gap-3">
+							<div class="min-w-0 flex-1">
+								<div class="mt-0.5 text-[13px] text-ink">
+									{#if cloudSyncing}
+										<span class="text-copper">Syncing…</span>
+									{:else if cloudAvailable === false}
+										<span class="text-muted">iCloud is off — sign into iCloud in iOS Settings to
+											sync between your devices.</span>
+									{:else if cloudError}
+										<span class="text-danger">{cloudError}</span>
+									{:else}
+										Synced {timeAgo(cloudLastSyncAt)}
+									{/if}
+								</div>
+								<p class="mt-1 text-[11px] leading-[1.4] text-faint">
+									Through your private iCloud only — no account, nothing shared with us.
+								</p>
+							</div>
+							<button
+								type="button"
+								onclick={handleCloudSyncNow}
+								disabled={cloudSyncing || cloudAvailable === false}
+								class="press-sm inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-hairline px-3 text-[12px] font-medium text-ink hover:bg-paper disabled:opacity-50"
+							>
+								<svg
+									width="12"
+									height="12"
+									viewBox="0 0 16 16"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.6"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									class={cloudSyncing ? 'animate-spin' : ''}
+								>
+									<path d="M14 4v4h-4M2 12V8h4" />
+									<path d="M2 8a6 6 0 0 1 10.5-4M14 8a6 6 0 0 1-10.5 4" />
+								</svg>
+								Sync now
+							</button>
+						</div>
+					</div>
+				</div>
+			{:else}
+			<!-- Account (web) -->
 			<div>
 				<Eyebrow class="mb-2">ACCOUNT</Eyebrow>
 				{#if auth.user}
@@ -362,6 +440,7 @@
 					</a>
 				{/if}
 			</div>
+			{/if}
 
 			<!-- Counts — grouped inset rows: label left, value right -->
 			<div>

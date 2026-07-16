@@ -31,3 +31,47 @@ export async function hideSplash(): Promise<void> {
 		/* plugin may be absent */
 	}
 }
+
+// ─── iCloud sync bridge (CloudSyncPlugin.swift, registered in ViewController) ──
+// Ported from sibling Buffy: the native side moves opaque {id, updatedAt, json}
+// records in/out of CloudKit's private database; all merge logic lives in JS
+// ($lib/cloudSync). registerPlugin is safe to call on web — every wrapper
+// no-ops before touching it.
+import { registerPlugin } from '@capacitor/core';
+
+export interface CloudRecord {
+	id: string;
+	updatedAt: string;
+	json: string;
+}
+interface CloudSyncBridge {
+	isAvailable(): Promise<{ available: boolean }>;
+	pull(opts: { type: string }): Promise<{ recordsJson: string }>;
+	push(opts: { type: string; recordsJson: string }): Promise<void>;
+}
+const CloudSync = registerPlugin<CloudSyncBridge>('CloudSync');
+
+/** Is iCloud available (device signed in, capability provisioned)? False on web. */
+export async function cloudSyncIsAvailable(): Promise<boolean> {
+	if (!isNative) return false;
+	try {
+		return (await CloudSync.isAvailable()).available;
+	} catch {
+		return false;
+	}
+}
+
+/** Full snapshot of one record type from CloudKit. Throws on failure —
+ * callers must NOT treat an error as an empty cloud. */
+export async function cloudSyncPull(type: string): Promise<CloudRecord[]> {
+	if (!isNative) return [];
+	const { recordsJson } = await CloudSync.pull({ type });
+	return JSON.parse(recordsJson) as CloudRecord[];
+}
+
+/** Upsert records of `type` to CloudKit — overwrites the server copy (the
+ * merge decision already happened in JS). Throws on failure. */
+export async function cloudSyncPush(type: string, records: CloudRecord[]): Promise<void> {
+	if (!isNative || records.length === 0) return;
+	await CloudSync.push({ type, recordsJson: JSON.stringify(records) });
+}

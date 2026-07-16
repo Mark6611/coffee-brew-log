@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabase';
 	import { auth } from '$lib/auth.svelte';
+	import { isNative } from '$lib/native';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 
 	type Phase = 'email' | 'otp';
@@ -15,6 +16,12 @@
 	let error = $state<string | null>(null);
 
 	onMount(() => {
+		// The native app has no accounts — data is local + the user's own iCloud.
+		// Any stale link/route lands on Settings, where iCloud sync lives.
+		if (isNative) {
+			void goto('/settings', { replaceState: true });
+			return;
+		}
 		if (auth.user) goto('/');
 	});
 

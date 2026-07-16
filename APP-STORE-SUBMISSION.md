@@ -53,8 +53,8 @@ KNOW YOUR BEANS
 • Ratings, tasting notes, and brew ratios computed for you
 
 PRIVATE BY DESIGN
-• Your data lives on your device. No account needed to use the app.
-• Optional sign-in syncs your log across your own devices through your private account
+• Your data lives on your device. No account, no sign-in, ever.
+• iCloud keeps your own devices in step — through your private iCloud only
 • No ads, no analytics, no tracking
 
 Coffee Brew Log is built for one person: you.
@@ -75,34 +75,31 @@ First public release of Coffee Brew Log.
 
 ## 3. App Privacy ("nutrition label" — ASC → App Privacy)
 
-Brew Log DOES collect data when a user signs in (unlike Buffy). Declare honestly, matching Chawan:
+**CHANGED for the 1.0 resubmission (build 5+): declare "Data Not Collected", like Buffy.**
+The iOS binary has NO accounts, NO sign-in, and NO server of ours: data is on-device (IndexedDB in
+the app's WebView) and syncs only through the user's own private iCloud (CloudKit) — which Apple's
+definitions treat as not "collected" (the developer never has access). No analytics/ads/tracking.
 
-- **Contact Info → Email Address** — collected, **Linked to identity**, purpose **App Functionality**
-  (magic-link sign-in / account identity). NOT used for tracking.
-- **User Content → Other User Content** — the bags, brews, tasting notes, and **photos** a signed-in
-  user syncs. Collected, **Linked to identity**, purpose **App Functionality**. NOT tracking.
-  *(Note: Brew Log photos DO leave the device when synced — Chawan's did not. Declare User Content.)*
-- **Identifiers → User ID** — the account id. Collected, **Linked to identity**, App Functionality.
-- **Tracking:** NO. No data is used to track across apps/sites; no ad/analytics SDKs.
-
-If the user never signs in, nothing is collected — but ASC labels describe the app's capability, so
-the above is the correct disclosure.
+To change: App Privacy → Edit Data Types → deselect Email / User Content / User ID → answer
+"No, we do not collect data from this app" → Publish. (The previous label declared Email + User
+Content + User ID for the magic-link sign-in that build 4 had — build 5 removed it.)
 
 ## 4. App Review notes (ASC → Version → Notes for Review)
 
 ```
-Coffee Brew Log is a personal coffee brewing log. It requires NO account and works fully offline —
-you can review the core experience immediately: add a bag, log an espresso or pour-over, rate it,
-and see it in History and Stats.
+Coffee Brew Log is a personal coffee brewing log. There is NO account and NO sign-in anywhere in
+the app — it works fully offline, immediately: add a bag, log an espresso or pour-over, rate it,
+and see it in History and Stats. No demo account is applicable.
 
-Optional, and the app is fully functional without them:
-• Sign in — optional, only for syncing across your own devices. It uses a one-time code emailed to
-  you (magic-link); there is no password. A reviewer can skip sign-in entirely.
-• Acaia scale — an optional Bluetooth connection that fills in weight and shot time while brewing.
-  A physical Acaia scale is required to see live data, so a reviewer without one will see the
-  “Connect” state; this does not affect any core feature. Screen recording available on request.
+Data is stored on the device. If the reviewer's device is signed into iCloud, the app can sync the
+user's own data between their devices through their private iCloud (CloudKit) — no developer server
+is involved.
 
-No ads, no analytics, no tracking. Privacy policy:
+Optional hardware: an Acaia scale can be connected over Bluetooth to fill in weight and shot time
+while brewing. A physical scale is required to see live data, so a reviewer without one will see
+the “Connect” state; this does not affect any core feature. Screen recording available on request.
+
+No ads, no analytics, no tracking, no login. Privacy policy:
 https://coffee-brew-log-git-main-kornkran-s-projects.vercel.app/privacy-policy.html
 ```
 
@@ -116,8 +113,8 @@ Captured this session with seeded sample data; see `appstore-screenshots/` and
 
 ## 6. Build
 
-- Signed App Store build with the **camera + photo-library usage strings** (added this session —
-  build 3 would crash when picking a photo). Submit **build 4+**.
+- Submit **build 5+**: signed archive carrying the iCloud/CloudKit entitlements (deploy-ios.sh
+  verifies them inside the IPA before upload), camera + photo-library usage strings, no login.
 - Export compliance: `ITSAppUsesNonExemptEncryption = false` ✅
 
 ## Status snapshot — filled via ASC API (scripts/asc-*.mjs), 2026-07-04

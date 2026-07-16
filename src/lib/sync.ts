@@ -2,6 +2,7 @@
 // Local is always read-first. Writes go local; sync hooks push to cloud when authenticated.
 
 import { supabase } from './supabase';
+import { isNative } from './native';
 import { auth } from './auth.svelte';
 import { db } from './db/database';
 import { BrewSchema, BagSchema, type Brew, type Bag } from './db/types';
@@ -14,8 +15,12 @@ export function getSyncStatus() {
 	return syncStatus;
 }
 
-function withUserId<T>(row: T, userId: string): T & { userId: string } {
-	return { ...row, userId };
+// Shape a local row for the Supabase upsert: attach the owning user, and strip
+// `updatedAt` — that field is the LOCAL iCloud-merge clock and has no column in
+// the Supabase tables (pushing it would 400 the whole upsert).
+function withUserId<T extends { updatedAt?: string }>(row: T, userId: string) {
+	const { updatedAt: _localOnly, ...rest } = row;
+	return { ...rest, userId };
 }
 
 const BAG_NUMERIC_KEYS = new Set(['weightGrams', 'pricePaid']);
@@ -92,6 +97,7 @@ function parseBrewFromServer(row: Record<string, unknown>): Brew | null {
 // ─── Push helpers (called by repository on each write) ──────────────
 
 export function pushBag(bag: Bag): void {
+	if (isNative) return; // native syncs via iCloud (see $lib/cloudSync), never Supabase
 	const user = auth.user;
 	if (!user) return;
 	void supabase
@@ -106,6 +112,7 @@ export function pushBag(bag: Bag): void {
 }
 
 export function pushBrew(brew: Brew): void {
+	if (isNative) return; // native syncs via iCloud, never Supabase
 	const user = auth.user;
 	if (!user) return;
 	const row = withUserId(brew, user.id) as never;
@@ -132,6 +139,7 @@ export function pushBrew(brew: Brew): void {
  * failure so the caller never reports a wipe that didn't actually reach the server.
  */
 export async function pushWipeTombstones(bags: Bag[], brews: Brew[]): Promise<void> {
+	if (isNative) return; // native has no server copy to wipe
 	const user = auth.user;
 	if (!user) return; // signed out ⇒ no server data of ours to wipe
 	const now = new Date().toISOString();
@@ -175,6 +183,7 @@ async function upsertChunked(
 }
 
 export async function fullSync(): Promise<void> {
+	if (isNative) return; // native syncs via iCloud, never Supabase
 	const user = auth.user;
 	if (!user) return;
 	if (syncStatus.syncing) return;
@@ -255,9 +264,9 @@ export async function fullSync(): Promise<void> {
 	}
 }
 
-// ─── Auth listener: trigger sync on sign-in / app load ──────────────
+// ─── Auth listener: trigger sync on sign-in / app load (web only) ───
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && !isNative) {
 	supabase.auth.onAuthStateChange((event, session) => {
 		if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
 			void fullSync();

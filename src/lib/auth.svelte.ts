@@ -1,5 +1,6 @@
 import type { User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
+import { isNative } from './native';
 
 // Module-level reactive state for the current user.
 // Components can read `auth.user` and it will react to sign-in / sign-out.
@@ -15,7 +16,9 @@ export const auth = {
 	}
 };
 
-if (typeof window !== 'undefined') {
+// Web only. The native app has no accounts at all — data is local + the user's
+// own private iCloud (see $lib/cloudSync) — so it never talks to Supabase.
+if (typeof window !== 'undefined' && !isNative) {
 	supabase.auth.getSession().then(({ data }) => {
 		userState = data.session?.user ?? null;
 		ready = true;

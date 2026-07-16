@@ -1,15 +1,16 @@
 #!/bin/bash
 # One-command TestFlight ship for the native iOS app.
-# Pipeline mirrors Buffy's proven flow (7 uploads on this Mac/team):
-#   bump build number -> SW-free web build + cap sync -> archive -> export
-#   (automatic signing via ASC API key) -> entitlement sanity print -> upload.
 #
-# SIGNING MODEL (read before changing): the archive is intentionally UNSIGNED
-# (CODE_SIGNING_ALLOWED=NO) and signing happens at export. That is safe ONLY
-# while this app has zero entitlements — sign-at-export silently strips
-# entitlements (the Buffy builds 2-6 bug). The moment any entitlement is added
-# (App Groups, HealthKit, iCloud, BLE background modes), switch to the manual
-# distribution-signing flow documented in DEPLOYMENT.md.
+# SIGNING MODEL (changed 2026-07-16, the day the iCloud entitlement landed):
+# the archive is SIGNED — automatic signing with -allowProvisioningUpdates and
+# the ASC API key, so xcodebuild can register the App ID capability, (re)create
+# the App Store profile, and sign in one pass. The previous unsigned-archive →
+# sign-at-export flow silently STRIPS entitlements (Buffy builds 2-6 bug) and
+# died the moment App.entitlements (iCloud/CloudKit) appeared.
+#
+# The entitlement check below is a HARD GATE, not a print: if the signed binary
+# lacks the iCloud container entitlement, the build must not ship — it would
+# reach users with cloud sync dead (CKContainer aborts or reports unavailable).
 
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
@@ -36,17 +37,21 @@ echo "==> Build number: ${CUR} -> ${NEXT}"
 # 2. Native-flavor web build (no service worker) + sync into the Xcode project
 npm run ios:sync
 
-# 3. Archive (unsigned — see header)
+# 3. SIGNED archive (automatic signing; the API key lets xcodebuild register
+#    the App ID's iCloud capability and mint the profile headlessly)
 rm -rf "$(dirname "$ARCHIVE_PATH")" "$EXPORT_DIR"
-echo "==> Archiving…"
+echo "==> Archiving (signed)…"
 xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
 	-destination 'generic/platform=iOS' \
 	-archivePath "$ARCHIVE_PATH" \
-	CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO archive -quiet
+	-allowProvisioningUpdates \
+	-authenticationKeyPath "$KEY_PATH" \
+	-authenticationKeyID "$KEY_ID" \
+	-authenticationKeyIssuerID "$ISSUER_ID" \
+	archive -quiet
 
-# 4. Export a signed .ipa (automatic signing; the API key lets xcodebuild
-#    create/refresh the App ID, cert, and App Store profile on the portal)
-echo "==> Exporting signed IPA…"
+# 4. Export the .ipa for App Store Connect
+echo "==> Exporting IPA…"
 xcodebuild -exportArchive -archivePath "$ARCHIVE_PATH" \
 	-exportPath "$EXPORT_DIR" -exportOptionsPlist ios/ExportOptions.plist \
 	-allowProvisioningUpdates \
@@ -56,16 +61,27 @@ xcodebuild -exportArchive -archivePath "$ARCHIVE_PATH" \
 
 IPA=$(ls "$EXPORT_DIR"/*.ipa | head -1)
 
-# 5. Entitlement sanity print (Buffy lesson: always eyeball before upload —
-#    expect ONLY application-identifier / team / beta-reports; anything more
-#    means an entitlement crept in and this flow is no longer safe)
-echo "==> Entitlements in the signed app:"
+# 5. Entitlement gate (Buffy build-5 lesson: verify INSIDE the signed binary)
+echo "==> Verifying entitlements in the signed app…"
 ENT_TMP=$(mktemp -d)
 unzip -q "$IPA" -d "$ENT_TMP"
-codesign -d --entitlements :- "$ENT_TMP"/Payload/*.app 2>/dev/null || true
+ENT=$(codesign -d --entitlements :- "$ENT_TMP"/Payload/*.app 2>/dev/null || true)
+echo "$ENT"
+for needle in icloud-container-identifiers icloud-services; do
+	echo "$ENT" | grep -q "$needle" || {
+		echo "FATAL: entitlement '$needle' missing from the signed binary — DO NOT ship."
+		echo "       (iCloud sync would be dead in production. Check App.entitlements,"
+		echo "        CODE_SIGN_ENTITLEMENTS, and that the profile carries the capability.)"
+		rm -rf "$ENT_TMP"
+		exit 1
+	}
+done
+VERS=$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$ENT_TMP"/Payload/*.app/Info.plist)
+[ "$VERS" = "$NEXT" ] || { echo "FATAL: IPA says build $VERS, expected $NEXT"; rm -rf "$ENT_TMP"; exit 1; }
 rm -rf "$ENT_TMP"
+echo "    entitlements + version OK"
 
-# 6. Upload to App Store Connect (altool auto-discovers the .p8 directory)
+# 6. Upload to App Store Connect
 echo "==> Uploading to App Store Connect…"
 xcrun altool --upload-app -f "$IPA" --type ios --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
 

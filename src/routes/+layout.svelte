@@ -9,7 +9,8 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { page } from '$app/state';
-	import { hideSplash, setupNativeChrome } from '$lib/native';
+	import { hideSplash, setupNativeChrome, isNative } from '$lib/native';
+	import { runCloudSync } from '$lib/cloudSync';
 	import SyncBanner from '$lib/components/SyncBanner.svelte';
 	import PwaUpdatePrompt from '$lib/components/PwaUpdatePrompt.svelte';
 
@@ -48,7 +49,22 @@
 			if (theme === 'system') apply('system');
 		};
 		mq.addEventListener('change', handler);
-		return () => mq.removeEventListener('change', handler);
+
+		// Native: sync with iCloud on launch and every return to the foreground
+		// (visibilitychange covers app-switch in the WKWebView — no extra plugin).
+		let onVisible: (() => void) | null = null;
+		if (isNative) {
+			void runCloudSync();
+			onVisible = () => {
+				if (document.visibilityState === 'visible') void runCloudSync();
+			};
+			document.addEventListener('visibilitychange', onVisible);
+		}
+
+		return () => {
+			mq.removeEventListener('change', handler);
+			if (onVisible) document.removeEventListener('visibilitychange', onVisible);
+		};
 	});
 </script>
 
