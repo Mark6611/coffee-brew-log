@@ -5,7 +5,9 @@
 	import { addBrew, listBrews, listBags } from '$lib/db/repository';
 	import { BrewSchema, type Bag, type Brew, type Extraction } from '$lib/db/types';
 	import { resolveGrindSuggestion } from '$lib/brews/grind';
-	import { espressoShotsFor, resolveNextShot } from '$lib/brews/dialin';
+	import { espressoShotsFor } from '$lib/brews/dialin';
+	import { brewCompass } from '$lib/brews/compass';
+	import { formatTimeAgo } from '$lib/brews/compute';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
 	import Chip from '$lib/components/Chip.svelte';
@@ -57,6 +59,9 @@
 		const params = page.url.searchParams;
 		quickMode = params.get('quick') === '1';
 		urlGrind = params.get('grind');
+		// Compass yield moves hand a target yield over too ("pull to 39g").
+		const urlYield = Number(params.get('yield'));
+		if (Number.isFinite(urlYield) && urlYield > 0) yieldGrams = urlYield;
 		const urlBagId = params.get('bagId');
 		if (params.get('method') === 'espresso') method = 'espresso';
 
@@ -104,9 +109,25 @@
 	const lastShot = $derived(bagShots.length > 0 ? bagShots[bagShots.length - 1] : null);
 	const shotNumber = $derived(bagShots.length + 1);
 
+	// The Brew Compass verdict for the LAST shot of this bag — the standing
+	// recommendation the next session starts from. Computed at read time.
+	const lastCompass = $derived.by(() => {
+		if (method !== 'espresso' || !selectedBag || !lastShot) return null;
+		if (selectedBag.dialedRecipe) return null; // dialed bags follow the recipe
+		return brewCompass({
+			doseG: lastShot.doseGrams,
+			yieldG: lastShot.yieldGrams,
+			timeS: lastShot.brewTimeSeconds,
+			grind: lastShot.grindSetting,
+			roast: selectedBag.roastLevel,
+			extraction: lastShot.extraction,
+			balance: lastShot.balance
+		});
+	});
+
 	// Staged grind for espresso — the dial-in precedence layer that outranks
 	// the plain grind engine while a dial-in is active:
-	//   dialedRecipe > next-shot move (from the LAST shot) > existing engine.
+	//   dialedRecipe > compass move (from the LAST shot) > existing engine.
 	// Only 'dialed' auto-fills the field. A computed 'move'/'hold' is NEVER
 	// auto-applied (handoff constraint) — it surfaces as a tap-to-use chip;
 	// tapping (or arriving via a CTA's ?grind=) is the user applying it.
@@ -127,20 +148,21 @@
 			};
 		}
 		if (!lastShot) return null;
-		const next = resolveNextShot(lastShot, selectedBag);
-		if (next?.kind === 'move' && next.target) {
+		const c = lastCompass;
+		if (c?.action.kind === 'grind' && c.action.target) {
 			return {
 				kind: 'move',
-				value: next.target,
-				provenance: `NEXT-SHOT MOVE · ${Math.abs(next.deltaTicks)} TICKS ${next.direction.toUpperCase()}`,
-				deltaTicks: next.deltaTicks
+				value: c.action.target,
+				provenance: `COMPASS · ${Math.abs(c.action.deltaTicks)} TICKS ${c.action.direction.toUpperCase()}`,
+				deltaTicks: c.action.deltaTicks
 			};
 		}
-		if (next?.kind === 'hold') {
+		if (c) {
+			// hold / yield / diagnose all keep the same grind next shot.
 			return {
 				kind: 'hold',
 				value: lastShot.grindSetting,
-				provenance: 'ON TARGET — REPEAT',
+				provenance: c.action.kind === 'hold' ? 'ON TARGET — REPEAT' : 'KEEP GRIND',
 				deltaTicks: 0
 			};
 		}
@@ -215,6 +237,49 @@
 			grindApplied = true;
 		}
 	}
+
+	// ── LAST SHOT card actions ─────────────────────────────────────────────
+	// "Start from the compass": apply the standing recommendation — exactly one
+	// variable moves; dose and temp carry because they aren't decisions.
+	function applyCompassStart() {
+		const c = lastCompass;
+		const s = lastShot;
+		if (!c || !s) return;
+		doseGrams = s.doseGrams;
+		if (s.waterTempC != null) waterTempC = s.waterTempC;
+		if (c.action.kind === 'grind' && c.action.target) {
+			grindSetting = c.action.target;
+		} else {
+			grindSetting = s.grindSetting;
+			if (c.action.kind === 'yield') yieldGrams = c.action.targetG;
+		}
+		grindApplied = true;
+	}
+
+	// "Repeat last": same grind, same dose, same temp — the skeptic's button.
+	function repeatLastShot() {
+		const s = lastShot;
+		if (!s) return;
+		doseGrams = s.doseGrams;
+		if (s.waterTempC != null) waterTempC = s.waterTempC;
+		grindSetting = s.grindSetting;
+		grindApplied = true;
+	}
+
+	// Beans age between sessions — a quiet heads-up, never a command.
+	const daysSinceLastShot = $derived.by(() => {
+		if (!lastShot) return null;
+		const d = Math.floor((Date.now() - new Date(lastShot.brewedAt).getTime()) / 86_400_000);
+		return d;
+	});
+	const lastShotTaste = $derived.by(() => {
+		const s = lastShot;
+		if (!s) return null;
+		const parts: string[] = [];
+		if (s.extraction) parts.push(s.extraction);
+		if (s.balance && s.balance !== 'balanced') parts.push(s.balance === 'light' ? 'thin' : 'heavy');
+		return parts.length ? parts.join(' · ') : null;
+	});
 
 	// Carried-over strip content (quick mode): what repeats from the last shot.
 	const carriedTempC = $derived(
@@ -424,6 +489,57 @@
 				<Eyebrow class="mb-2">COFFEE</Eyebrow>
 				<BagPicker bind:bagId oncreatenew={handleCreateNewBag} />
 			</div>
+
+			<!-- LAST SHOT card — logged history + the compass's standing start point -->
+			{#if isEspresso && selectedBag && lastShot && lastCompass}
+				{@const a = lastCompass.action}
+				<div class="rounded-[18px] border border-copper/25 bg-copper-lt px-4 py-[14px]">
+					<div class="flex items-center justify-between">
+						<div class="text-copper-dk font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]">
+							Last shot · {formatTimeAgo(lastShot.brewedAt)}
+						</div>
+						{#if !lastCompass.fromTaste}
+							<div class="text-faint font-mono text-[9px] uppercase tracking-[0.12em]">from the numbers</div>
+						{/if}
+					</div>
+					<div class="text-ink mt-2 font-mono text-[13px] tracking-[-0.01em]">
+						<span class="font-medium">{lastShot.grindSetting}</span>
+						<span class="text-muted"> grind · </span>{lastShot.doseGrams}g
+						<span class="text-muted">→</span>
+						{lastShot.yieldGrams}g
+						<span class="text-muted"> · </span>{lastShot.brewTimeSeconds}s
+						{#if lastShotTaste}<span class="text-copper-dk"> · {lastShotTaste}</span>{/if}
+					</div>
+					<div class="font-display text-ink mt-2 text-[16px] font-medium leading-[1.25]">
+						{lastCompass.headline}{#if a.kind === 'grind' && a.target}
+							<span class="text-copper">&nbsp;→ {a.target}</span>
+						{:else if a.kind === 'yield'}
+							<span class="text-copper">&nbsp;→ {a.targetG}g</span>
+						{/if}
+					</div>
+					{#if daysSinceLastShot != null && daysSinceLastShot > 7}
+						<p class="text-muted mt-1 text-[12px] italic leading-[1.4]">
+							Beans have aged {daysSinceLastShot} days since — they may run a touch faster.
+						</p>
+					{/if}
+					<div class="mt-3 flex flex-wrap items-center gap-2">
+						<button
+							type="button"
+							onclick={applyCompassStart}
+							class="press bg-copper text-paper hover:bg-copper-dk inline-flex h-9 items-center rounded-xl px-3.5 text-[13px] font-medium transition-colors"
+						>
+							{#if a.kind === 'grind' && a.target}Start at {a.target}{:else if a.kind === 'yield'}Pull to {a.targetG}g{:else}Same again{/if}
+						</button>
+						{#if a.kind === 'grind' && a.target}
+							<button
+								type="button"
+								onclick={repeatLastShot}
+								class="text-muted hover:text-ink px-2 text-[13px] transition-colors"
+							>Repeat {lastShot.grindSetting}</button>
+						{/if}
+					</div>
+				</div>
+			{/if}
 		{/if}
 
 		{#if showQuickChrome && lastShot}
@@ -482,8 +598,9 @@
 							{grindStaged.provenance}
 						{/if}
 					</p>
-				{:else if espressoStage != null && grindSetting.trim() === ''}
-					<!-- Computed dial-in move/hold: chip-only, never auto-applied -->
+				{:else if espressoStage != null && grindSetting.trim() === '' && (quickMode || lastCompass == null)}
+					<!-- Computed dial-in move/hold: chip-only, never auto-applied.
+					     Hidden when the LAST SHOT card is on screen — it says the same thing. -->
 					<button
 						type="button"
 						onclick={applyStage}

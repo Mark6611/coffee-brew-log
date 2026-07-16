@@ -6,8 +6,10 @@
 	import { formatRatio, formatBrewTime, formatTimeAgo, ratio } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
-	import { resolveNextShot, espressoShotsFor } from '$lib/brews/dialin';
+	import { espressoShotsFor } from '$lib/brews/dialin';
+	import { brewCompass } from '$lib/brews/compass';
 	import { stageBrewAgain } from '$lib/brews/repeat';
+	import CompassCard from '$lib/components/CompassCard.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
@@ -66,7 +68,7 @@
 	const outLabel = $derived(!brew ? '' : brew.method === 'espresso' ? 'YIELD' : 'WATER');
 	const verb = $derived(!brew ? '' : brew.method === 'espresso' ? 'espresso' : 'brew');
 
-	// ── NEXT SHOT card (dial-in loop) ──────────────────────────────────────
+	// ── Brew Compass card ──────────────────────────────────────────────────
 	// Shown only when this is the LATEST espresso shot of a bag that isn't
 	// dialed yet — advising from a stale shot would mislead.
 	let nextShotDismissed = $state(false);
@@ -80,14 +82,34 @@
 		const latest = shots.length > 0 ? shots[shots.length - 1] : null;
 		if (latest == null) return null;
 		if (latest.id !== b.id) return null;
-		return resolveNextShot(b, theBag);
+		return brewCompass({
+			doseG: b.doseGrams,
+			yieldG: b.yieldGrams,
+			timeS: b.brewTimeSeconds,
+			grind: b.grindSetting,
+			roast: theBag.roastLevel,
+			extraction: b.extraction,
+			balance: b.balance
+		});
 	});
 	const pullNextHref = $derived.by(() => {
 		const b = brew;
 		const n = nextShot;
-		if (!b?.bagId || !n) return null;
-		const grind = n.kind === 'move' && n.target ? n.target : b.grindSetting;
-		return `/brews/new?bagId=${b.bagId}&method=espresso&quick=1&grind=${encodeURIComponent(grind)}`;
+		if (!b?.bagId || !n || b.method !== 'espresso') return null;
+		const a = n.action;
+		const grind = a.kind === 'grind' && a.target ? a.target : b.grindSetting;
+		let href = `/brews/new?bagId=${b.bagId}&method=espresso&quick=1&grind=${encodeURIComponent(grind)}`;
+		if (a.kind === 'yield') href += `&yield=${a.targetG}`;
+		return href;
+	});
+	const pullNextLabel = $derived.by(() => {
+		const n = nextShot;
+		if (!n) return '';
+		const a = n.action;
+		if (a.kind === 'grind') return `Pull next shot at ${a.target ?? 'adjusted grind'}`;
+		if (a.kind === 'yield') return `Pull next shot to ${a.targetG}g`;
+		if (a.kind === 'diagnose') return 'Pull next shot (after prep)';
+		return 'Repeat this shot';
 	});
 
 	// Compound booleans live here, not in the template (Svelte 5.55 paren gotcha).
@@ -352,61 +374,25 @@
 				</div>
 			</div>
 
-			<!-- Next shot (dial-in) card -->
+			<!-- Brew Compass (dial-in) card -->
 			{#if nextShot != null && !nextShotDismissed}
-				{@const isHold = nextShot.kind === 'hold'}
-				<div
-					class="rounded-[18px] border px-4 py-[16px] {isHold
-						? 'border-success/25 bg-success/[0.07]'
-						: 'border-copper/25 bg-copper-lt'}"
-				>
-					<div
-						class="font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase {isHold
-							? 'text-success'
-							: 'text-copper-dk'}"
-					>
-						NEXT SHOT
-					</div>
-					<div class="mt-1.5 font-display text-[18px] leading-[1.25] font-medium text-ink">
-						{nextShot.headline}
-					</div>
-					{#if nextShot.kind === 'move'}
-						<div class="mt-2 flex items-baseline gap-2.5">
-							<span class="font-mono text-[26px] font-medium tracking-[-0.02em] text-copper">
-								{nextShot.target ?? '—'}
-							</span>
-							<span
-								class="font-mono text-[10.5px] font-medium tracking-[0.12em] text-copper-dk uppercase"
-							>
-								{nextShot.deltaTicks < 0 ? '−' : '+'}{Math.abs(nextShot.deltaTicks)} ticks · {nextShot.direction}
-							</span>
-						</div>
-					{/if}
-					<p class="mt-2 text-[13px] leading-[1.5] text-ink-70">{nextShot.prose}</p>
-					<div class="mt-3.5 flex flex-wrap items-center gap-2">
+				<CompassCard compass={nextShot} eyebrow="BREW COMPASS · NEXT SHOT">
+					{#snippet footer()}
 						{#if pullNextHref}
 							<a
 								href={pullNextHref}
-								class="{isHold
+								class="press {nextShot.action.kind === 'hold'
 									? 'bg-success text-paper'
 									: 'bg-copper text-paper hover:bg-copper-dk'} inline-flex h-10 items-center rounded-xl px-4 text-[13.5px] font-medium transition-colors"
-							>
-								{#if isHold}
-									Repeat this shot
-								{:else}
-									Pull next shot at {nextShot.kind === 'move'
-										? (nextShot.target ?? 'adjusted grind')
-										: ''}
-								{/if}
-							</a>
+							>{pullNextLabel}</a>
 						{/if}
 						<button
 							type="button"
 							onclick={() => (nextShotDismissed = true)}
-							class="px-2 text-[13px] text-muted transition-colors hover:text-ink">Done</button
-						>
-					</div>
-				</div>
+							class="text-muted hover:text-ink px-2 text-[13px] transition-colors"
+						>Done</button>
+					{/snippet}
+				</CompassCard>
 			{/if}
 
 			<!-- Variables card -->

@@ -11,14 +11,20 @@ export interface RoastTarget {
 	ratio: string; // display form, e.g. '1:2'
 	yieldG: string; // concrete grams at 18g dose — never make the user do math
 	time: [number, number]; // shot-time window in seconds
+	/** numeric ratio band — the "chosen ratio" the compass checks drift against */
+	ratioBand: [number, number];
 	hint: string | null;
 }
 
+// Windows widened 2026-07 per the cited research pass: they are heuristic
+// starting points, not laws (light roasts especially run long — Hoffmann's
+// light method sits at 35–50s on longer ratios), and a generous window means
+// the compass nags less and defers to taste more.
 export const ROAST_TARGETS: Record<RoastLevel, RoastTarget> = {
-	light: { ratio: '1:2.2–2.5', yieldG: '40–45g', time: [26, 32], hint: 'finer end' },
-	medium: { ratio: '1:2', yieldG: '36g', time: [25, 30], hint: null },
-	'medium-dark': { ratio: '1:1.8–2', yieldG: '32–36g', time: [24, 28], hint: null },
-	dark: { ratio: '1:1.5–1.8', yieldG: '27–32g', time: [22, 26], hint: 'coarser end' }
+	light: { ratio: '1:2.2–2.5', yieldG: '40–45g', time: [26, 36], ratioBand: [2.2, 2.8], hint: 'finer end' },
+	medium: { ratio: '1:2', yieldG: '36g', time: [24, 32], ratioBand: [1.9, 2.35], hint: null },
+	'medium-dark': { ratio: '1:1.8–2', yieldG: '32–36g', time: [23, 30], ratioBand: [1.7, 2.1], hint: null },
+	dark: { ratio: '1:1.5–1.8', yieldG: '27–32g', time: [21, 28], ratioBand: [1.5, 1.9], hint: 'coarser end' }
 };
 
 // Fixed rail domain for the target-window bar (all roast windows fit).
@@ -47,80 +53,11 @@ export function addTicks(grind: string, delta: number): string | null {
 	return formatLagom(ticks + delta);
 }
 
-// ─── The 9-case next-shot matrix ─────────────────────────────────────────
-
-export type NextShot =
-	| {
-			kind: 'move';
-			deltaTicks: number; // signed: negative = finer, positive = coarser
-			direction: 'finer' | 'coarser';
-			target: string | null; // concrete Lagom value, null if grind unparseable
-			headline: string;
-			prose: string;
-	  }
-	| { kind: 'hold'; headline: string; prose: string };
-
-function windowProse(timeS: number, lo: number, hi: number): string {
-	if (timeS < lo) return `${timeS}s is below the ${lo}–${hi}s window`;
-	if (timeS > hi) return `${timeS}s is above the ${lo}–${hi}s window`;
-	return `${timeS}s sits inside the ${lo}–${hi}s window`;
-}
-
-export function resolveNextShot(shot: EspressoBrew, bag: Bag): NextShot | null {
-	const roast = bag.roastLevel;
-	// No roast level → no window → stay silent (restraint over guessing).
-	if (!roast) return null;
-
-	const [lo, hi] = ROAST_TARGETS[roast].time;
-	const timeS = shot.brewTimeSeconds;
-	const fast = timeS < lo;
-	const slow = timeS > hi;
-	const t = shot.extraction;
-	const w = windowProse(timeS, lo, hi);
-
-	const move = (deltaTicks: number, headline: string, tail: string): NextShot => ({
-		kind: 'move',
-		deltaTicks,
-		direction: deltaTicks < 0 ? 'finer' : 'coarser',
-		target: addTicks(shot.grindSetting, deltaTicks),
-		headline,
-		prose: `${w}${tail}`
-	});
-
-	if (fast && t === 'sour')
-		return move(-4, 'Fast and sour — go finer.', ' and the shot read sour: classic under-extraction.');
-	if (slow && t === 'bitter')
-		return move(+4, 'Slow and bitter — go coarser.', ' and the shot read bitter: classic over-extraction.');
-	if (fast && t === 'bitter')
-		return move(
-			-2,
-			'Fast but bitter — small step finer; taste again.',
-			' yet read bitter — mixed signals, so move gently and re-taste.'
-		);
-	if (slow && t === 'sour')
-		return move(
-			+2,
-			'Slow but sour — small step coarser; consider temp.',
-			' yet read sour — mixed signals; raising brew temp on the Series 1 is the other lever.'
-		);
-	if (fast) return move(-3, 'Ran fast — finer.', '.');
-	if (slow) return move(+3, 'Ran slow — coarser.', '.');
-	if (t === 'sour')
-		return move(
-			-2,
-			'In the window but sour — nudge finer, or check temp.',
-			' but read sour; a nudge finer, or a hotter brew temp on the Series 1, are the levers.'
-		);
-	if (t === 'bitter')
-		return move(+2, 'In the window but bitter — nudge coarser.', ' but read bitter — nudge coarser.');
-	if (t === 'balanced')
-		return {
-			kind: 'hold',
-			headline: 'On target. Hold here.',
-			prose: `${w} and tasted balanced. A second consistent shot is the cue to mark this bag dialed.`
-		};
-	return null; // in window, no taste logged → silent
-}
+// The 9-case next-shot matrix (resolveNextShot) that lived here was superseded
+// 2026-07 by the Brew Compass — src/lib/brews/compass.ts — which is research-
+// grounded (taste leads when logged; numbers speak when it's silent; bitter+fast
+// reads as channeling; sour+slow moves yield, not grind), always has an answer,
+// and needs no roast level to function.
 
 // ─── Dial-in helpers for the UI layer ────────────────────────────────────
 
@@ -140,10 +77,10 @@ export function inWindow(shot: EspressoBrew, roast: RoastLevel | undefined): boo
 	return shot.brewTimeSeconds >= lo && shot.brewTimeSeconds <= hi;
 }
 
-/** "Mark dialed" brightens when the last two shots are in-window AND balanced. */
-export function readyToDial(shots: EspressoBrew[], roast: RoastLevel | undefined): boolean {
-	if (!roast || shots.length < 2) return false;
-	return shots
-		.slice(-2)
-		.every((s) => s.extraction === 'balanced' && inWindow(s, roast) === true);
+/** "Mark dialed" brightens when the last two shots tasted balanced. Taste is
+ * the arbiter (research: a good-tasting shot outside the window is still a
+ * good shot) — so no time gate, and no roast level required. */
+export function readyToDial(shots: EspressoBrew[], _roast?: RoastLevel | undefined): boolean {
+	if (shots.length < 2) return false;
+	return shots.slice(-2).every((s) => s.extraction === 'balanced');
 }

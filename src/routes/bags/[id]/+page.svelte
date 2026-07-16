@@ -7,13 +7,8 @@
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import { resolveGrindSuggestion } from '$lib/brews/grind';
-	import {
-		espressoShotsFor,
-		resolveNextShot,
-		readyToDial,
-		inWindow,
-		ROAST_TARGETS
-	} from '$lib/brews/dialin';
+	import { espressoShotsFor, readyToDial, inWindow, ROAST_TARGETS } from '$lib/brews/dialin';
+	import { brewCompass } from '$lib/brews/compass';
 	import { roastMeta } from '$lib/bags/roast';
 	import { costPerGram, costPerCupForBag } from '$lib/stats/cost';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
@@ -150,14 +145,24 @@
 		if (!b) return null;
 		if (b.dialedRecipe) return null;
 		if (!lastShot) return null;
-		return resolveNextShot(lastShot, b);
+		return brewCompass({
+			doseG: lastShot.doseGrams,
+			yieldG: lastShot.yieldGrams,
+			timeS: lastShot.brewTimeSeconds,
+			grind: lastShot.grindSetting,
+			roast: b.roastLevel,
+			extraction: lastShot.extraction,
+			balance: lastShot.balance
+		});
 	});
 	const pullShotHref = $derived.by(() => {
 		const b = bag;
 		if (!b) return '';
 		const base = `/brews/new?bagId=${b.id}&method=espresso&quick=1`;
-		const n = nextMove;
-		if (n?.kind === 'move' && n.target) return `${base}&grind=${encodeURIComponent(n.target)}`;
+		const a = nextMove?.action;
+		if (a?.kind === 'grind' && a.target) return `${base}&grind=${encodeURIComponent(a.target)}`;
+		if (a?.kind === 'yield' && lastShot)
+			return `${base}&grind=${encodeURIComponent(lastShot.grindSetting)}&yield=${a.targetG}`;
 		return base;
 	});
 	const settledAtShot = $derived.by(() => {
