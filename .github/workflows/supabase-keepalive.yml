@@ -28,10 +28,16 @@ jobs:
       SUPABASE_URL: https://ujlykuaegbborzsscrqp.supabase.co
       SUPABASE_KEY: sb_publishable_KL8fNgcPQ9R9rIaq5r3l6w_tfwCY_4n
     steps:
+      # Retries absorb transient runner/DNS blips. A PAUSED project still
+      # fails every retry (its subdomain leaves DNS entirely) and the run
+      # goes red — that failure email means: dashboard → Resume project.
+      # 2026-07-16 lesson (chawan): pings sent AFTER the pause-warning email
+      # do NOT cancel an already-scheduled pause; only the dashboard does.
       - name: Query REST endpoint (real DB read = project activity)
         run: |
           code=$(curl -s -o body.json -w '%{http_code}' \
+            --retry 5 --retry-all-errors --retry-delay 20 --max-time 30 \
             "$SUPABASE_URL/rest/v1/bags?select=id&limit=1" \
-            -H "apikey: $SUPABASE_KEY")
-          echo "HTTP $code — body: $(cat body.json)"
+            -H "apikey: $SUPABASE_KEY") || true
+          echo "HTTP $code — body: $(cat body.json 2>/dev/null)"
           test "$code" = "200"
