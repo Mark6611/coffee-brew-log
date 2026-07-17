@@ -26,8 +26,6 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>Coffee Brew Log connects to your Acaia scale to read live weight and shot time while you brew.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Coffee Brew Log uses the camera so you can photograph a bag label or your brew.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

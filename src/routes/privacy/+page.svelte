@@ -64,13 +64,6 @@
 			Brew Log collects no personal information at all.
 	</p>
 
-	<h2>Scale &amp; Bluetooth</h2>
-	<p>
-		If you connect an Acaia scale, Coffee Brew Log uses Bluetooth to read live weight and shot time
-		while you brew. This connection is directly between your device and the scale; nothing from the
-		scale is sent anywhere else, and the pairing is used only while you are logging a brew.
-	</p>
-
 	<h2>Analytics &amp; tracking</h2>
 	<p>
 		Coffee Brew Log contains no third-party analytics, advertising, or tracking SDKs. It does not

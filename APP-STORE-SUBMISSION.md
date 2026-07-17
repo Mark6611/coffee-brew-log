@@ -26,7 +26,7 @@ Your espresso & pour-over log
 
 **Promotional text** (≤170 chars, editable anytime without review):
 ```
-Log a shot in seconds, dial in by roast level, and let your Acaia scale fill in the weight and time. Private by default — no ads, no account required.
+Log a shot in seconds and dial in by roast level with a compass that tells you the one move to make next. Private by default — no ads, no account, ever.
 ```
 
 **Description:**
@@ -44,10 +44,6 @@ DIAL IN BY ROAST
 • Target brew-time windows so you know which way to move the grinder
 • Mark a bag “dialed” and every new shot starts from your settled recipe
 
-WEIGH WITHOUT TOUCHING YOUR PHONE
-• Connect an Acaia scale over Bluetooth to read live weight and shot time
-• The yield and time fill themselves in as you brew, then auto-stop when the flow settles
-
 KNOW YOUR BEANS
 • Freshness, remaining grams, and cost per cup for every bag
 • Ratings, tasting notes, and brew ratios computed for you
@@ -62,7 +58,7 @@ Coffee Brew Log is built for one person: you.
 
 **Keywords** (≤100 chars, comma-separated, no spaces):
 ```
-coffee,espresso,pourover,brew,log,dialin,grind,ratio,acaia,scale,barista,beans,tracker,recipe
+coffee,espresso,pourover,brew,log,dialin,grind,ratio,barista,beans,tracker,recipe,journal
 ```
 
 **Support URL:** `https://coffee-brew-log-git-main-kornkran-s-projects.vercel.app`
@@ -94,10 +90,6 @@ and see it in History and Stats. No demo account is applicable.
 Data is stored on the device. If the reviewer's device is signed into iCloud, the app can sync the
 user's own data between their devices through their private iCloud (CloudKit) — no developer server
 is involved.
-
-Optional hardware: an Acaia scale can be connected over Bluetooth to fill in weight and shot time
-while brewing. A physical scale is required to see live data, so a reviewer without one will see
-the “Connect” state; this does not affect any core feature. Screen recording available on request.
 
 No ads, no analytics, no tracking, no login. Privacy policy:
 https://coffee-brew-log-git-main-kornkran-s-projects.vercel.app/privacy-policy.html

@@ -80,9 +80,7 @@
 </script>
 
 {#if scale.status === 'unsupported'}
-	<p class="text-faint mt-1 text-[11.5px]">
-		Live Acaia assist is available in the iOS app.
-	</p>
+	<!-- Scale feature disabled for 1.0 (see scale.svelte.ts) — render nothing. -->
 {:else}
 	<div class="border-hairline bg-surface mt-1 rounded-[14px] border p-3">
 		{#if scale.status === 'idle' || scale.status === 'disconnected'}
