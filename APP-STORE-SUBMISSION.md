@@ -131,4 +131,9 @@ Metadata — listing "BrewLog by KK" vs device "Coffee Brew Log". Fixes in the r
 - Build 5: local-first + iCloud (CloudKit), **no login/no Supabase on iOS** — which also made
   the App Privacy label **"Data Not Collected"** (re-published) and removed any demo-account
   surface. Signed with the manual "BrewLog App Store" profile carrying the iCloud entitlement.
-Remaining after approval: device-test iCloud sync + Acaia BLE from TestFlight build 5.
+**REJECTED AGAIN (build 5): 2.1 App Completeness — demo video of the Acaia hardware pairing
+required. RESOLVED by REMOVING the scale feature from iOS (build 6): bluetooth-le plugin
+uninstalled, no CoreBluetooth, no Bluetooth permission string, UI + listing copy + privacy
+scrubbed; review notes state the removal. RESUBMITTED → "Waiting for Review" (1.0 build 6).
+Scale returns in 1.1 with a demo video (codec + tests preserved; driver restorable from fe2a811).**
+Remaining after approval: device-test iCloud sync from TestFlight build 6.
