@@ -3,8 +3,8 @@
 Personal coffee brew log for espresso and pour-over — a local-first SvelteKit PWA with cloud sync, an iOS app shell, and one-tap publishing to a companion blog.
 
 - **Local-first:** every brew is stored on-device in IndexedDB (Dexie), so the app works fully offline.
-- **Sync:** signed-in devices sync through Supabase (magic-link auth, last-write-wins).
-- **iOS:** the same codebase ships as a native app via Capacitor (App Store submission in review).
+- **Sync (web):** signed-in devices sync through Supabase (magic-link auth, last-write-wins).
+- **iOS:** the same codebase ships as a native app via Capacitor (App Store submission in review). The iOS build is local-first with iCloud (CloudKit) sync — no login, no Supabase on device.
 - **Blog:** selected brews publish to [Brew Sheet](https://github.com/Mark6611/html-brew), a static Astro blog that reads from the shared Supabase backend.
 
 ## Where the main code lives
