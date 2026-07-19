@@ -117,7 +117,7 @@
 			{#each rangeOptions as opt (opt.value)}
 				<a
 					href="?range={opt.value}"
-					class="inline-flex h-7 items-center rounded-full px-2.5 font-mono text-[10px] font-medium tracking-[0.1em] transition-colors {range ===
+					class="press-sm inline-flex h-9 items-center rounded-full px-3 font-mono text-[10px] font-medium tracking-[0.1em] {range ===
 					opt.value
 						? 'bg-ink text-paper'
 						: 'border border-hairline text-muted hover:text-ink'}">{opt.label}</a
@@ -177,7 +177,7 @@
 							style="height: {Math.max(8, (count / maxWeek) * 100)}%; background: {i ===
 							weekly.length - 1
 								? 'var(--color-copper)'
-								: '#D9CDB6'}"
+								: 'var(--color-rule)'}"
 							title="{count} brew{count === 1 ? '' : 's'}"
 						></div>
 					{/each}
@@ -301,7 +301,7 @@
 								style="height: {Math.max(
 									count === 0 ? 0 : 6,
 									(count / maxRatioBucket) * 100
-								)}%; background: {i === medianBucketIdx ? 'var(--color-copper)' : '#D9CDB6'}"
+								)}%; background: {i === medianBucketIdx ? 'var(--color-copper)' : 'var(--color-rule)'}"
 								title="1:{ratios.ratios[i]} · {count} brew{count === 1 ? '' : 's'}"
 							></div>
 						{/each}

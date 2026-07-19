@@ -75,7 +75,7 @@
 					: 'bg-ink/10'}"
 			>
 				<span
-					class="absolute top-[3px] h-[26px] w-[26px] rounded-full bg-[#FBF6EB] shadow-[0_1px_2px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.04)] transition-[left] duration-200"
+					class="absolute top-[3px] h-[26px] w-[26px] rounded-full bg-card shadow-[0_1px_2px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.04)] transition-[left] duration-200"
 					style="left: {published ? 23 : 3}px;"
 				></span>
 			</button>

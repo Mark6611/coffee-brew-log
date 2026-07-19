@@ -24,7 +24,7 @@
 	{href}
 	target="_blank"
 	rel="noopener noreferrer"
-	class="bg-copper-lt hover:bg-copper-lt/85 mt-3 flex items-center gap-3 rounded-[14px] border border-[rgba(156,74,31,0.18)] px-3.5 py-3 transition-colors"
+	class="bg-copper-lt hover:bg-copper-lt/85 mt-3 flex items-center gap-3 rounded-[14px] border border-copper/20 px-3.5 py-3 transition-colors"
 >
 	<span
 		class="bg-copper text-paper grid h-9 w-9 shrink-0 place-items-center rounded-[10px]"

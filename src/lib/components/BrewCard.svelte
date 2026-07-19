@@ -88,7 +88,7 @@
 						e.stopPropagation();
 						ontogglefavorite?.(brew.id);
 					}}
-					class="grid h-[22px] w-[22px] place-items-center rounded-full transition-colors {brew.isFavorite
+					class="press-sm -m-[7px] grid h-9 w-9 place-items-center rounded-full {brew.isFavorite
 						? 'text-copper hover:bg-copper-lt'
 						: 'text-faint hover:bg-hairline'}"
 					aria-label={brew.isFavorite ? 'Remove favorite' : 'Mark favorite'}
@@ -124,7 +124,7 @@
 			<button
 				type="button"
 				onclick={brewAgain}
-				class="text-faint hover:text-copper hover:bg-copper-lt grid h-[22px] w-[22px] place-items-center rounded-full transition-colors"
+				class="press-sm text-faint hover:text-copper hover:bg-copper-lt -m-[7px] grid h-9 w-9 place-items-center rounded-full"
 				aria-label="Brew this again"
 				title="Brew again"
 			>
@@ -154,8 +154,7 @@
 				<a
 					href="/bags/{bag.id}"
 					onclick={(e) => e.stopPropagation()}
-					class="text-copper-dk hover:text-copper mt-1 inline-flex items-center gap-1 text-[13px] transition-colors"
-					style="border-bottom: 1px solid rgba(156,74,31,0.35); padding-bottom: 1px;"
+					class="text-copper-dk hover:text-copper border-copper/35 mt-1 inline-flex items-center gap-1 border-b pb-px text-[13px] transition-colors"
 				>
 					<svg
 						width="11"

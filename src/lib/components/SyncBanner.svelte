@@ -50,7 +50,7 @@
 				type="button"
 				onclick={retry}
 				disabled={syncStatus.syncing}
-				class="border-danger/40 hover:bg-danger/10 rounded-full border px-2.5 py-0.5 uppercase tracking-[0.1em] transition-colors disabled:opacity-50"
+				class="press-sm inline-flex h-7 items-center border-danger/40 hover:bg-danger/10 rounded-full border px-2.5 py-0.5 uppercase tracking-[0.1em] disabled:opacity-50"
 			>
 				{syncStatus.syncing ? 'Syncing…' : 'Retry'}
 			</button>

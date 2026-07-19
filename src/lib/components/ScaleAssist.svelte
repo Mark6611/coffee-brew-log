@@ -87,7 +87,7 @@
 			<button
 				type="button"
 				onclick={() => connectScale()}
-				class="text-copper-dk flex w-full items-center justify-center gap-2 font-mono text-[11px] font-medium tracking-[0.1em] uppercase"
+				class="press text-copper-dk flex w-full items-center justify-center gap-2 font-mono text-[11px] font-medium tracking-[0.1em] uppercase"
 			>
 				<svg width="15" height="15" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 					<path d="M6 5l6 8-3 2V2l3 2-6 8" />
@@ -119,8 +119,8 @@
 						<span class="text-muted text-[12px]"> g</span>
 					</div>
 					<div class="flex gap-2">
-						<button type="button" onclick={() => tareScale()} class="border-hairline text-muted hover:text-ink rounded-lg border px-3 py-2 text-[12px] font-medium">Tare</button>
-						<button type="button" onclick={beginListening} class="bg-copper text-paper hover:bg-copper-dk rounded-lg px-3.5 py-2 text-[12px] font-medium transition-colors">
+						<button type="button" onclick={() => tareScale()} class="press-sm border-hairline text-muted hover:text-ink rounded-lg border px-3 py-2 text-[12px] font-medium">Tare</button>
+						<button type="button" onclick={beginListening} class="press-sm bg-copper text-paper hover:bg-copper-dk rounded-lg px-3.5 py-2 text-[12px] font-medium">
 							{mode === 'done' ? 'New shot' : 'Start shot'}
 						</button>
 					</div>
@@ -148,7 +148,7 @@
 					{:else}
 						<span class="text-copper flex-1 font-mono text-[10.5px] tracking-[0.1em] uppercase">Recording — auto-stops when flow settles</span>
 					{/if}
-					<button type="button" onclick={finish} class="bg-ink/[0.06] text-ink hover:bg-ink/[0.1] rounded-lg px-3.5 py-2 text-[12px] font-medium transition-colors">Stop</button>
+					<button type="button" onclick={finish} class="press-sm bg-ink/[0.06] text-ink hover:bg-ink/[0.1] rounded-lg px-3.5 py-2 text-[12px] font-medium">Stop</button>
 				</div>
 			{/if}
 		{/if}

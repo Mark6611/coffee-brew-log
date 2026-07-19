@@ -121,7 +121,11 @@
 	async function handleWipe() {
 		const total = brewCount + bagCount;
 		if (total === 0) return;
-		const where = auth.user ? 'this device and your synced account' : 'this device';
+		const where = auth.user
+			? 'this device and your synced account'
+			: isNative
+				? 'this device and your iCloud'
+				: 'this device';
 		if (
 			!confirm(
 				`Delete all ${brewCount} brew${brewCount === 1 ? '' : 's'} and ${bagCount} bag${bagCount === 1 ? '' : 's'} from ${where}? This permanently erases them and cannot be undone.`

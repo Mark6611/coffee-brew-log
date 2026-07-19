@@ -97,14 +97,30 @@ export function runCloudSync(): Promise<SyncResult> {
 
 // Post-write nudge from the repository: debounced so a burst of edits (a save
 // + a favorite + a photo) becomes one pass, started after the burst settles.
+// If a pass is already mid-flight when the timer fires, chain a follow-up —
+// the running pass snapshotted its reads before this write and would miss it.
 let queued: ReturnType<typeof setTimeout> | null = null;
 export function queueCloudSync(delayMs = 4000): void {
 	if (!isNative) return;
 	if (queued) clearTimeout(queued);
 	queued = setTimeout(() => {
 		queued = null;
-		void runCloudSync();
+		if (inFlight) {
+			void inFlight.then(() => void runCloudSync());
+		} else {
+			void runCloudSync();
+		}
 	}, delayMs);
+}
+
+/** Stop any pending nudge and wait out an in-flight pass. Called before a wipe
+ *  so a racing pass can't re-push live rows over the wipe's tombstones. */
+export async function quiesceCloudSync(): Promise<void> {
+	if (queued) {
+		clearTimeout(queued);
+		queued = null;
+	}
+	if (inFlight) await inFlight.catch(() => {});
 }
 
 async function doSync(): Promise<SyncResult> {
@@ -166,7 +182,17 @@ async function doSync(): Promise<SyncResult> {
  *  would just pull everything back. Mirrors sync.pushWipeTombstones. */
 export async function pushWipeTombstonesToCloud(bags: Bag[], brews: Brew[]): Promise<void> {
 	if (!isNative) return;
-	if (!(await cloudSyncIsAvailable())) return; // no cloud copy ⇒ nothing to tombstone
+	if (!(await cloudSyncIsAvailable())) {
+		// Unavailable ≠ nonexistent: if this device has EVER synced, a cloud copy
+		// exists and clearing local without tombstones just resurrects it later.
+		// Only a device that never synced can safely treat the cloud as empty.
+		if (typeof localStorage !== 'undefined' && localStorage.getItem(LAST_CLOUD_SYNC_KEY)) {
+			throw new Error(
+				'iCloud is unreachable, so your synced copy could not be erased. Sign into iCloud and try again.'
+			);
+		}
+		return;
+	}
 	const now = new Date().toISOString();
 	const toRecords = (rows: (Bag | Brew)[], schema: typeof BagSchema | typeof BrewSchema) =>
 		rows

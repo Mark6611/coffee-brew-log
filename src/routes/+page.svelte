@@ -68,7 +68,7 @@
 			<button
 				type="button"
 				onclick={load}
-				class="bg-copper text-paper hover:bg-copper-dk mt-5 inline-flex h-11 items-center rounded-2xl px-5 text-[14px] font-medium transition-colors"
+				class="press glass-cta bg-copper text-paper hover:bg-copper-dk mt-5 inline-flex h-11 items-center rounded-full px-5 text-[14px] font-medium"
 			>Try again</button>
 		</div>
 	{:else}

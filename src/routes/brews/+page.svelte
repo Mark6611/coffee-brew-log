@@ -22,7 +22,12 @@
 
 	async function toggleSearch() {
 		searchOpen = !searchOpen;
-		if (!searchOpen) return;
+		if (!searchOpen) {
+			// Closing must also clear the query, or the list stays filtered by an
+			// invisible search with no indication why.
+			searchQuery = '';
+			return;
+		}
 		// The input mounts in normal flow near the top of the document, NOT inside the
 		// pinned header — so tapping the icon while scrolled down opens a field offscreen.
 		// Bring it into view and focus it.
@@ -253,7 +258,8 @@
 
 	<a
 		href="/brews/new"
-		class="press glass-cta fixed right-6 bottom-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full bg-copper text-paper hover:bg-copper-dk"
+		class="press glass-cta fixed right-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full bg-copper text-paper hover:bg-copper-dk"
+		style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"
 		aria-label="New brew"
 	>
 		<svg width="20" height="20" viewBox="0 0 20 20" fill="none">

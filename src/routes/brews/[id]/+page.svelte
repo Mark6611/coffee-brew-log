@@ -383,7 +383,7 @@
 								href={pullNextHref}
 								class="press {nextShot.action.kind === 'hold'
 									? 'bg-success text-paper'
-									: 'bg-copper text-paper hover:bg-copper-dk'} inline-flex h-10 items-center rounded-xl px-4 text-[13.5px] font-medium transition-colors"
+									: 'bg-copper text-paper hover:bg-copper-dk'} inline-flex h-10 items-center rounded-xl px-4 text-[13.5px] font-medium"
 							>{pullNextLabel}</a>
 						{/if}
 						<button
@@ -474,7 +474,7 @@
 			{:else}
 				<a
 					href="/brews/{brew.id}/edit"
-					class="group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] transition-colors hover:border-copper/50"
+					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] hover:border-copper/50"
 				>
 					<div class="flex items-center gap-3">
 						<StarRow value={0} size={16} />
@@ -496,7 +496,7 @@
 			{:else}
 				<a
 					href="/brews/{brew.id}/edit"
-					class="group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] transition-colors hover:border-copper/50"
+					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] hover:border-copper/50"
 				>
 					<div class="font-display text-[14px] text-muted italic">What did it taste like?</div>
 					<span class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-copper uppercase"
@@ -509,7 +509,7 @@
 			{#if bag && bagConsumptionData}
 				<a
 					href="/bags/{bag.id}"
-					class="block rounded-[18px] border border-hairline bg-surface px-4 py-[14px] transition-colors hover:bg-paper/50"
+					class="press block rounded-[18px] border border-hairline bg-surface px-4 py-[14px] hover:bg-paper/50"
 				>
 					<div class="flex items-start gap-3">
 						<div
@@ -547,7 +547,7 @@
 								{/if}
 							</div>
 							{#if bag.weightGrams != null && bagConsumptionData.percentUsed != null}
-								<div class="mt-2 h-1 overflow-hidden rounded-full bg-[#EDE5D4]">
+								<div class="mt-2 h-1 overflow-hidden rounded-full bg-hairline">
 									<div
 										class="h-full bg-copper"
 										style="width: {Math.max(0, 100 - bagConsumptionData.percentUsed)}%"

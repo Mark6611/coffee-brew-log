@@ -31,7 +31,10 @@ export function brewAgainDraft(brew: Brew) {
 		notes: brew.notes ?? '',
 		rating: null,
 		balance: '',
-		brewedAtLocal: localDatetimeNow()
+		brewedAtLocal: localDatetimeNow(),
+		// The new-brew form discards drafts without a fresh savedAt (staleness
+		// gate) — omitting this silently blanked every "brew again" prefill.
+		savedAt: Date.now()
 	};
 }
 

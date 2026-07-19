@@ -43,7 +43,7 @@
 			<button
 				type="button"
 				onclick={reload}
-				class="border-copper/40 hover:bg-copper/10 rounded-full border px-2.5 py-0.5 uppercase tracking-[0.1em] transition-colors"
+				class="press-sm inline-flex h-7 items-center border-copper/40 hover:bg-copper/10 rounded-full border px-2.5 py-0.5 uppercase tracking-[0.1em]"
 			>Reload</button>
 			<button
 				type="button"

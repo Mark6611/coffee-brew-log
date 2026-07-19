@@ -253,12 +253,12 @@
 						<div class="mt-3 flex items-center justify-end gap-4">
 							<a
 								href="/bags/{bag.id}/edit"
-								class="text-[12px] text-muted transition-colors hover:text-ink">Edit</a
+								class="inline-flex h-9 items-center text-[12px] text-muted transition-colors hover:text-ink">Edit</a
 							>
 							<button
 								type="button"
 								onclick={() => handleDelete(bag)}
-								class="text-[12px] text-faint transition-colors hover:text-danger">Delete</button
+								class="inline-flex h-9 items-center text-[12px] text-faint transition-colors hover:text-danger">Delete</button
 							>
 						</div>
 					</div>
@@ -270,7 +270,8 @@
 	{#if bags.length > 0}
 		<a
 			href="/bags/new"
-			class="press glass-cta fixed right-6 bottom-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full bg-copper text-paper hover:bg-copper-dk"
+			class="press glass-cta fixed right-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full bg-copper text-paper hover:bg-copper-dk"
+		style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"
 			aria-label="New bag"
 		>
 			<svg width="20" height="20" viewBox="0 0 20 20" fill="none">

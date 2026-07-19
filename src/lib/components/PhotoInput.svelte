@@ -64,7 +64,7 @@
 				<button
 					type="button"
 					onclick={pick}
-					class="bg-ink/55 text-paper hover:bg-ink/70 grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm transition-colors"
+					class="press-sm bg-ink/55 text-paper hover:bg-ink/70 grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm"
 					aria-label="Replace {label.toLowerCase()}"
 					title="Replace"
 				>
@@ -76,7 +76,7 @@
 				<button
 					type="button"
 					onclick={remove}
-					class="bg-ink/55 text-paper hover:bg-danger grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm transition-colors"
+					class="press-sm bg-ink/55 text-paper hover:bg-danger grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm"
 					aria-label="Remove {label.toLowerCase()}"
 					title="Remove"
 				>
@@ -91,7 +91,7 @@
 			type="button"
 			onclick={pick}
 			disabled={busy}
-			class="border-rule text-muted hover:border-copper hover:text-copper-dk flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed py-6 transition-colors disabled:opacity-60"
+			class="press border-rule text-muted hover:border-copper hover:text-copper-dk flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed py-6 disabled:opacity-60"
 		>
 			{#if busy}
 				<span class="font-mono text-[11px] tracking-[0.1em] uppercase">Processing…</span>

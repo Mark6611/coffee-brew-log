@@ -197,8 +197,11 @@ export async function wipeAllData(): Promise<void> {
 	if (isNative) {
 		// Same resurrection hazard as the server path, but against iCloud: clearing
 		// local without cloud tombstones means the next sync pulls everything back.
-		// Awaited + throws, so a failed wipe is reported as failed.
-		const { pushWipeTombstonesToCloud } = await import('../cloudSync');
+		// Quiesce first — a queued/in-flight pass that snapshotted pre-wipe rows
+		// would blindly re-push live copies over the tombstones. Awaited + throws,
+		// so a failed wipe is reported as failed.
+		const { pushWipeTombstonesToCloud, quiesceCloudSync } = await import('../cloudSync');
+		await quiesceCloudSync();
 		await pushWipeTombstonesToCloud(localBags, localBrews);
 	}
 	await sync.pushWipeTombstones(localBags, localBrews);

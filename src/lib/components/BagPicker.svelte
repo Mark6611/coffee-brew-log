@@ -143,7 +143,7 @@
 		<button
 			type="button"
 			onclick={clearSelection}
-			class="bg-ink/[0.06] hover:bg-ink/[0.10] text-ink grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors"
+			class="press-sm bg-ink/[0.06] hover:bg-ink/[0.10] text-ink grid h-9 w-9 shrink-0 place-items-center rounded-full"
 			aria-label="Clear selection"
 		>
 			<svg

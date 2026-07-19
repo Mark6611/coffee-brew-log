@@ -80,7 +80,7 @@
 		<div class="text-muted flex justify-between font-mono text-[8.5px] font-medium uppercase tracking-[0.14em]">
 			<span>Under</span><span>Balanced</span><span>Over</span>
 		</div>
-		<div class="relative mt-1 h-[6px] rounded-full" style="background: linear-gradient(90deg, #C9A227 0%, #7A9B57 50%, #B0522B 100%); opacity: 0.85">
+		<div class="relative mt-1 h-[6px] rounded-full" style="background: linear-gradient(90deg, var(--color-warning) 0%, var(--color-success) 50%, var(--color-danger) 100%); opacity: 0.85">
 			<div
 				class="border-paper bg-ink absolute top-1/2 h-[13px] w-[13px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition-[left] duration-200"
 				style="left: {dotLeft}%"

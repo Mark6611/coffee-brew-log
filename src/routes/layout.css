@@ -52,6 +52,12 @@
 	--color-copper: #d2825a;
 	--color-copper-dk: #b5683f;
 	--color-copper-lt: rgba(210, 130, 90, 0.1);
+	/* Semantic trio lightens in dark like copper does — the light values sit at
+	   ~2.3-2.7:1 on dark surfaces and every status surface (compass verdicts,
+	   dialed badge, banners, freshness/extraction dots) went muddy without this. */
+	--color-success: #7fa050;
+	--color-warning: #d09a2e;
+	--color-danger: #d0603f;
 }
 
 @layer base {
@@ -211,3 +217,15 @@
 		transform: translateY(0);
 	}
 }
+
+/* Process badges — per-category hues (intentional multi-hue system). Dark
+   theme lifts the foregrounds toward white for legibility; backgrounds are
+   translucent so they sit on any surface. */
+.process-washed { background: rgba(63, 123, 162, 0.1); color: #3f5b7b; }
+.process-natural { background: rgba(166, 52, 27, 0.1); color: #7a2913; }
+.process-honey { background: rgba(176, 122, 20, 0.14); color: #7a540c; }
+.process-anaerobic { background: rgba(79, 107, 46, 0.12); color: #3f5723; }
+[data-theme='dark'] .process-washed { background: rgba(63, 123, 162, 0.22); color: #9fc0da; }
+[data-theme='dark'] .process-natural { background: rgba(166, 52, 27, 0.22); color: #e09a86; }
+[data-theme='dark'] .process-honey { background: rgba(176, 122, 20, 0.24); color: #dcb46a; }
+[data-theme='dark'] .process-anaerobic { background: rgba(79, 107, 46, 0.24); color: #aec98a; }

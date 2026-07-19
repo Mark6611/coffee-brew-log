@@ -157,8 +157,10 @@
 				deltaTicks: c.action.deltaTicks
 			};
 		}
-		if (c) {
-			// hold / yield / diagnose all keep the same grind next shot.
+		if (c && c.action.kind !== 'grind') {
+			// hold / yield / diagnose keep the same grind next shot. A grind move
+			// whose target is null (unparseable grind notation) stages NOTHING —
+			// "KEEP GRIND" beside a "Grind finer" headline is a contradiction.
 			return {
 				kind: 'hold',
 				value: lastShot.grindSetting,
@@ -526,7 +528,7 @@
 						<button
 							type="button"
 							onclick={applyCompassStart}
-							class="press bg-copper text-paper hover:bg-copper-dk inline-flex h-9 items-center rounded-xl px-3.5 text-[13px] font-medium transition-colors"
+							class="press bg-copper text-paper hover:bg-copper-dk inline-flex h-10 items-center rounded-xl px-3.5 text-[13px] font-medium"
 						>
 							{#if a.kind === 'grind' && a.target}Start at {a.target}{:else if a.kind === 'yield'}Pull to {a.targetG}g{:else}Same again{/if}
 						</button>
@@ -604,7 +606,7 @@
 					<button
 						type="button"
 						onclick={applyStage}
-						class="mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left transition hover:brightness-[0.98]"
+						class="press mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left hover:brightness-[0.98]"
 					>
 						<svg
 							width="18"
@@ -656,7 +658,7 @@
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left transition hover:brightness-[0.98]"
+							class="press mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left hover:brightness-[0.98]"
 						>
 							<svg
 								width="18"
@@ -956,7 +958,7 @@
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left transition hover:brightness-[0.98]"
+							class="press mt-2 flex w-full items-center gap-2.5 rounded-[12px] bg-copper-lt px-3 py-2.5 text-left hover:brightness-[0.98]"
 						>
 							<svg
 								width="18"

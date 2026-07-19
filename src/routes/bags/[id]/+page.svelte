@@ -7,7 +7,7 @@
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import { resolveGrindSuggestion } from '$lib/brews/grind';
-	import { espressoShotsFor, readyToDial, inWindow, ROAST_TARGETS } from '$lib/brews/dialin';
+	import { espressoShotsFor, readyToDial, ROAST_TARGETS } from '$lib/brews/dialin';
 	import { brewCompass } from '$lib/brews/compass';
 	import { roastMeta } from '$lib/bags/roast';
 	import { costPerGram, costPerCupForBag } from '$lib/stats/cost';
@@ -163,6 +163,9 @@
 		if (a?.kind === 'grind' && a.target) return `${base}&grind=${encodeURIComponent(a.target)}`;
 		if (a?.kind === 'yield' && lastShot)
 			return `${base}&grind=${encodeURIComponent(lastShot.grindSetting)}&yield=${a.targetG}`;
+		// hold / diagnose / unparseable-grind: repeat the last grind (parity with
+		// the shot-detail CTA, which always pre-fills).
+		if (lastShot) return `${base}&grind=${encodeURIComponent(lastShot.grindSetting)}`;
 		return base;
 	});
 	const settledAtShot = $derived.by(() => {
@@ -355,7 +358,7 @@
 							<span class="text-muted"> / {bag.weightGrams}g</span>
 						</div>
 					</div>
-					<div class="mt-2 h-2.5 overflow-hidden rounded-full bg-[#EDE5D4]">
+					<div class="mt-2 h-2.5 overflow-hidden rounded-full bg-hairline">
 						<div
 							class="h-full bg-copper transition-[width] duration-300 ease-out"
 							style="width: {Math.max(0, 100 - (consumption.percentUsed ?? 0))}%"
@@ -551,14 +554,14 @@
 						<div class="mt-3.5 flex flex-wrap items-center gap-2">
 							<a
 								href={pullShotHref}
-								class="inline-flex h-10 items-center rounded-xl bg-copper px-4 text-[13.5px] font-medium text-paper transition-colors hover:bg-copper-dk"
+								class="press glass-cta inline-flex h-10 items-center rounded-xl bg-copper px-4 text-[13.5px] font-medium text-paper hover:bg-copper-dk"
 								>{shots.length === 0 ? 'Pull first shot' : 'Pull next shot'}</a
 							>
 							{#if canDial}
 								<button
 									type="button"
 									onclick={handleMarkDialed}
-									class="inline-flex h-10 items-center rounded-xl border px-4 text-[13.5px] font-medium transition-all {dialReady
+									class="press inline-flex h-10 items-center rounded-xl border px-4 text-[13.5px] font-medium {dialReady
 										? 'border-copper bg-copper-lt text-copper'
 										: 'border-hairline text-muted hover:text-ink'}">Mark dialed</button
 								>
@@ -568,7 +571,7 @@
 						<div class="mt-3.5">
 							<a
 								href={pullShotHref}
-								class="inline-flex h-10 items-center rounded-xl border border-hairline px-4 text-[13.5px] font-medium text-ink transition-colors hover:bg-paper"
+								class="press inline-flex h-10 items-center rounded-xl border border-hairline px-4 text-[13.5px] font-medium text-ink hover:bg-paper"
 								>Log a shot</a
 							>
 						</div>
