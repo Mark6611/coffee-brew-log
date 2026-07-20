@@ -217,11 +217,14 @@
 	   system grays — the material's structure is what's being borrowed, not
 	   its hue.
 	   --------------------------------------------------------------------- */
-	/* Deliberately built on rgb(<channels> / <alpha>) rather than color-mix():
-	   the iOS deployment target is 15.0 and color-mix needs WebKit 16.2, where
-	   a single unsupported value invalidates the whole declaration — an entire
-	   box-shadow list, or the button's only fill. The channel tokens work back
-	   to Safari 12. */
+	/* Deliberately built on rgb(<channels> / <alpha>) rather than color-mix().
+	   A single unsupported value invalidates the WHOLE declaration — an entire
+	   box-shadow list, or this element's only fill — and hand-written color-mix
+	   carries no fallback, unlike Tailwind's own opacity utilities, which ship a
+	   hex under @supports. The channel tokens work back to Safari 12, so the
+	   material can't be the thing that breaks on an older WebKit.
+	   (Deployment target is now 16.4 — Tailwind v4's real floor, since it emits
+	   media-query range syntax — but this stays as cheap insurance.) */
 	.glass {
 		position: relative;
 		background-color: rgb(var(--color-card-rgb) / var(--glass-opacity));
@@ -327,11 +330,10 @@
 	   transparency overrides don't repaint it card-coloured and strand
 	   white text on a light surface.
 
-	   rgb(<channels> / <alpha>) for the same reason .glass uses it: color-mix
-	   needs WebKit 16.2 and the deployment target is iOS 15. An unsupported
-	   value drops the whole declaration, which here would mean falling back to
-	   .glass's light card fill while the label stays white — the exact
-	   unreadable case this class exists to prevent. */
+	   rgb(<channels> / <alpha>) for the same reason .glass uses it: an
+	   unsupported value drops the whole declaration, which here would mean
+	   falling back to .glass's light card fill while the label stays white —
+	   the exact unreadable case this class exists to prevent. */
 	.glass-scrim {
 		--glass-opacity: 0.55;
 		--glass-blur: 12px;
