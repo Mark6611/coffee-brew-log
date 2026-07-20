@@ -85,9 +85,7 @@ describe('freshnessStale', () => {
 describe('freshnessLabel', () => {
 	it('uses friendly labels at the day boundaries', () => {
 		expect(freshnessLabel('2026-05-15', new Date('2026-05-15T00:00:00'))).toBe('ROASTED TODAY');
-		expect(freshnessLabel('2026-05-14', new Date('2026-05-15T00:00:00'))).toBe(
-			'ROASTED YESTERDAY'
-		);
+		expect(freshnessLabel('2026-05-14', new Date('2026-05-15T00:00:00'))).toBe('ROASTED YESTERDAY');
 		expect(freshnessLabel('2026-05-10', new Date('2026-05-15T00:00:00'))).toBe(
 			'ROASTED 5 DAYS AGO'
 		);

@@ -31,13 +31,13 @@
 </script>
 
 <div
-	class="bg-paper flex h-12 w-full items-center rounded-[14px] border transition-all duration-200 {resolved
-		? 'border-copper ring-copper/[0.18] ring-[3px]'
-		: 'border-hairline focus-within:border-copper focus-within:ring-copper/25 focus-within:ring-2'}"
+	class="flex h-12 w-full items-center rounded-[14px] border bg-paper transition-all duration-200 {resolved
+		? 'border-copper ring-[3px] ring-copper/[0.18]'
+		: 'border-hairline focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25'}"
 >
 	{#if resolved}
 		<div
-			class="border-hairline flex h-full items-center border-r px-3"
+			class="flex h-full items-center border-r border-hairline px-3"
 			transition:fade={{ duration: 180 }}
 		>
 			<OriginFlag code={resolved.code} country={resolved.country} />
@@ -47,19 +47,16 @@
 		type="text"
 		bind:value
 		placeholder="e.g. Ethiopia"
-		class="text-ink placeholder:text-faint h-full min-w-0 flex-1 bg-transparent px-3.5 outline-none"
+		class="h-full min-w-0 flex-1 bg-transparent px-3.5 text-ink outline-none placeholder:text-faint"
 	/>
 	{#if resolved}
 		<span
-			class="text-copper pr-3.5 font-mono text-[12px] font-medium tracking-[0.14em]"
-			transition:fade={{ duration: 180 }}
-		>{resolved.code}</span>
+			class="pr-3.5 font-mono text-[12px] font-medium tracking-[0.14em] text-copper"
+			transition:fade={{ duration: 180 }}>{resolved.code}</span
+		>
 	{/if}
 </div>
-<p
-	class="mt-1.5 text-[12px] {resolved ? 'text-copper-dk' : 'text-faint'}"
-	aria-live="polite"
->
+<p class="mt-1.5 text-[12px] {resolved ? 'text-copper-dk' : 'text-faint'}" aria-live="polite">
 	{#if resolved}
 		Matched <strong class="font-medium">{resolved.country}</strong> for the flag indicator.
 	{:else if value}

@@ -109,6 +109,8 @@ describe('costPerCupForBag', () => {
 		expect(costPerCupForBag(bag({ id: 'a' }), [brew({ bagId: 'other' })])).toBeNull();
 	});
 	it('is null when the bag has no price', () => {
-		expect(costPerCupForBag(bag({ id: 'a', pricePaid: undefined }), [brew({ bagId: 'a' })])).toBeNull();
+		expect(
+			costPerCupForBag(bag({ id: 'a', pricePaid: undefined }), [brew({ bagId: 'a' })])
+		).toBeNull();
 	});
 });

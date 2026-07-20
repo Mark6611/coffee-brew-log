@@ -46,60 +46,76 @@
 >
 	<div class="flex items-center justify-between">
 		<div
-			class="font-mono text-[9.5px] font-medium uppercase tracking-[0.14em] {isHold
+			class="font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase {isHold
 				? 'text-success'
 				: isDiagnose
 					? 'text-warning'
 					: 'text-copper-dk'}"
-		>{eyebrow}</div>
+		>
+			{eyebrow}
+		</div>
 		{#if !c.fromTaste}
-			<div class="text-faint font-mono text-[9px] uppercase tracking-[0.12em]">from the numbers</div>
+			<div class="font-mono text-[9px] tracking-[0.12em] text-faint uppercase">
+				from the numbers
+			</div>
 		{/if}
 	</div>
 
 	<!-- Metrics row -->
 	<div class="mt-2.5 flex items-baseline gap-4 font-mono">
 		<div>
-			<span class="text-muted text-[9.5px] font-medium uppercase tracking-[0.12em]">Ratio </span>
-			<span class="text-ink text-[15px] font-medium tracking-[-0.01em]">1:{c.ratio.toFixed(2)}</span>
+			<span class="text-[9.5px] font-medium tracking-[0.12em] text-muted uppercase">Ratio </span>
+			<span class="text-[15px] font-medium tracking-[-0.01em] text-ink">1:{c.ratio.toFixed(2)}</span
+			>
 		</div>
 		<div>
-			<span class="text-muted text-[9.5px] font-medium uppercase tracking-[0.12em]">Flow </span>
-			<span class="text-ink text-[15px] font-medium tracking-[-0.01em]">{c.flowRate.toFixed(2)}</span>
-			<span class="text-muted text-[10px]">g/s</span>
+			<span class="text-[9.5px] font-medium tracking-[0.12em] text-muted uppercase">Flow </span>
+			<span class="text-[15px] font-medium tracking-[-0.01em] text-ink"
+				>{c.flowRate.toFixed(2)}</span
+			>
+			<span class="text-[10px] text-muted">g/s</span>
 		</div>
 		<div>
-			<span class="text-muted text-[9.5px] font-medium uppercase tracking-[0.12em]">Time </span>
-			<span class="text-ink text-[15px] font-medium tracking-[-0.01em]">{c.timeS}</span>
-			<span class="text-muted text-[10px]">s</span>
+			<span class="text-[9.5px] font-medium tracking-[0.12em] text-muted uppercase">Time </span>
+			<span class="text-[15px] font-medium tracking-[-0.01em] text-ink">{c.timeS}</span>
+			<span class="text-[10px] text-muted">s</span>
 		</div>
 	</div>
 
 	<!-- Under ↔ over rail -->
 	<div class="mt-3">
-		<div class="text-muted flex justify-between font-mono text-[8.5px] font-medium uppercase tracking-[0.14em]">
+		<div
+			class="flex justify-between font-mono text-[8.5px] font-medium tracking-[0.14em] text-muted uppercase"
+		>
 			<span>Under</span><span>Balanced</span><span>Over</span>
 		</div>
-		<div class="relative mt-1 h-[6px] rounded-full" style="background: linear-gradient(90deg, var(--color-warning) 0%, var(--color-success) 50%, var(--color-danger) 100%); opacity: 0.85">
+		<div
+			class="relative mt-1 h-[6px] rounded-full"
+			style="background: linear-gradient(90deg, var(--color-warning) 0%, var(--color-success) 50%, var(--color-danger) 100%); opacity: 0.85"
+		>
 			<div
-				class="border-paper bg-ink absolute top-1/2 h-[13px] w-[13px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 transition-[left] duration-200"
+				class="absolute top-1/2 h-[13px] w-[13px] -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-paper bg-ink transition-[left] duration-200"
 				style="left: {dotLeft}%"
 			></div>
 		</div>
 	</div>
 
-	<div class="font-display text-ink mt-3 text-[18px] font-medium leading-[1.25]">{c.headline}</div>
+	<div class="mt-3 font-display text-[18px] leading-[1.25] font-medium text-ink">{c.headline}</div>
 	{#if actionValue}
 		<div class="mt-1.5 flex items-baseline gap-2.5">
-			<span class="text-copper font-mono text-[24px] font-medium tracking-[-0.02em]">{actionValue}</span>
+			<span class="font-mono text-[24px] font-medium tracking-[-0.02em] text-copper"
+				>{actionValue}</span
+			>
 			{#if actionQualifier}
-				<span class="text-copper-dk font-mono text-[10.5px] font-medium tracking-[0.12em] uppercase">{actionQualifier}</span>
+				<span class="font-mono text-[10.5px] font-medium tracking-[0.12em] text-copper-dk uppercase"
+					>{actionQualifier}</span
+				>
 			{/if}
 		</div>
 	{/if}
-	<p class="text-ink-70 mt-2 text-[13px] leading-[1.5]">{c.prose}</p>
+	<p class="mt-2 text-[13px] leading-[1.5] text-ink-70">{c.prose}</p>
 	{#if c.aside}
-		<p class="text-muted mt-1.5 text-[12px] leading-[1.5] italic">{c.aside}</p>
+		<p class="mt-1.5 text-[12px] leading-[1.5] text-muted italic">{c.aside}</p>
 	{/if}
 
 	{#if footer}

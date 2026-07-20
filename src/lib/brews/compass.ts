@@ -79,7 +79,9 @@ function positionOf(t: Extraction | null, timeS: number, win: [number, number]):
 		return clamp(((timeS - mid) / (hi - lo)) * 0.4, -0.2, 0.2);
 	}
 	// Out of window: scale by how far past the edge, saturating ~8s out.
-	return timeS < lo ? clamp(-0.3 - (lo - timeS) / 12, -1, -0.3) : clamp(0.3 + (timeS - hi) / 12, 0.3, 1);
+	return timeS < lo
+		? clamp(-0.3 - (lo - timeS) / 12, -1, -0.3)
+		: clamp(0.3 + (timeS - hi) / 12, 0.3, 1);
 }
 
 function statusOf(position: number | null): Compass['status'] {

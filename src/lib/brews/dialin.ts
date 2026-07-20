@@ -21,10 +21,34 @@ export interface RoastTarget {
 // light method sits at 35–50s on longer ratios), and a generous window means
 // the compass nags less and defers to taste more.
 export const ROAST_TARGETS: Record<RoastLevel, RoastTarget> = {
-	light: { ratio: '1:2.2–2.8', yieldG: '40–50g', time: [26, 36], ratioBand: [2.2, 2.8], hint: 'finer end' },
-	medium: { ratio: '1:1.9–2.35', yieldG: '34–42g', time: [24, 32], ratioBand: [1.9, 2.35], hint: null },
-	'medium-dark': { ratio: '1:1.7–2.1', yieldG: '31–38g', time: [23, 30], ratioBand: [1.7, 2.1], hint: null },
-	dark: { ratio: '1:1.5–1.9', yieldG: '27–34g', time: [21, 28], ratioBand: [1.5, 1.9], hint: 'coarser end' }
+	light: {
+		ratio: '1:2.2–2.8',
+		yieldG: '40–50g',
+		time: [26, 36],
+		ratioBand: [2.2, 2.8],
+		hint: 'finer end'
+	},
+	medium: {
+		ratio: '1:1.9–2.35',
+		yieldG: '34–42g',
+		time: [24, 32],
+		ratioBand: [1.9, 2.35],
+		hint: null
+	},
+	'medium-dark': {
+		ratio: '1:1.7–2.1',
+		yieldG: '31–38g',
+		time: [23, 30],
+		ratioBand: [1.7, 2.1],
+		hint: null
+	},
+	dark: {
+		ratio: '1:1.5–1.9',
+		yieldG: '27–34g',
+		time: [21, 28],
+		ratioBand: [1.5, 1.9],
+		hint: 'coarser end'
+	}
 };
 
 // Fixed rail domain for the target-window bar (all roast windows fit).

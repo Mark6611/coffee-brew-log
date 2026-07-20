@@ -4,13 +4,13 @@
 </script>
 
 <div
-	class="bg-ink/[0.04] text-ink-70 mt-2 flex items-start gap-2 rounded-[10px] px-2.5 py-2 text-[12.5px] leading-[1.5]"
+	class="mt-2 flex items-start gap-2 rounded-[10px] bg-ink/[0.04] px-2.5 py-2 text-[12.5px] leading-[1.5] text-ink-70"
 >
 	<svg
 		width="13"
 		height="13"
 		viewBox="0 0 13 13"
-		class="text-muted mt-[2px] shrink-0"
+		class="mt-[2px] shrink-0 text-muted"
 		fill="none"
 		stroke="currentColor"
 		stroke-width="1.2"

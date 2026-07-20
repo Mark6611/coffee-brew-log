@@ -186,8 +186,12 @@ describe('roast level', () => {
 
 describe('actionLabel', () => {
 	it('renders each action kind compactly', () => {
-		expect(actionLabel({ kind: 'grind', direction: 'coarser', deltaTicks: 4, target: '2.4.4' })).toBe('Coarser → 2.4.4');
-		expect(actionLabel({ kind: 'grind', direction: 'finer', deltaTicks: -2, target: null })).toBe('2 ticks finer');
+		expect(
+			actionLabel({ kind: 'grind', direction: 'coarser', deltaTicks: 4, target: '2.4.4' })
+		).toBe('Coarser → 2.4.4');
+		expect(actionLabel({ kind: 'grind', direction: 'finer', deltaTicks: -2, target: null })).toBe(
+			'2 ticks finer'
+		);
 		expect(actionLabel({ kind: 'yield', direction: 'increase', targetG: 39 })).toBe('Longer → 39g');
 		expect(actionLabel({ kind: 'diagnose' })).toBe('Fix puck prep');
 		expect(actionLabel({ kind: 'hold' })).toBe('Hold');

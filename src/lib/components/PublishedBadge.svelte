@@ -9,7 +9,7 @@
 	{href}
 	target="_blank"
 	rel="noopener noreferrer"
-	class="bg-copper-lt text-copper-dk hover:bg-copper-lt/80 inline-flex h-[22px] items-center gap-1.5 rounded-full px-2.5 font-mono text-[10.5px] font-medium tracking-[0.12em] uppercase transition-colors"
+	class="inline-flex h-[22px] items-center gap-1.5 rounded-full bg-copper-lt px-2.5 font-mono text-[10.5px] font-medium tracking-[0.12em] text-copper-dk uppercase transition-colors hover:bg-copper-lt/80"
 >
 	<LiveDot color="var(--color-copper-dk)" size={5} />
 	<span>Published</span>

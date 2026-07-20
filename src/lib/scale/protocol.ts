@@ -51,7 +51,14 @@ export function encode(msgType: number, payload: number[]): Uint8Array {
 }
 
 // ─── Outgoing messages ───────────────────────────────────────────────────
-const MSG = { heartbeat: 0x00, tare: 0x04, getSettings: 0x06, ident: 0x0b, config: 0x0c, timer: 0x0d };
+const MSG = {
+	heartbeat: 0x00,
+	tare: 0x04,
+	getSettings: 0x06,
+	ident: 0x0b,
+	config: 0x0c,
+	timer: 0x0d
+};
 
 // 15-byte client id — the digit string is accepted by both generations.
 const IDENT_PAYLOAD = [...'012345678901234'].map((c) => c.charCodeAt(0));

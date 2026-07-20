@@ -26,7 +26,11 @@ describe('grinderFor', () => {
 describe('resolveGrindSuggestion — precedence', () => {
 	it('RULE 1: a prior brew of THIS bag prefills (and wins over history)', () => {
 		const target = bag({ roastLevel: 'dark' });
-		const [d1, d2, d3] = [bag({ roastLevel: 'dark' }), bag({ roastLevel: 'dark' }), bag({ roastLevel: 'dark' })];
+		const [d1, d2, d3] = [
+			bag({ roastLevel: 'dark' }),
+			bag({ roastLevel: 'dark' }),
+			bag({ roastLevel: 'dark' })
+		];
 		const brews = [
 			pourOver({ bagId: target.id, grindSetting: 'Ode 9', brewedAt: '2026-05-10T08:00:00.000Z' }),
 			pourOver({ bagId: d1.id, grindSetting: 'Ode 6' }),
@@ -72,7 +76,11 @@ describe('resolveGrindSuggestion — precedence', () => {
 
 	it('RULE 2: ≥3 brews at this roast level × method → median of real logged values', () => {
 		const target = bag({ roastLevel: 'dark' });
-		const [d1, d2, d3] = [bag({ roastLevel: 'dark' }), bag({ roastLevel: 'dark' }), bag({ roastLevel: 'dark' })];
+		const [d1, d2, d3] = [
+			bag({ roastLevel: 'dark' }),
+			bag({ roastLevel: 'dark' }),
+			bag({ roastLevel: 'dark' })
+		];
 		const brews = [
 			pourOver({ bagId: d1.id, grindSetting: '4.0' }),
 			pourOver({ bagId: d2.id, grindSetting: '4.2' }),
@@ -88,7 +96,11 @@ describe('resolveGrindSuggestion — precedence', () => {
 
 	it('RULE 2: preserves the Lagom rotation.number.tick notation verbatim', () => {
 		const target = bag({ roastLevel: 'dark' });
-		const [d1, d2, d3] = [bag({ roastLevel: 'dark' }), bag({ roastLevel: 'dark' }), bag({ roastLevel: 'dark' })];
+		const [d1, d2, d3] = [
+			bag({ roastLevel: 'dark' }),
+			bag({ roastLevel: 'dark' }),
+			bag({ roastLevel: 'dark' })
+		];
 		const brews = [
 			espresso({ bagId: d1.id, grindSetting: '0.7.2' }),
 			espresso({ bagId: d2.id, grindSetting: '0.7.5' }),
@@ -101,14 +113,20 @@ describe('resolveGrindSuggestion — precedence', () => {
 
 	it('RULE 2: history is scoped to the method (espresso brews don’t count for pour-over)', () => {
 		const target = bag({ roastLevel: 'dark' });
-		const [d1, d2, d3] = [bag({ roastLevel: 'dark' }), bag({ roastLevel: 'dark' }), bag({ roastLevel: 'dark' })];
+		const [d1, d2, d3] = [
+			bag({ roastLevel: 'dark' }),
+			bag({ roastLevel: 'dark' }),
+			bag({ roastLevel: 'dark' })
+		];
 		const brews = [
 			espresso({ bagId: d1.id, grindSetting: 'Lagom 2' }),
 			espresso({ bagId: d2.id, grindSetting: 'Lagom 2' }),
 			espresso({ bagId: d3.id, grindSetting: 'Lagom 2' })
 		];
 		// No pour-over peers → falls to the pour-over seed.
-		expect(resolveGrindSuggestion(target, 'pour-over', brews, [target, d1, d2, d3])?.kind).toBe('seed');
+		expect(resolveGrindSuggestion(target, 'pour-over', brews, [target, d1, d2, d3])?.kind).toBe(
+			'seed'
+		);
 	});
 
 	it('RULE 3: roast level set but <3 peers → seed table', () => {

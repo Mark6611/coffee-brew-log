@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { parseLagom, formatLagom, addTicks, inWindow, readyToDial, ROAST_TARGETS, TIME_RAIL } from './dialin';
+import {
+	parseLagom,
+	formatLagom,
+	addTicks,
+	inWindow,
+	readyToDial,
+	ROAST_TARGETS,
+	TIME_RAIL
+} from './dialin';
 import { espresso } from '$lib/test/factories';
 import type { EspressoBrew } from '$lib/db/types';
 

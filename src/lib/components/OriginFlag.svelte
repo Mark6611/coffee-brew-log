@@ -12,7 +12,8 @@
 	role="img"
 	aria-hidden="true"
 	data-flag-code={code}
-	data-flag-country={country}>{toEmoji(code)}</span>
+	data-flag-country={country}>{toEmoji(code)}</span
+>
 
 <style>
 	.origin-flag {

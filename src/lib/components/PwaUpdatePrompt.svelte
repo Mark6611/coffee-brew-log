@@ -43,13 +43,15 @@
 			<button
 				type="button"
 				onclick={reload}
-				class="press-sm inline-flex h-7 items-center border-copper/40 hover:bg-copper/10 rounded-full border px-2.5 py-0.5 uppercase tracking-[0.1em]"
-			>Reload</button>
+				class="press-sm inline-flex h-7 items-center rounded-full border border-copper/40 px-2.5 py-0.5 tracking-[0.1em] uppercase hover:bg-copper/10"
+				>Reload</button
+			>
 			<button
 				type="button"
 				onclick={dismiss}
-				class="text-copper-dk/70 hover:text-copper-dk px-1.5 py-0.5 uppercase tracking-[0.1em] transition-colors"
-			>Later</button>
+				class="px-1.5 py-0.5 tracking-[0.1em] text-copper-dk/70 uppercase transition-colors hover:text-copper-dk"
+				>Later</button
+			>
 		{/snippet}
 	</Banner>
 {/if}

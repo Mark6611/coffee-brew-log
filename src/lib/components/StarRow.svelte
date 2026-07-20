@@ -14,7 +14,7 @@
 	const interactive = $derived(!!oninput);
 </script>
 
-<div class="text-copper inline-flex items-center" style="gap: {gap}px">
+<div class="inline-flex items-center text-copper" style="gap: {gap}px">
 	{#each [1, 2, 3, 4, 5] as star (star)}
 		{@const fill = Math.max(0, Math.min(1, value - (star - 1)))}
 		<span class="relative inline-block" style="width: {size}px; height: {size}px">
@@ -62,7 +62,7 @@
 				<button
 					type="button"
 					onclick={() => oninput?.(star)}
-					class="absolute top-0 -bottom-1 right-0 w-1/2 cursor-pointer"
+					class="absolute top-0 right-0 -bottom-1 w-1/2 cursor-pointer"
 					aria-label="Rate {star} of 5"
 				></button>
 			{/if}

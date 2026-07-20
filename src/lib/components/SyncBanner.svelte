@@ -37,20 +37,21 @@
 
 {#if showOffline}
 	<Banner tone="warning" role="status">
-		<span class="bg-warning inline-block h-1.5 w-1.5 shrink-0 rounded-full" aria-hidden="true"
+		<span class="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-warning" aria-hidden="true"
 		></span>
 		Offline — changes are saved here and sync when you reconnect.
 	</Banner>
 {:else if showError}
 	<Banner tone="danger" role="alert">
-		<span class="bg-danger inline-block h-1.5 w-1.5 shrink-0 rounded-full" aria-hidden="true"></span>
+		<span class="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-danger" aria-hidden="true"
+		></span>
 		Last sync failed.
 		{#snippet action()}
 			<button
 				type="button"
 				onclick={retry}
 				disabled={syncStatus.syncing}
-				class="press-sm inline-flex h-7 items-center border-danger/40 hover:bg-danger/10 rounded-full border px-2.5 py-0.5 uppercase tracking-[0.1em] disabled:opacity-50"
+				class="press-sm inline-flex h-7 items-center rounded-full border border-danger/40 px-2.5 py-0.5 tracking-[0.1em] uppercase hover:bg-danger/10 disabled:opacity-50"
 			>
 				{syncStatus.syncing ? 'Syncing…' : 'Retry'}
 			</button>

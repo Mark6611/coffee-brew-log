@@ -64,7 +64,11 @@ export function mergeRecords<T extends Syncable>(local: T[], remote: CloudRecord
 			// not just on the envelope — otherwise every other device pulls a record
 			// whose inner timestamp never matches the envelope and re-syncs it forever.
 			const stamped = loc.updatedAt ? loc : { ...loc, updatedAt: new Date().toISOString() };
-			toPushRemotely.push({ id: stamped.id, updatedAt: stamped.updatedAt!, json: JSON.stringify(stamped) });
+			toPushRemotely.push({
+				id: stamped.id,
+				updatedAt: stamped.updatedAt!,
+				json: JSON.stringify(stamped)
+			});
 		}
 	}
 	return { toWriteLocally, toPushRemotely };

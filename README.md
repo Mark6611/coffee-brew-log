@@ -41,12 +41,12 @@ src/
 
 Supporting directories:
 
-| Path | What it is |
-|---|---|
-| `ios/` | Capacitor-generated Xcode project (the iOS app shell) |
-| `supabase/` | SQL migrations for the sync backend |
-| `scripts/` | Tooling: App Store Connect automation (`asc-*.mjs`), CSV/JSON export, icon + screenshot generation |
-| `static/` | PWA manifest, icons, service-worker assets |
+| Path            | What it is                                                                                                                     |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `ios/`          | Capacitor-generated Xcode project (the iOS app shell)                                                                          |
+| `supabase/`     | SQL migrations for the sync backend                                                                                            |
+| `scripts/`      | Tooling: App Store Connect automation (`asc-*.mjs`), CSV/JSON export, icon + screenshot generation                             |
+| `static/`       | PWA manifest, icons, service-worker assets                                                                                     |
 | `docs/`, `*.md` | [DEPLOYMENT.md](DEPLOYMENT.md), [APP-STORE-SUBMISSION.md](APP-STORE-SUBMISSION.md), [UAT-NATIVE.md](UAT-NATIVE.md), milestones |
 
 ## Data model conventions
@@ -66,15 +66,15 @@ cp .env.example .env   # Supabase URL + anon key (sync is optional in dev)
 npm run dev
 ```
 
-| Command | Purpose |
-|---|---|
-| `npm run dev` | Dev server |
-| `npm test` | Unit tests (Vitest) |
-| `npm run check` | Type-check (svelte-check) |
-| `npm run lint` / `format` | Prettier + ESLint |
-| `npm run build` | Production web build (deployed on Vercel) |
-| `npm run ios` | Capacitor build → sync → open Xcode |
-| `npm run export` | Local CSV/JSON backup of the database |
+| Command                   | Purpose                                   |
+| ------------------------- | ----------------------------------------- |
+| `npm run dev`             | Dev server                                |
+| `npm test`                | Unit tests (Vitest)                       |
+| `npm run check`           | Type-check (svelte-check)                 |
+| `npm run lint` / `format` | Prettier + ESLint                         |
+| `npm run build`           | Production web build (deployed on Vercel) |
+| `npm run ios`             | Capacitor build → sync → open Xcode       |
+| `npm run export`          | Local CSV/JSON backup of the database     |
 
 ## Sibling projects
 

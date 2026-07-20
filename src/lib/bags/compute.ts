@@ -30,26 +30,21 @@ export function formatRoastedAt(iso: string | undefined, now: Date = new Date())
 	const days = daysSinceRoast(iso, now);
 	if (days == null) return '';
 	const date = new Date(iso + 'T00:00:00');
-	if (days < 0) return 'roasted ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+	if (days < 0)
+		return 'roasted ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 	if (days === 0) return 'roasted today';
 	if (days === 1) return 'roasted yesterday';
 	if (days < 30) return `roasted ${days} days ago`;
 	return 'roasted ' + date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
-export function daysSinceRoast(
-	iso: string | undefined,
-	now: Date = new Date()
-): number | null {
+export function daysSinceRoast(iso: string | undefined, now: Date = new Date()): number | null {
 	if (!iso) return null;
 	const date = new Date(iso + 'T00:00:00');
 	return Math.floor((now.getTime() - date.getTime()) / 86_400_000);
 }
 
-export function freshnessTone(
-	iso: string | undefined,
-	now: Date = new Date()
-): string | null {
+export function freshnessTone(iso: string | undefined, now: Date = new Date()): string | null {
 	const days = daysSinceRoast(iso, now);
 	if (days == null) return null;
 	if (days <= 14) return 'var(--color-success)';
@@ -57,10 +52,7 @@ export function freshnessTone(
 	return 'var(--color-danger)';
 }
 
-export function freshnessLabel(
-	iso: string | undefined,
-	now: Date = new Date()
-): string | null {
+export function freshnessLabel(iso: string | undefined, now: Date = new Date()): string | null {
 	const days = daysSinceRoast(iso, now);
 	if (days == null) return null;
 	if (days < 0) return 'NOT YET ROASTED';

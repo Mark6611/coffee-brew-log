@@ -52,7 +52,9 @@ export class ShotTracker {
 	/** Feed one weight reading. Returns the transitions the caller should act on. */
 	push(rawGrams: number, tMs: number): { justStarted: boolean; justEnded: boolean } {
 		const smoothed =
-			this.samples.length === 0 ? rawGrams : rawGrams * EMA_ALPHA + this.prevSmoothed * (1 - EMA_ALPHA);
+			this.samples.length === 0
+				? rawGrams
+				: rawGrams * EMA_ALPHA + this.prevSmoothed * (1 - EMA_ALPHA);
 		this.prevSmoothed = smoothed;
 		this.samples.push({ t: tMs, w: rawGrams, s: smoothed });
 

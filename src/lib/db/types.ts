@@ -30,7 +30,10 @@ export const BagSchema = z.object({
 	name: z.string().min(1),
 	roaster: z.string().min(1).optional(),
 	origin: z.string().min(1).optional(),
-	roastedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+	roastedAt: z
+		.string()
+		.regex(/^\d{4}-\d{2}-\d{2}$/)
+		.optional(),
 	process: ProcessSchema.optional(),
 	roastLevel: RoastLevelSchema.optional(),
 	weightGrams: z.number().positive().optional(),
@@ -67,7 +70,10 @@ export const BagSnapshotSchema = z.object({
 	roaster: z.string().min(1).optional(),
 	origin: z.string().min(1).optional(),
 	process: ProcessSchema.optional(),
-	roastedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+	roastedAt: z
+		.string()
+		.regex(/^\d{4}-\d{2}-\d{2}$/)
+		.optional(),
 	weightGrams: z.number().positive().optional()
 });
 
@@ -119,10 +125,7 @@ export const PourOverBrewSchema = BrewBase.extend({
 	waterTempC: z.number().positive().optional()
 });
 
-export const BrewSchema = z.discriminatedUnion('method', [
-	EspressoBrewSchema,
-	PourOverBrewSchema
-]);
+export const BrewSchema = z.discriminatedUnion('method', [EspressoBrewSchema, PourOverBrewSchema]);
 
 export type EspressoBrew = z.infer<typeof EspressoBrewSchema>;
 export type PourOverBrew = z.infer<typeof PourOverBrewSchema>;

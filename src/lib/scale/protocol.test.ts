@@ -33,9 +33,7 @@ describe('checksum', () => {
 
 describe('encoders produce exact wire bytes', () => {
 	it('ident', () => {
-		expect(hex(encodeIdent())).toBe(
-			'ef dd 0b 30 31 32 33 34 35 36 37 38 39 30 31 32 33 34 9a 6d'
-		);
+		expect(hex(encodeIdent())).toBe('ef dd 0b 30 31 32 33 34 35 36 37 38 39 30 31 32 33 34 9a 6d');
 	});
 	it('notification request', () => {
 		expect(hex(encodeNotificationRequest())).toBe('ef dd 0c 09 00 01 01 02 02 05 03 04 15 06');
@@ -58,7 +56,15 @@ describe('encoders produce exact wire bytes', () => {
 
 describe('isAcaiaName', () => {
 	it('matches every known prefix, case-insensitive', () => {
-		for (const n of ['ACAIA123', 'LUNAR-abc', 'PYXIS-01', 'PEARL-x', 'PROCHBT001', 'CINCO 9', 'lunar-lower'])
+		for (const n of [
+			'ACAIA123',
+			'LUNAR-abc',
+			'PYXIS-01',
+			'PEARL-x',
+			'PROCHBT001',
+			'CINCO 9',
+			'lunar-lower'
+		])
 			expect(isAcaiaName(n)).toBe(true);
 	});
 	it('rejects non-Acaia and empty', () => {
@@ -71,7 +77,16 @@ describe('isAcaiaName', () => {
 // Build a cmd 0x0C event frame the way the scale would, via the (separately
 // tested) encoder, then assert the decoder parses it back.
 const weightFrame = (mag: number, exp: number, negative = false) =>
-	encode(0x0c, [0x08, 0x05, mag & 0xff, (mag >> 8) & 0xff, (mag >> 16) & 0xff, 0x00, exp, negative ? 0x02 : 0x00]);
+	encode(0x0c, [
+		0x08,
+		0x05,
+		mag & 0xff,
+		(mag >> 8) & 0xff,
+		(mag >> 16) & 0xff,
+		0x00,
+		exp,
+		negative ? 0x02 : 0x00
+	]);
 const timerFrame = (min: number, sec: number, tenths: number) =>
 	encode(0x0c, [0x05, 0x07, min, sec, tenths]);
 const buttonFrame = (a: number, b: number) => encode(0x0c, [0x04, 0x08, a, b]);

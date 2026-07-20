@@ -17,7 +17,7 @@
 </script>
 
 {#if formatted}
-	<div class="text-muted mt-1.5 flex items-center gap-2 font-mono text-[11px] tracking-[0.04em]">
+	<div class="mt-1.5 flex items-center gap-2 font-mono text-[11px] tracking-[0.04em] text-muted">
 		<LiveDot color="var(--color-success)" size={5} />
 		<span>PUBLISHED {formatted}</span>
 	</div>

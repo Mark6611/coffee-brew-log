@@ -17,7 +17,11 @@ const KEY_PATH = join(homedir(), '.appstoreconnect/private_keys', `AuthKey_${KEY
 const BASE = 'https://api.appstoreconnect.apple.com';
 
 function b64url(buf) {
-	return Buffer.from(buf).toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+	return Buffer.from(buf)
+		.toString('base64')
+		.replace(/=/g, '')
+		.replace(/\+/g, '-')
+		.replace(/\//g, '_');
 }
 
 function token() {

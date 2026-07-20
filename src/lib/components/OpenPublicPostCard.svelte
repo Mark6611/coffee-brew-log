@@ -24,23 +24,28 @@
 	{href}
 	target="_blank"
 	rel="noopener noreferrer"
-	class="bg-copper-lt hover:bg-copper-lt/85 mt-3 flex items-center gap-3 rounded-[14px] border border-copper/20 px-3.5 py-3 transition-colors"
+	class="mt-3 flex items-center gap-3 rounded-[14px] border border-copper/20 bg-copper-lt px-3.5 py-3 transition-colors hover:bg-copper-lt/85"
 >
 	<span
-		class="bg-copper text-paper grid h-9 w-9 shrink-0 place-items-center rounded-[10px]"
+		class="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-copper text-paper"
 		aria-hidden="true"
 	>
-		<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4">
+		<svg
+			width="16"
+			height="16"
+			viewBox="0 0 16 16"
+			fill="none"
+			stroke="currentColor"
+			stroke-width="1.4"
+		>
 			<circle cx="8" cy="8" r="6" />
 			<path d="M2 8h12M8 2c2 1.8 2 10.2 0 12M8 2c-2 1.8-2 10.2 0 12" stroke-width="1.2" />
 		</svg>
 	</span>
 	<div class="min-w-0 flex-1">
+		<div class="truncate text-[14px] font-semibold tracking-[-0.005em] text-ink">{title}</div>
 		<div
-			class="text-ink truncate text-[14px] font-semibold tracking-[-0.005em]"
-		>{title}</div>
-		<div
-			class="text-copper-dk mt-0.5 flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.08em] uppercase"
+			class="mt-0.5 flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.08em] text-copper-dk uppercase"
 		>
 			<LiveDot color="var(--color-copper-dk)" size={4} />
 			{#if formatted}
@@ -54,7 +59,7 @@
 		width="8"
 		height="14"
 		viewBox="0 0 8 14"
-		class="text-copper-dk shrink-0"
+		class="shrink-0 text-copper-dk"
 		fill="none"
 		stroke="currentColor"
 		stroke-width="1.8"

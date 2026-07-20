@@ -22,7 +22,7 @@
 	];
 </script>
 
-<div class="bg-paper border-hairline relative grid h-11 grid-cols-3 gap-1 rounded-xl border p-1">
+<div class="relative grid h-11 grid-cols-3 gap-1 rounded-xl border border-hairline bg-paper p-1">
 	{#each options as opt (opt.key)}
 		{@const active = value === opt.key}
 		<button
@@ -30,8 +30,8 @@
 			onclick={() => oninput?.(opt.key)}
 			disabled={readonly}
 			class="relative h-full rounded-[8px] text-[13px] capitalize transition-all duration-200 {active
-				? 'bg-surface text-ink font-semibold shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.04)]'
-				: 'text-muted bg-transparent font-medium'} {readonly ? 'cursor-default' : ''}"
+				? 'bg-surface font-semibold text-ink shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.04)]'
+				: 'bg-transparent font-medium text-muted'} {readonly ? 'cursor-default' : ''}"
 		>
 			<span class="inline-flex items-center gap-1.5">
 				{#if active}

@@ -2,9 +2,9 @@
 
 Two shells, two pipelines:
 
-| Shell | Trigger | Pipeline |
-|---|---|---|
-| **Web PWA** | every push to `main` | Vercel auto-deploy (unchanged, zero-touch) |
+| Shell                | Trigger                      | Pipeline                                   |
+| -------------------- | ---------------------------- | ------------------------------------------ |
+| **Web PWA**          | every push to `main`         | Vercel auto-deploy (unchanged, zero-touch) |
 | **iOS (TestFlight)** | native-relevant changes only | `bash scripts/deploy-ios.sh` (one command) |
 
 Cadence policy (decided 2026-07-02): native builds ship when the shell, plugins,
@@ -56,7 +56,7 @@ Current flow: **unsigned archive, sign at export, automatic style** — proven b
 Buffy builds 1–6 and safe here because this app has **zero entitlements**.
 
 **Tripwire — switch to manual signing when any entitlement is added** (App
-Groups, iCloud, HealthKit, BLE *background* modes; plain foreground BLE needs
+Groups, iCloud, HealthKit, BLE _background_ modes; plain foreground BLE needs
 only an Info.plist string, no entitlement): sign-at-export silently strips
 entitlements (Buffy's builds 2–6 shipped broken because of this). The manual
 flow per Buffy build 7: Apple Distribution cert + App Store profile (both

@@ -87,8 +87,7 @@ export function ratioBuckets(brews: Brew[]): RatioBuckets {
 	if (pourovers.length === 0) return { ratios, counts, median: null };
 	const sorted = pourovers.map(ratio).sort((a, b) => a - b);
 	const mid = Math.floor(sorted.length / 2);
-	const median =
-		sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+	const median = sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 	return { ratios, counts, median };
 }
 
@@ -99,10 +98,7 @@ export function topRatedBrews(brews: Brew[], n = 3): Brew[] {
 		.slice(0, n);
 }
 
-export function mostBrewedBag(
-	brews: Brew[],
-	bags: Bag[]
-): { bag: Bag | null; count: number } {
+export function mostBrewedBag(brews: Brew[], bags: Bag[]): { bag: Bag | null; count: number } {
 	const counts: Record<string, number> = {};
 	for (const b of brews) {
 		if (b.bagId) counts[b.bagId] = (counts[b.bagId] ?? 0) + 1;
@@ -236,7 +232,11 @@ export function pullQuote(
 
 	if (observations.length === 0) {
 		const label =
-			range === 'all' ? 'in total' : range === '12w' ? 'in the last 12 weeks' : 'in the last 6 months';
+			range === 'all'
+				? 'in total'
+				: range === '12w'
+					? 'in the last 12 weeks'
+					: 'in the last 6 months';
 		return `You logged ${filtered.length} brew${filtered.length === 1 ? '' : 's'} ${label}.`;
 	}
 	observations.sort((a, b) => b.strength - a.strength);

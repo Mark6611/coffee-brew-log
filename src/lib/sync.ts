@@ -192,10 +192,7 @@ export async function fullSync(): Promise<void> {
 
 	try {
 		// 1. Push all local rows up
-		const [localBags, localBrews] = await Promise.all([
-			db.bags.toArray(),
-			db.brews.toArray()
-		]);
+		const [localBags, localBrews] = await Promise.all([db.bags.toArray(), db.brews.toArray()]);
 
 		let pushOk = true;
 

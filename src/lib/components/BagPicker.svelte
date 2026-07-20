@@ -2,12 +2,7 @@
 	import { onMount } from 'svelte';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews } from '$lib/db/repository';
-	import {
-		bagConsumption,
-		daysSinceRoast,
-		freshnessTone,
-		freshnessLabel
-	} from '$lib/bags/compute';
+	import { bagConsumption, daysSinceRoast, freshnessTone, freshnessLabel } from '$lib/bags/compute';
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import ProcessBadge from './ProcessBadge.svelte';
 	import OriginFlag from './OriginFlag.svelte';
@@ -41,8 +36,7 @@
 		const q = query.trim().toLowerCase();
 		if (!q) return activeBags.slice(0, 3);
 		return activeBags.filter(
-			(b) =>
-				b.name.toLowerCase().includes(q) || (b.roaster?.toLowerCase().includes(q) ?? false)
+			(b) => b.name.toLowerCase().includes(q) || (b.roaster?.toLowerCase().includes(q) ?? false)
 		);
 	});
 
@@ -110,9 +104,9 @@
 {#if selectedBag}
 	<!-- Selected (chip) -->
 	<div
-		class="bg-copper-lt flex h-14 items-center gap-3 rounded-[14px] border border-transparent px-3"
+		class="flex h-14 items-center gap-3 rounded-[14px] border border-transparent bg-copper-lt px-3"
 	>
-		<div class="bg-copper text-paper grid h-8 w-8 shrink-0 place-items-center rounded-[9px]">
+		<div class="grid h-8 w-8 shrink-0 place-items-center rounded-[9px] bg-copper text-paper">
 			<svg
 				width="16"
 				height="16"
@@ -129,21 +123,25 @@
 			</svg>
 		</div>
 		<div class="min-w-0 flex-1">
-			<div
-				class="font-display text-ink truncate text-[17px] font-medium leading-[1.2]"
-			>{selectedBag.name}</div>
-			<div class="text-copper-dk truncate text-[12px]">
+			<div class="truncate font-display text-[17px] leading-[1.2] font-medium text-ink">
+				{selectedBag.name}
+			</div>
+			<div class="truncate text-[12px] text-copper-dk">
 				{#if selectedBag.roaster}{selectedBag.roaster}{/if}
-				{#if selectedBag.roaster && (selectedBag.process || selectedBag.roastedAt)} · {/if}
+				{#if selectedBag.roaster && (selectedBag.process || selectedBag.roastedAt)}
+					·
+				{/if}
 				{#if selectedBag.process}{selectedBag.process}{/if}
-				{#if selectedBag.process && selectedBag.roastedAt} · {/if}
+				{#if selectedBag.process && selectedBag.roastedAt}
+					·
+				{/if}
 				{#if selectedBag.roastedAt}{freshnessLabel(selectedBag.roastedAt)?.toLowerCase()}{/if}
 			</div>
 		</div>
 		<button
 			type="button"
 			onclick={clearSelection}
-			class="press-sm bg-ink/[0.06] hover:bg-ink/[0.10] text-ink grid h-9 w-9 shrink-0 place-items-center rounded-full"
+			class="press-sm grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink/[0.06] text-ink hover:bg-ink/[0.10]"
 			aria-label="Clear selection"
 		>
 			<svg
@@ -164,7 +162,7 @@
 	<div class="relative">
 		<!-- Idle / typing -->
 		<div
-			class="bg-paper border-hairline focus-within:border-copper focus-within:ring-copper/25 flex h-12 items-center gap-2 rounded-[14px] border px-3 transition focus-within:ring-2"
+			class="flex h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-3 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 		>
 			<svg
 				width="18"
@@ -188,16 +186,16 @@
 				onblur={() => setTimeout(() => (isOpen = false), 150)}
 				onkeydown={handleKeydown}
 				placeholder="Search or add a coffee…"
-				class="text-ink placeholder:text-faint min-w-0 flex-1 bg-transparent outline-none"
+				class="min-w-0 flex-1 bg-transparent text-ink outline-none placeholder:text-faint"
 				role="combobox"
 				aria-expanded={isOpen}
 				aria-controls="bag-listbox"
 				aria-autocomplete="list"
 			/>
 			{#if hasQuery}
-				<span
-					class="text-muted font-mono text-[10px] font-medium tracking-[0.14em] uppercase"
-				>{filtered.length} match{filtered.length === 1 ? '' : 'es'}</span>
+				<span class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+					>{filtered.length} match{filtered.length === 1 ? '' : 'es'}</span
+				>
 			{:else}
 				<svg
 					width="12"
@@ -218,14 +216,16 @@
 		{#if isOpen}
 			<div
 				id="bag-listbox"
-				class="bg-surface border-hairline absolute top-full right-0 left-0 z-50 mt-1 max-h-80 overflow-hidden rounded-2xl border shadow-[0_12px_32px_rgba(28,24,20,0.10)]"
+				class="absolute top-full right-0 left-0 z-50 mt-1 max-h-80 overflow-hidden rounded-2xl border border-hairline bg-surface shadow-[0_12px_32px_rgba(28,24,20,0.10)]"
 				role="listbox"
 			>
 				{#if filtered.length > 0}
 					<div
-						class="text-muted px-4 pt-3 pb-1 font-mono text-[10px] font-medium tracking-[0.14em] uppercase"
+						class="px-4 pt-3 pb-1 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
 					>
-						{hasQuery ? `${filtered.length} match${filtered.length === 1 ? '' : 'es'}` : 'Recent bags'}
+						{hasQuery
+							? `${filtered.length} match${filtered.length === 1 ? '' : 'es'}`
+							: 'Recent bags'}
 					</div>
 				{/if}
 
@@ -252,7 +252,7 @@
 						>
 							<div class="flex items-center gap-3">
 								<div
-									class="bg-paper border-hairline text-muted grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg border"
+									class="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg border border-hairline bg-paper text-muted"
 								>
 									<svg
 										width="14"
@@ -272,17 +272,18 @@
 								<div class="min-w-0 flex-1">
 									<div class="flex items-center justify-between gap-2">
 										<div
-											class="font-display text-ink truncate text-[16px] font-medium leading-[1.2]"
-										>{bag.name}</div>
+											class="truncate font-display text-[16px] leading-[1.2] font-medium text-ink"
+										>
+											{bag.name}
+										</div>
 										{#if days != null}
-											<span
-												class="shrink-0 font-mono text-[12px] font-medium"
-												style="color: {tone}"
-											>{days}d</span>
+											<span class="shrink-0 font-mono text-[12px] font-medium" style="color: {tone}"
+												>{days}d</span
+											>
 										{/if}
 									</div>
 									<div class="mt-0.5 flex items-center justify-between gap-2">
-										<div class="text-muted flex min-w-0 items-center gap-1.5 text-[12.5px]">
+										<div class="flex min-w-0 items-center gap-1.5 text-[12.5px] text-muted">
 											{#if bag.roaster}
 												<span class="truncate">{bag.roaster}</span>
 											{/if}
@@ -302,8 +303,10 @@
 											{/if}
 										</div>
 										{#if bag.weightGrams}
-											<span class="text-muted shrink-0 font-mono text-[12px]">
-												{c.remaining != null ? `${Math.max(0, c.remaining).toFixed(0)}g` : `${bag.weightGrams}g`}
+											<span class="shrink-0 font-mono text-[12px] text-muted">
+												{c.remaining != null
+													? `${Math.max(0, c.remaining).toFixed(0)}g`
+													: `${bag.weightGrams}g`}
 											</span>
 										{/if}
 									</div>
@@ -320,7 +323,7 @@
 						createNew();
 					}}
 					onmouseenter={() => (highlightedIndex = filtered.length)}
-					class="border-hairline block w-full border-t px-4 py-3 text-left transition-colors {highlightedIndex ===
+					class="block w-full border-t border-hairline px-4 py-3 text-left transition-colors {highlightedIndex ===
 					filtered.length
 						? 'bg-paper'
 						: 'hover:bg-paper/60'}"
@@ -329,7 +332,7 @@
 				>
 					<div class="flex items-center gap-3">
 						<div
-							class="bg-copper text-paper grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg"
+							class="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg bg-copper text-paper"
 						>
 							<svg
 								width="14"
@@ -344,20 +347,20 @@
 							</svg>
 						</div>
 						<div class="min-w-0 flex-1">
-							<div class="text-copper text-[14px] font-medium">
+							<div class="text-[14px] font-medium text-copper">
 								{hasQuery ? 'Create new bag' : 'Add a new bag'}
 							</div>
 							{#if hasQuery}
-								<div class="text-muted mt-0.5 truncate text-[12px]">"{query}"</div>
+								<div class="mt-0.5 truncate text-[12px] text-muted">"{query}"</div>
 							{:else}
-								<div class="text-muted mt-0.5 text-[12px]">Open the bag form →</div>
+								<div class="mt-0.5 text-[12px] text-muted">Open the bag form →</div>
 							{/if}
 						</div>
 					</div>
 				</button>
 
 				<div
-					class="text-muted bg-paper/50 border-hairline border-t px-4 py-2 font-mono text-[10px] font-medium tracking-[0.1em] uppercase"
+					class="border-t border-hairline bg-paper/50 px-4 py-2 font-mono text-[10px] font-medium tracking-[0.1em] text-muted uppercase"
 				>
 					↑↓ navigate · ↵ select · esc close
 				</div>

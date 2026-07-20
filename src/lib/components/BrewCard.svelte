@@ -53,14 +53,16 @@
 
 {#snippet metric(label: string, value: string, accent: boolean = false)}
 	<div>
-		<div class="text-muted font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]">
+		<div class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase">
 			{label}
 		</div>
 		<div
 			class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] {accent
 				? 'text-copper'
 				: 'text-ink'}"
-		>{value}</div>
+		>
+			{value}
+		</div>
 	</div>
 {/snippet}
 
@@ -69,13 +71,13 @@
 	tabindex="0"
 	onclick={openDetail}
 	onkeydown={handleCardKeydown}
-	class="bg-surface border-hairline hover:border-rule relative cursor-pointer overflow-hidden border transition duration-[180ms] ease-out active:scale-[0.985] {hero
+	class="relative cursor-pointer overflow-hidden border border-hairline bg-surface transition duration-[180ms] ease-out hover:border-rule active:scale-[0.985] {hero
 		? 'rounded-[22px] p-[22px]'
 		: 'rounded-[18px] px-[18px] pt-[16px] pb-[18px]'}"
 >
 	{#if hero}
 		<div
-			class="bg-copper-lt pointer-events-none absolute -top-[30px] -right-[30px] h-[140px] w-[140px] rounded-full opacity-50"
+			class="pointer-events-none absolute -top-[30px] -right-[30px] h-[140px] w-[140px] rounded-full bg-copper-lt opacity-50"
 		></div>
 	{/if}
 	<div class="relative mb-2.5 flex items-center justify-between">
@@ -110,7 +112,7 @@
 			{/if}
 			{#if BLOG_ENABLED && brew.published}
 				<span
-					class="bg-copper-lt text-copper-dk inline-flex h-[22px] items-center gap-1.5 rounded-full px-2 font-mono text-[10.5px] font-medium tracking-[0.12em] uppercase"
+					class="inline-flex h-[22px] items-center gap-1.5 rounded-full bg-copper-lt px-2 font-mono text-[10.5px] font-medium tracking-[0.12em] text-copper-dk uppercase"
 				>
 					<LiveDot color="var(--color-copper-dk)" size={4.5} />
 					Public
@@ -118,13 +120,13 @@
 			{/if}
 		</div>
 		<div class="flex items-center gap-1.5">
-			<span class="text-muted font-mono text-[11px] tracking-[0.04em]">
+			<span class="font-mono text-[11px] tracking-[0.04em] text-muted">
 				{formatTimeAgo(brew.brewedAt)}
 			</span>
 			<button
 				type="button"
 				onclick={brewAgain}
-				class="press-sm text-faint hover:text-copper hover:bg-copper-lt -m-[7px] grid h-9 w-9 place-items-center rounded-full"
+				class="press-sm -m-[7px] grid h-9 w-9 place-items-center rounded-full text-faint hover:bg-copper-lt hover:text-copper"
 				aria-label="Brew this again"
 				title="Brew again"
 			>
@@ -146,7 +148,7 @@
 	</div>
 
 	{#if brew.coffeeName || bag}
-		<div class="font-display text-ink text-[22px] font-medium leading-[1.15] tracking-[-0.005em]">
+		<div class="font-display text-[22px] leading-[1.15] font-medium tracking-[-0.005em] text-ink">
 			{bag?.name ?? brew.coffeeName}
 		</div>
 		{#if roasterText}
@@ -154,7 +156,7 @@
 				<a
 					href="/bags/{bag.id}"
 					onclick={(e) => e.stopPropagation()}
-					class="text-copper-dk hover:text-copper border-copper/35 mt-1 inline-flex items-center gap-1 border-b pb-px text-[13px] transition-colors"
+					class="mt-1 inline-flex items-center gap-1 border-b border-copper/35 pb-px text-[13px] text-copper-dk transition-colors hover:text-copper"
 				>
 					<svg
 						width="11"
@@ -171,11 +173,13 @@
 						<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
 					</svg>
 					{roasterText}
-					{#if resolvedOrigin}<span class="text-muted"> · <OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} /></span>{/if}
+					{#if resolvedOrigin}<span class="text-muted">
+							· <OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} /></span
+						>{/if}
 					{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
 				</a>
 			{:else}
-				<div class="text-muted mt-0.5 text-[13px]">{roasterText}</div>
+				<div class="mt-0.5 text-[13px] text-muted">{roasterText}</div>
 			{/if}
 		{/if}
 	{/if}
@@ -195,7 +199,7 @@
 		</div>
 	{/if}
 
-	<div class="border-hairline mt-[14px] grid grid-cols-3 gap-1 border-t pt-[12px]">
+	<div class="mt-[14px] grid grid-cols-3 gap-1 border-t border-hairline pt-[12px]">
 		{@render metric('DOSE', `${brew.doseGrams}g`)}
 		{@render metric(outLabel, outValue)}
 		{@render metric('RATIO', formatRatio(brew), true)}
@@ -203,14 +207,14 @@
 
 	{#if brew.notes}
 		<div
-			class="border-hairline font-display text-ink-70 mt-3 border-t border-dashed pt-3 text-[14.5px] leading-[1.45] italic"
+			class="mt-3 border-t border-dashed border-hairline pt-3 font-display text-[14.5px] leading-[1.45] text-ink-70 italic"
 		>
 			<MarkdownText text={brew.notes} />
 		</div>
 	{/if}
 
 	{#if brew.photo}
-		<div class="border-hairline mt-3 overflow-hidden rounded-[12px] border">
+		<div class="mt-3 overflow-hidden rounded-[12px] border border-hairline">
 			<img src={brew.photo} alt="" class="max-h-[160px] w-full object-cover" />
 		</div>
 	{/if}

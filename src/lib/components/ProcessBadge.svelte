@@ -9,5 +9,5 @@
      foregrounds in one place — the old inline hex values vanished on dark. -->
 <span
 	class="process-{process} inline-flex h-[18px] items-center rounded-full px-[7px] font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
-	aria-label={process}
->{process}</span>
+	aria-label={process}>{process}</span
+>

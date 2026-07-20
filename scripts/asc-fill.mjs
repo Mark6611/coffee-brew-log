@@ -35,7 +35,8 @@ PRIVATE BY DESIGN
 
 Coffee Brew Log is built for one person: you.`;
 
-const keywords = 'coffee,espresso,pourover,brew,log,dialin,grind,ratio,acaia,scale,barista,beans,tracker,recipe';
+const keywords =
+	'coffee,espresso,pourover,brew,log,dialin,grind,ratio,acaia,scale,barista,beans,tracker,recipe';
 const promotionalText =
 	'Log a shot in seconds, dial in by roast level, and let your Acaia scale fill in the weight and time. Private by default — no ads, no account required.';
 const subtitle = 'Your espresso & pour-over log';

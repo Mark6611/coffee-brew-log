@@ -95,7 +95,9 @@ export function weekStats(brews: Brew[], now: Date = new Date()): WeekStats {
 	// figure meaningless (see stats/compute.avgRatio).
 	const pourOvers = recent.filter((b) => b.method === 'pour-over');
 	const avgRatioNum =
-		pourOvers.length === 0 ? null : pourOvers.reduce((sum, b) => sum + ratio(b), 0) / pourOvers.length;
+		pourOvers.length === 0
+			? null
+			: pourOvers.reduce((sum, b) => sum + ratio(b), 0) / pourOvers.length;
 	const avgRatio = avgRatioNum === null ? null : `1:${avgRatioNum.toFixed(1)}`;
 	const favoritesCount = recent.filter((b) => b.isFavorite).length;
 

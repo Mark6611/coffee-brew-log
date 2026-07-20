@@ -8,11 +8,7 @@ export const MAX_DIM = 1280;
 export const QUALITY = 0.72;
 
 /** Scale (w,h) to fit within a maxDim square, preserving aspect. No upscaling. */
-export function fitWithin(
-	w: number,
-	h: number,
-	maxDim: number
-): { width: number; height: number } {
+export function fitWithin(w: number, h: number, maxDim: number): { width: number; height: number } {
 	if (w <= 0 || h <= 0) return { width: 0, height: 0 };
 	if (w <= maxDim && h <= maxDim) return { width: w, height: h };
 	const scale = maxDim / Math.max(w, h);

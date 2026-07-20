@@ -69,7 +69,10 @@ describe('ShotTracker — espresso auto-stop', () => {
 	it('ends when flow stalls after reaching ≥ 1:1', () => {
 		const t = new ShotTracker(opts);
 		// Pour to 36 g over 4 s (armed past 18 g), then flat for 2 s.
-		const r = feed(t, [{ toG: 36, secs: 4 }, { toG: 36, secs: 2 }]);
+		const r = feed(t, [
+			{ toG: 36, secs: 4 },
+			{ toG: 36, secs: 2 }
+		]);
 		expect(r.justEnded).toBe(1);
 		expect(t.ended).toBe(true);
 		expect(t.yieldG).toBeCloseTo(36, 0);
@@ -77,25 +80,38 @@ describe('ShotTracker — espresso auto-stop', () => {
 	it('does NOT end if yield never reaches the dose (never armed)', () => {
 		const t = new ShotTracker(opts);
 		// Only ever reaches 10 g (< 18 g dose), then plateaus.
-		const r = feed(t, [{ toG: 10, secs: 4 }, { toG: 10, secs: 3 }]);
+		const r = feed(t, [
+			{ toG: 10, secs: 4 },
+			{ toG: 10, secs: 3 }
+		]);
 		expect(r.justEnded).toBe(0);
 		expect(t.ended).toBe(false);
 	});
 	it('does NOT end during a mid-pour pre-infusion pause before arming', () => {
 		const t = new ShotTracker(opts);
 		// Pause at 8 g (below dose) for 3 s — pre-infusion, must not stop.
-		const r = feed(t, [{ toG: 8, secs: 2 }, { toG: 8, secs: 3 }, { toG: 36, secs: 3 }]);
+		const r = feed(t, [
+			{ toG: 8, secs: 2 },
+			{ toG: 8, secs: 3 },
+			{ toG: 36, secs: 3 }
+		]);
 		// It should only end during the FINAL plateau, which we didn't add, so 0.
 		expect(r.justEnded).toBe(0);
 	});
 	it('respects the minimum-time gate', () => {
 		const t = new ShotTracker({ ...opts, minSecondsBeforeStop: 30 });
-		const r = feed(t, [{ toG: 36, secs: 4 }, { toG: 36, secs: 3 }]);
+		const r = feed(t, [
+			{ toG: 36, secs: 4 },
+			{ toG: 36, secs: 3 }
+		]);
 		expect(r.justEnded).toBe(0); // stalled, but 30 s gate not met
 	});
 	it('pour-over never auto-stops even when flow stalls', () => {
 		const t = new ShotTracker({ ...opts, method: 'pour-over' });
-		const r = feed(t, [{ toG: 300, secs: 4 }, { toG: 300, secs: 3 }]);
+		const r = feed(t, [
+			{ toG: 300, secs: 4 },
+			{ toG: 300, secs: 3 }
+		]);
 		expect(r.justEnded).toBe(0);
 	});
 });

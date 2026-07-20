@@ -26,7 +26,7 @@
 				? 600
 				: 500}; {active
 				? 'box-shadow: 0 0 0 2px var(--color-paper), 0 0 0 4px var(--color-copper);'
-				: ''}"
-		>{lvl.label}</button>
+				: ''}">{lvl.label}</button
+		>
 	{/each}
 </div>
