@@ -1,13 +1,26 @@
-// Upload App Store screenshots to the 1.0 version localization via the ASC API.
+// Upload App Store screenshots to a version localization via the ASC API.
 // Flow per image: reserve (POST) → PUT bytes to the returned upload URL(s) →
-// commit (PATCH uploaded=true + md5). Idempotent: skips a display set that
-// already has screenshots.
+// commit (PATCH uploaded=true + md5).
+//
+// Usage:
+//   node scripts/asc-screenshots.mjs <versionLocalizationId> [--replace]
+//
+// Without --replace a display set that already has screenshots is left alone.
+// With --replace its existing screenshots are deleted first — which is what a
+// new version needs, since ASC copies the previous version's images forward and
+// they then show the OLD UI (a 2.3.3 "accurate metadata" risk after a redesign).
 import { asc } from './asc-api.mjs';
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import crypto from 'node:crypto';
 
-const VER_LOC = '28d09801-183b-466d-96ab-e9415fcff198';
+const VER_LOC = process.argv[2] ?? '28d09801-183b-466d-96ab-e9415fcff198';
+const REPLACE = process.argv.includes('--replace');
+if (!/^[0-9a-f-]{36}$/.test(VER_LOC)) {
+	console.error(`Not a version-localization id: ${VER_LOC}`);
+	process.exit(1);
+}
+console.log(`target localization ${VER_LOC}${REPLACE ? ' (replacing existing)' : ''}`);
 
 const DEVICES = [
 	{ displayType: 'APP_IPHONE_67', dir: 'appstore-screenshots' }, // 1320×2868
@@ -38,9 +51,16 @@ async function findOrCreateSet(displayType) {
 	return created.json.data.id;
 }
 
-async function setCount(setId) {
+async function setScreenshots(setId) {
 	const r = await asc('GET', `/v1/appScreenshotSets/${setId}/appScreenshots?limit=50`);
-	return (r.json?.data ?? []).length;
+	return r.json?.data ?? [];
+}
+
+async function clearSet(setId) {
+	for (const shot of await setScreenshots(setId)) {
+		const del = await asc('DELETE', `/v1/appScreenshots/${shot.id}`);
+		if (!del.ok) throw new Error(`delete ${shot.id}: ${JSON.stringify(del.json)}`);
+	}
 }
 
 async function uploadOne(setId, dir, file) {
@@ -72,10 +92,14 @@ async function uploadOne(setId, dir, file) {
 
 for (const dev of DEVICES) {
 	const setId = await findOrCreateSet(dev.displayType);
-	const already = await setCount(setId);
+	const already = (await setScreenshots(setId)).length;
 	if (already > 0) {
-		console.log(`• ${dev.displayType}: already has ${already} screenshots — skipping`);
-		continue;
+		if (!REPLACE) {
+			console.log(`• ${dev.displayType}: already has ${already} screenshots — skipping`);
+			continue;
+		}
+		await clearSet(setId);
+		console.log(`• ${dev.displayType}: removed ${already} carried-over screenshots`);
 	}
 	const files = readdirSync(dev.dir)
 		.filter((f) => f.endsWith('.png'))
