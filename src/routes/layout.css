@@ -9,6 +9,11 @@
 	/* Toggle knobs stay white in both themes, the way iOS switches do — so this
 	   is deliberately not --color-card, which flips dark. */
 	--color-knob: #ffffff;
+	/* Raw channels for the two colours the glass material composites at partial
+	   alpha. Kept in step with --color-card / --color-copper above and their
+	   dark counterparts below. */
+	--color-card-rgb: 255 255 255;
+	--color-copper-rgb: 156 74 31;
 
 	/* Ink */
 	--color-ink: #1c1814;
@@ -54,6 +59,8 @@
 	   rather than drop to signal elevation. Glass reads through this, so a
 	   stale white here made every glass control unreadable. */
 	--color-card: #272119;
+	--color-card-rgb: 39 33 25;
+	--color-copper-rgb: 210 130 90;
 	--color-hairline: #2d261d;
 	--color-rule: #3a3127;
 	--color-copper: #d2825a;
@@ -199,13 +206,14 @@
 	   system grays — the material's structure is what's being borrowed, not
 	   its hue.
 	   --------------------------------------------------------------------- */
+	/* Deliberately built on rgb(<channels> / <alpha>) rather than color-mix():
+	   the iOS deployment target is 15.0 and color-mix needs WebKit 16.2, where
+	   a single unsupported value invalidates the whole declaration — an entire
+	   box-shadow list, or the button's only fill. The channel tokens work back
+	   to Safari 12. */
 	.glass {
 		position: relative;
-		background-color: color-mix(
-			in srgb,
-			var(--color-card) calc(var(--glass-opacity) * 100%),
-			transparent
-		);
+		background-color: rgb(var(--color-card-rgb) / var(--glass-opacity));
 		backdrop-filter: blur(var(--glass-blur)) saturate(180%);
 		-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
 		box-shadow:
@@ -215,7 +223,7 @@
 				rgba(255, 255, 255, calc(var(--glass-specular) * 0.4)),
 			/* the refraction rim that separates glass from what's behind it */ inset 0 0 0 0.5px
 				rgba(255, 255, 255, calc(var(--glass-specular) * 0.5)),
-			0 0 0 0.5px color-mix(in srgb, var(--color-ink) 8%, transparent),
+			0 0 0 0.5px rgba(0, 0, 0, 0.08),
 			0 1px 2px rgba(0, 0, 0, 0.04),
 			0 6px 16px rgba(0, 0, 0, 0.06);
 	}
@@ -240,12 +248,13 @@
 	}
 
 	/* Accent-tinted glass (the kit's "Regular - Small - Tinted"): the copper
-	   reads through the material instead of sitting on top of it. */
+	   reads through the material instead of sitting on top of it. The tint is a
+	   flat gradient layer over the card fill, since background-color is already
+	   carrying the material and only one can be set. */
 	.glass-tinted {
-		background-color: color-mix(
-			in srgb,
-			var(--color-copper) calc(var(--glass-opacity) * 22%),
-			color-mix(in srgb, var(--color-card) calc(var(--glass-opacity) * 78%), transparent)
+		background-image: linear-gradient(
+			rgb(var(--color-copper-rgb) / 0.22),
+			rgb(var(--color-copper-rgb) / 0.22)
 		);
 	}
 
@@ -281,6 +290,7 @@
 		}
 		.glass-tinted {
 			background-color: var(--color-copper-lt);
+			background-image: none;
 		}
 	}
 
@@ -294,7 +304,7 @@
 		);
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.22),
-			0 6px 18px color-mix(in srgb, var(--color-copper) 30%, transparent),
+			0 6px 18px rgb(var(--color-copper-rgb) / 0.3),
 			0 1px 3px rgba(0, 0, 0, 0.1);
 	}
 }
