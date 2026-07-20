@@ -27,12 +27,12 @@
 		style="background: linear-gradient(120deg, var(--color-copper) 0%, var(--color-paper) 45%, var(--color-success) 100%)"
 	>
 		<div class="flex flex-wrap items-center gap-3">
-			{#each sizes as size}
+			{#each sizes as size (size)}
 				<Button {size} variant="glass">Glass {size}</Button>
 			{/each}
 		</div>
 		<div class="mt-3 flex flex-wrap items-center gap-3">
-			{#each sizes as size}
+			{#each sizes as size (size)}
 				<Button {size} variant="glassProminent">Tinted {size}</Button>
 			{/each}
 		</div>
@@ -55,20 +55,20 @@
 			glassScrim · over media
 		</div>
 		<div class="flex flex-wrap items-center gap-3">
-			{#each sizes as size}
+			{#each sizes as size (size)}
 				<Button {size} variant="glassScrim">Scrim {size}</Button>
 			{/each}
 			<Button size="medium" variant="glassScrim" iconOnly label="Close">✕</Button>
 		</div>
 	</div>
 
-	{#each variants as variant}
+	{#each variants as variant (variant)}
 		<div class="border-t border-hairline py-5">
 			<div class="mb-3 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
 				{variant}
 			</div>
 			<div class="flex flex-wrap items-center gap-3">
-				{#each sizes as size}
+				{#each sizes as size (size)}
 					<Button {size} {variant}>Label</Button>
 				{/each}
 				<Button size="regular" {variant} disabled>Disabled</Button>

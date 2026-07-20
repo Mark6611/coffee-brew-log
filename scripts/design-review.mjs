@@ -6,7 +6,7 @@
 // Run: node scripts/design-review.mjs [baseUrl]   (default http://localhost:5179)
 
 import { chromium } from '@playwright/test';
-import { mkdir, rm } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const BASE = process.argv[2] ?? 'http://localhost:5179';
@@ -286,8 +286,6 @@ const brews = [
 
 const DETAIL_BREW = brews[0].id; // the dialed 5★ espresso
 const DETAIL_BAG = BAG2; // dialed bag (dial-in + cost)
-
-const seedData = { bags, brews };
 
 async function seed(page) {
 	await page.evaluate(

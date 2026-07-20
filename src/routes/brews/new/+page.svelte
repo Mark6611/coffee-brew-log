@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import { addBrew, listBrews, listBags } from '$lib/db/repository';
 	import { BrewSchema, type Bag, type Brew, type Extraction } from '$lib/db/types';
 	import { resolveGrindSuggestion } from '$lib/brews/grind';
@@ -136,7 +137,10 @@
 					balance = d.balance ?? balance;
 					extraction = d.extraction ?? extraction;
 					if (d.brewedAtLocal) brewedAtLocal = d.brewedAtLocal;
-				} catch {}
+				} catch {
+					// Stale or corrupt draft — thrown deliberately above for staleness.
+					// Either way the form just keeps its defaults; the draft is dropped below.
+				}
 			}
 			sessionStorage.removeItem(DRAFT_KEY);
 		}
@@ -358,7 +362,11 @@
 
 	function handleCreateNewBag(name: string) {
 		saveDraft();
-		goto(`/bags/new?name=${encodeURIComponent(name)}&returnTo=/brews/new`);
+		goto(
+			resolve(
+				`/bags/new?name=${encodeURIComponent(name)}&returnTo=${encodeURIComponent('/brews/new')}`
+			)
+		);
 	}
 
 	function localDatetimeNow(): string {
@@ -457,7 +465,9 @@
 			const brew = BrewSchema.parse(candidate);
 			await addBrew(brew);
 			// Espresso lands on the shot detail (home of the NEXT SHOT card).
-			await goto(method === 'espresso' ? `/brews/${brew.id}` : '/brews');
+			await goto(
+				method === 'espresso' ? resolve('/brews/[id]', { id: brew.id }) : resolve('/brews')
+			);
 		} catch (err) {
 			error = firstIssueMessage(err);
 			submitting = false;
@@ -484,7 +494,7 @@
 	<!-- Header row -->
 	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
-			href="/brews"
+			href={resolve('/brews')}
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg

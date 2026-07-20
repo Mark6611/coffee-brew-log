@@ -21,6 +21,11 @@
 	} = $props();
 
 	const wasPublished = $derived(!!publishedAt);
+
+	// Kept in the script rather than inline: the blank lines are real newlines,
+	// which an HTML attribute can't carry without becoming a multi-line literal.
+	const BODY_PLACEHOLDER =
+		'# The Yirgacheffe pulled like syrup on day 3…\n\nBloom went long. The bed never crusted.\n\n*Stone fruit on cool-down.*';
 </script>
 
 <div class="relative">
@@ -114,7 +119,7 @@
 					<textarea
 						bind:value={blogBody}
 						rows="8"
-						placeholder={'# The Yirgacheffe pulled like syrup on day 3…\n\nBloom went long. The bed never crusted.\n\n*Stone fruit on cool-down.*'}
+						placeholder={BODY_PLACEHOLDER}
 						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-3.5 py-3 text-[16px] leading-[1.55] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 					></textarea>
 				</div>

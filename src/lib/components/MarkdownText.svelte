@@ -26,6 +26,9 @@
 	);
 </script>
 
+<!-- Rendering marked's output is the whole job of this component; the XSS note
+     in the script above explains why raw HTML is tolerated here. -->
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 <div class="markdown">{@html html}</div>
 
 <style>

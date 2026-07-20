@@ -1,6 +1,8 @@
 <script lang="ts">
 	// Detail-page CTA card that links out to the live blog post.
 	// Copper-lt fill, copper icon button, post title, mono PUBLISHED stamp, chevron.
+	// href is a blog URL on another origin (see postUrl), hence rel="external":
+	// it leaves the app, so the router must not try to route it.
 	import LiveDot from './LiveDot.svelte';
 
 	let {
@@ -23,7 +25,7 @@
 <a
 	{href}
 	target="_blank"
-	rel="noopener noreferrer"
+	rel="external noopener noreferrer"
 	class="mt-3 flex items-center gap-3 rounded-[14px] border border-copper/20 bg-copper-lt px-3.5 py-3 transition-colors hover:bg-copper-lt/85"
 >
 	<span

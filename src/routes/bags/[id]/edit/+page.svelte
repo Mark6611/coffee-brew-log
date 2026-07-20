@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import { getBagById, updateBag } from '$lib/db/repository';
 	import { BagSchema, type Bag, type Process, type RoastLevel } from '$lib/db/types';
 	import Button from '$lib/components/Button.svelte';
@@ -80,7 +81,7 @@
 			};
 			const bag = BagSchema.parse(candidate);
 			await updateBag(bag);
-			await goto(`/bags/${bagId}`);
+			await goto(resolve('/bags/[id]', { id: bagId }));
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 			submitting = false;
@@ -97,13 +98,13 @@
 {:else if notFound}
 	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
 		<p class="text-muted">Bag not found.</p>
-		<a href="/bags" class="mt-3 inline-block text-copper underline">Back to bags</a>
+		<a href={resolve('/bags')} class="mt-3 inline-block text-copper underline">Back to bags</a>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
-				href="/bags/{bagId}"
+				href={resolve('/bags/[id]', { id: bagId })}
 				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 			>
 				<svg

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { getBagById, listBags, listBrews, archiveBag, updateBag } from '$lib/db/repository';
-	import { bagConsumption, daysSinceRoast, freshnessTone, freshnessLabel } from '$lib/bags/compute';
+	import { bagConsumption, daysSinceRoast, freshnessTone } from '$lib/bags/compute';
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 		import { resolveGrindSuggestion } from '$lib/brews/grind';
 	import { espressoShotsFor, readyToDial, ROAST_TARGETS } from '$lib/brews/dialin';
@@ -179,16 +179,20 @@
 	});
 	const pullShotHref = $derived.by(() => {
 		const b = bag;
-		if (!b) return '';
-		const base = `/brews/new?bagId=${b.id}&method=espresso&quick=1`;
+		if (!b) return undefined;
+		const q = `bagId=${b.id}&method=espresso&quick=1`;
 		const a = nextMove?.action;
-		if (a?.kind === 'grind' && a.target) return `${base}&grind=${encodeURIComponent(a.target)}`;
+		if (a?.kind === 'grind' && a.target)
+			return resolve(`/brews/new?${q}&grind=${encodeURIComponent(a.target)}`);
 		if (a?.kind === 'yield' && lastShot)
-			return `${base}&grind=${encodeURIComponent(lastShot.grindSetting)}&yield=${a.targetG}`;
+			return resolve(
+				`/brews/new?${q}&grind=${encodeURIComponent(lastShot.grindSetting)}&yield=${a.targetG}`
+			);
 		// hold / diagnose / unparseable-grind: repeat the last grind (parity with
 		// the shot-detail CTA, which always pre-fills).
-		if (lastShot) return `${base}&grind=${encodeURIComponent(lastShot.grindSetting)}`;
-		return base;
+		if (lastShot)
+			return resolve(`/brews/new?${q}&grind=${encodeURIComponent(lastShot.grindSetting)}`);
+		return resolve(`/brews/new?${q}`);
 	});
 	const settledAtShot = $derived.by(() => {
 		const b = bag;
@@ -252,14 +256,14 @@
 {:else if notFound || !bag}
 	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
 		<p class="text-muted">Bag not found.</p>
-		<a href="/bags" class="mt-3 inline-block text-copper underline">Back to bags</a>
+		<a href={resolve('/bags')} class="mt-3 inline-block text-copper underline">Back to bags</a>
 	</div>
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
 		<!-- Header row -->
 		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
-				href="/bags"
+				href={resolve('/bags')}
 				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 			>
 				<svg
@@ -278,7 +282,7 @@
 			</a>
 			<span aria-hidden="true"></span>
 			<a
-				href="/bags/{bag.id}/edit"
+				href={resolve('/bags/[id]/edit', { id: bag.id })}
 				class="h-9 px-2 text-[14px] text-muted transition-colors hover:text-ink">Edit</a
 			>
 		</div>
@@ -527,7 +531,7 @@
 							{#each shots as s, i (s.id)}
 								{@const latest = i === shots.length - 1}
 								<a
-									href="/brews/{s.id}"
+									href={resolve('/brews/[id]', { id: s.id })}
 									class="flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 transition-colors {latest
 										? 'border border-hairline bg-surface'
 										: 'hover:bg-paper/60'}"
@@ -642,7 +646,7 @@
 					<div class="mb-2 flex items-center justify-between">
 						<Eyebrow>BREWS · {brews.length}</Eyebrow>
 						<a
-							href="/brews"
+							href={resolve('/brews')}
 							class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 							>See all →</a
 						>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+
 	// Privacy policy — required by App Review 5.1.1 (a URL in App Store Connect
 	// AND an in-app link, under Settings). Reachable at /privacy. Kept honest to
 	// the split architecture: iOS = on-device + the user's private iCloud (no
@@ -12,7 +14,7 @@
 
 <article class="policy mx-auto max-w-[680px] px-[22px] pt-7 pb-16">
 	<a
-		href="/settings"
+		href={resolve('/settings')}
 		class="mb-6 inline-flex items-center gap-1 text-[14px] text-muted transition-colors hover:text-ink"
 	>
 		<svg

@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { getBrewById, getBagById, listBrews, deleteBrew } from '$lib/db/repository';
-	import { formatRatio, formatBrewTime, formatTimeAgo, ratio } from '$lib/brews/compute';
+	import { formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
 	import { resolveOrigins, originLabel } from '$lib/origin/resolve';
 	import { espressoShotsFor } from '$lib/brews/dialin';
@@ -100,9 +101,10 @@
 		if (!b?.bagId || !n || b.method !== 'espresso') return null;
 		const a = n.action;
 		const grind = a.kind === 'grind' && a.target ? a.target : b.grindSetting;
-		let href = `/brews/new?bagId=${b.bagId}&method=espresso&quick=1&grind=${encodeURIComponent(grind)}`;
-		if (a.kind === 'yield') href += `&yield=${a.targetG}`;
-		return href;
+		const yieldParam = a.kind === 'yield' ? `&yield=${a.targetG}` : '';
+		return resolve(
+			`/brews/new?bagId=${b.bagId}&method=espresso&quick=1&grind=${encodeURIComponent(grind)}${yieldParam}`
+		);
 	});
 	const pullNextLabel = $derived.by(() => {
 		const n = nextShot;
@@ -126,13 +128,11 @@
 		return false;
 	});
 
-	const ratioValue = $derived(brew ? ratio(brew) : null);
-
 	async function handleDelete() {
 		if (!brew) return;
 		if (!confirm('Delete this brew?')) return;
 		await deleteBrew(brew.id);
-		await goto('/brews');
+		await goto(resolve('/brews'));
 	}
 
 	function handleDuplicate() {
@@ -152,14 +152,14 @@
 {:else if notFound || !brew}
 	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
 		<p class="text-muted">Brew not found.</p>
-		<a href="/brews" class="mt-3 inline-block text-copper underline">Back to brews</a>
+		<a href={resolve('/brews')} class="mt-3 inline-block text-copper underline">Back to brews</a>
 	</div>
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
 		<!-- Header row -->
 		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
-				href="/brews"
+				href={resolve('/brews')}
 				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 			>
 				<svg
@@ -177,7 +177,7 @@
 				Brews
 			</a>
 			<a
-				href="/brews/{brew.id}/edit"
+				href={resolve('/brews/[id]/edit', { id: brew.id })}
 				class="h-9 px-2 text-[14px] text-muted transition-colors hover:text-ink">Edit</a
 			>
 		</div>
@@ -215,7 +215,7 @@
 
 				{#if bag}
 					<a
-						href="/bags/{bag.id}"
+						href={resolve('/bags/[id]', { id: bag.id })}
 						class="mt-1.5 inline-flex items-center gap-1 text-[13px] text-copper-dk transition-colors hover:text-copper"
 						style="border-bottom: 1px solid rgba(156,74,31,0.35); padding-bottom: 1px;"
 					>
@@ -287,7 +287,7 @@
 							This brew isn't linked to a bag.
 						</div>
 						<a
-							href="/brews/{brew.id}/edit"
+							href={resolve('/brews/[id]/edit', { id: brew.id })}
 							class="font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase hover:underline"
 							>Link →</a
 						>
@@ -472,7 +472,7 @@
 				</div>
 			{:else}
 				<a
-					href="/brews/{brew.id}/edit"
+					href={resolve('/brews/[id]/edit', { id: brew.id })}
 					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] hover:border-copper/50"
 				>
 					<div class="flex items-center gap-3">
@@ -494,7 +494,7 @@
 				</div>
 			{:else}
 				<a
-					href="/brews/{brew.id}/edit"
+					href={resolve('/brews/[id]/edit', { id: brew.id })}
 					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] hover:border-copper/50"
 				>
 					<div class="font-display text-[14px] text-muted italic">What did it taste like?</div>
@@ -507,7 +507,7 @@
 			<!-- Bag preview card -->
 			{#if bag && bagConsumptionData}
 				<a
-					href="/bags/{bag.id}"
+					href={resolve('/bags/[id]', { id: bag.id })}
 					class="press block rounded-[18px] border border-hairline bg-surface px-4 py-[14px] hover:bg-paper/50"
 				>
 					<div class="flex items-start gap-3">

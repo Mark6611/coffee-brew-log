@@ -1,3 +1,5 @@
+import { resolve } from '$app/paths';
+import type { ResolvedPathname } from '$app/types';
 import type { Brew } from '$lib/db/types';
 
 // "Brew again" — repeat a past brew's recipe as a fresh log. Shared by the
@@ -39,7 +41,7 @@ export function brewAgainDraft(brew: Brew) {
 }
 
 /** Stage the prefill and return the path the caller should navigate to. */
-export function stageBrewAgain(brew: Brew): string {
+export function stageBrewAgain(brew: Brew): ResolvedPathname {
 	sessionStorage.setItem(BREW_DRAFT_KEY, JSON.stringify(brewAgainDraft(brew)));
-	return '/brews/new';
+	return resolve('/brews/new');
 }

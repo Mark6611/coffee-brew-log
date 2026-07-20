@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { ResolvedPathname } from '$app/types';
 
 	// Button system modelled on the Apple iOS 27 UI Kit, which organises every
 	// button as a size crossed with a style rather than as a one-off recipe.
@@ -41,7 +42,8 @@
 	}: {
 		size?: Size;
 		variant?: Variant;
-		href?: string;
+		/** Renders an <a>. Must come from `resolve()` — the caller owns the path. */
+		href?: ResolvedPathname;
 		type?: 'button' | 'submit' | 'reset';
 		disabled?: boolean;
 		/** Stretch to the container width (form CTAs, empty-state actions). */

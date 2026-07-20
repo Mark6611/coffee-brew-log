@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
 	import { bagConsumption, formatRoastedAt } from '$lib/bags/compute';
@@ -58,7 +59,7 @@
 <div class="mx-auto max-w-2xl pb-24">
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
 		<a
-			href="/"
+			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
@@ -84,13 +85,13 @@
 		<div class="px-[22px] pb-3">
 			{#if showArchived}
 				<a
-					href="/bags"
+					href={resolve('/bags')}
 					class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 					>← Active</a
 				>
 			{:else}
 				<a
-					href="/bags?show=archived"
+					href={resolve('/bags?show=archived')}
 					class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 					>Show archived ({archivedCount}) →</a
 				>
@@ -159,7 +160,7 @@
 						class="rounded-[18px] border border-hairline bg-surface px-[18px] pt-[16px] pb-[18px] transition-transform duration-[180ms] ease-out has-[a:active]:scale-[0.985]"
 					>
 						<a
-							href="/bags/{bag.id}"
+							href={resolve('/bags/[id]', { id: bag.id })}
 							class="-m-2 mb-2 flex items-start justify-between gap-3 rounded-lg p-2 transition-colors hover:bg-paper/40"
 						>
 							{#if bag.photo}
@@ -247,7 +248,11 @@
 						{/if}
 
 						<div class="mt-3 flex items-center justify-end gap-4">
-							<Button size="regular" variant="plain" href="/bags/{bag.id}/edit">Edit</Button>
+							<Button
+								size="regular"
+								variant="plain"
+								href={resolve('/bags/[id]/edit', { id: bag.id })}>Edit</Button
+							>
 							<Button size="regular" variant="destructive" onclick={() => handleDelete(bag)}>
 								Delete
 							</Button>

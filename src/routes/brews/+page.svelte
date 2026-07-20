@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import { resolve } from '$app/paths';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { listBrews, listBags, toggleFavorite } from '$lib/db/repository';
 	import { groupBrewsByDay } from '$lib/brews/compute';
@@ -97,7 +98,7 @@
 <div class="relative mx-auto max-w-2xl pb-24">
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
 		<a
-			href="/"
+			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg

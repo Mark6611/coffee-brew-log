@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { BagSchema, BrewSchema } from '$lib/db/types';
 	import { listBags, listBrews, bulkImport, wipeAllData, deleteAccount } from '$lib/db/repository';
@@ -256,7 +257,7 @@
 <div class="mx-auto max-w-2xl pb-12">
 	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
-			href="/"
+			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg

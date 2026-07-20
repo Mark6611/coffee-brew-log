@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { supabase } from '$lib/supabase';
 
 	let status = $state<'loading' | 'success' | 'error'>('loading');
@@ -27,7 +28,7 @@
 		} = supabase.auth.onAuthStateChange((event, session) => {
 			if (event === 'SIGNED_IN' || (event === 'INITIAL_SESSION' && session)) {
 				status = 'success';
-				setTimeout(() => goto('/'), 400);
+				setTimeout(() => goto(resolve('/')), 400);
 			}
 		});
 
@@ -39,7 +40,7 @@
 			}
 			if (data.session) {
 				status = 'success';
-				setTimeout(() => goto('/'), 400);
+				setTimeout(() => goto(resolve('/')), 400);
 				return;
 			}
 			// No session yet — give Supabase a moment to process the URL hash.
@@ -91,7 +92,7 @@
 		<p class="font-display text-[18px] font-medium text-danger">Sign-in link didn't work.</p>
 		<p class="mt-2 font-display text-[14px] text-muted italic">{errorMsg}</p>
 		<a
-			href="/auth"
+			href={resolve('/auth')}
 			class="mt-6 inline-block font-mono text-[11px] font-medium tracking-[0.14em] text-copper uppercase hover:underline"
 			>← Try again</a
 		>
