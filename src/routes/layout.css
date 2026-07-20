@@ -303,12 +303,18 @@
 
 	   Declared after the fallback blocks above so the opaque/reduced-
 	   transparency overrides don't repaint it card-coloured and strand
-	   white text on a light surface. */
+	   white text on a light surface.
+
+	   rgb(<channels> / <alpha>) for the same reason .glass uses it: color-mix
+	   needs WebKit 16.2 and the deployment target is iOS 15. An unsupported
+	   value drops the whole declaration, which here would mean falling back to
+	   .glass's light card fill while the label stays white — the exact
+	   unreadable case this class exists to prevent. */
 	.glass-scrim {
 		--glass-opacity: 0.55;
 		--glass-blur: 12px;
 		--glass-specular: 0.3;
-		background-color: color-mix(in srgb, #000 calc(var(--glass-opacity) * 100%), transparent);
+		background-color: rgb(0 0 0 / var(--glass-opacity));
 		color: var(--color-paper);
 	}
 	@supports not (backdrop-filter: blur(1px)) {
