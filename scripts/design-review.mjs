@@ -295,6 +295,9 @@ console.log(`\nOutput: ${OUT}`);
 if (errors.length) {
 	console.log(`\n${errors.length} PAGE ERRORS:`);
 	for (const e of [...new Set(errors)]) console.log('  ' + e);
+	// Exit non-zero so `design-review && next-step` actually gates. Printing the
+	// errors and returning 0 is how a broken screen sails through a ship chain.
+	process.exit(1);
 } else {
 	console.log('\nNo console/page errors on any screen.');
 }

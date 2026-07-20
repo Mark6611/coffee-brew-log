@@ -61,7 +61,7 @@
 	   the bar as it scrolls under, matching the iOS 27 large-title nav. The
 	   border colour is driven by the app's own hairline token. */
 	.header.is-scrolled {
-		background-color: color-mix(in srgb, var(--color-paper) 72%, transparent);
+		background-color: rgb(var(--color-paper-rgb) / 0.72);
 		border-color: var(--color-hairline);
 		-webkit-backdrop-filter: saturate(180%) blur(20px);
 		backdrop-filter: saturate(180%) blur(20px);

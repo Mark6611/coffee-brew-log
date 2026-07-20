@@ -11,13 +11,22 @@
 // they then show the OLD UI (a 2.3.3 "accurate metadata" risk after a redesign).
 import { asc } from './asc-api.mjs';
 import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import crypto from 'node:crypto';
 
-const VER_LOC = process.argv[2] ?? '28d09801-183b-466d-96ab-e9415fcff198';
+// Resolve image dirs against the repo, not the caller's cwd. deploy-ios.sh cds
+// to the repo root for exactly this reason; run from elsewhere and the readdir
+// would throw AFTER --replace had already deleted the live screenshots.
+const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+
+// Required, never defaulted: the previous default was the LIVE 1.0 localization,
+// so a forgotten argument aimed a destructive run at the shipping listing.
+const VER_LOC = process.argv[2];
 const REPLACE = process.argv.includes('--replace');
-if (!/^[0-9a-f-]{36}$/.test(VER_LOC)) {
-	console.error(`Not a version-localization id: ${VER_LOC}`);
+if (!VER_LOC || !/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(VER_LOC)) {
+	console.error('Usage: node scripts/asc-screenshots.mjs <versionLocalizationId> [--replace]');
+	console.error('Find the id with: asc-api.mjs GET /v1/appStoreVersions/<verId>/appStoreVersionLocalizations');
 	process.exit(1);
 }
 console.log(`target localization ${VER_LOC}${REPLACE ? ' (replacing existing)' : ''}`);
@@ -32,6 +41,7 @@ async function findOrCreateSet(displayType) {
 		'GET',
 		`/v1/appStoreVersionLocalizations/${VER_LOC}/appScreenshotSets?limit=50`
 	);
+	if (!existing.ok) throw new Error(`list sets: ${JSON.stringify(existing.json)}`);
 	const found = (existing.json?.data ?? []).find(
 		(s) => s.attributes?.screenshotDisplayType === displayType
 	);
@@ -53,14 +63,20 @@ async function findOrCreateSet(displayType) {
 
 async function setScreenshots(setId) {
 	const r = await asc('GET', `/v1/appScreenshotSets/${setId}/appScreenshots?limit=50`);
+	// An unchecked failure here would read as "no existing screenshots", skipping
+	// the --replace deletion and stacking new images on top of the carried-over
+	// ones — the exact mixed-UI listing this flag exists to prevent.
+	if (!r.ok) throw new Error(`list screenshots for set ${setId}: ${JSON.stringify(r.json)}`);
 	return r.json?.data ?? [];
 }
 
 async function clearSet(setId) {
-	for (const shot of await setScreenshots(setId)) {
+	const shots = await setScreenshots(setId);
+	for (const shot of shots) {
 		const del = await asc('DELETE', `/v1/appScreenshots/${shot.id}`);
 		if (!del.ok) throw new Error(`delete ${shot.id}: ${JSON.stringify(del.json)}`);
 	}
+	return shots.length;
 }
 
 async function uploadOne(setId, dir, file) {
@@ -91,6 +107,14 @@ async function uploadOne(setId, dir, file) {
 }
 
 for (const dev of DEVICES) {
+	const dir = join(REPO, dev.dir);
+	// Everything that can fail without touching ASC happens first: no DELETE is
+	// issued until we know there are replacement images on disk to upload.
+	const files = readdirSync(dir)
+		.filter((f) => f.endsWith('.png'))
+		.sort();
+	if (files.length === 0) throw new Error(`${dir} contains no .png — refusing to clear ${dev.displayType}`);
+
 	const setId = await findOrCreateSet(dev.displayType);
 	const already = (await setScreenshots(setId)).length;
 	if (already > 0) {
@@ -98,15 +122,18 @@ for (const dev of DEVICES) {
 			console.log(`• ${dev.displayType}: already has ${already} screenshots — skipping`);
 			continue;
 		}
-		await clearSet(setId);
-		console.log(`• ${dev.displayType}: removed ${already} carried-over screenshots`);
+		const removed = await clearSet(setId);
+		console.log(`• ${dev.displayType}: removed ${removed} carried-over screenshots`);
 	}
-	const files = readdirSync(dev.dir)
-		.filter((f) => f.endsWith('.png'))
-		.sort();
 	for (const f of files) {
-		await uploadOne(setId, dev.dir, f);
+		await uploadOne(setId, dir, f);
 		console.log(`✓ ${dev.displayType}  ${f}`);
+	}
+	// A half-uploaded set is worse than an untouched one: the version would go to
+	// review short. Surface it rather than exiting 0.
+	const final = (await setScreenshots(setId)).length;
+	if (final !== files.length) {
+		throw new Error(`${dev.displayType}: expected ${files.length} screenshots, ASC reports ${final}`);
 	}
 }
 console.log('screenshots done.');

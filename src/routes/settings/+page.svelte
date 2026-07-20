@@ -40,6 +40,7 @@
 	let error = $state<string | null>(null);
 	let fileInput = $state<HTMLInputElement | undefined>();
 	let syncing = $state(false);
+	let wiping = $state(false);
 	let lastSyncAt = $state<string | null>(null);
 	let lastSyncError = $state<string | null>(null);
 
@@ -122,6 +123,11 @@
 	}
 
 	async function handleWipe() {
+		// The native wipe is network-bound now (it quiesces the in-flight CloudKit
+		// pass, then pushes tombstones), so it can run for seconds with nothing on
+		// screen changing. Without this guard a second tap re-enters against the
+		// still-populated tables and races the first pass.
+		if (wiping) return;
 		const total = brewCount + bagCount;
 		if (total === 0) return;
 		const where = auth.user
@@ -135,6 +141,7 @@
 			)
 		)
 			return;
+		wiping = true;
 		try {
 			await wipeAllData();
 			message = 'All data wiped.';
@@ -144,6 +151,8 @@
 			// don't claim success for a wipe that didn't reach the account.
 			error = e instanceof Error ? `Couldn’t wipe your account — ${e.message}` : 'Wipe failed.';
 			message = null;
+		} finally {
+			wiping = false;
 		}
 		await loadCounts();
 	}
@@ -523,7 +532,7 @@
 						variant="destructive"
 						full
 						onclick={handleWipe}
-						disabled={brewCount === 0 && bagCount === 0}
+						disabled={wiping || (brewCount === 0 && bagCount === 0)}
 					>
 						<svg
 							width="16"
@@ -537,7 +546,11 @@
 						>
 							<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
 						</svg>
-						{auth.user ? 'Delete all data' : 'Wipe all data'}
+						{#if wiping}
+							Erasing…
+						{:else}
+							{auth.user ? 'Delete all data' : 'Wipe all data'}
+						{/if}
 					</Button>
 				</div>
 				<p class="mt-2 px-4 text-[12.5px] leading-[1.5] text-muted">
@@ -546,6 +559,11 @@
 							>and your account</strong
 						> — but keeps the account itself. Cannot be undone; download a backup first. To remove your
 						account entirely, use “Delete account” above.
+					{:else if isNative}
+						Deletes every brew and bag — from this device <strong class="text-ink-70"
+							>and your iCloud</strong
+						>, so they also disappear from your other devices. Cannot be undone — download a backup
+						first.
 					{:else}
 						Deletes every brew and bag from this device. Cannot be undone — download a backup first.
 					{/if}

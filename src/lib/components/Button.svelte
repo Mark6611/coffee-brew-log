@@ -130,13 +130,17 @@
 	);
 </script>
 
-{#if href}
+{#if href != null && href !== ''}
+	<!-- `disabled` is not a thing on an anchor: the :disabled selector can never
+	     match, so the opacity/pointer-events utilities silently do nothing and a
+	     "disabled" link stays fully clickable. Reproduce the state explicitly. -->
 	<a
-		{href}
-		class={classes}
+		href={disabled ? undefined : href}
+		class="{classes}{disabled ? ' pointer-events-none opacity-50' : ''}"
 		aria-label={label}
 		{title}
 		aria-disabled={disabled || undefined}
+		tabindex={disabled ? -1 : undefined}
 		{onclick}
 		{...rest}>{@render children()}</a
 	>

@@ -1,7 +1,7 @@
 <!-- Olive tonal pill marking a bag with a settled (user-declared) espresso recipe. -->
 <span
-	class="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-[3px] font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
-	style="background: color-mix(in oklab, var(--color-success) 14%, transparent); color: var(--color-success)"
+	class="bg-success/15 inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-[3px] font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
+	style="color: var(--color-success)"
 >
 	<svg
 		width="9"

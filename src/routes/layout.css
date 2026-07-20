@@ -14,6 +14,7 @@
 	   dark counterparts below. */
 	--color-card-rgb: 255 255 255;
 	--color-copper-rgb: 156 74 31;
+	--color-paper-rgb: 244 239 230;
 
 	/* Ink */
 	--color-ink: #1c1814;
@@ -61,6 +62,7 @@
 	--color-card: #272119;
 	--color-card-rgb: 39 33 25;
 	--color-copper-rgb: 210 130 90;
+	--color-paper-rgb: 22 18 14;
 	--color-hairline: #2d261d;
 	--color-rule: #3a3127;
 	--color-copper: #d2825a;
@@ -160,6 +162,15 @@
 			transition-duration: 1ms !important;
 			scroll-behavior: auto !important;
 		}
+		/* Collapsing the duration alone would leave the press/card scales firing
+		   as an instant snap on every tap — worse than the animation. Remove the
+		   transform itself, not just its timing. */
+		.press:active,
+		.press-sm:active,
+		[class*='active:scale-']:active {
+			transform: none !important;
+			scale: none !important;
+		}
 	}
 }
 
@@ -214,8 +225,8 @@
 	.glass {
 		position: relative;
 		background-color: rgb(var(--color-card-rgb) / var(--glass-opacity));
-		backdrop-filter: blur(var(--glass-blur)) saturate(180%);
 		-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+		backdrop-filter: blur(var(--glass-blur)) saturate(180%);
 		box-shadow:
 			/* specular top edge — the light source sits above */
 			inset 0 1px 0.5px rgba(255, 255, 255, var(--glass-specular)),
@@ -282,15 +293,26 @@
 	   material becomes an opaque surface with a plain hairline — translucency
 	   is what that setting exists to remove, so nothing here should survive it. */
 	@media (prefers-reduced-transparency: reduce) {
-		.glass {
+		/* Selectors are doubled so these beat [data-theme='dark'] .glass (0,2,0);
+		   a media query contributes no specificity of its own, so the single-class
+		   version silently lost to the dark rule and kept the whole gloss stack. */
+		.glass.glass,
+		[data-theme='dark'] .glass.glass {
 			background-color: var(--color-card);
-			backdrop-filter: none;
 			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
 			box-shadow: 0 0 0 0.5px var(--color-rule);
 		}
-		.glass-tinted {
-			background-color: var(--color-copper-lt);
-			background-image: none;
+		/* --color-copper-lt is a translucent wash in dark, so using it as the
+		   opaque replacement erased the tinted button. Composite the same tint
+		   over the solid card colour instead. */
+		.glass-tinted.glass-tinted,
+		[data-theme='dark'] .glass-tinted.glass-tinted {
+			background-color: var(--color-card);
+			background-image: linear-gradient(
+				rgb(var(--color-copper-rgb) / 0.16),
+				rgb(var(--color-copper-rgb) / 0.16)
+			);
 		}
 	}
 

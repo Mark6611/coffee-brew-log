@@ -471,8 +471,7 @@
 					{#if bag.dialedRecipe}
 						{@const r = bag.dialedRecipe}
 						<div
-							class="mt-3 rounded-2xl border p-4"
-							style="border-color: color-mix(in oklab, var(--color-success) 25%, transparent); background: color-mix(in oklab, var(--color-success) 6%, transparent)"
+							class="border-success/25 bg-success/[0.06] mt-3 rounded-2xl border p-4"
 						>
 							<div class="flex items-baseline justify-between">
 								<span

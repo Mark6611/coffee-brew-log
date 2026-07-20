@@ -466,9 +466,9 @@
 							{@const intensity = count === 0 ? 0 : 0.2 + (count / maxHour) * 0.8}
 							<div
 								class="aspect-square rounded-sm"
-								style="background: color-mix(in oklab, var(--color-copper) {(
-									intensity * 100
-								).toFixed(0)}%, var(--color-paper))"
+								style="background-color: var(--color-paper); background-image: linear-gradient(rgb(var(--color-copper-rgb) / {intensity.toFixed(
+									2
+								)}), rgb(var(--color-copper-rgb) / {intensity.toFixed(2)}))"
 								title="{count} brew{count === 1 ? '' : 's'} at {formatHour(hr)}"
 								aria-label="{count} brews at {formatHour(hr)}"
 							></div>

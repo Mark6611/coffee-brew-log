@@ -119,7 +119,7 @@
 		Brews
 		{#snippet action()}
 			<Button
-				size="regular"
+				size="medium"
 				variant="bordered"
 				iconOnly
 				onclick={toggleSearch}
