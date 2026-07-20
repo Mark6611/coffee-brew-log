@@ -1,5 +1,3 @@
-import { resolve } from '$app/paths';
-import type { ResolvedPathname } from '$app/types';
 import type { Brew } from '$lib/db/types';
 
 // "Brew again" — repeat a past brew's recipe as a fresh log. Shared by the
@@ -40,8 +38,14 @@ export function brewAgainDraft(brew: Brew) {
 	};
 }
 
-/** Stage the prefill and return the path the caller should navigate to. */
-export function stageBrewAgain(brew: Brew): ResolvedPathname {
+/**
+ * Stage the prefill. The caller navigates to /brews/new itself.
+ *
+ * Deliberately does NOT import `$app/paths` to return a resolved path: this
+ * directory is the pure-logic half of the app and every sibling has a unit
+ * test, but vitest.config.ts only aliases `$lib`, so a `$app/*` runtime import
+ * makes the whole module — brewAgainDraft included — unimportable under vitest.
+ */
+export function stageBrewAgain(brew: Brew): void {
 	sessionStorage.setItem(BREW_DRAFT_KEY, JSON.stringify(brewAgainDraft(brew)));
-	return resolve('/brews/new');
 }

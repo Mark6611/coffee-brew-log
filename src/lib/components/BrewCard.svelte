@@ -41,7 +41,8 @@
 
 	function brewAgain(e: MouseEvent) {
 		e.stopPropagation();
-		goto(stageBrewAgain(brew));
+		stageBrewAgain(brew);
+		goto(resolve('/brews/new'));
 	}
 
 	function handleCardKeydown(e: KeyboardEvent) {

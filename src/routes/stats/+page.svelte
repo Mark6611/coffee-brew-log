@@ -138,7 +138,9 @@
 			<p class="mt-2 max-w-[280px] font-display text-[15px] text-muted italic">
 				Log a brew or two and stats appear here.
 			</p>
-			<Button size="medium" variant="prominent" href="/brews/new" class="mt-6">Log a brew</Button>
+			<Button size="medium" variant="prominent" href={resolve('/brews/new')} class="mt-6"
+				>Log a brew</Button
+			>
 		</div>
 	{:else}
 		<div class="space-y-7 px-[22px]">

@@ -37,7 +37,12 @@
 	// falls back to the bag list rather than bouncing the user somewhere arbitrary.
 	function returnTarget(newBagId?: string): ResolvedPathname {
 		const raw = page.url.searchParams.get('returnTo');
-		const editId = /^\/brews\/([^/?#]+)\/edit$/.exec(raw ?? '')?.[1];
+		// Matched against the uuid shape ids actually have (crypto.randomUUID, and
+		// BrewSchema.id is z.string().uuid()). A looser [^/?#]+ would also accept
+		// dot segments — `/brews/../edit` resolves to `/edit`, a dead route.
+		const editId = /^\/brews\/([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})\/edit$/i.exec(
+			raw ?? ''
+		)?.[1];
 		if (editId) {
 			return newBagId
 				? resolve(`/brews/[id]/edit?bagId=${newBagId}`, { id: editId })

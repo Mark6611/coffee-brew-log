@@ -22,8 +22,8 @@
 
 	const wasPublished = $derived(!!publishedAt);
 
-	// Kept in the script rather than inline: the blank lines are real newlines,
-	// which an HTML attribute can't carry without becoming a multi-line literal.
+	// Hoisted out of the template purely for readability — it was already a Svelte
+	// expression, so the \n were real newlines there too. Byte-identical string.
 	const BODY_PLACEHOLDER =
 		'# The Yirgacheffe pulled like syrup on day 3…\n\nBloom went long. The bed never crusted.\n\n*Stone fruit on cool-down.*';
 </script>

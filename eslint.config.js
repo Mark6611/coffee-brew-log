@@ -24,16 +24,17 @@ export default defineConfig(
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
 			'no-undef': 'off',
 			// A leading underscore is this repo's marker for "deliberately unused":
-			// stub implementations that must keep a signature (scale.svelte.ts on
-			// web, the PWA no-op prompt) and fields dropped via rest destructuring.
+			// stub implementations that must keep a signature (_cb in scale.svelte.ts,
+			// _reload in the PWA no-op prompt, _roast in dialin.ts) via argsIgnorePattern,
+			// and _localOnly in sync.ts — an object rest-sibling, which is a *variable*,
+			// hence varsIgnorePattern.
+			//
+			// Only these two patterns. caughtErrorsIgnorePattern is deliberately absent
+			// so a `catch (_e) {}` that swallows a sync or import failure still fails
+			// lint; use a bare `catch {}` when there is genuinely nothing to inspect.
 			'@typescript-eslint/no-unused-vars': [
 				'error',
-				{
-					argsIgnorePattern: '^_',
-					varsIgnorePattern: '^_',
-					caughtErrorsIgnorePattern: '^_',
-					destructuredArrayIgnorePattern: '^_'
-				}
+				{ argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
 			]
 		}
 	},

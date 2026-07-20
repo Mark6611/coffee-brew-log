@@ -134,7 +134,7 @@
 				<p class="mt-2 mb-7 max-w-[280px] font-display text-[15px] leading-[1.5] text-muted italic">
 					Add a bag once and reach for it across all the brews you make from it.
 				</p>
-				<Button size="large" variant="prominent" href="/bags/new">
+				<Button size="large" variant="prominent" href={resolve('/bags/new')}>
 					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 						<path
 							d="M9 3v12M3 9h12"
@@ -268,7 +268,7 @@
 			size="large"
 			iconOnly
 			variant="prominent"
-			href="/bags/new"
+			href={resolve('/bags/new')}
 			label="New bag"
 			class="fixed right-6 z-40 h-[60px] w-[60px]"
 			style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"

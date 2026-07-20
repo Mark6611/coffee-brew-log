@@ -220,7 +220,7 @@
 					Your first cup of the morning is also the start of a record. Log it and we'll watch the
 					numbers settle.
 				</p>
-				<Button size="large" variant="prominent" href="/brews/new">
+				<Button size="large" variant="prominent" href={resolve('/brews/new')}>
 					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 						<path
 							d="M9 3v12M3 9h12"
@@ -260,7 +260,7 @@
 		size="large"
 		iconOnly
 		variant="prominent"
-		href="/brews/new"
+		href={resolve('/brews/new')}
 		label="New brew"
 		class="fixed right-6 z-40 h-[60px] w-[60px]"
 		style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"

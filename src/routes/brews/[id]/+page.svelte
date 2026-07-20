@@ -137,7 +137,8 @@
 
 	function handleDuplicate() {
 		if (!brew) return;
-		goto(stageBrewAgain(brew));
+		stageBrewAgain(brew);
+		goto(resolve('/brews/new'));
 	}
 
 	const bagConsumptionData = $derived(bag && brew ? bagConsumption(bag, allBrews) : null);

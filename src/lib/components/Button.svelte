@@ -42,7 +42,12 @@
 	}: {
 		size?: Size;
 		variant?: Variant;
-		/** Renders an <a>. Must come from `resolve()` — the caller owns the path. */
+		/**
+		 * Renders an <a>. Should come from `resolve()` — the caller owns the path.
+		 * Note the type does NOT enforce that: ResolvedPathname expands to
+		 * `${"" | `/${string}`}${Pathname}`, so the empty-base branch makes a bare
+		 * "/brews/new" assignable too. It rejects external URLs, nothing more.
+		 */
 		href?: ResolvedPathname;
 		type?: 'button' | 'submit' | 'reset';
 		disabled?: boolean;

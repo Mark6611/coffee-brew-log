@@ -1,8 +1,10 @@
 <script lang="ts">
 	// Detail-page CTA card that links out to the live blog post.
 	// Copper-lt fill, copper icon button, post title, mono PUBLISHED stamp, chevron.
-	// href is a blog URL on another origin (see postUrl), hence rel="external":
-	// it leaves the app, so the router must not try to route it.
+	// href is a blog URL on another origin (see postUrl). target="_blank" plus the
+	// cross-origin URL already keep this out of the client router — rel="external"
+	// is belt-and-braces, and is what satisfies svelte/no-navigation-without-resolve
+	// for an href the component can't resolve(). Don't drop it: lint fails.
 	import LiveDot from './LiveDot.svelte';
 
 	let {

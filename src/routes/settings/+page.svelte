@@ -435,7 +435,11 @@
 						</div>
 					{:else}
 						<ListGroup>
-							<ListRow href="/auth" title="Sign in" subtitle="Sync brews across devices." />
+							<ListRow
+								href={resolve('/auth')}
+								title="Sign in"
+								subtitle="Sync brews across devices."
+							/>
 						</ListGroup>
 					{/if}
 				</div>
@@ -574,7 +578,7 @@
 			<!-- About -->
 			<div class="mt-8 border-t border-hairline pt-6">
 				<ListGroup header="ABOUT">
-					<ListRow href="/privacy" title="Privacy Policy" />
+					<ListRow href={resolve('/privacy')} title="Privacy Policy" />
 					<ListRow title="Version" value={APP_VERSION} />
 				</ListGroup>
 			</div>
