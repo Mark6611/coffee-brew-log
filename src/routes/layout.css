@@ -228,6 +228,12 @@
 	.glass {
 		position: relative;
 		background-color: rgb(var(--color-card-rgb) / var(--glass-opacity));
+		/* Order is load-bearing, do not "tidy" it. Lightning CSS treats the
+		   prefixed and unprefixed forms as one property and keeps only the LAST
+		   one written. With unprefixed first, the bundle shipped -webkit- alone
+		   — which Chrome and Firefox reject outright, so every glass surface
+		   lost its blur on the web build (verified in Chrome 148: the shipped
+		   declaration computed to "none"). Prefixed first keeps both. */
 		-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
 		backdrop-filter: blur(var(--glass-blur)) saturate(180%);
 		box-shadow:
@@ -350,7 +356,6 @@
 		.glass-scrim {
 			background-color: rgba(0, 0, 0, 0.82);
 			backdrop-filter: none;
-			-webkit-backdrop-filter: none;
 			box-shadow: none;
 		}
 	}

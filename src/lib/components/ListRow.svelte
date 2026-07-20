@@ -56,10 +56,16 @@
 		accent: 'text-copper-dk dark:text-copper'
 	};
 
+	// The focus ring has to be drawn INSIDE the row. Rows are w-full, so their
+	// border box coincides with ListGroup's `overflow-hidden` clip box — a
+	// default outline sits outside that box and gets clipped away entirely on a
+	// single-row group, leaving a keyboard user with no visible focus at all.
+	const FOCUS =
+		'focus-visible:outline-2 focus-visible:outline-copper focus-visible:[outline-offset:-3px]';
 	const classes = $derived(
 		[
 			'flex w-full min-h-[52px] items-center gap-3 px-4 py-2.5 text-left',
-			interactive ? 'press-sm hover:bg-paper/60' : '',
+			interactive ? `press-sm hover:bg-paper/60 ${FOCUS}` : '',
 			disabled ? 'pointer-events-none opacity-50' : '',
 			cls
 		]
