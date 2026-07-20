@@ -38,6 +38,30 @@
 		</div>
 	</div>
 
+	<!-- glassScrim is the over-media material: it sits on a user photo, where the
+	     card-tinted glass above would lose contrast. Shown on a bright backdrop
+	     because that's the case it exists to survive. -->
+	<div
+		class="mb-8 rounded-[22px] p-5"
+		style="background: linear-gradient(115deg, #f7f3e8 0%, #d8c9a8 40%, #8fae6a 100%)"
+	>
+		<!-- The backdrop is a hardcoded bright gradient, so this caption is a
+		     hardcoded dark ink too — text-ink would flip to cream in dark theme and
+		     vanish against a swatch that never changes. -->
+		<div
+			class="mb-3 font-mono text-[10px] font-medium tracking-[0.14em] uppercase"
+			style="color: rgba(28,24,20,0.7)"
+		>
+			glassScrim · over media
+		</div>
+		<div class="flex flex-wrap items-center gap-3">
+			{#each sizes as size}
+				<Button {size} variant="glassScrim">Scrim {size}</Button>
+			{/each}
+			<Button size="medium" variant="glassScrim" iconOnly label="Close">✕</Button>
+		</div>
+	</div>
+
 	{#each variants as variant}
 		<div class="border-t border-hairline py-5">
 			<div class="mb-3 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">

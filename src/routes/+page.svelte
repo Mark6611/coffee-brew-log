@@ -7,6 +7,8 @@
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import BrewCard from '$lib/components/BrewCard.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import ListGroup from '$lib/components/ListGroup.svelte';
+	import ListRow from '$lib/components/ListRow.svelte';
 
 	let allBrews = $state<Brew[]>([]);
 	let allBags = $state<Bag[]>([]);
@@ -33,6 +35,7 @@
 	});
 
 	const stats = $derived(weekStats(allBrews));
+	const activeBagCount = $derived(allBags.filter((b) => !b.archived).length);
 	const lastBrew = $derived(allBrews[0]);
 	const lastBrewBag = $derived(
 		lastBrew?.bagId ? allBags.find((b) => b.id === lastBrew.bagId) : undefined
@@ -131,27 +134,96 @@
 			</div>
 		{/if}
 
-		<div class="flex gap-5 px-[22px] pt-[18px]">
-			<a
-				href="/brews"
-				class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
-				>View all brews →</a
-			>
-			<a
-				href="/bags"
-				class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
-				>Bags →</a
-			>
-			<a
-				href="/stats"
-				class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
-				>Stats →</a
-			>
-			<a
-				href="/settings"
-				class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
-				>Settings →</a
-			>
+		<!-- Primary navigation. This was four 11px mono links on one line; as a
+		     grouped inset list every destination gets a real 52px touch target and
+		     room for the counts, which is what the row was missing. -->
+		<div class="px-[22px] pt-[22px]">
+			<ListGroup>
+				<ListRow
+					href="/brews"
+					title="All brews"
+					value={allBrews.length || undefined}
+					icon={brewsIcon}
+				/>
+				<ListRow href="/bags" title="Bags" value={activeBagCount || undefined} icon={bagsIcon} />
+				<ListRow href="/stats" title="Stats" icon={statsIcon} />
+				<ListRow href="/settings" title="Settings" icon={settingsIcon} />
+			</ListGroup>
 		</div>
 	{/if}
 </div>
+
+<!-- Row glyphs. 1.5 stroke on an 18px box, matching the icons already in
+     BagPicker/PhotoInput so the list doesn't introduce a second icon voice. -->
+{#snippet brewsIcon()}
+	<svg
+		width="18"
+		height="18"
+		viewBox="0 0 18 18"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.5"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M3.5 5.5h9v5a4.5 4.5 0 0 1-9 0v-5z" />
+		<path d="M12.5 6.5h1.2a1.8 1.8 0 0 1 0 3.6h-1.2" />
+		<path d="M5.5 2.2v1.4M8.5 2v1.6M11.5 2.4v1.2" />
+	</svg>
+{/snippet}
+
+{#snippet bagsIcon()}
+	<svg
+		width="18"
+		height="18"
+		viewBox="0 0 18 18"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.5"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M3.2 5L4.7 3h8.6L14.8 5" />
+		<path d="M3.2 5h11.6v9.2c0 1.2-1 2.1-2.1 2.1H5.3c-1.2 0-2.1-1-2.1-2.1V5z" />
+		<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
+	</svg>
+{/snippet}
+
+{#snippet statsIcon()}
+	<svg
+		width="18"
+		height="18"
+		viewBox="0 0 18 18"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.5"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<path d="M2.5 15.5h13" />
+		<path d="M4.8 15.5V9.2M9 15.5V4.5M13.2 15.5v-4" />
+	</svg>
+{/snippet}
+
+{#snippet settingsIcon()}
+	<svg
+		width="18"
+		height="18"
+		viewBox="0 0 18 18"
+		fill="none"
+		stroke="currentColor"
+		stroke-width="1.5"
+		stroke-linecap="round"
+		stroke-linejoin="round"
+		aria-hidden="true"
+	>
+		<!-- Sliders, not a gear: a short-spoked gear at 18px reads as a sun, which
+		     is exactly the glyph the theme toggle uses two rows up. -->
+		<path d="M2.5 5h4M9.5 5h6M2.5 13h6M11.5 13h4" />
+		<circle cx="8" cy="5" r="1.9" />
+		<circle cx="10" cy="13" r="1.9" />
+	</svg>
+{/snippet}

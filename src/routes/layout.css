@@ -294,6 +294,37 @@
 		}
 	}
 
+	/* Over-media glass (the kit's dark vibrancy). Controls that float on a
+	   user photo can't use the card-tinted material: the backdrop is an
+	   arbitrary image, so a light body plus a light label loses all contrast
+	   on a bright photo. iOS solves this by darkening the material and
+	   keeping a light label, which is what this does. Theme-independent on
+	   purpose — the photo, not the page, is what it sits on.
+
+	   Declared after the fallback blocks above so the opaque/reduced-
+	   transparency overrides don't repaint it card-coloured and strand
+	   white text on a light surface. */
+	.glass-scrim {
+		--glass-opacity: 0.55;
+		--glass-blur: 12px;
+		--glass-specular: 0.3;
+		background-color: color-mix(in srgb, #000 calc(var(--glass-opacity) * 100%), transparent);
+		color: var(--color-paper);
+	}
+	@supports not (backdrop-filter: blur(1px)) {
+		.glass-scrim {
+			background-color: rgba(0, 0, 0, 0.72);
+		}
+	}
+	@media (prefers-reduced-transparency: reduce) {
+		.glass-scrim {
+			background-color: rgba(0, 0, 0, 0.82);
+			backdrop-filter: none;
+			-webkit-backdrop-filter: none;
+			box-shadow: none;
+		}
+	}
+
 	/* Filled copper CTAs. Same specular logic as .glass, but the material is
 	   the accent itself, so the ambient shadow is tinted in its own hue. */
 	.glass-cta {

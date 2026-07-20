@@ -15,7 +15,14 @@
 	// have to duplicate the class list to get a link that looks like a button.
 
 	type Size = 'large' | 'medium' | 'regular' | 'small';
-	type Variant = 'prominent' | 'glass' | 'glassProminent' | 'bordered' | 'plain' | 'destructive';
+	type Variant =
+		| 'prominent'
+		| 'glass'
+		| 'glassProminent'
+		| 'glassScrim'
+		| 'bordered'
+		| 'plain'
+		| 'destructive';
 
 	let {
 		size = 'regular',
@@ -77,6 +84,10 @@
 		// copper-dk is the darker copper, so it only works as text on light
 		// surfaces; dark theme has to step up to the lighter --color-copper.
 		glassProminent: 'glass glass-tinted text-copper-dk dark:text-copper hover:brightness-[0.97]',
+		// Dark vibrancy for controls sitting ON a user photo, where the
+		// card-tinted material can't hold contrast. Label colour comes from
+		// .glass-scrim itself, so no text utility here to fight it.
+		glassScrim: 'glass glass-scrim hover:brightness-110',
 		// Hairline outline on the page surface — the kit's Bordered.
 		bordered: 'border border-hairline bg-surface text-ink hover:bg-paper',
 		// Text-only; still gets press physics and a hit box.
@@ -92,6 +103,9 @@
 	const shape = $derived(
 		iconOnly ? `${s.box} aspect-square rounded-full` : `${s.box} rounded-full ${s.pad}`
 	);
+	// glassScrim deliberately omitted: it carries its own opacity/blur/specular
+	// (it sits on a photo, not on the page), so adding a size scale here would
+	// leave the result depending on CSS source order.
 	const glassScale = $derived(
 		variant === 'glass' || variant === 'glassProminent' ? GLASS_SCALE[size] : ''
 	);

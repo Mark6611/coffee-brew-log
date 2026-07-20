@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { fileToPhoto } from '$lib/photo/resize';
+	import Button from './Button.svelte';
 
 	// Capture/replace/remove a single inline photo (data URL). Bindable so the
 	// parent form owns the value. On iOS the file picker offers Take Photo /
@@ -48,42 +49,59 @@
 </script>
 
 <div>
-	<input
-		bind:this={input}
-		type="file"
-		accept="image/*"
-		class="hidden"
-		onchange={onFile}
-	/>
+	<input bind:this={input} type="file" accept="image/*" class="hidden" onchange={onFile} />
 
 	{#if photo}
-		<div class="border-hairline bg-surface relative overflow-hidden rounded-2xl border">
+		<div class="relative overflow-hidden rounded-2xl border border-hairline bg-surface">
 			<!-- svelte-ignore a11y_img_redundant_alt -->
 			<img src={photo} alt="{label} photo" class="max-h-[220px] w-full object-cover" />
-			<div class="absolute right-1.5 top-1.5 flex gap-1">
-				<button
-					type="button"
+			<!-- Controls sit ON the photo, so they use the over-media material
+			     (dark vibrancy) rather than the card-tinted glass. -->
+			<div class="absolute top-1.5 right-1.5 flex gap-1">
+				<Button
+					variant="glassScrim"
+					size="medium"
+					iconOnly
 					onclick={pick}
-					class="press-sm bg-ink/55 text-paper hover:bg-ink/70 grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm"
-					aria-label="Replace {label.toLowerCase()}"
+					label="Replace {label.toLowerCase()}"
 					title="Replace"
 				>
-					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
 						<path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />
 						<path d="M13.5 2.5V5H11" />
 					</svg>
-				</button>
-				<button
-					type="button"
+				</Button>
+				<Button
+					variant="glassScrim"
+					size="medium"
+					iconOnly
 					onclick={remove}
-					class="press-sm bg-ink/55 text-paper hover:bg-danger grid h-11 w-11 place-items-center rounded-full backdrop-blur-sm"
-					aria-label="Remove {label.toLowerCase()}"
+					label="Remove {label.toLowerCase()}"
 					title="Remove"
+					class="hover:!bg-danger"
 				>
-					<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
 						<path d="M4 4l8 8M12 4l-8 8" />
 					</svg>
-				</button>
+				</Button>
 			</div>
 		</div>
 	{:else}
@@ -91,12 +109,22 @@
 			type="button"
 			onclick={pick}
 			disabled={busy}
-			class="press border-rule text-muted hover:border-copper hover:text-copper-dk flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed py-6 disabled:opacity-60"
+			class="press flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-rule py-6 text-muted hover:border-copper hover:text-copper-dk disabled:opacity-60"
 		>
 			{#if busy}
 				<span class="font-mono text-[11px] tracking-[0.1em] uppercase">Processing…</span>
 			{:else}
-				<svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+				<svg
+					width="18"
+					height="18"
+					viewBox="0 0 20 20"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
 					<rect x="2.5" y="4.5" width="15" height="12" rx="2.5" />
 					<circle cx="10" cy="10.5" r="3" />
 					<path d="M6.5 4.5l1-1.8h5l1 1.8" />
@@ -107,6 +135,6 @@
 	{/if}
 
 	{#if error}
-		<p class="text-danger mt-1.5 text-[11.5px]">{error}</p>
+		<p class="mt-1.5 text-[11.5px] text-danger">{error}</p>
 	{/if}
 </div>

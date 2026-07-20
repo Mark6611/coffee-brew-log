@@ -10,6 +10,8 @@
 	import { runCloudSync, LAST_CLOUD_SYNC_KEY } from '$lib/cloudSync';
 	import Button from '$lib/components/Button.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
+	import ListGroup from '$lib/components/ListGroup.svelte';
+	import ListRow from '$lib/components/ListRow.svelte';
 
 	// ── iCloud sync state (native only) ────────────────────────────────
 	let cloudAvailable = $state<boolean | null>(null); // null = still checking
@@ -422,46 +424,18 @@
 							</div>
 						</div>
 					{:else}
-						<a
-							href="/auth"
-							class="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 transition-colors hover:bg-paper/50"
-						>
-							<div>
-								<div class="text-[14px] text-ink">Sign in</div>
-								<div class="mt-0.5 text-[12px] text-muted">Sync brews across devices.</div>
-							</div>
-							<svg
-								width="14"
-								height="14"
-								viewBox="0 0 16 16"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.6"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								class="shrink-0 text-faint"
-							>
-								<path d="M6 3l5 5-5 5" />
-							</svg>
-						</a>
+						<ListGroup>
+							<ListRow href="/auth" title="Sign in" subtitle="Sync brews across devices." />
+						</ListGroup>
 					{/if}
 				</div>
 			{/if}
 
 			<!-- Counts — grouped inset rows: label left, value right -->
-			<div>
-				<Eyebrow class="mb-2">ON THIS DEVICE</Eyebrow>
-				<div class="divide-y divide-hairline rounded-2xl border border-hairline bg-surface">
-					<div class="flex h-12 items-center justify-between px-4">
-						<span class="text-[14px] text-ink">Brews</span>
-						<span class="font-mono text-[13px] text-muted">{brewCount}</span>
-					</div>
-					<div class="flex h-12 items-center justify-between px-4">
-						<span class="text-[14px] text-ink">Bags</span>
-						<span class="font-mono text-[13px] text-muted">{bagCount}</span>
-					</div>
-				</div>
-			</div>
+			<ListGroup header="ON THIS DEVICE">
+				<ListRow title="Brews" value={brewCount} />
+				<ListRow title="Bags" value={bagCount} />
+			</ListGroup>
 
 			<!-- Backup — stacked bordered actions -->
 			<div>
@@ -580,29 +554,10 @@
 
 			<!-- About -->
 			<div class="mt-8 border-t border-hairline pt-6">
-				<Eyebrow class="mb-2">ABOUT</Eyebrow>
-				<a
-					href="/privacy"
-					class="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 transition-colors hover:bg-paper/50"
-				>
-					<span class="text-[14px] text-ink">Privacy Policy</span>
-					<svg
-						width="14"
-						height="14"
-						viewBox="0 0 16 16"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.6"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="shrink-0 text-faint"
-					>
-						<path d="M6 3l5 5-5 5" />
-					</svg>
-				</a>
-				<p class="mt-3 text-center font-mono text-[11px] tracking-[0.04em] text-faint">
-					Coffee Brew Log · v{APP_VERSION}
-				</p>
+				<ListGroup header="ABOUT">
+					<ListRow href="/privacy" title="Privacy Policy" />
+					<ListRow title="Version" value={APP_VERSION} />
+				</ListGroup>
 			</div>
 		</div>
 	{/if}
