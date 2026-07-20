@@ -6,6 +6,7 @@
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import BrewCard from '$lib/components/BrewCard.svelte';
+	import Button from '$lib/components/Button.svelte';
 
 	let allBrews = $state<Brew[]>([]);
 	let allBags = $state<Bag[]>([]);
@@ -59,17 +60,15 @@
 <div class="mx-auto max-w-2xl pb-10">
 	{#if loading}
 		<div class="px-[22px] pt-16 text-center">
-			<p class="text-muted text-sm">Loading…</p>
+			<p class="text-sm text-muted">Loading…</p>
 		</div>
 	{:else if loadError}
 		<div class="px-[22px] pt-16 text-center">
-			<p class="font-display text-ink text-[20px] font-medium">Couldn't load your brews.</p>
-			<p class="text-muted mt-2 text-[14px]">Something went wrong reading your data on this device.</p>
-			<button
-				type="button"
-				onclick={load}
-				class="press glass-cta bg-copper text-paper hover:bg-copper-dk mt-5 inline-flex h-11 items-center rounded-full px-5 text-[14px] font-medium"
-			>Try again</button>
+			<p class="font-display text-[20px] font-medium text-ink">Couldn't load your brews.</p>
+			<p class="mt-2 text-[14px] text-muted">
+				Something went wrong reading your data on this device.
+			</p>
+			<Button size="medium" variant="prominent" onclick={load} class="mt-5">Try again</Button>
 		</div>
 	{:else}
 		<AppHeader eyebrow={todayEyebrow}>
@@ -87,10 +86,7 @@
 		{/if}
 
 		<div class="px-[22px] pt-[18px]">
-			<a
-				href="/brews/new"
-				class="press glass-cta flex h-14 w-full items-center justify-center gap-2.5 rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk"
-			>
+			<Button size="large" variant="prominent" href="/brews/new" full>
 				<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 					<path
 						d="M9 3v12M3 9h12"
@@ -100,7 +96,7 @@
 					/>
 				</svg>
 				New brew
-			</a>
+			</Button>
 		</div>
 
 		{#if allBrews.length > 0}

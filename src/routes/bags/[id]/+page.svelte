@@ -11,6 +11,7 @@
 	import { brewCompass } from '$lib/brews/compass';
 	import { roastMeta } from '$lib/bags/roast';
 	import { costPerGram, costPerCupForBag } from '$lib/stats/cost';
+	import Button from '$lib/components/Button.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ProcessBadge from '$lib/components/ProcessBadge.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
@@ -235,7 +236,7 @@
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
 		<!-- Header row -->
-		<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
+		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
 				href="/bags"
 				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
@@ -552,16 +553,14 @@
 
 					{#if !bag.dialedRecipe}
 						<div class="mt-3.5 flex flex-wrap items-center gap-2">
-							<a
-								href={pullShotHref}
-								class="press glass-cta inline-flex h-10 items-center rounded-xl bg-copper px-4 text-[13.5px] font-medium text-paper hover:bg-copper-dk"
-								>{shots.length === 0 ? 'Pull first shot' : 'Pull next shot'}</a
+							<Button size="regular" variant="prominent" href={pullShotHref}
+								>{shots.length === 0 ? 'Pull first shot' : 'Pull next shot'}</Button
 							>
 							{#if canDial}
 								<button
 									type="button"
 									onclick={handleMarkDialed}
-									class="press inline-flex h-10 items-center rounded-xl border px-4 text-[13.5px] font-medium {dialReady
+									class="press inline-flex h-9 items-center rounded-full border px-3.5 text-[13px] font-medium {dialReady
 										? 'border-copper bg-copper-lt text-copper'
 										: 'border-hairline text-muted hover:text-ink'}">Mark dialed</button
 								>
@@ -569,11 +568,7 @@
 						</div>
 					{:else}
 						<div class="mt-3.5">
-							<a
-								href={pullShotHref}
-								class="press inline-flex h-10 items-center rounded-xl border border-hairline px-4 text-[13.5px] font-medium text-ink hover:bg-paper"
-								>Log a shot</a
-							>
+							<Button size="regular" variant="bordered" href={pullShotHref}>Log a shot</Button>
 						</div>
 					{/if}
 				</div>

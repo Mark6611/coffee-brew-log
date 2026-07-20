@@ -6,6 +6,9 @@
 	--color-paper: #f4efe6;
 	--color-surface: #fbf8f2;
 	--color-card: #ffffff;
+	/* Toggle knobs stay white in both themes, the way iOS switches do — so this
+	   is deliberately not --color-card, which flips dark. */
+	--color-knob: #ffffff;
 
 	/* Ink */
 	--color-ink: #1c1814;
@@ -47,6 +50,10 @@
 	--color-ink-70: #c9bfad;
 	--color-muted: #9a8e7e;
 	--color-faint: #6b6052;
+	/* Elevated surface, one step lighter than --color-surface. Dark themes lift
+	   rather than drop to signal elevation. Glass reads through this, so a
+	   stale white here made every glass control unreadable. */
+	--color-card: #272119;
 	--color-hairline: #2d261d;
 	--color-rule: #3a3127;
 	--color-copper: #d2825a;
@@ -178,9 +185,107 @@
 		transform: none;
 	}
 
-	/* Liquid-glass treatment for filled copper CTAs: a specular top edge +
-	   soft vertical sheen, and an ambient shadow tinted in the button's own
-	   hue (adapts to the dark-mode copper via the token). */
+	/* ---------------------------------------------------------------------
+	   Liquid Glass — modelled on the Apple iOS 27 UI Kit's material styles.
+
+	   The kit defines the material at three scales (Regular Large / Medium /
+	   Small) rather than as one fixed recipe: a large surface reads as mostly
+	   transparent with a pronounced specular rim, while a small one turns
+	   near-opaque because there isn't enough area to read a blur through. The
+	   --glass-* custom properties below carry that scale; the shared .glass
+	   rule consumes them, so a size class is only three numbers.
+
+	   Rendered in this app's warm paper/copper palette rather than the kit's
+	   system grays — the material's structure is what's being borrowed, not
+	   its hue.
+	   --------------------------------------------------------------------- */
+	.glass {
+		position: relative;
+		background-color: color-mix(
+			in srgb,
+			var(--color-card) calc(var(--glass-opacity) * 100%),
+			transparent
+		);
+		backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+		-webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+		box-shadow:
+			/* specular top edge — the light source sits above */
+			inset 0 1px 0.5px rgba(255, 255, 255, var(--glass-specular)),
+			/* bounce light returning off the bottom inner wall */ inset 0 -1px 0.5px
+				rgba(255, 255, 255, calc(var(--glass-specular) * 0.4)),
+			/* the refraction rim that separates glass from what's behind it */ inset 0 0 0 0.5px
+				rgba(255, 255, 255, calc(var(--glass-specular) * 0.5)),
+			0 0 0 0.5px color-mix(in srgb, var(--color-ink) 8%, transparent),
+			0 1px 2px rgba(0, 0, 0, 0.04),
+			0 6px 16px rgba(0, 0, 0, 0.06);
+	}
+
+	/* Large surfaces: sheets, hero CTAs, the floating action button. */
+	.glass-lg {
+		--glass-opacity: 0.55;
+		--glass-blur: 20px;
+		--glass-specular: 0.75;
+	}
+	/* Medium: inline buttons, pills, section headers. */
+	.glass-md {
+		--glass-opacity: 0.7;
+		--glass-blur: 14px;
+		--glass-specular: 0.6;
+	}
+	/* Small: icon buttons and chips — nearly solid, faint rim. */
+	.glass-sm {
+		--glass-opacity: 0.85;
+		--glass-blur: 8px;
+		--glass-specular: 0.45;
+	}
+
+	/* Accent-tinted glass (the kit's "Regular - Small - Tinted"): the copper
+	   reads through the material instead of sitting on top of it. */
+	.glass-tinted {
+		background-color: color-mix(
+			in srgb,
+			var(--color-copper) calc(var(--glass-opacity) * 22%),
+			color-mix(in srgb, var(--color-card) calc(var(--glass-opacity) * 78%), transparent)
+		);
+	}
+
+	/* Dark theme inverts the light model: the specular rim stays white but
+	   drops sharply, and the body darkens rather than lightens. */
+	[data-theme='dark'] .glass {
+		box-shadow:
+			inset 0 1px 0.5px rgba(255, 255, 255, calc(var(--glass-specular) * 0.28)),
+			inset 0 -1px 0.5px rgba(255, 255, 255, calc(var(--glass-specular) * 0.1)),
+			inset 0 0 0 0.5px rgba(255, 255, 255, calc(var(--glass-specular) * 0.14)),
+			0 0 0 0.5px rgba(0, 0, 0, 0.5),
+			0 1px 2px rgba(0, 0, 0, 0.3),
+			0 6px 16px rgba(0, 0, 0, 0.35);
+	}
+
+	/* Browsers without backdrop-filter get the opaque card instead of a
+	   washed-out translucent panel over unblurred content. */
+	@supports not (backdrop-filter: blur(1px)) {
+		.glass {
+			background-color: var(--color-card);
+		}
+	}
+
+	/* iOS "Reduce Transparency" (Settings > Accessibility > Display). The
+	   material becomes an opaque surface with a plain hairline — translucency
+	   is what that setting exists to remove, so nothing here should survive it. */
+	@media (prefers-reduced-transparency: reduce) {
+		.glass {
+			background-color: var(--color-card);
+			backdrop-filter: none;
+			-webkit-backdrop-filter: none;
+			box-shadow: 0 0 0 0.5px var(--color-rule);
+		}
+		.glass-tinted {
+			background-color: var(--color-copper-lt);
+		}
+	}
+
+	/* Filled copper CTAs. Same specular logic as .glass, but the material is
+	   the accent itself, so the ambient shadow is tinted in its own hue. */
 	.glass-cta {
 		background-image: linear-gradient(
 			to bottom,
@@ -221,11 +326,35 @@
 /* Process badges — per-category hues (intentional multi-hue system). Dark
    theme lifts the foregrounds toward white for legibility; backgrounds are
    translucent so they sit on any surface. */
-.process-washed { background: rgba(63, 123, 162, 0.1); color: #3f5b7b; }
-.process-natural { background: rgba(166, 52, 27, 0.1); color: #7a2913; }
-.process-honey { background: rgba(176, 122, 20, 0.14); color: #7a540c; }
-.process-anaerobic { background: rgba(79, 107, 46, 0.12); color: #3f5723; }
-[data-theme='dark'] .process-washed { background: rgba(63, 123, 162, 0.22); color: #9fc0da; }
-[data-theme='dark'] .process-natural { background: rgba(166, 52, 27, 0.22); color: #e09a86; }
-[data-theme='dark'] .process-honey { background: rgba(176, 122, 20, 0.24); color: #dcb46a; }
-[data-theme='dark'] .process-anaerobic { background: rgba(79, 107, 46, 0.24); color: #aec98a; }
+.process-washed {
+	background: rgba(63, 123, 162, 0.1);
+	color: #3f5b7b;
+}
+.process-natural {
+	background: rgba(166, 52, 27, 0.1);
+	color: #7a2913;
+}
+.process-honey {
+	background: rgba(176, 122, 20, 0.14);
+	color: #7a540c;
+}
+.process-anaerobic {
+	background: rgba(79, 107, 46, 0.12);
+	color: #3f5723;
+}
+[data-theme='dark'] .process-washed {
+	background: rgba(63, 123, 162, 0.22);
+	color: #9fc0da;
+}
+[data-theme='dark'] .process-natural {
+	background: rgba(166, 52, 27, 0.22);
+	color: #e09a86;
+}
+[data-theme='dark'] .process-honey {
+	background: rgba(176, 122, 20, 0.24);
+	color: #dcb46a;
+}
+[data-theme='dark'] .process-anaerobic {
+	background: rgba(79, 107, 46, 0.24);
+	color: #aec98a;
+}

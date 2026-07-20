@@ -4,6 +4,7 @@
 	import { supabase } from '$lib/supabase';
 	import { auth } from '$lib/auth.svelte';
 	import { isNative } from '$lib/native';
+	import Button from '$lib/components/Button.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 
 	type Phase = 'email' | 'otp';
@@ -77,7 +78,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-20">
-	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
+	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
 			href="/"
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
@@ -133,11 +134,12 @@
 					</div>
 				{/if}
 
-				<button
+				<Button
+					size="large"
+					variant="prominent"
+					full
 					type="submit"
-					disabled={sending || !email.trim()}
-					class="press glass-cta flex h-14 w-full items-center justify-center rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk disabled:opacity-50"
-					>{sending ? 'Sending…' : 'Send code'}</button
+					disabled={sending || !email.trim()}>{sending ? 'Sending…' : 'Send code'}</Button
 				>
 			</form>
 		{:else}
@@ -170,11 +172,13 @@
 					</div>
 				{/if}
 
-				<button
+				<Button
+					size="large"
+					variant="prominent"
+					full
 					type="submit"
 					disabled={verifying || otpCode.trim().length < 6}
-					class="press glass-cta flex h-14 w-full items-center justify-center rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk disabled:opacity-50"
-					>{verifying ? 'Verifying…' : 'Verify code'}</button
+					>{verifying ? 'Verifying…' : 'Verify code'}</Button
 				>
 
 				<button

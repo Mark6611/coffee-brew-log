@@ -26,14 +26,14 @@
 <div class="relative">
 	{#if dirty}
 		<div
-			class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+			class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 			aria-hidden="true"
 		></div>
 	{/if}
 	<div
 		class="rounded-[18px] border p-[18px] transition-[background-color,border-color] duration-200 {published
-			? 'bg-copper-lt border-copper/20'
-			: 'bg-surface border-hairline'}"
+			? 'border-copper/20 bg-copper-lt'
+			: 'border-hairline bg-surface'}"
 	>
 		<!-- Header row: eyebrow + headline + toggle -->
 		<div class="flex items-center justify-between gap-3">
@@ -49,7 +49,7 @@
 					{/if}
 				</div>
 				<div
-					class="font-display mt-1.5 text-[19px] leading-[1.2] font-medium tracking-[-0.005em] {published
+					class="mt-1.5 font-display text-[19px] leading-[1.2] font-medium tracking-[-0.005em] {published
 						? 'text-ink'
 						: 'text-muted'}"
 				>
@@ -75,7 +75,7 @@
 					: 'bg-ink/10'}"
 			>
 				<span
-					class="absolute top-[3px] h-[26px] w-[26px] rounded-full bg-card shadow-[0_1px_2px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.04)] transition-[left] duration-200"
+					class="absolute top-[3px] h-[26px] w-[26px] rounded-full bg-knob shadow-[0_1px_2px_rgba(0,0,0,0.15),0_0_0_1px_rgba(0,0,0,0.04)] transition-[left] duration-200"
 					style="left: {published ? 23 : 3}px;"
 				></span>
 			</button>
@@ -86,10 +86,10 @@
 				<!-- POST TITLE -->
 				<div>
 					<div
-						class="text-muted mb-2 flex items-center justify-between font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase"
+						class="mb-2 flex items-center justify-between font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						<span>POST TITLE</span>
-						<span class="text-faint text-[11.5px] font-normal normal-case tracking-normal"
+						<span class="text-[11.5px] font-normal tracking-normal text-faint normal-case"
 							>separate from coffee name</span
 						>
 					</div>
@@ -97,25 +97,25 @@
 						type="text"
 						bind:value={blogTitle}
 						placeholder="A morning at home with the Yirgacheffe"
-						class="bg-surface border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 font-display h-12 w-full rounded-[14px] border px-3.5 text-[17px] transition outline-none focus:ring-2"
+						class="h-12 w-full rounded-[14px] border border-hairline bg-surface px-3.5 font-display text-[17px] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				<!-- BODY -->
 				<div class="mt-[18px]">
 					<div
-						class="text-muted mb-2 flex items-center justify-between font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase"
+						class="mb-2 flex items-center justify-between font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						<span>BODY</span>
-						<span class="text-faint text-[11.5px] font-normal normal-case tracking-normal"
+						<span class="text-[11.5px] font-normal tracking-normal text-faint normal-case"
 							>Markdown supported</span
 						>
 					</div>
 					<textarea
 						bind:value={blogBody}
 						rows="8"
-						placeholder={"# The Yirgacheffe pulled like syrup on day 3…\n\nBloom went long. The bed never crusted.\n\n*Stone fruit on cool-down.*"}
-						class="bg-surface border-hairline text-ink placeholder:text-faint focus:border-copper focus:ring-copper/25 w-full resize-none rounded-[14px] border px-3.5 py-3 text-[16px] leading-[1.55] transition outline-none focus:ring-2"
+						placeholder={'# The Yirgacheffe pulled like syrup on day 3…\n\nBloom went long. The bed never crusted.\n\n*Stone fruit on cool-down.*'}
+						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-3.5 py-3 text-[16px] leading-[1.55] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
 					></textarea>
 				</div>
 

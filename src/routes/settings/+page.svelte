@@ -8,6 +8,7 @@
 	import { isNative } from '$lib/native';
 	import { cloudSyncIsAvailable } from '$lib/native';
 	import { runCloudSync, LAST_CLOUD_SYNC_KEY } from '$lib/cloudSync';
+	import Button from '$lib/components/Button.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 
 	// ── iCloud sync state (native only) ────────────────────────────────
@@ -242,7 +243,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-12">
-	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
+	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
 			href="/"
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
@@ -294,8 +295,10 @@
 									{#if cloudSyncing}
 										<span class="text-copper">Syncing…</span>
 									{:else if cloudAvailable === false}
-										<span class="text-muted">iCloud is off — sign into iCloud in iOS Settings to
-											sync between your devices.</span>
+										<span class="text-muted"
+											>iCloud is off — sign into iCloud in iOS Settings to sync between your
+											devices.</span
+										>
 									{:else if cloudError}
 										<span class="text-danger">{cloudError}</span>
 									{:else}
@@ -306,11 +309,11 @@
 									Through your private iCloud only — no account, nothing shared with us.
 								</p>
 							</div>
-							<button
-								type="button"
+							<Button
+								size="regular"
+								variant="bordered"
 								onclick={handleCloudSyncNow}
 								disabled={cloudSyncing || cloudAvailable === false}
-								class="press-sm inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-hairline px-3 text-[12px] font-medium text-ink hover:bg-paper disabled:opacity-50"
 							>
 								<svg
 									width="12"
@@ -327,123 +330,122 @@
 									<path d="M2 8a6 6 0 0 1 10.5-4M14 8a6 6 0 0 1-10.5 4" />
 								</svg>
 								Sync now
-							</button>
+							</Button>
 						</div>
 					</div>
 				</div>
 			{:else}
-			<!-- Account (web) -->
-			<div>
-				<Eyebrow class="mb-2">ACCOUNT</Eyebrow>
-				{#if auth.user}
-					<div class="space-y-3 rounded-2xl border border-hairline bg-surface px-4 py-3">
-						<div class="flex items-center justify-between gap-3">
-							<div class="min-w-0">
-								<div class="truncate text-[14px] text-ink">{auth.user.email}</div>
-								<div class="mt-0.5 font-mono text-[10.5px] tracking-[0.04em] text-muted uppercase">
-									Signed in
+				<!-- Account (web) -->
+				<div>
+					<Eyebrow class="mb-2">ACCOUNT</Eyebrow>
+					{#if auth.user}
+						<div class="space-y-3 rounded-2xl border border-hairline bg-surface px-4 py-3">
+							<div class="flex items-center justify-between gap-3">
+								<div class="min-w-0">
+									<div class="truncate text-[14px] text-ink">{auth.user.email}</div>
+									<div
+										class="mt-0.5 font-mono text-[10.5px] tracking-[0.04em] text-muted uppercase"
+									>
+										Signed in
+									</div>
 								</div>
+								<Button size="regular" variant="plain" onclick={signOut}>Sign out</Button>
 							</div>
-							<button
-								type="button"
-								onclick={signOut}
-								class="shrink-0 text-[12px] text-muted transition-colors hover:text-ink"
-								>Sign out</button
-							>
-						</div>
 
-						<div class="flex items-center justify-between gap-3 border-t border-hairline pt-3">
-							<div class="min-w-0 flex-1">
-								<div
-									class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+							<div class="flex items-center justify-between gap-3 border-t border-hairline pt-3">
+								<div class="min-w-0 flex-1">
+									<div
+										class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+									>
+										SYNC
+									</div>
+									<div class="mt-0.5 text-[13px] text-ink">
+										{#if syncing}
+											<span class="text-copper">Syncing…</span>
+										{:else if lastSyncError}
+											<span class="text-danger">{lastSyncError}</span>
+										{:else}
+											Synced {timeAgo(lastSyncAt)}
+										{/if}
+									</div>
+								</div>
+								<Button
+									size="regular"
+									variant="bordered"
+									onclick={handleSyncNow}
+									disabled={syncing}
 								>
-									SYNC
-								</div>
-								<div class="mt-0.5 text-[13px] text-ink">
-									{#if syncing}
-										<span class="text-copper">Syncing…</span>
-									{:else if lastSyncError}
-										<span class="text-danger">{lastSyncError}</span>
-									{:else}
-										Synced {timeAgo(lastSyncAt)}
-									{/if}
-								</div>
+									<svg
+										width="12"
+										height="12"
+										viewBox="0 0 16 16"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.6"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										class={syncing ? 'animate-spin' : ''}
+									>
+										<path d="M14 4v4h-4M2 12V8h4" />
+										<path d="M2 8a6 6 0 0 1 10.5-4M14 8a6 6 0 0 1-10.5 4" />
+									</svg>
+									Sync now
+								</Button>
 							</div>
-							<button
-								type="button"
-								onclick={handleSyncNow}
-								disabled={syncing}
-								class="press-sm inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-hairline px-3 text-[12px] font-medium text-ink hover:bg-paper disabled:opacity-50"
-							>
-								<svg
-									width="12"
-									height="12"
-									viewBox="0 0 16 16"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="1.6"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									class={syncing ? 'animate-spin' : ''}
-								>
-									<path d="M14 4v4h-4M2 12V8h4" />
-									<path d="M2 8a6 6 0 0 1 10.5-4M14 8a6 6 0 0 1-10.5 4" />
-								</svg>
-								Sync now
-							</button>
-						</div>
 
-						<div class="border-t border-hairline pt-3">
-							<button
-								type="button"
-								onclick={handleDeleteAccount}
-								disabled={deletingAccount}
-								class="inline-flex items-center gap-1.5 text-[12px] font-medium text-danger transition-opacity hover:text-danger disabled:opacity-50"
-							>
-								<svg
-									width="12"
-									height="12"
-									viewBox="0 0 16 16"
-									fill="none"
-									stroke="currentColor"
-									stroke-width="1.6"
-									stroke-linecap="round"
-									stroke-linejoin="round"
+							<div class="border-t border-hairline pt-3">
+								<Button
+									size="regular"
+									variant="destructive"
+									onclick={handleDeleteAccount}
+									disabled={deletingAccount}
 								>
-									<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
-								</svg>
-								{deletingAccount ? 'Deleting account…' : 'Delete account'}
-							</button>
-							<p class="mt-1.5 text-[11px] leading-[1.4] text-faint">
-								Permanently deletes your account and all synced data.
-							</p>
+									<svg
+										width="12"
+										height="12"
+										viewBox="0 0 16 16"
+										fill="none"
+										stroke="currentColor"
+										stroke-width="1.6"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+									>
+										<path
+											d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4"
+										/>
+									</svg>
+									{deletingAccount ? 'Deleting account…' : 'Delete account'}
+								</Button>
+								<p class="mt-1.5 text-[11px] leading-[1.4] text-faint">
+									Permanently deletes your account and all synced data.
+								</p>
+							</div>
 						</div>
-					</div>
-				{:else}
-					<a
-						href="/auth"
-						class="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 transition-colors hover:bg-paper/50"
-					>
-						<div>
-							<div class="text-[14px] text-ink">Sign in</div>
-							<div class="mt-0.5 text-[12px] text-muted">Sync brews across devices.</div>
-						</div>
-						<svg
-							width="14"
-							height="14"
-							viewBox="0 0 16 16"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.6"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="shrink-0 text-faint"
+					{:else}
+						<a
+							href="/auth"
+							class="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 transition-colors hover:bg-paper/50"
 						>
-							<path d="M6 3l5 5-5 5" />
-						</svg>
-					</a>
-				{/if}
-			</div>
+							<div>
+								<div class="text-[14px] text-ink">Sign in</div>
+								<div class="mt-0.5 text-[12px] text-muted">Sync brews across devices.</div>
+							</div>
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 16 16"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.6"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								class="shrink-0 text-faint"
+							>
+								<path d="M6 3l5 5-5 5" />
+							</svg>
+						</a>
+					{/if}
+				</div>
 			{/if}
 
 			<!-- Counts — grouped inset rows: label left, value right -->
@@ -461,7 +463,7 @@
 				</div>
 			</div>
 
-			<!-- Backup — grouped inset action rows (iOS: tinted action rows in one group) -->
+			<!-- Backup — stacked bordered actions -->
 			<div>
 				<Eyebrow class="mb-2">BACKUP</Eyebrow>
 				<input
@@ -471,14 +473,13 @@
 					onchange={handleFileChange}
 					class="hidden"
 				/>
-				<div
-					class="divide-y divide-hairline overflow-hidden rounded-2xl border border-hairline bg-surface"
-				>
-					<button
-						type="button"
+				<div class="flex flex-col gap-2.5">
+					<Button
+						size="medium"
+						variant="bordered"
+						full
 						onclick={handleExport}
 						disabled={brewCount === 0 && bagCount === 0}
-						class="flex h-12 w-full items-center gap-2.5 px-4 text-left text-[14px] font-medium text-copper transition-colors hover:bg-paper/60 active:bg-paper disabled:opacity-50"
 					>
 						<svg
 							width="16"
@@ -495,12 +496,13 @@
 							<path d="M2.5 11.5v1c0 .8.7 1.5 1.5 1.5h8c.8 0 1.5-.7 1.5-1.5v-1" />
 						</svg>
 						Download backup
-					</button>
-					<button
-						type="button"
+					</Button>
+					<Button
+						size="medium"
+						variant="bordered"
+						full
 						onclick={() => fileInput?.click()}
 						disabled={importing}
-						class="flex h-12 w-full items-center gap-2.5 px-4 text-left text-[14px] font-medium text-ink transition-colors hover:bg-paper/60 active:bg-paper disabled:opacity-50"
 					>
 						<svg
 							width="16"
@@ -517,7 +519,7 @@
 							<path d="M2.5 3.5v-1C2.5 1.7 3.2 1 4 1h8c.8 0 1.5.7 1.5 1.5v1" />
 						</svg>
 						{importing ? 'Importing…' : 'Restore from file'}
-					</button>
+					</Button>
 				</div>
 				<p class="mt-2 px-4 text-[12.5px] leading-[1.5] text-muted">
 					Backups are plain JSON with every brew and bag. Restoring replaces items with matching IDs
@@ -536,15 +538,18 @@
 				</div>
 			{/if}
 
-			<!-- Danger zone — lone destructive row in its own inset group -->
+			<!-- Danger zone — lone destructive action -->
 			<div class="mt-8">
 				<Eyebrow class="mb-2 text-danger">DANGER ZONE</Eyebrow>
+				<!-- Destructive actions stay on a grouped inset row, the way iOS keeps
+				     "Erase All Content and Settings" carded rather than floating. -->
 				<div class="overflow-hidden rounded-2xl border border-hairline bg-surface">
-					<button
-						type="button"
+					<Button
+						size="medium"
+						variant="destructive"
+						full
 						onclick={handleWipe}
 						disabled={brewCount === 0 && bagCount === 0}
-						class="flex h-12 w-full items-center gap-2.5 px-4 text-left text-[14px] font-medium text-danger transition-colors hover:bg-danger/6 active:bg-danger/8 disabled:opacity-50"
 					>
 						<svg
 							width="16"
@@ -559,7 +564,7 @@
 							<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
 						</svg>
 						{auth.user ? 'Delete all data' : 'Wipe all data'}
-					</button>
+					</Button>
 				</div>
 				<p class="mt-2 px-4 text-[12.5px] leading-[1.5] text-muted">
 					{#if auth.user}

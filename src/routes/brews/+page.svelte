@@ -8,6 +8,7 @@
 	import DayHeader from '$lib/components/DayHeader.svelte';
 	import BrewCard from '$lib/components/BrewCard.svelte';
 	import Chip from '$lib/components/Chip.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import LiveDot from '$lib/components/LiveDot.svelte';
 	import { BLOG_ENABLED } from '$lib/blog/config';
 
@@ -117,11 +118,12 @@
 	<AppHeader eyebrow="ALL TIME · {allBrews.length}">
 		Brews
 		{#snippet action()}
-			<button
-				type="button"
+			<Button
+				size="regular"
+				variant="bordered"
+				iconOnly
 				onclick={toggleSearch}
-				class="press-sm grid h-[38px] w-[38px] place-items-center rounded-full border border-hairline bg-surface hover:bg-paper"
-				aria-label={searchOpen ? 'Close search' : 'Open search'}
+				label={searchOpen ? 'Close search' : 'Open search'}
 			>
 				{#if searchOpen}
 					<svg
@@ -147,7 +149,7 @@
 						/>
 					</svg>
 				{/if}
-			</button>
+			</Button>
 		{/snippet}
 	</AppHeader>
 
@@ -217,10 +219,7 @@
 					Your first cup of the morning is also the start of a record. Log it and we'll watch the
 					numbers settle.
 				</p>
-				<a
-					href="/brews/new"
-					class="press glass-cta inline-flex h-[52px] items-center gap-2.5 rounded-full bg-copper px-5 text-[15px] font-medium text-paper hover:bg-copper-dk"
-				>
+				<Button size="large" variant="prominent" href="/brews/new">
 					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 						<path
 							d="M9 3v12M3 9h12"
@@ -230,7 +229,7 @@
 						/>
 					</svg>
 					Log first brew
-				</a>
+				</Button>
 			</div>
 		{:else if filtered.length === 0}
 			<p class="py-8 text-center text-sm text-muted">
@@ -256,11 +255,14 @@
 		{/if}
 	</div>
 
-	<a
+	<Button
+		size="large"
+		iconOnly
+		variant="prominent"
 		href="/brews/new"
-		class="press glass-cta fixed right-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full bg-copper text-paper hover:bg-copper-dk"
+		label="New brew"
+		class="fixed right-6 z-40 h-[60px] w-[60px]"
 		style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"
-		aria-label="New brew"
 	>
 		<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
 			<path
@@ -270,5 +272,5 @@
 				stroke-linecap="round"
 			/>
 		</svg>
-	</a>
+	</Button>
 </div>

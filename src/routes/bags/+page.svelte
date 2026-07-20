@@ -8,6 +8,7 @@
 	import { resolveOrigin } from '$lib/origin/resolve';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import Badge from '$lib/components/Badge.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import OriginFlag from '$lib/components/OriginFlag.svelte';
 	import DialedBadge from '$lib/components/DialedBadge.svelte';
 
@@ -133,10 +134,7 @@
 				<p class="mt-2 mb-7 max-w-[280px] font-display text-[15px] leading-[1.5] text-muted italic">
 					Add a bag once and reach for it across all the brews you make from it.
 				</p>
-				<a
-					href="/bags/new"
-					class="press glass-cta inline-flex h-[52px] items-center gap-2.5 rounded-full bg-copper px-5 text-[15px] font-medium text-paper hover:bg-copper-dk"
-				>
+				<Button size="large" variant="prominent" href="/bags/new">
 					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 						<path
 							d="M9 3v12M3 9h12"
@@ -146,7 +144,7 @@
 						/>
 					</svg>
 					Add first bag
-				</a>
+				</Button>
 			</div>
 		{:else if visibleBags.length === 0}
 			<p class="py-12 text-center text-sm text-muted">
@@ -251,15 +249,10 @@
 						{/if}
 
 						<div class="mt-3 flex items-center justify-end gap-4">
-							<a
-								href="/bags/{bag.id}/edit"
-								class="inline-flex h-9 items-center text-[12px] text-muted transition-colors hover:text-ink">Edit</a
-							>
-							<button
-								type="button"
-								onclick={() => handleDelete(bag)}
-								class="inline-flex h-9 items-center text-[12px] text-faint transition-colors hover:text-danger">Delete</button
-							>
+							<Button size="regular" variant="plain" href="/bags/{bag.id}/edit">Edit</Button>
+							<Button size="regular" variant="destructive" onclick={() => handleDelete(bag)}>
+								Delete
+							</Button>
 						</div>
 					</div>
 				{/each}
@@ -268,11 +261,14 @@
 	</div>
 
 	{#if bags.length > 0}
-		<a
+		<Button
+			size="large"
+			iconOnly
+			variant="prominent"
 			href="/bags/new"
-			class="press glass-cta fixed right-6 z-40 grid h-[60px] w-[60px] place-items-center rounded-full bg-copper text-paper hover:bg-copper-dk"
-		style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"
-			aria-label="New bag"
+			label="New bag"
+			class="fixed right-6 z-40 h-[60px] w-[60px]"
+			style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"
 		>
 			<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
 				<path
@@ -282,6 +278,6 @@
 					stroke-linecap="round"
 				/>
 			</svg>
-		</a>
+		</Button>
 	{/if}
 </div>

@@ -6,6 +6,7 @@
 	import { BrewSchema, type Bag, type BagSnapshot, type Extraction } from '$lib/db/types';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
@@ -361,7 +362,10 @@
 			// human message instead. (ZodError is an Error, so check .issues first.)
 			if (err && typeof err === 'object' && 'issues' in err) {
 				const issues = (err as { issues?: Array<{ message?: string }> }).issues;
-				error = Array.isArray(issues) && issues[0]?.message ? issues[0].message : 'Please check the form and try again.';
+				error =
+					Array.isArray(issues) && issues[0]?.message
+						? issues[0].message
+						: 'Please check the form and try again.';
 			} else {
 				error = err instanceof Error ? err.message : String(err);
 			}
@@ -387,7 +391,7 @@
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 		<!-- Header row -->
-		<div class="flex items-center justify-between px-[18px] pt-[10px] pb-[10px]">
+		<div class="flex items-center justify-between px-[18px] pe-14 pt-[10px] pb-[10px] sm:pe-[18px]">
 			<a
 				href="/brews/{brewId}"
 				onclick={handleCancel}
@@ -421,13 +425,8 @@
 				{/if}
 			</div>
 
-			<button
-				type="submit"
-				disabled={!dirty || submitting}
-				class={dirty
-					? 'press h-9 rounded-full bg-copper px-3.5 text-[13px] font-semibold text-paper hover:bg-copper-dk'
-					: 'h-9 cursor-not-allowed rounded-full bg-ink/[0.08] px-3.5 text-[13px] font-semibold text-muted'}
-				>{submitting ? 'Saving…' : 'Save changes'}</button
+			<Button size="regular" variant="prominent" type="submit" disabled={!dirty || submitting}
+				>{submitting ? 'Saving…' : 'Save changes'}</Button
 			>
 		</div>
 
@@ -760,7 +759,7 @@
 			<div class="relative">
 				{#if isDirty('photo')}
 					<div
-						class="bg-copper absolute top-1 -left-2 bottom-1 w-1 rounded-full"
+						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
 						aria-hidden="true"
 					></div>
 				{/if}

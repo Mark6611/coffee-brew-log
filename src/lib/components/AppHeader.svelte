@@ -48,10 +48,10 @@
 			{@render children()}
 		</h1>
 		{#if action}
-			<!-- pe-11 on phone clears the app's fixed theme toggle (top-3 right-3, z-50),
-			     which otherwise overlaps and steals taps from this action button once the
-			     header pins; no clearance needed once the column has side margins (sm+). -->
-			<div class="pe-11 sm:pe-0">{@render action()}</div>
+			<!-- Clears the app's fixed theme toggle (right-3, w-9 → 48px occupied),
+			     which otherwise overlaps and steals taps from this action button once
+			     the header pins; no clearance needed once the column has side margins (sm+). -->
+			<div class="pe-14 sm:pe-0">{@render action()}</div>
 		{/if}
 	</div>
 </div>
@@ -65,5 +65,14 @@
 		border-color: var(--color-hairline);
 		-webkit-backdrop-filter: saturate(180%) blur(20px);
 		backdrop-filter: saturate(180%) blur(20px);
+	}
+	/* Same contract as .glass — "Reduce Transparency" turns the bar opaque
+	   rather than leaving unblurred content showing through a tinted panel. */
+	@media (prefers-reduced-transparency: reduce) {
+		.header.is-scrolled {
+			background-color: var(--color-paper);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+		}
 	}
 </style>

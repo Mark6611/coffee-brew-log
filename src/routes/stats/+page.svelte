@@ -21,6 +21,7 @@
 	} from '$lib/stats/compute';
 	import { formatRatio } from '$lib/brews/compute';
 	import { costSummary } from '$lib/stats/cost';
+	import Button from '$lib/components/Button.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
 
@@ -93,7 +94,7 @@
 
 <div class="mx-auto max-w-2xl pb-12">
 	<!-- Header row -->
-	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
+	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
 			href="/"
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
@@ -136,11 +137,7 @@
 			<p class="mt-2 max-w-[280px] font-display text-[15px] text-muted italic">
 				Log a brew or two and stats appear here.
 			</p>
-			<a
-				href="/brews/new"
-				class="press glass-cta mt-6 inline-flex h-[44px] items-center gap-2 rounded-full bg-copper px-4 text-[14px] font-medium text-paper hover:bg-copper-dk"
-				>Log a brew</a
-			>
+			<Button size="medium" variant="prominent" href="/brews/new" class="mt-6">Log a brew</Button>
 		</div>
 	{:else}
 		<div class="space-y-7 px-[22px]">
@@ -259,24 +256,33 @@
 					<Eyebrow class="mb-2">COST</Eyebrow>
 					<div class="flex items-end justify-between gap-4">
 						<div>
-							<div class="text-copper font-display font-mono text-[28px] font-medium leading-none tracking-[-0.02em]">
+							<div
+								class="font-display font-mono text-[28px] leading-none font-medium tracking-[-0.02em] text-copper"
+							>
 								{cost.costPerCup != null ? money(cost.costPerCup, 1) : '—'}
 							</div>
-							<div class="text-muted mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] uppercase">
-								PER CUP{#if cost.cupsWithCost > 0} · {cost.cupsWithCost} counted{/if}
+							<div
+								class="mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								PER CUP{#if cost.cupsWithCost > 0}
+									· {cost.cupsWithCost} counted{/if}
 							</div>
 						</div>
 						<div class="text-right">
-							<div class="text-copper-dk font-display font-mono text-[28px] font-medium leading-none tracking-[-0.02em]">
+							<div
+								class="font-display font-mono text-[28px] leading-none font-medium tracking-[-0.02em] text-copper-dk"
+							>
 								{money(cost.totalBrewedValue)}
 							</div>
-							<div class="text-muted mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] uppercase">
+							<div
+								class="mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+							>
 								BREWED THIS RANGE
 							</div>
 						</div>
 					</div>
 					{#if cost.totalBeanSpend > 0}
-						<p class="text-faint mt-2.5 font-mono text-[10.5px] tracking-[0.04em]">
+						<p class="mt-2.5 font-mono text-[10.5px] tracking-[0.04em] text-faint">
 							{money(cost.totalBeanSpend)} spent on beans all-time
 						</p>
 					{/if}
@@ -301,7 +307,9 @@
 								style="height: {Math.max(
 									count === 0 ? 0 : 6,
 									(count / maxRatioBucket) * 100
-								)}%; background: {i === medianBucketIdx ? 'var(--color-copper)' : 'var(--color-rule)'}"
+								)}%; background: {i === medianBucketIdx
+									? 'var(--color-copper)'
+									: 'var(--color-rule)'}"
 								title="1:{ratios.ratios[i]} · {count} brew{count === 1 ? '' : 's'}"
 							></div>
 						{/each}

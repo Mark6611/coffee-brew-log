@@ -10,6 +10,7 @@
 	import { formatTimeAgo } from '$lib/brews/compute';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
+	import Button from '$lib/components/Button.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
@@ -436,7 +437,7 @@
 
 <form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 	<!-- Header row -->
-	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
+	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
 			href="/brews"
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
@@ -497,14 +498,18 @@
 				{@const a = lastCompass.action}
 				<div class="rounded-[18px] border border-copper/25 bg-copper-lt px-4 py-[14px]">
 					<div class="flex items-center justify-between">
-						<div class="text-copper-dk font-mono text-[9.5px] font-medium uppercase tracking-[0.14em]">
+						<div
+							class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-copper-dk uppercase"
+						>
 							Last shot · {formatTimeAgo(lastShot.brewedAt)}
 						</div>
 						{#if !lastCompass.fromTaste}
-							<div class="text-faint font-mono text-[9px] uppercase tracking-[0.12em]">from the numbers</div>
+							<div class="font-mono text-[9px] tracking-[0.12em] text-faint uppercase">
+								from the numbers
+							</div>
 						{/if}
 					</div>
-					<div class="text-ink mt-2 font-mono text-[13px] tracking-[-0.01em]">
+					<div class="mt-2 font-mono text-[13px] tracking-[-0.01em] text-ink">
 						<span class="font-medium">{lastShot.grindSetting}</span>
 						<span class="text-muted"> grind · </span>{lastShot.doseGrams}g
 						<span class="text-muted">→</span>
@@ -512,7 +517,7 @@
 						<span class="text-muted"> · </span>{lastShot.brewTimeSeconds}s
 						{#if lastShotTaste}<span class="text-copper-dk"> · {lastShotTaste}</span>{/if}
 					</div>
-					<div class="font-display text-ink mt-2 text-[16px] font-medium leading-[1.25]">
+					<div class="mt-2 font-display text-[16px] leading-[1.25] font-medium text-ink">
 						{lastCompass.headline}{#if a.kind === 'grind' && a.target}
 							<span class="text-copper">&nbsp;→ {a.target}</span>
 						{:else if a.kind === 'yield'}
@@ -520,24 +525,22 @@
 						{/if}
 					</div>
 					{#if daysSinceLastShot != null && daysSinceLastShot > 7}
-						<p class="text-muted mt-1 text-[12px] italic leading-[1.4]">
+						<p class="mt-1 text-[12px] leading-[1.4] text-muted italic">
 							Beans have aged {daysSinceLastShot} days since — they may run a touch faster.
 						</p>
 					{/if}
 					<div class="mt-3 flex flex-wrap items-center gap-2">
-						<button
-							type="button"
-							onclick={applyCompassStart}
-							class="press bg-copper text-paper hover:bg-copper-dk inline-flex h-10 items-center rounded-xl px-3.5 text-[13px] font-medium"
-						>
-							{#if a.kind === 'grind' && a.target}Start at {a.target}{:else if a.kind === 'yield'}Pull to {a.targetG}g{:else}Same again{/if}
-						</button>
+						<Button size="regular" variant="prominent" onclick={applyCompassStart}>
+							{#if a.kind === 'grind' && a.target}Start at {a.target}{:else if a.kind === 'yield'}Pull
+								to {a.targetG}g{:else}Same again{/if}
+						</Button>
 						{#if a.kind === 'grind' && a.target}
 							<button
 								type="button"
 								onclick={repeatLastShot}
-								class="text-muted hover:text-ink px-2 text-[13px] transition-colors"
-							>Repeat {lastShot.grindSetting}</button>
+								class="px-2 text-[13px] text-muted transition-colors hover:text-ink"
+								>Repeat {lastShot.grindSetting}</button
+							>
 						{/if}
 					</div>
 				</div>
@@ -1123,11 +1126,8 @@
 		{/if}
 
 		<!-- Save button at bottom -->
-		<button
-			type="submit"
-			disabled={submitting}
-			class="press glass-cta flex h-14 w-full items-center justify-center rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk disabled:opacity-50"
-			>{submitting ? 'Saving…' : quickMode ? 'Save shot' : 'Save brew'}</button
+		<Button size="large" variant="prominent" full type="submit" disabled={submitting}
+			>{submitting ? 'Saving…' : quickMode ? 'Save shot' : 'Save brew'}</Button
 		>
 	</div>
 </form>

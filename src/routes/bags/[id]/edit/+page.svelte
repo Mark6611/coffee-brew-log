@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { getBagById, updateBag } from '$lib/db/repository';
 	import { BagSchema, type Bag, type Process, type RoastLevel } from '$lib/db/types';
+	import Button from '$lib/components/Button.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import OriginInput from '$lib/components/OriginInput.svelte';
@@ -100,7 +101,7 @@
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
-		<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
+		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
 				href="/bags/{bagId}"
 				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
@@ -231,11 +232,8 @@
 				</div>
 			{/if}
 
-			<button
-				type="submit"
-				disabled={submitting}
-				class="press glass-cta flex h-14 w-full items-center justify-center rounded-full bg-copper text-base font-medium text-paper hover:bg-copper-dk disabled:opacity-50"
-				>{submitting ? 'Saving…' : 'Save'}</button
+			<Button size="large" variant="prominent" full type="submit" disabled={submitting}
+				>{submitting ? 'Saving…' : 'Save'}</Button
 			>
 		</div>
 	</form>

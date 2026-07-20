@@ -9,6 +9,7 @@
 	import { espressoShotsFor } from '$lib/brews/dialin';
 	import { brewCompass } from '$lib/brews/compass';
 	import { stageBrewAgain } from '$lib/brews/repeat';
+	import Button from '$lib/components/Button.svelte';
 	import CompassCard from '$lib/components/CompassCard.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Badge from '$lib/components/Badge.svelte';
@@ -155,7 +156,7 @@
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
 		<!-- Header row -->
-		<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[10px]">
+		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
 				href="/brews"
 				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
@@ -379,18 +380,18 @@
 				<CompassCard compass={nextShot} eyebrow="BREW COMPASS · NEXT SHOT">
 					{#snippet footer()}
 						{#if pullNextHref}
-							<a
+							<Button
+								size="regular"
+								variant="prominent"
 								href={pullNextHref}
-								class="press {nextShot.action.kind === 'hold'
-									? 'bg-success text-paper'
-									: 'bg-copper text-paper hover:bg-copper-dk'} inline-flex h-10 items-center rounded-xl px-4 text-[13.5px] font-medium"
-							>{pullNextLabel}</a>
+								style={nextShot.action.kind === 'hold'
+									? 'background-color: var(--color-success)'
+									: undefined}>{pullNextLabel}</Button
+							>
 						{/if}
-						<button
-							type="button"
-							onclick={() => (nextShotDismissed = true)}
-							class="text-muted hover:text-ink px-2 text-[13px] transition-colors"
-						>Done</button>
+						<Button size="regular" variant="plain" onclick={() => (nextShotDismissed = true)}
+							>Done</Button
+						>
 					{/snippet}
 				</CompassCard>
 			{/if}
@@ -561,11 +562,7 @@
 
 			<!-- Footer actions -->
 			<div class="mt-6 grid grid-cols-2 gap-2.5">
-				<button
-					type="button"
-					onclick={handleDuplicate}
-					class="press flex items-center justify-center gap-2 rounded-full bg-ink/[0.04] py-3 text-[14px] font-medium text-ink hover:bg-ink/[0.08]"
-				>
+				<Button size="medium" variant="glass" full onclick={handleDuplicate}>
 					<svg
 						width="14"
 						height="14"
@@ -580,12 +577,8 @@
 						<path d="M13.5 2.5V5H11" />
 					</svg>
 					Brew again
-				</button>
-				<button
-					type="button"
-					onclick={handleDelete}
-					class="press flex items-center justify-center gap-2 rounded-full bg-danger/8 py-3 text-[14px] font-medium text-danger hover:bg-danger/14"
-				>
+				</Button>
+				<Button size="medium" variant="destructive" full onclick={handleDelete}>
 					<svg
 						width="14"
 						height="14"
@@ -599,7 +592,7 @@
 						<path d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4" />
 					</svg>
 					Delete
-				</button>
+				</Button>
 			</div>
 		</div>
 	</div>
