@@ -5,16 +5,16 @@
 	import { getBagById, listBags, listBrews, archiveBag, updateBag } from '$lib/db/repository';
 	import { bagConsumption, daysSinceRoast, freshnessTone, freshnessLabel } from '$lib/bags/compute';
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
-	import { resolveOrigin } from '$lib/origin/resolve';
-	import { resolveGrindSuggestion } from '$lib/brews/grind';
+		import { resolveGrindSuggestion } from '$lib/brews/grind';
 	import { espressoShotsFor, readyToDial, ROAST_TARGETS } from '$lib/brews/dialin';
+	import { calibrateGrind, type GrindCalibration } from '$lib/brews/calibrate';
 	import { brewCompass } from '$lib/brews/compass';
 	import { roastMeta } from '$lib/bags/roast';
 	import { costPerGram, costPerCupForBag } from '$lib/stats/cost';
 	import Button from '$lib/components/Button.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ProcessBadge from '$lib/components/ProcessBadge.svelte';
-	import OriginFlag from '$lib/components/OriginFlag.svelte';
+	import OriginFlags from '$lib/components/OriginFlags.svelte';
 	import MarkdownText from '$lib/components/MarkdownText.svelte';
 	import TargetWindowBar from '$lib/components/TargetWindowBar.svelte';
 	import DialedBadge from '$lib/components/DialedBadge.svelte';
@@ -141,6 +141,27 @@
 		return shots.length >= 2;
 	});
 	const dialReady = $derived(bag ? readyToDial(shots, bag.roastLevel ?? undefined) : false);
+	// Learned grind sweet spot — converges across the bag's good shots (see
+	// $lib/brews/calibrate). Null until there are ≥2 good ones.
+	const calibration = $derived(bag ? calibrateGrind(bag, allBrews) : null);
+	function confTone(c: GrindCalibration['confidence']): string {
+		if (c === 'high') return 'var(--color-success)';
+		if (c === 'low') return 'var(--color-warning)';
+		return 'var(--color-copper-dk)';
+	}
+	function calibrationBlurb(c: GrindCalibration): string {
+		const basis =
+			c.basis === 'balanced'
+				? 'balanced shots'
+				: c.basis === 'rated'
+					? 'your top-rated shots'
+					: 'balanced and top-rated shots';
+		if (c.confidence === 'high')
+			return `A tight cluster across ${basis} — treat this as your grind for this bag.`;
+		if (c.confidence === 'low')
+			return `An early read from ${basis}; it sharpens as you log a few more.`;
+		return `Weighted toward your recent ${basis}. Keep logging to tighten it.`;
+	}
 	const nextMove = $derived.by(() => {
 		const b = bag;
 		if (!b) return null;
@@ -283,9 +304,8 @@
 				{/if}
 				{#if bag.roaster && bag.origin}<span>·</span>{/if}
 				{#if bag.origin}
-					{@const r = resolveOrigin(bag.origin)}
-					<span>
-						{#if r}<OriginFlag code={r.code} country={r.country} />{/if}{bag.origin}
+										<span>
+						<OriginFlags origin={bag.origin} />{bag.origin}
 					</span>
 				{/if}
 				{#if (bag.roaster || bag.origin) && bag.process}<span>·</span>{/if}
@@ -548,6 +568,37 @@
 								{/each}
 							</div>
 						{/if}
+					{/if}
+
+					{#if calibration}
+						<div class="mt-3.5 rounded-[14px] border border-copper/30 bg-copper/[0.06] px-3.5 py-3">
+							<div class="flex items-center justify-between">
+								<span
+									class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-copper-dk uppercase"
+									>Grind sweet spot</span
+								>
+								<span
+									class="font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
+									style="color: {confTone(calibration.confidence)}"
+									>{calibration.confidence} confidence</span
+								>
+							</div>
+							<div class="mt-1 flex items-baseline gap-2">
+								<span class="font-mono text-[22px] font-semibold tracking-[-0.01em] text-copper"
+									>{calibration.grind}</span
+								>
+								<span class="text-[12px] text-muted"
+									>from {calibration.sampleCount} good shot{calibration.sampleCount === 1
+										? ''
+										: 's'}{calibration.totalShots > calibration.sampleCount
+										? ` of ${calibration.totalShots}`
+										: ''}</span
+								>
+							</div>
+							<p class="mt-1 text-[11.5px] leading-[1.45] text-muted">
+								{calibrationBlurb(calibration)}
+							</p>
+						</div>
 					{/if}
 
 					{#if !bag.dialedRecipe}

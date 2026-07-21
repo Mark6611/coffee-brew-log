@@ -5,11 +5,10 @@
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
 	import { bagConsumption, formatRoastedAt } from '$lib/bags/compute';
 	import { fly, slide } from 'svelte/transition';
-	import { resolveOrigin } from '$lib/origin/resolve';
-	import AppHeader from '$lib/components/AppHeader.svelte';
+		import AppHeader from '$lib/components/AppHeader.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import OriginFlag from '$lib/components/OriginFlag.svelte';
+	import OriginFlags from '$lib/components/OriginFlags.svelte';
 	import DialedBadge from '$lib/components/DialedBadge.svelte';
 
 	let bags = $state<Bag[]>([]);
@@ -188,9 +187,8 @@
 
 						<div class="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-muted">
 							{#if bag.origin}
-								{@const r = resolveOrigin(bag.origin)}
-								<span>
-									{#if r}<OriginFlag code={r.code} country={r.country} />{/if}{bag.origin}
+																<span>
+									<OriginFlags origin={bag.origin} />{bag.origin}
 								</span>
 							{/if}
 							{#if bag.roastedAt}

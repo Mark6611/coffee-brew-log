@@ -5,7 +5,7 @@
 	import { getBrewById, getBagById, listBrews, deleteBrew } from '$lib/db/repository';
 	import { formatRatio, formatBrewTime, formatTimeAgo, ratio } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
-	import { resolveOrigin } from '$lib/origin/resolve';
+	import { resolveOrigins, originLabel } from '$lib/origin/resolve';
 	import { espressoShotsFor } from '$lib/brews/dialin';
 	import { brewCompass } from '$lib/brews/compass';
 	import { stageBrewAgain } from '$lib/brews/repeat';
@@ -16,7 +16,7 @@
 	import StarRow from '$lib/components/StarRow.svelte';
 	import BalanceScale from '$lib/components/BalanceScale.svelte';
 	import ExtractionScale from '$lib/components/ExtractionScale.svelte';
-	import OriginFlag from '$lib/components/OriginFlag.svelte';
+	import OriginFlags from '$lib/components/OriginFlags.svelte';
 	import MarkdownText from '$lib/components/MarkdownText.svelte';
 	import PublishedBadge from '$lib/components/PublishedBadge.svelte';
 	import OpenPublicPostCard from '$lib/components/OpenPublicPostCard.svelte';
@@ -26,7 +26,8 @@
 
 	let brew = $state<Brew | null>(null);
 	let bag = $state<Bag | null>(null);
-	const resolvedOrigin = $derived(bag ? resolveOrigin(bag.origin) : null);
+	const originFlags = $derived(bag ? resolveOrigins(bag.origin) : []);
+	const originText = $derived(bag ? originLabel(bag.origin) : '');
 	let allBrews = $state<Brew[]>([]);
 	let loading = $state(true);
 	let notFound = $state(false);
@@ -233,11 +234,8 @@
 							<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
 						</svg>
 						{bag.roaster ?? bag.name}
-						{#if resolvedOrigin}<span class="text-muted">
-								· <OriginFlag
-									code={resolvedOrigin.code}
-									country={resolvedOrigin.country}
-								/>{resolvedOrigin.country}</span
+						{#if originFlags.length}<span class="text-muted">
+								· <OriginFlags origin={bag.origin} />{originText}</span
 							>{/if}
 						{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
 					</a>
@@ -536,10 +534,7 @@
 								{bag.name}
 							</div>
 							<div class="mt-0.5 font-mono text-[11.5px] tracking-[0.04em] text-muted">
-								{#if resolvedOrigin}<OriginFlag
-										code={resolvedOrigin.code}
-										country={resolvedOrigin.country}
-									/>{resolvedOrigin.country} ·
+								{#if originFlags.length}<OriginFlags origin={bag.origin} />{originText} ·
 								{/if}{#if bag.weightGrams != null && bagConsumptionData.remaining != null}
 									{Math.max(0, bagConsumptionData.remaining).toFixed(0)}G LEFT · {bagConsumptionData.brewCount}
 									BREW{bagConsumptionData.brewCount === 1 ? '' : 'S'}

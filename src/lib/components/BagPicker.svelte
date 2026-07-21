@@ -3,9 +3,9 @@
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews } from '$lib/db/repository';
 	import { bagConsumption, daysSinceRoast, freshnessTone, freshnessLabel } from '$lib/bags/compute';
-	import { resolveOrigin } from '$lib/origin/resolve';
+	import { resolveOrigins, originLabel } from '$lib/origin/resolve';
 	import ProcessBadge from './ProcessBadge.svelte';
-	import OriginFlag from './OriginFlag.svelte';
+	import OriginFlags from './OriginFlags.svelte';
 
 	let {
 		bagId = $bindable<string | undefined>(undefined),
@@ -234,7 +234,7 @@
 						{@const c = bagConsumption(bag, allBrews)}
 						{@const days = daysSinceRoast(bag.roastedAt)}
 						{@const tone = freshnessTone(bag.roastedAt)}
-						{@const r = resolveOrigin(bag.origin)}
+						{@const oFlags = resolveOrigins(bag.origin)}
 						<button
 							type="button"
 							onmousedown={(e) => {
@@ -287,15 +287,15 @@
 											{#if bag.roaster}
 												<span class="truncate">{bag.roaster}</span>
 											{/if}
-											{#if bag.roaster && r}
+											{#if bag.roaster && oFlags.length}
 												<span>·</span>
 											{/if}
-											{#if r}
+											{#if oFlags.length}
 												<span class="whitespace-nowrap">
-													<OriginFlag code={r.code} country={r.country} />{r.country}
+													<OriginFlags origin={bag.origin} />{originLabel(bag.origin)}
 												</span>
 											{/if}
-											{#if (bag.roaster || r) && bag.process}
+											{#if (bag.roaster || oFlags.length) && bag.process}
 												<span>·</span>
 											{/if}
 											{#if bag.process}

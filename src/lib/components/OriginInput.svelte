@@ -1,67 +1,121 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { resolveOrigin, type ResolvedOrigin } from '$lib/origin/resolve';
+	import {
+		resolveOrigins,
+		resolveOne,
+		isBlend,
+		POPULAR_ORIGINS,
+		type ResolvedOrigin
+	} from '$lib/origin/resolve';
 	import OriginFlag from './OriginFlag.svelte';
 
 	let { value = $bindable('') }: { value?: string } = $props();
-	let resolved = $state<ResolvedOrigin | null>(null);
-	// Plain `let` (not `$state`) so it doesn't track in the effect — used only
-	// to skip the 300ms debounce on the very first run. Without this guard, the
-	// edit form flickers "no match" for ~300ms before showing the matched flag
-	// when an existing bag with a known origin is opened.
+
+	// Flags in the input adornment are debounced so they don't flicker "no match"
+	// mid-word while typing. Chip active-state is derived straight from `value`
+	// (instant) — a tap should light up immediately.
+	let resolved = $state<ResolvedOrigin[]>([]);
 	let firstRun = true;
 
 	$effect(() => {
 		const current = value;
 		if (!current) {
-			resolved = null;
+			resolved = [];
 			firstRun = false;
 			return;
 		}
 		if (firstRun) {
 			firstRun = false;
-			resolved = resolveOrigin(current);
+			resolved = resolveOrigins(current);
 			return;
 		}
 		const timer = setTimeout(() => {
-			resolved = resolveOrigin(current);
+			resolved = resolveOrigins(current);
 		}, 300);
 		return () => clearTimeout(timer);
 	});
+
+	const blend = $derived(isBlend(value));
+	const activeCodes = $derived(new Set(resolveOrigins(value).map((r) => r.code)));
+
+	// Tapping a chip toggles that country in the free-text value. Adding appends
+	// with the " + " blend separator; removing drops every written component that
+	// resolves to it (so removing "Ethiopia" also clears a "Yirgacheffe" part).
+	function toggle(o: ResolvedOrigin) {
+		if (activeCodes.has(o.code)) {
+			const parts = value
+				.split(/\s*[/+&]\s*/)
+				.map((p) => p.trim())
+				.filter(Boolean);
+			value = parts.filter((p) => resolveOne(p)?.code !== o.code).join(' + ');
+		} else {
+			const t = value.trim();
+			value = t ? `${t} + ${o.country}` : o.country;
+		}
+		resolved = resolveOrigins(value); // instant flag feedback on tap
+	}
 </script>
 
 <div
-	class="flex h-12 w-full items-center rounded-[14px] border bg-paper transition-all duration-200 {resolved
+	class="flex min-h-12 w-full items-center rounded-[14px] border bg-paper transition-all duration-200 {resolved.length
 		? 'border-copper ring-[3px] ring-copper/[0.18]'
 		: 'border-hairline focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25'}"
 >
-	{#if resolved}
+	{#if resolved.length}
 		<div
-			class="flex h-full items-center border-r border-hairline px-3"
+			class="flex h-full items-center gap-0.5 border-r border-hairline px-3"
 			transition:fade={{ duration: 180 }}
 		>
-			<OriginFlag code={resolved.code} country={resolved.country} />
+			{#each resolved as f (f.code)}<OriginFlag code={f.code} country={f.country} />{/each}
 		</div>
 	{/if}
 	<input
 		type="text"
 		bind:value
-		placeholder="e.g. Ethiopia"
-		class="h-full min-w-0 flex-1 bg-transparent px-3.5 text-ink outline-none placeholder:text-faint"
+		placeholder="e.g. Ethiopia, or Brazil + Ethiopia"
+		class="min-h-12 min-w-0 flex-1 bg-transparent px-3.5 text-ink outline-none placeholder:text-faint"
 	/>
-	{#if resolved}
+	{#if blend}
+		<span
+			class="mr-2.5 rounded-full bg-copper-lt px-2 py-[3px] font-mono text-[10px] font-medium tracking-[0.12em] text-copper-dk uppercase"
+			transition:fade={{ duration: 180 }}>Blend</span
+		>
+	{:else if resolved.length === 1}
 		<span
 			class="pr-3.5 font-mono text-[12px] font-medium tracking-[0.14em] text-copper"
-			transition:fade={{ duration: 180 }}>{resolved.code}</span
+			transition:fade={{ duration: 180 }}>{resolved[0].code}</span
 		>
 	{/if}
 </div>
-<p class="mt-1.5 text-[12px] {resolved ? 'text-copper-dk' : 'text-faint'}" aria-live="polite">
-	{#if resolved}
-		Matched <strong class="font-medium">{resolved.country}</strong> for the flag indicator.
+
+<!-- Quick-pick popular origins. Multi-select: tap two for a blend. -->
+<div class="mt-2 flex flex-wrap gap-1.5">
+	{#each POPULAR_ORIGINS as o (o.code)}
+		{@const active = activeCodes.has(o.code)}
+		<button
+			type="button"
+			onclick={() => toggle(o)}
+			aria-pressed={active}
+			class="press-sm inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[12.5px] font-medium {active
+				? 'border-copper bg-copper text-paper'
+				: 'border-hairline bg-surface text-ink hover:border-copper/50'}"
+		>
+			<OriginFlag code={o.code} country={o.country} />
+			{o.country}
+		</button>
+	{/each}
+</div>
+
+<p class="mt-1.5 text-[12px] {resolved.length ? 'text-copper-dk' : 'text-faint'}" aria-live="polite">
+	{#if blend}
+		Blend of <strong class="font-medium"
+			>{resolved.length ? resolved.map((r) => r.country).join(', ') : 'multiple origins'}</strong
+		>.
+	{:else if resolved.length === 1}
+		Matched <strong class="font-medium">{resolved[0].country}</strong> for the flag indicator.
 	{:else if value}
 		Free text — no flag if origin isn't recognized.
 	{:else}
-		e.g. Ethiopia · Yirgacheffe · Brazil Cerrado
+		Tap a country, or type — e.g. Ethiopia · Brazil Cerrado · Brazil + Ethiopia
 	{/if}
 </p>

@@ -93,12 +93,23 @@ function lookupTokens(text: string): ResolvedOrigin | null {
 	return null;
 }
 
+// Blend component separators. A comma is deliberately NOT one — "Yirgacheffe,
+// Ethiopia" is a single origin (locality + country), not a two-country blend.
+const BLEND_SPLIT = /\s*[/+&]\s*/;
+
+/** Resolve a single origin token/phrase (no blend handling). Exposed so the
+ *  origin input can test whether a specific chip's country is already present. */
+export function resolveOne(text: string | null | undefined): ResolvedOrigin | null {
+	if (!text) return null;
+	return lookupTokens(text);
+}
+
 export function resolveOrigin(text: string | null | undefined): ResolvedOrigin | null {
 	if (!text) return null;
 
-	// Blend: multiple parts separated by "/" or "+". If they resolve to >1
-	// distinct country code, return null — the slash carries the signal.
-	const blendParts = text.split(/\s*[/+]\s*/);
+	// Blend: multiple parts separated by "/", "+", or "&". If they resolve to >1
+	// distinct country code, return null — the separator carries the signal.
+	const blendParts = text.split(BLEND_SPLIT);
 	if (blendParts.length > 1) {
 		const seen = new Set<string>();
 		for (const p of blendParts) {
@@ -110,3 +121,66 @@ export function resolveOrigin(text: string | null | undefined): ResolvedOrigin |
 
 	return lookupTokens(text);
 }
+
+/** Whether the origin names more than one component (a blend), regardless of
+ *  whether every component resolves to a known country. */
+export function isBlend(text: string | null | undefined): boolean {
+	if (!text) return false;
+	return (
+		text
+			.split(BLEND_SPLIT)
+			.map((p) => p.trim())
+			.filter(Boolean).length > 1
+	);
+}
+
+/** Every distinct country a (possibly blended) origin resolves to, in the order
+ *  written. Unknown components are simply skipped, so an all-unknown blend
+ *  yields []. This is the multi-flag counterpart to resolveOrigin. */
+export function resolveOrigins(text: string | null | undefined): ResolvedOrigin[] {
+	if (!text) return [];
+	const parts = text
+		.split(BLEND_SPLIT)
+		.map((p) => p.trim())
+		.filter(Boolean);
+	// Single component: run the whole string through the token matcher (so
+	// "Brazil Cerrado" or "Huila, Colombia" still resolves). Multi: per part.
+	const sources = parts.length > 1 ? parts : [text];
+	const out: ResolvedOrigin[] = [];
+	const seen = new Set<string>();
+	for (const s of sources) {
+		const r = lookupTokens(s);
+		if (r && !seen.has(r.code)) {
+			seen.add(r.code);
+			out.push(r);
+		}
+	}
+	return out;
+}
+
+/** Human label to sit beside the flag(s): the tidy country name for a single
+ *  resolved origin (so "Yirgacheffe" reads as "Ethiopia"), else the raw text
+ *  as written (blends and unrecognized origins keep the user's own wording). */
+export function originLabel(text: string | null | undefined): string {
+	const flags = resolveOrigins(text);
+	if (flags.length === 1) return flags[0].country;
+	return text?.trim() ?? '';
+}
+
+// Curated quick-pick set for the origin chip row — the most-logged producing
+// countries, ordered by rough specialty prevalence (Thailand kept high; it's
+// local). Each already exists in LOOKUP; this only fixes their order + subset.
+export const POPULAR_ORIGINS: ResolvedOrigin[] = [
+	{ code: 'ET', country: 'Ethiopia' },
+	{ code: 'CO', country: 'Colombia' },
+	{ code: 'BR', country: 'Brazil' },
+	{ code: 'GT', country: 'Guatemala' },
+	{ code: 'KE', country: 'Kenya' },
+	{ code: 'HN', country: 'Honduras' },
+	{ code: 'CR', country: 'Costa Rica' },
+	{ code: 'ID', country: 'Indonesia' },
+	{ code: 'TH', country: 'Thailand' },
+	{ code: 'PA', country: 'Panama' },
+	{ code: 'PE', country: 'Peru' },
+	{ code: 'MX', country: 'Mexico' }
+];

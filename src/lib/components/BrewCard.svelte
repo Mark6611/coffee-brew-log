@@ -3,11 +3,11 @@
 	import type { Brew, Bag } from '$lib/db/types';
 	import { formatRatio, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale } from '$lib/bags/compute';
-	import { resolveOrigin } from '$lib/origin/resolve';
+	import { resolveOrigins } from '$lib/origin/resolve';
 	import { stageBrewAgain } from '$lib/brews/repeat';
 	import { BLOG_ENABLED } from '$lib/blog/config';
 	import Badge from './Badge.svelte';
-	import OriginFlag from './OriginFlag.svelte';
+	import OriginFlags from './OriginFlags.svelte';
 	import MarkdownText from './MarkdownText.svelte';
 	import LiveDot from './LiveDot.svelte';
 
@@ -32,7 +32,7 @@
 	const label = $derived(bag ? freshnessLabel(bag.roastedAt) : null);
 	const stale = $derived(bag ? freshnessStale(bag.roastedAt) : false);
 	const roasterText = $derived(bag?.roaster ?? brew.roaster);
-	const resolvedOrigin = $derived(bag ? resolveOrigin(bag.origin) : null);
+	const originFlags = $derived(bag ? resolveOrigins(bag.origin) : []);
 
 	function openDetail() {
 		goto(`/brews/${brew.id}`);
@@ -173,8 +173,8 @@
 						<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
 					</svg>
 					{roasterText}
-					{#if resolvedOrigin}<span class="text-muted">
-							· <OriginFlag code={resolvedOrigin.code} country={resolvedOrigin.country} /></span
+					{#if originFlags.length}<span class="text-muted">
+							· <OriginFlags origin={bag.origin} /></span
 						>{/if}
 					{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
 				</a>

@@ -10,6 +10,7 @@
 	import { formatTimeAgo } from '$lib/brews/compute';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
+	import { brewAgainDraft } from '$lib/brews/repeat';
 	import Button from '$lib/components/Button.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
@@ -53,6 +54,50 @@
 	let urlGrind: string | null = null;
 
 	const selectedBag = $derived(allBags.find((b) => b.id === bagId) ?? null);
+
+	// "Repeat last brew" (WHOOP-style): a one-tap copy of your most recent brew
+	// (any bag) so you edit the deltas instead of starting blank. Only offered on
+	// a pristine form so it never clobbers input you've already begun.
+	const mostRecentBrew = $derived(
+		allBrews.length
+			? [...allBrews].sort((a, b) => b.brewedAt.localeCompare(a.brewedAt))[0]
+			: null
+	);
+	// Dose is deliberately excluded: espresso auto-defaults it to 18g on mount,
+	// so a fresh espresso form is still "pristine". The other fields only become
+	// non-empty once the user actually starts entering the brew.
+	const pristine = $derived(
+		yieldGrams == null && waterGrams == null && grindSetting === '' && !bagId && notes === ''
+	);
+	const repeatLabel = $derived.by(() => {
+		const b = mostRecentBrew;
+		if (!b) return '';
+		const bag = allBags.find((x) => x.id === b.bagId);
+		return (
+			bag?.name ??
+			b.coffeeName ??
+			(b.method === 'espresso' ? 'your last espresso' : 'your last pour-over')
+		);
+	});
+	function repeatLast() {
+		const last = mostRecentBrew;
+		if (!last) return;
+		const d = brewAgainDraft(last);
+		method = d.method;
+		bagId = d.bagId ?? undefined;
+		doseGrams = d.doseGrams ?? null;
+		yieldGrams = d.yieldGrams ?? null;
+		waterGrams = d.waterGrams ?? null;
+		waterTempC = d.waterTempC ?? null;
+		brewTimeSeconds = d.brewTimeSeconds ?? null;
+		brewMinutes = d.brewMinutes ?? null;
+		brewSecondsPart = d.brewSecondsPart ?? null;
+		grindSetting = d.grindSetting ?? '';
+		notes = d.notes ?? '';
+		rating = null;
+		balance = '';
+		extraction = '';
+	}
 
 	onMount(async () => {
 		// URL params first: a quick-log entry (dial-in CTA) must never inherit a
@@ -469,6 +514,50 @@
 	{/if}
 
 	<div class="space-y-[18px] px-[22px] {quickMode ? 'pt-2' : ''}">
+		{#if !quickMode && pristine && mostRecentBrew}
+			<!-- Repeat last brew — copy the most recent log, then edit the deltas. -->
+			<button
+				type="button"
+				onclick={repeatLast}
+				class="press flex w-full items-center gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 text-left hover:border-copper/50"
+			>
+				<span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-copper-lt text-copper">
+					<svg
+						width="16"
+						height="16"
+						viewBox="0 0 16 16"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.6"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />
+						<path d="M13.5 2.5V5H11" />
+					</svg>
+				</span>
+				<span class="min-w-0 flex-1">
+					<span class="block text-[14px] font-medium text-ink">Repeat last brew</span>
+					<span class="block truncate text-[12.5px] text-muted"
+						>Start from {repeatLabel}, then edit what changed</span
+					>
+				</span>
+				<svg
+					width="16"
+					height="16"
+					viewBox="0 0 16 16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="shrink-0 text-faint"
+				>
+					<path d="M6 3l5 5-5 5" />
+				</svg>
+			</button>
+		{/if}
+
 		{#if !quickMode}
 			<!-- Method -->
 			<div>
