@@ -67,6 +67,7 @@ const ymd = (daysAgo) => new Date(now - daysAgo * day).toISOString().slice(0, 10
 const BAG1 = '11111111-1111-4111-8111-111111111111';
 const BAG2 = '22222222-2222-4222-8222-222222222222';
 const BAG3 = '33333333-3333-4333-8333-333333333333';
+const BAG4 = '44444444-4444-4444-8444-444444444444';
 
 const bags = [
 	{
@@ -115,6 +116,20 @@ const bags = [
 		roastedAt: ymd(20),
 		notes: 'Red apple, brown sugar, cocoa.',
 		createdAt: iso(22 * day)
+	},
+	{
+		// Espresso blend — showcases multi-origin flags + the grind calibrator.
+		id: BAG4,
+		name: 'Bourbon Barrel Blend',
+		roaster: 'Onyx',
+		origin: 'Brazil + Ethiopia',
+		process: 'natural',
+		roastLevel: 'medium-dark',
+		weightGrams: 340,
+		pricePaid: 480,
+		roastedAt: ymd(10),
+		notes: 'Chocolate-forward espresso blend. Brazil for body, Ethiopia for lift.',
+		createdAt: iso(11 * day)
 	}
 ];
 
@@ -257,11 +272,66 @@ const brews = [
 		rating: 4,
 		notes: 'Brown sugar sweetness. 1:16.6.',
 		brewedAt: iso(8 * day)
+	},
+	// Bourbon Barrel Blend — three balanced shots clustered at 2.9.x so the
+	// bag-dial-in screenshot shows a converged grind sweet spot (medium+).
+	{
+		id: bid(),
+		method: 'espresso',
+		bagId: BAG4,
+		coffeeName: 'Bourbon Barrel Blend',
+		roaster: 'Onyx',
+		doseGrams: 18,
+		yieldGrams: 36,
+		brewTimeSeconds: 27,
+		grindSetting: '2.9.1',
+		waterTempC: 92,
+		extraction: 'balanced',
+		balance: 'balanced',
+		rating: 5,
+		notes: 'Milk chocolate, dried cherry, round. Dialed.',
+		brewedAt: iso(1 * day + 5 * 3600_000)
+	},
+	{
+		id: bid(),
+		method: 'espresso',
+		bagId: BAG4,
+		coffeeName: 'Bourbon Barrel Blend',
+		roaster: 'Onyx',
+		doseGrams: 18,
+		yieldGrams: 37,
+		brewTimeSeconds: 28,
+		grindSetting: '2.9.2',
+		waterTempC: 92,
+		extraction: 'balanced',
+		balance: 'balanced',
+		rating: 4.5,
+		notes: 'Comfortable, cocoa-forward.',
+		brewedAt: iso(3 * day)
+	},
+	{
+		id: bid(),
+		method: 'espresso',
+		bagId: BAG4,
+		coffeeName: 'Bourbon Barrel Blend',
+		roaster: 'Onyx',
+		doseGrams: 18,
+		yieldGrams: 36,
+		brewTimeSeconds: 27,
+		grindSetting: '2.9.0',
+		waterTempC: 92,
+		extraction: 'balanced',
+		balance: 'balanced',
+		rating: 4.5,
+		notes: 'First good one on this bag.',
+		brewedAt: iso(6 * day)
 	}
 ];
 
 const DETAIL_BREW = brews[0].id; // the dialed 5★ espresso
-const DETAIL_BAG = BAG2; // dialed bag (dial-in + cost)
+// The blend bag: shows multi-origin flags + the grind calibrator + converging
+// dial-in (it's intentionally not "dialed" so the dial-in UI stays visible).
+const DETAIL_BAG = BAG4;
 
 const seedData = { bags, brews };
 
