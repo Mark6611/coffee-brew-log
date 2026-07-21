@@ -58,6 +58,7 @@
 		"@capacitor/status-bar": "^8.0.2",
 		"@supabase/supabase-js": "^2.105.4",
 		"dexie": "^4.4.2",
+		"dompurify": "^3.4.12",
 		"marked": "^18.0.4",
 		"zod": "^4.4.3"
 	}

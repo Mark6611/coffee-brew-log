@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { marked } from 'marked';
+	import DOMPurify from 'dompurify';
 
 	let { text }: { text: string | null | undefined } = $props();
 
@@ -7,11 +8,22 @@
 	// breaks: single newline → <br>, matches how people write notes
 	marked.setOptions({ gfm: true, breaks: true });
 
-	// XSS note: marked does NOT sanitize raw HTML in source by default.
-	// Acceptable for this app because the only author is the signed-in user
-	// (their own data; they can't XSS themselves). If/when the HTML Brew blog
-	// project ships, revisit — anonymous readers shouldn't see arbitrary HTML.
-	const html = $derived(text ? marked.parse(text) : '');
+	// marked passes raw HTML in the source straight through (it dropped its own
+	// `sanitize` option in v4), so its output is scrubbed before it reaches
+	// {@html}. This was once waved off as "the only author is the signed-in user"
+	// — no longer true: Settings can restore a hand-edited backup JSON, where
+	// `notes` is validated as a string but never scrubbed, and this component
+	// renders that field on the brew detail, bag detail and brew card. DOMPurify
+	// strips <script>, inline event handlers and javascript:/data: URLs while
+	// keeping the formatting tags real notes use. (The blog publish path is a
+	// second reader-isn't-author surface; it's gated off today — BLOG_ENABLED —
+	// and html-brew must sanitize on its own side when it ships.)
+	//
+	// ssr=false, so this only runs in the browser; the window guard is a
+	// failsafe so a non-DOM context can never fall through to unsanitized HTML.
+	const html = $derived(
+		text && typeof window !== 'undefined' ? DOMPurify.sanitize(marked.parse(text) as string) : ''
+	);
 </script>
 
 <div class="markdown">{@html html}</div>
