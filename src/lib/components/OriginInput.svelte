@@ -2,8 +2,8 @@
 	import { fade } from 'svelte/transition';
 	import {
 		resolveOrigins,
-		resolveOne,
 		isBlend,
+		toggleOriginChip,
 		POPULAR_ORIGINS,
 		type ResolvedOrigin
 	} from '$lib/origin/resolve';
@@ -38,21 +38,12 @@
 	const blend = $derived(isBlend(value));
 	const activeCodes = $derived(new Set(resolveOrigins(value).map((r) => r.code)));
 
-	// Tapping a chip toggles that country in the free-text value. Adding appends
-	// with the " + " blend separator; removing drops every written component that
-	// resolves to it (so removing "Ethiopia" also clears a "Yirgacheffe" part).
+	// Tapping a chip adds/removes that country in the free-text value. All the
+	// logic lives in the pure toggleOriginChip helper (unit-tested); here we just
+	// apply it and refresh the flag adornment instantly.
 	function toggle(o: ResolvedOrigin) {
-		if (activeCodes.has(o.code)) {
-			const parts = value
-				.split(/\s*[/+&]\s*/)
-				.map((p) => p.trim())
-				.filter(Boolean);
-			value = parts.filter((p) => resolveOne(p)?.code !== o.code).join(' + ');
-		} else {
-			const t = value.trim();
-			value = t ? `${t} + ${o.country}` : o.country;
-		}
-		resolved = resolveOrigins(value); // instant flag feedback on tap
+		value = toggleOriginChip(value, o);
+		resolved = resolveOrigins(value);
 	}
 </script>
 
