@@ -38,8 +38,14 @@ export function brewAgainDraft(brew: Brew) {
 	};
 }
 
-/** Stage the prefill and return the path the caller should navigate to. */
-export function stageBrewAgain(brew: Brew): string {
+/**
+ * Stage the prefill. The caller navigates to /brews/new itself.
+ *
+ * Deliberately does NOT import `$app/paths` to return a resolved path: this
+ * directory is the pure-logic half of the app and every sibling has a unit
+ * test, but vitest.config.ts only aliases `$lib`, so a `$app/*` runtime import
+ * makes the whole module — brewAgainDraft included — unimportable under vitest.
+ */
+export function stageBrewAgain(brew: Brew): void {
 	sessionStorage.setItem(BREW_DRAFT_KEY, JSON.stringify(brewAgainDraft(brew)));
-	return '/brews/new';
 }

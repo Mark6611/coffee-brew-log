@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import { resolve } from '$app/paths';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { listBrews, listBags, toggleFavorite } from '$lib/db/repository';
 	import { groupBrewsByDay } from '$lib/brews/compute';
@@ -97,7 +98,7 @@
 <div class="relative mx-auto max-w-2xl pb-24">
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
 		<a
-			href="/"
+			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
@@ -219,7 +220,7 @@
 					Your first cup of the morning is also the start of a record. Log it and we'll watch the
 					numbers settle.
 				</p>
-				<Button size="large" variant="prominent" href="/brews/new">
+				<Button size="large" variant="prominent" href={resolve('/brews/new')}>
 					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 						<path
 							d="M9 3v12M3 9h12"
@@ -259,7 +260,7 @@
 		size="large"
 		iconOnly
 		variant="prominent"
-		href="/brews/new"
+		href={resolve('/brews/new')}
 		label="New brew"
 		class="fixed right-6 z-40 h-[60px] w-[60px]"
 		style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"

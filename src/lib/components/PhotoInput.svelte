@@ -53,7 +53,6 @@
 
 	{#if photo}
 		<div class="relative overflow-hidden rounded-2xl border border-hairline bg-surface">
-			<!-- svelte-ignore a11y_img_redundant_alt -->
 			<img src={photo} alt="{label} photo" class="max-h-[220px] w-full object-cover" />
 			<!-- Controls sit ON the photo, so they use the over-media material
 			     (dark vibrancy) rather than the card-tinted glass. -->

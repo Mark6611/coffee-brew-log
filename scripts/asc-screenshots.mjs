@@ -26,7 +26,9 @@ const VER_LOC = process.argv[2];
 const REPLACE = process.argv.includes('--replace');
 if (!VER_LOC || !/^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/.test(VER_LOC)) {
 	console.error('Usage: node scripts/asc-screenshots.mjs <versionLocalizationId> [--replace]');
-	console.error('Find the id with: asc-api.mjs GET /v1/appStoreVersions/<verId>/appStoreVersionLocalizations');
+	console.error(
+		'Find the id with: asc-api.mjs GET /v1/appStoreVersions/<verId>/appStoreVersionLocalizations'
+	);
 	process.exit(1);
 }
 console.log(`target localization ${VER_LOC}${REPLACE ? ' (replacing existing)' : ''}`);
@@ -113,7 +115,8 @@ for (const dev of DEVICES) {
 	const files = readdirSync(dir)
 		.filter((f) => f.endsWith('.png'))
 		.sort();
-	if (files.length === 0) throw new Error(`${dir} contains no .png — refusing to clear ${dev.displayType}`);
+	if (files.length === 0)
+		throw new Error(`${dir} contains no .png — refusing to clear ${dev.displayType}`);
 
 	const setId = await findOrCreateSet(dev.displayType);
 	const already = (await setScreenshots(setId)).length;
@@ -133,7 +136,9 @@ for (const dev of DEVICES) {
 	// review short. Surface it rather than exiting 0.
 	const final = (await setScreenshots(setId)).length;
 	if (final !== files.length) {
-		throw new Error(`${dev.displayType}: expected ${files.length} screenshots, ASC reports ${final}`);
+		throw new Error(
+			`${dev.displayType}: expected ${files.length} screenshots, ASC reports ${final}`
+		);
 	}
 }
 console.log('screenshots done.');

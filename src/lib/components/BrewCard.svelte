@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { formatRatio, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale } from '$lib/bags/compute';
@@ -35,12 +36,13 @@
 	const originFlags = $derived(bag ? resolveOrigins(bag.origin) : []);
 
 	function openDetail() {
-		goto(`/brews/${brew.id}`);
+		goto(resolve('/brews/[id]', { id: brew.id }));
 	}
 
 	function brewAgain(e: MouseEvent) {
 		e.stopPropagation();
-		goto(stageBrewAgain(brew));
+		stageBrewAgain(brew);
+		goto(resolve('/brews/new'));
 	}
 
 	function handleCardKeydown(e: KeyboardEvent) {
@@ -154,7 +156,7 @@
 		{#if roasterText}
 			{#if bag}
 				<a
-					href="/bags/{bag.id}"
+					href={resolve('/bags/[id]', { id: bag.id })}
 					onclick={(e) => e.stopPropagation()}
 					class="mt-1 inline-flex items-center gap-1 border-b border-copper/35 pb-px text-[13px] text-copper-dk transition-colors hover:text-copper"
 				>

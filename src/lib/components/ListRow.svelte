@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { ResolvedPathname } from '$app/types';
 
 	// One row of a grouped inset list (see ListGroup). Modelled on the iOS 27 UI
 	// Kit's list cells: a leading glyph well, a title with optional subtitle, a
@@ -32,7 +33,12 @@
 		subtitle?: string;
 		/** Right-aligned secondary text — counts, versions, current selection. */
 		value?: string | number;
-		href?: string;
+		/**
+		 * Renders an <a>. Should come from `resolve()` — the caller owns the path.
+		 * The type does not enforce it (see Button.svelte for why); it only rules
+		 * out external URLs.
+		 */
+		href?: ResolvedPathname;
 		onclick?: (e: MouseEvent) => void;
 		/** Disclosure arrow. Defaults on for rows that navigate. */
 		chevron?: boolean;

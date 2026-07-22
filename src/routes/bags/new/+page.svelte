@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
+	import type { ResolvedPathname } from '$app/types';
 	import { addBag } from '$lib/db/repository';
 	import { BagSchema, type Process, type RoastLevel } from '$lib/db/types';
 	import Button from '$lib/components/Button.svelte';
@@ -29,6 +31,29 @@
 		if (queryName) name = queryName;
 	});
 
+	// Where Cancel/Save go back to. `returnTo` is whatever the query string says,
+	// so it can't be handed to resolve() — or to goto() — as a route. Only the two
+	// screens that link here (new brew, edit brew) are honoured; anything else
+	// falls back to the bag list rather than bouncing the user somewhere arbitrary.
+	function returnTarget(newBagId?: string): ResolvedPathname {
+		const raw = page.url.searchParams.get('returnTo');
+		// Matched against the uuid shape ids actually have (crypto.randomUUID, and
+		// BrewSchema.id is z.string().uuid()). A looser [^/?#]+ would also accept
+		// dot segments — `/brews/../edit` resolves to `/edit`, a dead route.
+		const editId = /^\/brews\/([0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12})\/edit$/i.exec(
+			raw ?? ''
+		)?.[1];
+		if (editId) {
+			return newBagId
+				? resolve(`/brews/[id]/edit?bagId=${newBagId}`, { id: editId })
+				: resolve('/brews/[id]/edit', { id: editId });
+		}
+		if (raw === '/brews/new') {
+			return newBagId ? resolve(`/brews/new?bagId=${newBagId}`) : resolve('/brews/new');
+		}
+		return resolve('/bags');
+	}
+
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
 		error = null;
@@ -51,12 +76,7 @@
 			};
 			const bag = BagSchema.parse(candidate);
 			await addBag(bag);
-			const returnTo = page.url.searchParams.get('returnTo');
-			if (returnTo) {
-				await goto(`${returnTo}?bagId=${bag.id}`);
-			} else {
-				await goto('/bags');
-			}
+			await goto(returnTarget(bag.id));
 		} catch (err) {
 			error = err instanceof Error ? err.message : String(err);
 			submitting = false;
@@ -71,7 +91,7 @@
 <form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
-			href={page.url.searchParams.get('returnTo') ?? '/bags'}
+			href={returnTarget()}
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { resolve } from '$app/paths';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { listBrews, listBags } from '$lib/db/repository';
 	import { weekStats, formatTimeAgo } from '$lib/brews/compute';
@@ -89,7 +90,7 @@
 		{/if}
 
 		<div class="px-[22px] pt-[18px]">
-			<Button size="large" variant="prominent" href="/brews/new" full>
+			<Button size="large" variant="prominent" href={resolve('/brews/new')} full>
 				<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 					<path
 						d="M9 3v12M3 9h12"
@@ -140,14 +141,19 @@
 		<div class="px-[22px] pt-[22px]">
 			<ListGroup>
 				<ListRow
-					href="/brews"
+					href={resolve('/brews')}
 					title="All brews"
 					value={allBrews.length || undefined}
 					icon={brewsIcon}
 				/>
-				<ListRow href="/bags" title="Bags" value={activeBagCount || undefined} icon={bagsIcon} />
-				<ListRow href="/stats" title="Stats" icon={statsIcon} />
-				<ListRow href="/settings" title="Settings" icon={settingsIcon} />
+				<ListRow
+					href={resolve('/bags')}
+					title="Bags"
+					value={activeBagCount || undefined}
+					icon={bagsIcon}
+				/>
+				<ListRow href={resolve('/stats')} title="Stats" icon={statsIcon} />
+				<ListRow href={resolve('/settings')} title="Settings" icon={settingsIcon} />
 			</ListGroup>
 		</div>
 	{/if}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { ResolvedPathname } from '$app/types';
 
 	// Button system modelled on the Apple iOS 27 UI Kit, which organises every
 	// button as a size crossed with a style rather than as a one-off recipe.
@@ -41,7 +42,13 @@
 	}: {
 		size?: Size;
 		variant?: Variant;
-		href?: string;
+		/**
+		 * Renders an <a>. Should come from `resolve()` — the caller owns the path.
+		 * Note the type does NOT enforce that: ResolvedPathname expands to
+		 * `${"" | `/${string}`}${Pathname}`, so the empty-base branch makes a bare
+		 * "/brews/new" assignable too. It rejects external URLs, nothing more.
+		 */
+		href?: ResolvedPathname;
 		type?: 'button' | 'submit' | 'reset';
 		disabled?: boolean;
 		/** Stretch to the container width (form CTAs, empty-state actions). */
@@ -130,7 +137,7 @@
 	);
 </script>
 
-{#if href != null && href !== ''}
+{#if href != null}
 	<!-- `disabled` is not a thing on an anchor: the :disabled selector can never
 	     match, so the opacity/pointer-events utilities silently do nothing and a
 	     "disabled" link stays fully clickable. Reproduce the state explicitly. -->

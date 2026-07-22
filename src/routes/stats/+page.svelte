@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { listBrews, listBags } from '$lib/db/repository';
 	import {
@@ -96,7 +97,7 @@
 	<!-- Header row -->
 	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
-			href="/"
+			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
@@ -117,7 +118,7 @@
 		<div class="flex gap-1.5">
 			{#each rangeOptions as opt (opt.value)}
 				<a
-					href="?range={opt.value}"
+					href={resolve(`/stats?range=${opt.value}`)}
 					class="press-sm inline-flex h-9 items-center rounded-full px-3 font-mono text-[10px] font-medium tracking-[0.1em] {range ===
 					opt.value
 						? 'bg-ink text-paper'
@@ -137,7 +138,9 @@
 			<p class="mt-2 max-w-[280px] font-display text-[15px] text-muted italic">
 				Log a brew or two and stats appear here.
 			</p>
-			<Button size="medium" variant="prominent" href="/brews/new" class="mt-6">Log a brew</Button>
+			<Button size="medium" variant="prominent" href={resolve('/brews/new')} class="mt-6"
+				>Log a brew</Button
+			>
 		</div>
 	{:else}
 		<div class="space-y-7 px-[22px]">
@@ -332,7 +335,7 @@
 						{#each top3 as brew, i (brew.id)}
 							{@const linkedBag = allBags.find((b) => b.id === brew.bagId)}
 							<a
-								href="/brews/{brew.id}"
+								href={resolve('/brews/[id]', { id: brew.id })}
 								class="flex items-center justify-between gap-3 bg-surface px-3.5 py-3 transition-colors hover:bg-paper/50"
 							>
 								<div class="flex items-center gap-3">
@@ -369,7 +372,7 @@
 					<div class="space-y-2.5">
 						{#if topBag.bag}
 							<a
-								href="/bags/{topBag.bag.id}"
+								href={resolve('/bags/[id]', { id: topBag.bag.id })}
 								class="flex items-center gap-3 rounded-[14px] bg-copper-lt px-3 py-2.5 transition-colors hover:bg-copper-lt/80"
 							>
 								<div

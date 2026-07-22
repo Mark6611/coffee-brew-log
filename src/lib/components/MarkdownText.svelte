@@ -1,31 +1,18 @@
 <script lang="ts">
-	import { marked } from 'marked';
-	import DOMPurify from 'dompurify';
+	import { renderNoteMarkdown } from '$lib/markdown';
 
 	let { text }: { text: string | null | undefined } = $props();
 
-	// gfm: tables / strikethrough / task lists, the modern default
-	// breaks: single newline → <br>, matches how people write notes
-	marked.setOptions({ gfm: true, breaks: true });
-
-	// marked passes raw HTML in the source straight through (it dropped its own
-	// `sanitize` option in v4), so its output is scrubbed before it reaches
-	// {@html}. This was once waved off as "the only author is the signed-in user"
-	// — no longer true: Settings can restore a hand-edited backup JSON, where
-	// `notes` is validated as a string but never scrubbed, and this component
-	// renders that field on the brew detail, bag detail and brew card. DOMPurify
-	// strips <script>, inline event handlers and javascript:/data: URLs while
-	// keeping the formatting tags real notes use. (The blog publish path is a
-	// second reader-isn't-author surface; it's gated off today — BLOG_ENABLED —
-	// and html-brew must sanitize on its own side when it ships.)
-	//
-	// ssr=false, so this only runs in the browser; the window guard is a
-	// failsafe so a non-DOM context can never fall through to unsanitized HTML.
-	const html = $derived(
-		text && typeof window !== 'undefined' ? DOMPurify.sanitize(marked.parse(text) as string) : ''
-	);
+	// Sanitized at render — see $lib/markdown.ts for the DOMPurify wiring and the
+	// threat model (notes can arrive from a restored backup), and markdown.test.ts
+	// for the XSS payload battery. The {@html} below only ever receives
+	// DOMPurify-scrubbed output.
+	const html = $derived(renderNoteMarkdown(text));
 </script>
 
+<!-- html is DOMPurify-scrubbed in renderNoteMarkdown(); the rule flags every
+     {@html} regardless of source, so it is disabled on the next line only. -->
+<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 <div class="markdown">{@html html}</div>
 
 <style>

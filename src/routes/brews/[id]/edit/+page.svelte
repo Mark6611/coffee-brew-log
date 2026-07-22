@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import { getBrewById, updateBrew, listBrews, listBags } from '$lib/db/repository';
 	import { BrewSchema, type Bag, type BagSnapshot, type Extraction } from '$lib/db/types';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
@@ -138,11 +139,14 @@
 		return Object.keys(current).filter((k) => current[k] !== original[k]);
 	});
 
-	const dirtyFields = $derived.by<string[]>(() => {
-		const fields = new Set<string>();
-		for (const key of dirtyKeys) fields.add(FIELD_LABELS[key] ?? key);
-		return Array.from(fields);
-	});
+	// Distinct labels, in first-seen order — two keys can share one label. Deduped
+	// with indexOf rather than a Set: this is a throwaway inside a $derived, so
+	// there's no reactive state to model, and the field list is a dozen entries.
+	const dirtyFields = $derived.by<string[]>(() =>
+		dirtyKeys
+			.map((key) => FIELD_LABELS[key] ?? key)
+			.filter((label, i, all) => all.indexOf(label) === i)
+	);
 
 	const dirty = $derived(dirtyFields.length > 0);
 
@@ -212,7 +216,10 @@
 				if (d.published !== undefined) published = d.published;
 				if (d.blogTitle !== undefined) blogTitle = d.blogTitle;
 				if (d.blogBody !== undefined) blogBody = d.blogBody;
-			} catch {}
+			} catch {
+				// A corrupt draft is not worth surfacing — the form keeps the values
+				// loaded from the brew itself, and the draft is dropped just below.
+			}
 			sessionStorage.removeItem(DRAFT_KEY_PREFIX + brewId);
 		}
 
@@ -275,9 +282,9 @@
 
 	function handleCreateNewBag(name: string) {
 		saveDraft();
-		const params = new URLSearchParams({ returnTo: `/brews/${brewId}/edit` });
-		if (name) params.set('name', name);
-		goto(`/bags/new?${params}`);
+		const returnTo = encodeURIComponent(`/brews/${brewId}/edit`);
+		const nameParam = name ? `&name=${encodeURIComponent(name)}` : '';
+		goto(resolve(`/bags/new?returnTo=${returnTo}${nameParam}`));
 	}
 
 	function handleCancel(e: MouseEvent) {
@@ -356,7 +363,7 @@
 
 			const brew = BrewSchema.parse(candidate);
 			await updateBrew(brew);
-			await goto(`/brews/${brewId}`);
+			await goto(resolve('/brews/[id]', { id: brewId }));
 		} catch (err) {
 			// A ZodError's .message is a JSON dump of all issues — show the first issue's
 			// human message instead. (ZodError is an Error, so check .issues first.)
@@ -386,14 +393,14 @@
 {:else if notFound}
 	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
 		<p class="text-muted">Brew not found.</p>
-		<a href="/brews" class="mt-3 inline-block text-copper underline">Back to brews</a>
+		<a href={resolve('/brews')} class="mt-3 inline-block text-copper underline">Back to brews</a>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 		<!-- Header row -->
 		<div class="flex items-center justify-between px-[18px] pe-14 pt-[10px] pb-[10px] sm:pe-[18px]">
 			<a
-				href="/brews/{brewId}"
+				href={resolve('/brews/[id]', { id: brewId })}
 				onclick={handleCancel}
 				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 			>

@@ -1,11 +1,12 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { page } from '$app/state';
+	import { resolve } from '$app/paths';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
 	import { bagConsumption, formatRoastedAt } from '$lib/bags/compute';
 	import { fly, slide } from 'svelte/transition';
-		import AppHeader from '$lib/components/AppHeader.svelte';
+	import AppHeader from '$lib/components/AppHeader.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import OriginFlags from '$lib/components/OriginFlags.svelte';
@@ -58,7 +59,7 @@
 <div class="mx-auto max-w-2xl pb-24">
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
 		<a
-			href="/"
+			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
 		>
 			<svg
@@ -84,13 +85,13 @@
 		<div class="px-[22px] pb-3">
 			{#if showArchived}
 				<a
-					href="/bags"
+					href={resolve('/bags')}
 					class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 					>← Active</a
 				>
 			{:else}
 				<a
-					href="/bags?show=archived"
+					href={resolve('/bags?show=archived')}
 					class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 					>Show archived ({archivedCount}) →</a
 				>
@@ -133,7 +134,7 @@
 				<p class="mt-2 mb-7 max-w-[280px] font-display text-[15px] leading-[1.5] text-muted italic">
 					Add a bag once and reach for it across all the brews you make from it.
 				</p>
-				<Button size="large" variant="prominent" href="/bags/new">
+				<Button size="large" variant="prominent" href={resolve('/bags/new')}>
 					<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 						<path
 							d="M9 3v12M3 9h12"
@@ -159,7 +160,7 @@
 						class="rounded-[18px] border border-hairline bg-surface px-[18px] pt-[16px] pb-[18px] transition-transform duration-[180ms] ease-out has-[a:active]:scale-[0.985]"
 					>
 						<a
-							href="/bags/{bag.id}"
+							href={resolve('/bags/[id]', { id: bag.id })}
 							class="-m-2 mb-2 flex items-start justify-between gap-3 rounded-lg p-2 transition-colors hover:bg-paper/40"
 						>
 							{#if bag.photo}
@@ -187,7 +188,7 @@
 
 						<div class="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-muted">
 							{#if bag.origin}
-																<span>
+								<span>
 									<OriginFlags origin={bag.origin} />{bag.origin}
 								</span>
 							{/if}
@@ -247,7 +248,11 @@
 						{/if}
 
 						<div class="mt-3 flex items-center justify-end gap-4">
-							<Button size="regular" variant="plain" href="/bags/{bag.id}/edit">Edit</Button>
+							<Button
+								size="regular"
+								variant="plain"
+								href={resolve('/bags/[id]/edit', { id: bag.id })}>Edit</Button
+							>
 							<Button size="regular" variant="destructive" onclick={() => handleDelete(bag)}>
 								Delete
 							</Button>
@@ -263,7 +268,7 @@
 			size="large"
 			iconOnly
 			variant="prominent"
-			href="/bags/new"
+			href={resolve('/bags/new')}
 			label="New bag"
 			class="fixed right-6 z-40 h-[60px] w-[60px]"
 			style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"

@@ -12,6 +12,11 @@
 		<link rel="icon" href="/icon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/icon-180.png" />
 		<link rel="manifest" href="/manifest.webmanifest" />
+		<!-- Sets data-theme before first paint to avoid a light/dark flash. Inline
+		     on purpose (an external file would fetch after paint). Its exact bytes
+		     are hashed into the CSP script-src in svelte.config.js — edit this and
+		     you must update that hash, or the script is blocked and the flash
+		     returns. Keep it dependency-free and self-contained. -->
 		<script>
 			(() => {
 				try {
