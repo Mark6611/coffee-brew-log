@@ -12,6 +12,12 @@ const gitignorePath = path.resolve(import.meta.dirname, '.gitignore');
 
 export default defineConfig(
 	includeIgnoreFile(gitignorePath),
+	// The Capacitor web bundle. It IS git-ignored — but via ios/.gitignore, a
+	// NESTED gitignore, and includeIgnoreFile() above only reads the ROOT
+	// .gitignore. So without this, every `cap sync` repopulates ios/App/App/public
+	// with minified chunks and `npm run lint` drowns in thousands of errors from
+	// generated code (a fresh symptom after any iOS ship).
+	{ ignores: ['ios/App/App/public/**'] },
 	js.configs.recommended,
 	ts.configs.recommended,
 	svelte.configs.recommended,
