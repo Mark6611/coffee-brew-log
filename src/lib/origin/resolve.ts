@@ -174,9 +174,7 @@ export function resolveOrigins(text: string | null | undefined): ResolvedOrigin[
 		const r = lookupTokens(text);
 		return r ? [r] : [];
 	}
-	const resolved = parts
-		.map(resolvePart)
-		.filter((p): p is ResolvedPart => p != null);
+	const resolved = parts.map(resolvePart).filter((p): p is ResolvedPart => p != null);
 	const countries = dedupe(resolved.filter((p) => p.kind === 'country').map((p) => p.origin));
 	if (countries.length) return countries;
 	// No country named outright — fall back to the distinct regions' countries so

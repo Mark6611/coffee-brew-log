@@ -69,10 +69,7 @@ describe('calibrateGrind', () => {
 	});
 
 	it('counts a high rating when no extraction was logged (basis: rated)', () => {
-		const cal = calibrateGrind(bag, [
-			shot('2.8.0', { rating: 5 }),
-			shot('2.8.0', { rating: 4.5 })
-		]);
+		const cal = calibrateGrind(bag, [shot('2.8.0', { rating: 5 }), shot('2.8.0', { rating: 4.5 })]);
 		expect(cal!.basis).toBe('rated');
 		expect(cal!.grind).toBe('2.8.0');
 	});

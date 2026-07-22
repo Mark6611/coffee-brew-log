@@ -5,7 +5,7 @@
 	import { getBagById, listBags, listBrews, archiveBag, updateBag } from '$lib/db/repository';
 	import { bagConsumption, daysSinceRoast, freshnessTone } from '$lib/bags/compute';
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
-		import { resolveGrindSuggestion } from '$lib/brews/grind';
+	import { resolveGrindSuggestion } from '$lib/brews/grind';
 	import { espressoShotsFor, readyToDial, ROAST_TARGETS } from '$lib/brews/dialin';
 	import { calibrateGrind, type GrindCalibration } from '$lib/brews/calibrate';
 	import { brewCompass } from '$lib/brews/compass';
@@ -308,7 +308,7 @@
 				{/if}
 				{#if bag.roaster && bag.origin}<span>·</span>{/if}
 				{#if bag.origin}
-										<span>
+					<span>
 						<OriginFlags origin={bag.origin} />{bag.origin}
 					</span>
 				{/if}
@@ -494,9 +494,7 @@
 
 					{#if bag.dialedRecipe}
 						{@const r = bag.dialedRecipe}
-						<div
-							class="border-success/25 bg-success/[0.06] mt-3 rounded-2xl border p-4"
-						>
+						<div class="mt-3 rounded-2xl border border-success/25 bg-success/[0.06] p-4">
 							<div class="flex items-baseline justify-between">
 								<span
 									class="font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase"

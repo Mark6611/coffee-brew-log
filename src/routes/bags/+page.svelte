@@ -6,7 +6,7 @@
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
 	import { bagConsumption, formatRoastedAt } from '$lib/bags/compute';
 	import { fly, slide } from 'svelte/transition';
-		import AppHeader from '$lib/components/AppHeader.svelte';
+	import AppHeader from '$lib/components/AppHeader.svelte';
 	import Badge from '$lib/components/Badge.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import OriginFlags from '$lib/components/OriginFlags.svelte';
@@ -188,7 +188,7 @@
 
 						<div class="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-muted">
 							{#if bag.origin}
-																<span>
+								<span>
 									<OriginFlags origin={bag.origin} />{bag.origin}
 								</span>
 							{/if}

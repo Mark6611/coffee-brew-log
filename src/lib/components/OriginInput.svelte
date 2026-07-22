@@ -97,7 +97,10 @@
 	{/each}
 </div>
 
-<p class="mt-1.5 text-[12px] {resolved.length ? 'text-copper-dk' : 'text-faint'}" aria-live="polite">
+<p
+	class="mt-1.5 text-[12px] {resolved.length ? 'text-copper-dk' : 'text-faint'}"
+	aria-live="polite"
+>
 	{#if blend}
 		Blend of <strong class="font-medium"
 			>{resolved.length ? resolved.map((r) => r.country).join(', ') : 'multiple origins'}</strong

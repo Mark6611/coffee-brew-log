@@ -60,9 +60,7 @@
 	// (any bag) so you edit the deltas instead of starting blank. Only offered on
 	// a pristine form so it never clobbers input you've already begun.
 	const mostRecentBrew = $derived(
-		allBrews.length
-			? [...allBrews].sort((a, b) => b.brewedAt.localeCompare(a.brewedAt))[0]
-			: null
+		allBrews.length ? [...allBrews].sort((a, b) => b.brewedAt.localeCompare(a.brewedAt))[0] : null
 	);
 	// Dose is deliberately excluded: espresso auto-defaults it to 18g on mount,
 	// so a fresh espresso form is still "pristine". The other fields only become
@@ -531,7 +529,9 @@
 				onclick={repeatLast}
 				class="press flex w-full items-center gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 text-left hover:border-copper/50"
 			>
-				<span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-copper-lt text-copper">
+				<span
+					class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-copper-lt text-copper"
+				>
 					<svg
 						width="16"
 						height="16"

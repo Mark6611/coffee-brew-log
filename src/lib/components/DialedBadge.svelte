@@ -1,6 +1,6 @@
 <!-- Olive tonal pill marking a bag with a settled (user-declared) espresso recipe. -->
 <span
-	class="bg-success/15 inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-[3px] font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
+	class="inline-flex shrink-0 items-center gap-1 rounded-full bg-success/15 px-2 py-[3px] font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
 	style="color: var(--color-success)"
 >
 	<svg

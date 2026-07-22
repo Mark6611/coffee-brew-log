@@ -137,7 +137,7 @@
 	);
 </script>
 
-{#if href != null && href !== ''}
+{#if href != null}
 	<!-- `disabled` is not a thing on an anchor: the :disabled selector can never
 	     match, so the opacity/pointer-events utilities silently do nothing and a
 	     "disabled" link stays fully clickable. Reproduce the state explicitly. -->
