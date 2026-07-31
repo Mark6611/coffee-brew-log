@@ -235,6 +235,34 @@
 		transform: none;
 	}
 
+	/* Expand the TOUCH region to Apple's 44pt minimum WITHOUT changing the
+	   painted box. Used on controls that are genuinely under 44 and whose box
+	   cannot grow without breaking the row they sit in (chip strips, segmented
+	   tracks, dense card headers). The pseudo-element is invisible; it only
+	   enlarges what hit-testing finds.
+	   Deliberately in @layer components, not a utility: `position: relative`
+	   here must LOSE to the `.fixed` utility, or the two FABs would drop out of
+	   fixed positioning. Component layer sorts before utilities, so it does. */
+	.hit-44 {
+		position: relative;
+	}
+	.hit-44::after {
+		content: '';
+		position: absolute;
+		top: 50%;
+		right: 0;
+		left: 0;
+		height: 44px;
+		transform: translateY(-50%);
+	}
+	/* Icon-only circles need both axes expanded, not just the vertical. */
+	.hit-44-sq::after {
+		right: auto;
+		left: 50%;
+		width: 44px;
+		transform: translate(-50%, -50%);
+	}
+
 	/* ---------------------------------------------------------------------
 	   Liquid Glass — modelled on the Apple iOS 27 UI Kit's material styles.
 

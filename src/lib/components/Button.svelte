@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { FOCUS_RING, FOCUS_RING_SCRIM } from './focus';
 	import type { Snippet } from 'svelte';
 	import type { ResolvedPathname } from '$app/types';
 
@@ -64,9 +65,14 @@
 		[key: string]: unknown;
 	} = $props();
 
+
 	// Heights track the kit's ladder (Large 50, Medium 44, Regular 36, Small 30)
-	// nudged to the app's existing rhythm. Every size clears the 44pt touch
-	// target either by its own height or by the negative margin callers add.
+	// nudged to the app's existing rhythm.
+	// NOTE: large (52) and medium (44) clear the 44pt touch target on their own.
+	// regular (36) and small (28) DO NOT — an earlier version of this comment
+	// claimed every size did, which was simply false. Those two get .hit-44,
+	// which expands the TOUCH region with a pseudo-element without changing the
+	// painted box (growing the box would break the rows they sit in).
 	const SIZES: Record<Size, { box: string; text: string; pad: string; gap: string }> = {
 		large: { box: 'h-[52px]', text: 'text-[15px]', pad: 'px-5', gap: 'gap-2.5' },
 		medium: { box: 'h-11', text: 'text-[14px]', pad: 'px-4', gap: 'gap-2' },
@@ -118,10 +124,17 @@
 	);
 	// Small controls read better with the deeper compress (.press-sm).
 	const physics = $derived(size === 'small' || iconOnly ? 'press-sm' : 'press');
+	// Only the under-44 sizes need the expanded touch region.
+	const hit = $derived(size === 'regular' || size === 'small' ? (iconOnly ? 'hit-44-sq' : 'hit-44') : '');
+	// A scrim button sits on a user photo, where copper can't be trusted to hold
+	// contrast; everything else takes the copper ring.
+	const focus = $derived(variant === 'glassScrim' ? FOCUS_RING_SCRIM : FOCUS_RING);
 
 	const classes = $derived(
 		[
 			physics,
+			hit,
+			focus,
 			'inline-flex shrink-0 items-center justify-center font-medium whitespace-nowrap',
 			'disabled:pointer-events-none disabled:opacity-50',
 			s.text,

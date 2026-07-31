@@ -119,7 +119,7 @@
 			{#each rangeOptions as opt (opt.value)}
 				<a
 					href={resolve(`/stats?range=${opt.value}`)}
-					class="press-sm inline-flex h-9 items-center rounded-full px-3 font-mono text-[10px] font-medium tracking-[0.1em] {range ===
+					class="press-sm hit-44 inline-flex h-9 items-center rounded-full px-3 font-mono text-[10px] font-medium tracking-[0.1em] {range ===
 					opt.value
 						? 'bg-ink text-paper'
 						: 'border border-hairline text-muted hover:text-ink'}">{opt.label}</a

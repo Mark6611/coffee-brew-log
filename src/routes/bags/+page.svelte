@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
+	import { motion } from '$lib/motion.svelte';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import type { Bag, Brew } from '$lib/db/types';
@@ -155,8 +156,8 @@
 				{#each visibleBags as bag, i (bag.id)}
 					{@const c = bagConsumption(bag, brews)}
 					<div
-						in:fly={{ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 }}
-						out:slide={{ duration: 220 }}
+						in:fly={motion({ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 })}
+						out:slide={motion({ duration: 220 })}
 						class="rounded-[18px] border border-hairline bg-surface px-[18px] pt-[16px] pb-[18px] transition-transform duration-[180ms] ease-out has-[a:active]:scale-[0.985]"
 					>
 						<a

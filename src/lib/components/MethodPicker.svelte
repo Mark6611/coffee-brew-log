@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { FOCUS_RING_INSET } from './focus';
 	type Method = 'espresso' | 'pour-over';
 	let { value = $bindable<Method>('espresso') }: { value?: Method } = $props();
 </script>
@@ -19,7 +20,7 @@
 		type="button"
 		onclick={() => (value = 'espresso')}
 		aria-pressed={value === 'espresso'}
-		class="relative z-10 h-full flex-1 text-[14.5px] transition-colors duration-200 {value ===
+		class="hit-44 {FOCUS_RING_INSET} relative z-10 h-full flex-1 text-[14.5px] transition-colors duration-200 {value ===
 		'espresso'
 			? 'font-semibold text-ink'
 			: 'font-medium text-muted'}">Espresso</button

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import { resolve } from '$app/paths';
+	import { motion, rm } from '$lib/motion.svelte';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { listBrews, listBags, toggleFavorite } from '$lib/db/repository';
 	import { groupBrewsByDay } from '$lib/brews/compute';
@@ -33,7 +34,9 @@
 		// The input mounts in normal flow near the top of the document, NOT inside the
 		// pinned header — so tapping the icon while scrolled down opens a field offscreen.
 		// Bring it into view and focus it.
-		window.scrollTo({ top: 0, behavior: 'smooth' });
+		// An explicit 'smooth' overrides scroll-behavior:auto!important from the
+		// reduced-motion block, so it has to be chosen in JS too.
+		window.scrollTo({ top: 0, behavior: rm() ? 'auto' : 'smooth' });
 		await tick();
 		searchInputEl?.focus();
 	}
@@ -245,8 +248,8 @@
 				<div class="mb-5 flex flex-col gap-2.5">
 					{#each group.brews as brew, i (brew.id)}
 						<div
-							in:fly={{ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 }}
-							out:slide={{ duration: 220 }}
+							in:fly={motion({ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 })}
+							out:slide={motion({ duration: 220 })}
 						>
 							<BrewCard {brew} bag={bagFor(brew)} ontogglefavorite={handleFavorite} />
 						</div>

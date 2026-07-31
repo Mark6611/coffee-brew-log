@@ -92,7 +92,7 @@
 						e.stopPropagation();
 						ontogglefavorite?.(brew.id);
 					}}
-					class="press-sm -m-[7px] grid h-9 w-9 place-items-center rounded-full {brew.isFavorite
+					class="press-sm hit-44-sq -m-[7px] grid h-9 w-9 place-items-center rounded-full {brew.isFavorite
 						? 'text-copper hover:bg-copper-lt'
 						: 'text-muted hover:bg-hairline'}"
 					aria-label={brew.isFavorite ? 'Remove favorite' : 'Mark favorite'}
@@ -128,7 +128,7 @@
 			<button
 				type="button"
 				onclick={brewAgain}
-				class="press-sm -m-[7px] grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-copper-lt hover:text-copper"
+				class="press-sm hit-44-sq -m-[7px] grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-copper-lt hover:text-copper"
 				aria-label="Brew this again"
 				title="Brew again"
 			>

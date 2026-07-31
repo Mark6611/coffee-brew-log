@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
+	import { motion } from '$lib/motion.svelte';
 	import {
 		resolveOrigins,
 		isBlend,
@@ -55,7 +56,7 @@
 	{#if resolved.length}
 		<div
 			class="flex h-full items-center gap-0.5 border-r border-hairline px-3"
-			transition:fade={{ duration: 180 }}
+			transition:fade={motion({ duration: 180 })}
 		>
 			{#each resolved as f (f.code)}<OriginFlag code={f.code} country={f.country} />{/each}
 		</div>
@@ -69,12 +70,12 @@
 	{#if blend}
 		<span
 			class="mr-2.5 rounded-full bg-copper-lt px-2 py-[3px] font-mono text-[10px] font-medium tracking-[0.12em] text-copper-dk uppercase"
-			transition:fade={{ duration: 180 }}>Blend</span
+			transition:fade={motion({ duration: 180 })}>Blend</span
 		>
 	{:else if resolved.length === 1}
 		<span
 			class="pr-3.5 font-mono text-[12px] font-medium tracking-[0.14em] text-copper"
-			transition:fade={{ duration: 180 }}>{resolved[0].code}</span
+			transition:fade={motion({ duration: 180 })}>{resolved[0].code}</span
 		>
 	{/if}
 </div>

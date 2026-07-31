@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { FOCUS_RING_INK } from './focus';
 	import type { RoastLevel } from '$lib/db/types';
 	import { ROAST_LEVELS } from '$lib/bags/roast';
 
@@ -21,7 +22,7 @@
 			type="button"
 			onclick={() => toggle(lvl.key)}
 			aria-pressed={active}
-			class="h-[38px] rounded-full px-[14px] font-sans text-[13.5px] transition-all duration-150"
+			class="hit-44 {FOCUS_RING_INK} h-[38px] rounded-full px-[14px] font-sans text-[13.5px] transition-all duration-150"
 			style="background:{lvl.bg}; color:{lvl.fg}; font-weight:{active
 				? 600
 				: 500}; {active

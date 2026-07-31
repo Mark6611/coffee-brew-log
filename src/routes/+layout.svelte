@@ -8,6 +8,7 @@
 
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { motion } from '$lib/motion.svelte';
 	import { page } from '$app/state';
 	import { hideSplash, setupNativeChrome, isNative } from '$lib/native';
 	import { runCloudSync } from '$lib/cloudSync';
@@ -126,7 +127,7 @@
 <SyncBanner />
 
 {#key page.url.pathname}
-	<div in:fade={{ duration: 120 }}>
+	<div in:fade={motion({ duration: 120 })}>
 		{@render children()}
 	</div>
 {/key}
