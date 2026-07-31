@@ -266,7 +266,7 @@
 		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
 				href={resolve('/bags')}
-				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -285,7 +285,8 @@
 			<span aria-hidden="true"></span>
 			<a
 				href={resolve('/bags/[id]/edit', { id: bag.id })}
-				class="h-9 px-2 text-[14px] text-muted transition-colors hover:text-ink">Edit</a
+				class="h-9 px-2 text-[calc(var(--dt-base)*14/17)] text-muted transition-colors hover:text-ink"
+				>Edit</a
 			>
 		</div>
 
@@ -299,12 +300,14 @@
 				>
 			{/if}
 			<h1
-				class="mt-1 flex flex-wrap items-center gap-2.5 font-display text-[30px] leading-[1.1] font-medium tracking-[-0.015em] text-ink"
+				class="mt-1 flex flex-wrap items-center gap-2.5 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.1] font-medium tracking-[-0.015em] text-ink"
 			>
 				{bag.name}
 				{#if bag.dialedRecipe}<DialedBadge />{/if}
 			</h1>
-			<div class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted">
+			<div
+				class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[calc(var(--dt-base)*13/17)] text-muted"
+			>
 				{#if bag.roaster}
 					<span>{bag.roaster}</span>
 				{/if}
@@ -330,44 +333,62 @@
 			<!-- Key facts card -->
 			<div class="mt-5 grid grid-cols-3 gap-3 rounded-2xl border border-hairline bg-surface p-4">
 				<div>
-					<div class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase">
+					<div
+						class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+					>
 						ROASTED
 					</div>
 					{#if roastedDays != null}
 						<div
-							class="mt-1 font-display text-[22px] font-medium tracking-[-0.01em]"
+							class="mt-1 font-display text-[calc(var(--dt-base)*22/17)] font-medium tracking-[-0.01em]"
 							style="color: {roastedTone}"
 						>
 							{roastedDays}d
 						</div>
-						<div class="mt-0.5 font-mono text-[10.5px] tracking-[0.04em] text-muted">
+						<div
+							class="mt-0.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted"
+						>
 							{roastedFmt}
 						</div>
 					{:else}
-						<div class="mt-1 font-display text-[22px] font-medium tracking-[-0.01em] text-ink">
+						<div
+							class="mt-1 font-display text-[calc(var(--dt-base)*22/17)] font-medium tracking-[-0.01em] text-ink"
+						>
 							—
 						</div>
 					{/if}
 				</div>
 				<div>
-					<div class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase">
+					<div
+						class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+					>
 						BREWS
 					</div>
-					<div class="mt-1 font-display text-[22px] font-medium tracking-[-0.01em] text-ink">
+					<div
+						class="mt-1 font-display text-[calc(var(--dt-base)*22/17)] font-medium tracking-[-0.01em] text-ink"
+					>
 						{brews.length}
 					</div>
-					<div class="mt-0.5 font-mono text-[10.5px] tracking-[0.04em] text-muted">this bag</div>
+					<div
+						class="mt-0.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted"
+					>
+						this bag
+					</div>
 				</div>
 				<div>
-					<div class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase">
+					<div
+						class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+					>
 						AVG RATIO
 					</div>
 					<div
-						class="mt-1 font-display font-mono text-[22px] font-medium tracking-[-0.01em] text-ink"
+						class="mt-1 font-display font-mono text-[calc(var(--dt-base)*22/17)] font-medium tracking-[-0.01em] text-ink"
 					>
 						{avgRatioStr ?? '—'}
 					</div>
-					<div class="mt-0.5 font-mono text-[10.5px] tracking-[0.04em] text-muted">
+					<div
+						class="mt-0.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted"
+					>
 						{dominantMethod ?? '—'}
 					</div>
 				</div>
@@ -377,10 +398,12 @@
 			{#if bag.weightGrams != null && consumption != null}
 				<div class="mt-5">
 					<div class="flex items-center justify-between">
-						<div class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase">
+						<div
+							class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+						>
 							REMAINING
 						</div>
-						<div class="font-mono text-[12px]">
+						<div class="font-mono text-[calc(var(--dt-base)*12/17)]">
 							<span class="text-copper">{Math.max(0, consumption.remaining ?? 0).toFixed(0)}g</span>
 							<span class="text-muted"> / {bag.weightGrams}g</span>
 						</div>
@@ -392,7 +415,7 @@
 						></div>
 					</div>
 					{#if consumption.percentUsed != null && consumption.percentUsed > 100}
-						<div class="mt-1.5 font-mono text-[11px] text-warning-dk">
+						<div class="mt-1.5 font-mono text-[calc(var(--dt-base)*11/17)] text-warning-dk">
 							{(consumption.used - bag.weightGrams).toFixed(1)}g over recorded weight
 						</div>
 					{/if}
@@ -402,11 +425,13 @@
 			<!-- Cost (only when a price is logged for this bag) -->
 			{#if perGram != null}
 				<div class="mt-3 flex items-center justify-between">
-					<div class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase">
+					<div
+						class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+					>
 						COST{#if costPerCup != null}
 							· {money(costPerCup, 1)}/cup{/if}
 					</div>
-					<div class="font-mono text-[12px]">
+					<div class="font-mono text-[calc(var(--dt-base)*12/17)]">
 						{#if remainingValue != null}
 							<span class="text-copper">{money(remainingValue)}</span>
 							<span class="text-muted"> left</span>
@@ -423,7 +448,7 @@
 				<div class="mt-5">
 					<Eyebrow class="mb-2">ROAST LEVEL</Eyebrow>
 					<span
-						class="inline-flex h-[34px] items-center rounded-full px-[14px] font-sans text-[13px] font-medium"
+						class="inline-flex h-[34px] items-center rounded-full px-[14px] font-sans text-[calc(var(--dt-base)*13/17)] font-medium"
 						style="background:{rm.bg}; color:{rm.fg}">{rm.label}</span
 					>
 				</div>
@@ -436,11 +461,14 @@
 						{#each [{ label: 'Pour-over', s: grindPourOver }, { label: 'Espresso', s: grindEspresso }] as row (row.label)}
 							{#if row.s}
 								<div class="flex items-center justify-between gap-3 px-3.5 py-2.5">
-									<span class="text-[13px] text-ink">{row.label}</span>
+									<span class="text-[calc(var(--dt-base)*13/17)] text-ink">{row.label}</span>
 									<span class="flex items-center gap-2">
-										<span class="font-mono text-[13px] font-medium text-copper">{row.s.value}</span>
 										<span
-											class="font-mono text-[9.5px] font-medium tracking-[0.1em] text-muted uppercase"
+											class="font-mono text-[calc(var(--dt-base)*13/17)] font-medium text-copper"
+											>{row.s.value}</span
+										>
+										<span
+											class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.1em] text-muted uppercase"
 											>{provenance(
 												row.s.kind,
 												row.s.kind === 'history' ? row.s.brews : undefined
@@ -461,11 +489,12 @@
 						<Eyebrow>DIAL-IN</Eyebrow>
 						{#if bag.dialedRecipe}
 							<span
-								class="font-mono text-[10px] font-medium tracking-[0.12em] uppercase"
+								class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] uppercase"
 								style="color: var(--color-success)">Settled at shot {settledAtShot}</span
 							>
 						{:else if shots.length > 0}
-							<span class="font-mono text-[10px] font-medium tracking-[0.12em] text-muted uppercase"
+							<span
+								class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-muted uppercase"
 								>Shot {shots.length} · converging</span
 							>
 						{/if}
@@ -475,10 +504,10 @@
 						<div class="rounded-2xl border border-hairline bg-surface p-4">
 							<div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
 								<span
-									class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 									>{bag.roastLevel} roast target · 18g dose</span
 								>
-								<span class="font-mono text-[11.5px] font-medium text-copper">
+								<span class="font-mono text-[calc(var(--dt-base)*11.5/17)] font-medium text-copper">
 									{roastTarget.ratio} → {roastTarget.yieldG}
 								</span>
 							</div>
@@ -486,7 +515,9 @@
 								<TargetWindowBar window={roastTarget.time} shots={windowShots} />
 							</div>
 							{#if shots.length === 0}
-								<p class="mt-2.5 font-display text-[13px] leading-[1.45] text-muted italic">
+								<p
+									class="mt-2.5 font-display text-[calc(var(--dt-base)*13/17)] leading-[1.45] text-muted italic"
+								>
 									No shots yet. The window is where {bag.roastLevel} roasts usually land — your dots will
 									appear here as you pull.
 								</p>
@@ -499,28 +530,30 @@
 						<div class="mt-3 rounded-2xl border border-success/25 bg-success/[0.06] p-4">
 							<div class="flex items-baseline justify-between">
 								<span
-									class="font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase"
+									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] uppercase"
 									style="color: var(--color-success)">Settled recipe</span
 								>
 								<button
 									type="button"
 									onclick={handleReopen}
-									class="font-mono text-[9.5px] font-medium tracking-[0.12em] text-muted uppercase transition-colors hover:text-ink"
+									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.12em] text-muted uppercase transition-colors hover:text-ink"
 									>Re-open</button
 								>
 							</div>
 							<div class="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
 								<span
-									class="font-mono text-[24px] font-medium tracking-[-0.01em]"
+									class="font-mono text-[calc(var(--dt-base)*24/17)] font-medium tracking-[-0.01em]"
 									style="color: var(--color-success)">{r.grind}</span
 								>
-								<span class="font-mono text-[11.5px] tracking-[0.04em] text-muted uppercase">
+								<span
+									class="font-mono text-[calc(var(--dt-base)*11.5/17)] tracking-[0.04em] text-muted uppercase"
+								>
 									Dose {r.doseG}g · Yield {r.yieldG}g · Time ~{r.timeS}s{r.tempC != null
 										? ` · Temp ${r.tempC}°C`
 										: ''}
 								</span>
 							</div>
-							<p class="mt-1.5 font-display text-[12.5px] text-muted italic">
+							<p class="mt-1.5 font-display text-[calc(var(--dt-base)*12.5/17)] text-muted italic">
 								Declared after two consistent shots.
 							</p>
 						</div>
@@ -536,7 +569,8 @@
 										? 'border border-hairline bg-surface'
 										: 'hover:bg-paper/60'}"
 								>
-									<span class="w-4 shrink-0 text-right font-mono text-[11px] text-muted"
+									<span
+										class="w-4 shrink-0 text-right font-mono text-[calc(var(--dt-base)*11/17)] text-muted"
 										>{i + 1}</span
 									>
 									<span
@@ -544,16 +578,18 @@
 										style="background: {extractionTone(s.extraction)}"
 										aria-hidden="true"
 									></span>
-									<span class="shrink-0 font-mono text-[14px] font-medium text-ink"
+									<span
+										class="shrink-0 font-mono text-[calc(var(--dt-base)*14/17)] font-medium text-ink"
 										>{s.grindSetting}</span
 									>
-									<span class="shrink-0 font-mono text-[12px] text-muted"
+									<span class="shrink-0 font-mono text-[calc(var(--dt-base)*12/17)] text-muted"
 										>{s.yieldGrams}g · {s.brewTimeSeconds}s</span
 									>
-									<span class="min-w-0 flex-1 truncate text-[12px] text-muted">{s.notes ?? ''}</span
+									<span class="min-w-0 flex-1 truncate text-[calc(var(--dt-base)*12/17)] text-muted"
+										>{s.notes ?? ''}</span
 									>
 									{#if s.rating != null}
-										<span class="shrink-0 font-mono text-[12px] text-ink"
+										<span class="shrink-0 font-mono text-[calc(var(--dt-base)*12/17)] text-ink"
 											>{s.rating.toFixed(1)}</span
 										>
 									{/if}
@@ -562,8 +598,13 @@
 						</div>
 
 						{#if grindPath.length >= 2}
-							<div class="mt-2 px-2.5 font-mono text-[11px] tracking-[0.04em] text-muted">
-								<span class="text-[9.5px] font-medium tracking-[0.14em] uppercase">Grind path</span>
+							<div
+								class="mt-2 px-2.5 font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
+							>
+								<span
+									class="text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] uppercase"
+									>Grind path</span
+								>
 								{#each grindPath as g, i (i)}
 									{#if i > 0}<span class="text-muted"> → </span>{/if}
 									<span class={i === grindPath.length - 1 ? 'font-semibold text-copper' : ''}
@@ -578,20 +619,21 @@
 						<div class="mt-3.5 rounded-[14px] border border-copper/30 bg-copper/[0.06] px-3.5 py-3">
 							<div class="flex items-center justify-between">
 								<span
-									class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-copper-dk uppercase"
+									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-copper-dk uppercase"
 									>Grind sweet spot</span
 								>
 								<span
-									class="font-mono text-[9.5px] font-medium tracking-[0.12em] uppercase"
+									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.12em] uppercase"
 									style="color: {confTone(calibration.confidence)}"
 									>{calibration.confidence} confidence</span
 								>
 							</div>
 							<div class="mt-1 flex items-baseline gap-2">
-								<span class="font-mono text-[22px] font-semibold tracking-[-0.01em] text-copper"
+								<span
+									class="font-mono text-[calc(var(--dt-base)*22/17)] font-semibold tracking-[-0.01em] text-copper"
 									>{calibration.grind}</span
 								>
-								<span class="text-[12px] text-muted"
+								<span class="text-[calc(var(--dt-base)*12/17)] text-muted"
 									>from {calibration.sampleCount} good shot{calibration.sampleCount === 1
 										? ''
 										: 's'}{calibration.totalShots > calibration.sampleCount
@@ -599,7 +641,7 @@
 										: ''}</span
 								>
 							</div>
-							<p class="mt-1 text-[11.5px] leading-[1.45] text-muted">
+							<p class="mt-1 text-[calc(var(--dt-base)*11.5/17)] leading-[1.45] text-muted">
 								{calibrationBlurb(calibration)}
 							</p>
 						</div>
@@ -614,7 +656,7 @@
 								<button
 									type="button"
 									onclick={handleMarkDialed}
-									class="press inline-flex h-9 items-center rounded-full border px-3.5 text-[13px] font-medium {dialReady
+									class="press inline-flex h-9 items-center rounded-full border px-3.5 text-[calc(var(--dt-base)*13/17)] font-medium {dialReady
 										? 'border-copper bg-copper-lt text-copper'
 										: 'border-hairline text-muted hover:text-ink'}">Mark dialed</button
 								>
@@ -633,7 +675,7 @@
 				<div class="mt-5">
 					<Eyebrow class="mb-2">NOTES</Eyebrow>
 					<div
-						class="rounded-2xl border border-hairline bg-paper px-4 py-3.5 font-display text-[15px] leading-[1.5] text-ink-70 italic"
+						class="rounded-2xl border border-hairline bg-paper px-4 py-3.5 font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-ink-70 italic"
 					>
 						<MarkdownText text={bag.notes} />
 					</div>
@@ -647,7 +689,7 @@
 						<Eyebrow>BREWS · {brews.length}</Eyebrow>
 						<a
 							href={resolve('/brews')}
-							class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+							class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 							>See all →</a
 						>
 					</div>
@@ -656,16 +698,16 @@
 							<div class="flex items-center justify-between gap-3 bg-surface px-3.5 py-3">
 								<div class="flex items-center gap-3">
 									<span
-										class="w-[62px] shrink-0 font-mono text-[17px] font-medium tracking-[-0.01em] text-copper"
+										class="w-[62px] shrink-0 font-mono text-[calc(var(--dt-base)*17/17)] font-medium tracking-[-0.01em] text-copper"
 										>{formatRatio(brew)}</span
 									>
 									<div>
 										<div
-											class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+											class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 										>
 											{formatTimeAgo(brew.brewedAt)}
 										</div>
-										<div class="text-[13px] text-ink">
+										<div class="text-[calc(var(--dt-base)*13/17)] text-ink">
 											{brew.method} · {formatBrewTime(brew)}
 										</div>
 									</div>
@@ -698,7 +740,7 @@
 					onclick={handleArchive}
 					class="{bag.archived
 						? 'bg-success/10 text-success hover:bg-success/15'
-						: 'bg-danger/8 text-danger hover:bg-danger/14'} press w-full rounded-full py-3 text-[14px] font-medium"
+						: 'bg-danger/8 text-danger hover:bg-danger/14'} press w-full rounded-full py-3 text-[calc(var(--dt-base)*14/17)] font-medium"
 					>{bag.archived ? 'Unarchive this bag' : 'Archive this bag'}</button
 				>
 			</div>

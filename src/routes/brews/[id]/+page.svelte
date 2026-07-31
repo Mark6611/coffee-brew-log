@@ -161,7 +161,7 @@
 		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
 				href={resolve('/brews')}
-				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -179,7 +179,8 @@
 			</a>
 			<a
 				href={resolve('/brews/[id]/edit', { id: brew.id })}
-				class="h-9 px-2 text-[14px] text-muted transition-colors hover:text-ink">Edit</a
+				class="h-9 px-2 text-[calc(var(--dt-base)*14/17)] text-muted transition-colors hover:text-ink"
+				>Edit</a
 			>
 		</div>
 
@@ -193,7 +194,7 @@
 					<Badge>{brew.method}</Badge>
 					{#if brew.isFavorite}
 						<span
-							class="inline-flex h-[22px] items-center gap-1 rounded-full bg-success/10 px-2 font-mono text-[10.5px] font-medium tracking-[0.12em] text-success uppercase"
+							class="inline-flex h-[22px] items-center gap-1 rounded-full bg-success/10 px-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.12em] text-success uppercase"
 						>
 							<svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
 								<polygon
@@ -209,7 +210,7 @@
 				</div>
 
 				<h1
-					class="mt-3 font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+					class="mt-3 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 				>
 					{bag?.name ?? brew.coffeeName ?? 'Untitled brew'}
 				</h1>
@@ -217,7 +218,7 @@
 				{#if bag}
 					<a
 						href={resolve('/bags/[id]', { id: bag.id })}
-						class="mt-1.5 inline-flex items-center gap-1 text-[13px] text-copper-dk transition-colors hover:text-copper"
+						class="mt-1.5 inline-flex items-center gap-1 text-[calc(var(--dt-base)*13/17)] text-copper-dk transition-colors hover:text-copper"
 						style="border-bottom: 1px solid rgba(156,74,31,0.35); padding-bottom: 1px;"
 					>
 						<svg
@@ -245,7 +246,7 @@
 						{@const label = freshnessLabel(bag.roastedAt)}
 						{#if tone && label}
 							<div
-								class="mt-2 flex items-center gap-1.5 font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase"
+								class="mt-2 flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase"
 								style="color: {tone}"
 							>
 								<span
@@ -259,16 +260,18 @@
 						{/if}
 					{/if}
 				{:else if brew.roaster || brew.coffeeName}
-					<div class="mt-1.5 text-[13px] text-muted">{brew.roaster ?? ''}</div>
+					<div class="mt-1.5 text-[calc(var(--dt-base)*13/17)] text-muted">
+						{brew.roaster ?? ''}
+					</div>
 				{/if}
 
-				<div class="mt-2 font-mono text-[12px] tracking-[0.04em] text-muted">
+				<div class="mt-2 font-mono text-[calc(var(--dt-base)*12/17)] tracking-[0.04em] text-muted">
 					{formatTimeAgo(brew.brewedAt)}
 				</div>
 
 				{#if !brew.bagId}
 					<div
-						class="mt-3 flex items-center justify-between gap-3 rounded-[14px] bg-copper-lt px-3.5 py-2.5 text-[12.5px] text-copper-dk"
+						class="mt-3 flex items-center justify-between gap-3 rounded-[14px] bg-copper-lt px-3.5 py-2.5 text-[calc(var(--dt-base)*12.5/17)] text-copper-dk"
 					>
 						<div class="flex items-center gap-2">
 							<svg
@@ -289,7 +292,7 @@
 						</div>
 						<a
 							href={resolve('/brews/[id]/edit', { id: brew.id })}
-							class="font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase hover:underline"
+							class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase hover:underline"
 							>Link →</a
 						>
 					</div>
@@ -321,52 +324,60 @@
 				<div class="relative">
 					<Eyebrow>RATIO</Eyebrow>
 					<div
-						class="mt-1 font-mono text-[56px] leading-none font-medium tracking-[-0.04em] text-copper"
+						class="mt-1 font-mono text-[calc(var(--dt-base)*56/17)] leading-none font-medium tracking-[-0.04em] text-copper"
 					>
 						{formatRatio(brew)}
 					</div>
-					<p class="mt-3 text-[13px] leading-[1.5] text-muted">
+					<p class="mt-3 text-[calc(var(--dt-base)*13/17)] leading-[1.5] text-muted">
 						{brew.doseGrams}g of coffee yielded {outValue} of {verb} in {formatBrewTime(brew)}.
 					</p>
 
 					<div class="mt-4 grid grid-cols-4 gap-1 border-t border-hairline pt-4">
 						<div>
 							<div
-								class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								DOSE
 							</div>
-							<div class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] text-ink">
+							<div
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*17/17)] font-medium tracking-[-0.01em] text-ink"
+							>
 								{brew.doseGrams}g
 							</div>
 						</div>
 						<div>
 							<div
-								class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								{outLabel}
 							</div>
-							<div class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] text-ink">
+							<div
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*17/17)] font-medium tracking-[-0.01em] text-ink"
+							>
 								{outValue}
 							</div>
 						</div>
 						<div>
 							<div
-								class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								TIME
 							</div>
-							<div class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] text-ink">
+							<div
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*17/17)] font-medium tracking-[-0.01em] text-ink"
+							>
 								{formatBrewTime(brew)}
 							</div>
 						</div>
 						<div>
 							<div
-								class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								RATIO
 							</div>
-							<div class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] text-copper">
+							<div
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*17/17)] font-medium tracking-[-0.01em] text-copper"
+							>
 								{formatRatio(brew)}
 							</div>
 						</div>
@@ -402,14 +413,16 @@
 						{#if brew.grindSetting}
 							<div>
 								<div
-									class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 								>
 									GRIND
 								</div>
-								<div class="mt-1 font-mono text-[19px] font-medium tracking-[-0.01em] text-ink">
+								<div
+									class="mt-1 font-mono text-[calc(var(--dt-base)*19/17)] font-medium tracking-[-0.01em] text-ink"
+								>
 									{brew.grindSetting}
 								</div>
-								<div class="mt-0.5 text-[11.5px] text-muted">
+								<div class="mt-0.5 text-[calc(var(--dt-base)*11.5/17)] text-muted">
 									{brew.method === 'espresso' ? 'Lagom Casa' : 'Fellow Ode 2'}
 								</div>
 							</div>
@@ -417,11 +430,13 @@
 						{#if brew.waterTempC != null}
 							<div>
 								<div
-									class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 								>
 									{brew.method === 'espresso' ? 'BREW TEMP' : 'WATER TEMP'}
 								</div>
-								<div class="mt-1 font-mono text-[19px] font-medium tracking-[-0.01em] text-ink">
+								<div
+									class="mt-1 font-mono text-[calc(var(--dt-base)*19/17)] font-medium tracking-[-0.01em] text-ink"
+								>
 									{brew.waterTempC}°C
 								</div>
 							</div>
@@ -431,7 +446,7 @@
 					{#if espressoExtraction}
 						<div class="mt-4">
 							<div
-								class="mb-1.5 font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-1.5 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								TASTE
 							</div>
@@ -442,7 +457,7 @@
 					{#if brew.balance}
 						<div class="mt-4">
 							<div
-								class="mb-1.5 font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-1.5 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								BALANCE
 							</div>
@@ -458,12 +473,12 @@
 					<div class="flex items-end justify-between gap-4">
 						<div>
 							<div
-								class="font-display font-mono text-[36px] leading-none font-medium tracking-[-0.02em] text-copper"
+								class="font-display font-mono text-[calc(var(--dt-base)*36/17)] leading-none font-medium tracking-[-0.02em] text-copper"
 							>
 								{brew.rating.toFixed(1)}
 							</div>
 							<div
-								class="mt-1 font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-1 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								out of 5
 							</div>
@@ -478,9 +493,10 @@
 				>
 					<div class="flex items-center gap-3">
 						<StarRow value={0} size={16} />
-						<div class="text-[13px] text-muted">Rate this brew</div>
+						<div class="text-[calc(var(--dt-base)*13/17)] text-muted">Rate this brew</div>
 					</div>
-					<span class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-copper uppercase"
+					<span
+						class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-copper uppercase"
 						>Add →</span
 					>
 				</a>
@@ -489,7 +505,7 @@
 			<!-- Notes card -->
 			{#if brew.notes}
 				<div
-					class="rounded-[18px] border border-hairline bg-surface px-4 py-3.5 font-display text-[15.5px] leading-[1.5] text-ink-70 italic"
+					class="rounded-[18px] border border-hairline bg-surface px-4 py-3.5 font-display text-[calc(var(--dt-base)*15.5/17)] leading-[1.5] text-ink-70 italic"
 				>
 					<MarkdownText text={brew.notes} />
 				</div>
@@ -498,8 +514,11 @@
 					href={resolve('/brews/[id]/edit', { id: brew.id })}
 					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] hover:border-copper/50"
 				>
-					<div class="font-display text-[14px] text-muted italic">What did it taste like?</div>
-					<span class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-copper uppercase"
+					<div class="font-display text-[calc(var(--dt-base)*14/17)] text-muted italic">
+						What did it taste like?
+					</div>
+					<span
+						class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-copper uppercase"
 						>Add →</span
 					>
 				</a>
@@ -531,10 +550,14 @@
 							</svg>
 						</div>
 						<div class="min-w-0 flex-1">
-							<div class="truncate font-display text-[17px] leading-[1.2] font-medium text-ink">
+							<div
+								class="truncate font-display text-[calc(var(--dt-base)*17/17)] leading-[1.2] font-medium text-ink"
+							>
 								{bag.name}
 							</div>
-							<div class="mt-0.5 font-mono text-[11.5px] tracking-[0.04em] text-muted">
+							<div
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*11.5/17)] tracking-[0.04em] text-muted"
+							>
 								{#if originFlags.length}<OriginFlags origin={bag.origin} />{originText} ·
 								{/if}{#if bag.weightGrams != null && bagConsumptionData.remaining != null}
 									{Math.max(0, bagConsumptionData.remaining).toFixed(0)}G LEFT · {bagConsumptionData.brewCount}

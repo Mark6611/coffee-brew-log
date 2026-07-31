@@ -27,7 +27,7 @@
 
 <div transition:slide={motion({ duration: 180 })} class="px-[22px] pt-2">
 	<div
-		class="mx-auto flex max-w-2xl items-center justify-between gap-3 rounded-xl border px-3 py-2 font-mono text-[11px] font-medium tracking-[0.04em] {toneClass[
+		class="mx-auto flex max-w-2xl items-center justify-between gap-3 rounded-xl border px-3 py-2 font-mono text-[calc(var(--dt-base)*11/17)] font-medium tracking-[0.04em] {toneClass[
 			tone
 		]}"
 		{role}

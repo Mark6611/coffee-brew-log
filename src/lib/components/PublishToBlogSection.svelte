@@ -44,7 +44,7 @@
 		<div class="flex items-center justify-between gap-3">
 			<div class="min-w-0">
 				<div
-					class="flex items-center gap-1.5 font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase {published
+					class="flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase {published
 						? 'text-copper-dk'
 						: 'text-muted'}"
 				>
@@ -54,14 +54,16 @@
 					{/if}
 				</div>
 				<div
-					class="mt-1.5 font-display text-[19px] leading-[1.2] font-medium tracking-[-0.005em] {published
+					class="mt-1.5 font-display text-[calc(var(--dt-base)*19/17)] leading-[1.2] font-medium tracking-[-0.005em] {published
 						? 'text-ink'
 						: 'text-muted'}"
 				>
 					{published ? 'Visible on the public site' : 'Publish this brew'}
 				</div>
 				<div
-					class="mt-1 text-[12.5px] leading-[1.45] {published ? 'text-copper-dk/85' : 'text-muted'}"
+					class="mt-1 text-[calc(var(--dt-base)*12.5/17)] leading-[1.45] {published
+						? 'text-copper-dk/85'
+						: 'text-muted'}"
 				>
 					{published
 						? 'Rebuilds on next deploy. Title and body below.'
@@ -91,10 +93,11 @@
 				<!-- POST TITLE -->
 				<div>
 					<div
-						class="mb-2 flex items-center justify-between font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase"
+						class="mb-2 flex items-center justify-between font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						<span>POST TITLE</span>
-						<span class="text-[11.5px] font-normal tracking-normal text-muted normal-case"
+						<span
+							class="text-[calc(var(--dt-base)*11.5/17)] font-normal tracking-normal text-muted normal-case"
 							>separate from coffee name</span
 						>
 					</div>
@@ -102,17 +105,18 @@
 						type="text"
 						bind:value={blogTitle}
 						placeholder="A morning at home with the Yirgacheffe"
-						class="h-12 w-full rounded-[14px] border border-hairline bg-surface px-3.5 font-display text-[17px] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-[14px] border border-hairline bg-surface px-3.5 py-2 font-display text-[calc(var(--dt-base)*17/17)] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				<!-- BODY -->
 				<div class="mt-[18px]">
 					<div
-						class="mb-2 flex items-center justify-between font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase"
+						class="mb-2 flex items-center justify-between font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						<span>BODY</span>
-						<span class="text-[11.5px] font-normal tracking-normal text-muted normal-case"
+						<span
+							class="text-[calc(var(--dt-base)*11.5/17)] font-normal tracking-normal text-muted normal-case"
 							>Markdown supported</span
 						>
 					</div>
@@ -120,7 +124,7 @@
 						bind:value={blogBody}
 						rows="8"
 						placeholder={BODY_PLACEHOLDER}
-						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-3.5 py-3 text-[16px] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-3.5 py-3 text-[calc(var(--dt-base)*16/17)] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					></textarea>
 				</div>
 

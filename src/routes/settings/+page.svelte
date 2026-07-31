@@ -258,7 +258,7 @@
 	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -279,11 +279,11 @@
 	<div class="px-[22px]">
 		<Eyebrow>SETTINGS</Eyebrow>
 		<h1
-			class="mt-1 font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+			class="mt-1 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 		>
 			Data
 		</h1>
-		<p class="mt-2 font-display text-[15px] text-muted italic">
+		<p class="mt-2 font-display text-[calc(var(--dt-base)*15/17)] text-muted italic">
 			{#if isNative}
 				Your brews live on this device, and sync through your own iCloud. Back up regularly.
 			{:else}
@@ -303,7 +303,7 @@
 					<div class="rounded-2xl border border-hairline bg-surface px-4 py-3">
 						<div class="flex items-center justify-between gap-3">
 							<div class="min-w-0 flex-1">
-								<div class="mt-0.5 text-[13px] text-ink">
+								<div class="mt-0.5 text-[calc(var(--dt-base)*13/17)] text-ink">
 									{#if cloudSyncing}
 										<span class="text-copper">Syncing…</span>
 									{:else if cloudAvailable === false}
@@ -317,7 +317,7 @@
 										Synced {timeAgo(cloudLastSyncAt)}
 									{/if}
 								</div>
-								<p class="mt-1 text-[11px] leading-[1.4] text-muted">
+								<p class="mt-1 text-[calc(var(--dt-base)*11/17)] leading-[1.4] text-muted">
 									Through your private iCloud only — no account, nothing shared with us.
 								</p>
 							</div>
@@ -354,9 +354,11 @@
 						<div class="space-y-3 rounded-2xl border border-hairline bg-surface px-4 py-3">
 							<div class="flex items-center justify-between gap-3">
 								<div class="min-w-0">
-									<div class="truncate text-[14px] text-ink">{auth.user.email}</div>
+									<div class="truncate text-[calc(var(--dt-base)*14/17)] text-ink">
+										{auth.user.email}
+									</div>
 									<div
-										class="mt-0.5 font-mono text-[10.5px] tracking-[0.04em] text-muted uppercase"
+										class="mt-0.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted uppercase"
 									>
 										Signed in
 									</div>
@@ -367,11 +369,11 @@
 							<div class="flex items-center justify-between gap-3 border-t border-hairline pt-3">
 								<div class="min-w-0 flex-1">
 									<div
-										class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+										class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 									>
 										SYNC
 									</div>
-									<div class="mt-0.5 text-[13px] text-ink">
+									<div class="mt-0.5 text-[calc(var(--dt-base)*13/17)] text-ink">
 										{#if syncing}
 											<span class="text-copper">Syncing…</span>
 										{:else if lastSyncError}
@@ -428,7 +430,7 @@
 									</svg>
 									{deletingAccount ? 'Deleting account…' : 'Delete account'}
 								</Button>
-								<p class="mt-1.5 text-[11px] leading-[1.4] text-muted">
+								<p class="mt-1.5 text-[calc(var(--dt-base)*11/17)] leading-[1.4] text-muted">
 									Permanently deletes your account and all synced data.
 								</p>
 							</div>
@@ -509,19 +511,23 @@
 						{importing ? 'Importing…' : 'Restore from file'}
 					</Button>
 				</div>
-				<p class="mt-2 px-4 text-[12.5px] leading-[1.5] text-muted">
+				<p class="mt-2 px-4 text-[calc(var(--dt-base)*12.5/17)] leading-[1.5] text-muted">
 					Backups are plain JSON with every brew and bag. Restoring replaces items with matching IDs
 					and adds the rest.
 				</p>
 			</div>
 
 			{#if message}
-				<div class="rounded-[14px] bg-success/10 px-3 py-2.5 text-[13px] text-success">
+				<div
+					class="rounded-[14px] bg-success/10 px-3 py-2.5 text-[calc(var(--dt-base)*13/17)] text-success"
+				>
 					{message}
 				</div>
 			{/if}
 			{#if error}
-				<div class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[13px] text-danger">
+				<div
+					class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
+				>
 					{error}
 				</div>
 			{/if}
@@ -558,7 +564,7 @@
 						{/if}
 					</Button>
 				</div>
-				<p class="mt-2 px-4 text-[12.5px] leading-[1.5] text-muted">
+				<p class="mt-2 px-4 text-[calc(var(--dt-base)*12.5/17)] leading-[1.5] text-muted">
 					{#if auth.user}
 						Deletes every brew and bag — from this device <strong class="text-ink-70"
 							>and your account</strong

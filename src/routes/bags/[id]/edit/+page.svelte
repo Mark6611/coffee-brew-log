@@ -105,7 +105,7 @@
 		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 			<a
 				href={resolve('/bags/[id]', { id: bagId })}
-				class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -126,7 +126,7 @@
 		</div>
 
 		<h1
-			class="mx-[22px] mt-1.5 mb-[18px] font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+			class="mx-[22px] mt-1.5 mb-[18px] font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 		>
 			Edit bag
 		</h1>
@@ -138,7 +138,7 @@
 					type="text"
 					bind:value={name}
 					required
-					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -152,7 +152,7 @@
 				<input
 					type="text"
 					bind:value={roaster}
-					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -166,7 +166,7 @@
 				<input
 					type="date"
 					bind:value={roastedAt}
-					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -192,7 +192,7 @@
 				<div>
 					<Eyebrow class="mb-2">WEIGHT (G)</Eyebrow>
 					<div
-						class="field-wrapper flex h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -200,9 +200,9 @@
 							step="1"
 							min="1"
 							inputmode="decimal"
-							class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-muted"
+							class="min-w-0 flex-1 font-mono text-[calc(var(--dt-base)*16/17)] tracking-[-0.01em] text-ink placeholder:text-muted"
 						/>
-						<span class="font-mono text-[12px] text-muted">g</span>
+						<span class="font-mono text-[calc(var(--dt-base)*12/17)] text-muted">g</span>
 					</div>
 				</div>
 				<div>
@@ -213,7 +213,7 @@
 						step="0.01"
 						min="0"
 						inputmode="decimal"
-						class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 			</div>
@@ -223,7 +223,7 @@
 				<textarea
 					bind:value={notes}
 					rows="3"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[16px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[calc(var(--dt-base)*16/17)] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 

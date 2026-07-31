@@ -82,7 +82,7 @@
 	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -103,13 +103,15 @@
 	<div class="px-[22px]">
 		<Eyebrow>ACCOUNT</Eyebrow>
 		<h1
-			class="mt-1 font-display text-[30px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+			class="mt-1 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 		>
 			{phase === 'email' ? 'Sign in.' : 'Enter the code.'}
 		</h1>
 
 		{#if phase === 'email'}
-			<p class="mt-3 font-display text-[15px] leading-[1.5] text-muted italic">
+			<p
+				class="mt-3 font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-muted italic"
+			>
 				Sign in lets you sync brews across devices. Your existing brews on this device stay right
 				here — they'll migrate to your account on first sign-in.
 			</p>
@@ -123,13 +125,13 @@
 						required
 						autocomplete="email"
 						placeholder="you@example.com"
-						class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				{#if error}
 					<div
-						class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[13px] text-danger"
+						class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
 					>
 						{error}
 					</div>
@@ -144,7 +146,9 @@
 				>
 			</form>
 		{:else}
-			<p class="mt-3 font-display text-[15px] leading-[1.5] text-muted italic">
+			<p
+				class="mt-3 font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-muted italic"
+			>
 				Sent a code to <strong class="text-ink not-italic">{email}</strong>. Open the email and type
 				the code below — or tap the link to sign in this browser.
 			</p>
@@ -161,13 +165,13 @@
 						pattern="[0-9]*"
 						maxlength="10"
 						placeholder="00000000"
-						class="h-14 w-full rounded-[14px] border border-hairline bg-paper px-4 text-center font-mono text-[24px] font-medium tracking-[0.25em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-14 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-center font-mono text-[calc(var(--dt-base)*24/17)] font-medium tracking-[0.25em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				{#if error}
 					<div
-						class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[13px] text-danger"
+						class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
 					>
 						{error}
 					</div>
@@ -185,7 +189,7 @@
 				<button
 					type="button"
 					onclick={back}
-					class="font-mono text-[11px] font-medium tracking-[0.14em] text-copper uppercase transition-colors hover:text-copper-dk"
+					class="font-mono text-[calc(var(--dt-base)*11/17)] font-medium tracking-[0.14em] text-copper uppercase transition-colors hover:text-copper-dk"
 					>← Use a different email</button
 				>
 			</form>

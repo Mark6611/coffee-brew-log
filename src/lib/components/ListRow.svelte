@@ -91,15 +91,21 @@
 		>
 	{/if}
 	<span class="min-w-0 flex-1">
-		<span class="block truncate text-[15px] font-medium {TONE[tone]}">{title}</span>
+		<span class="block truncate text-[calc(var(--dt-base)*15/17)] font-medium {TONE[tone]}"
+			>{title}</span
+		>
 		{#if subtitle}
-			<span class="mt-0.5 block text-[12.5px] leading-[1.35] text-muted">{subtitle}</span>
+			<span class="mt-0.5 block text-[calc(var(--dt-base)*12.5/17)] leading-[1.35] text-muted"
+				>{subtitle}</span
+			>
 		{/if}
 	</span>
 	{#if trailing}
 		{@render trailing()}
 	{:else if value != null && value !== ''}
-		<span class="shrink-0 font-mono text-[13px] text-muted tabular-nums">{value}</span>
+		<span class="shrink-0 font-mono text-[calc(var(--dt-base)*13/17)] text-muted tabular-nums"
+			>{value}</span
+		>
 	{/if}
 	{#if showChevron}
 		<svg

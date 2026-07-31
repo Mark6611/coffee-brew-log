@@ -39,5 +39,5 @@
 </div>
 
 {#if footer}
-	<p class="mt-2 px-1 text-[12.5px] leading-[1.45] text-muted">{footer}</p>
+	<p class="mt-2 px-1 text-[calc(var(--dt-base)*12.5/17)] leading-[1.45] text-muted">{footer}</p>
 {/if}

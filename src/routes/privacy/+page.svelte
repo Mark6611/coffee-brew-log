@@ -15,7 +15,7 @@
 <article class="policy mx-auto max-w-[680px] px-[22px] pt-7 pb-16">
 	<a
 		href={resolve('/settings')}
-		class="mb-6 inline-flex items-center gap-1 text-[14px] text-muted transition-colors hover:text-ink"
+		class="mb-6 inline-flex items-center gap-1 text-[calc(var(--dt-base)*14/17)] text-muted transition-colors hover:text-ink"
 	>
 		<svg
 			width="14"
@@ -30,14 +30,16 @@
 		Back
 	</a>
 
-	<h1 class="font-display text-[26px] font-medium tracking-[-0.01em] text-ink">
+	<h1
+		class="font-display text-[calc(var(--dt-base)*26/17)] font-medium tracking-[-0.01em] text-ink"
+	>
 		Coffee Brew Log — Privacy Policy
 	</h1>
-	<p class="mt-1 mb-6 font-mono text-[12px] tracking-[0.04em] text-muted">
+	<p class="mt-1 mb-6 font-mono text-[calc(var(--dt-base)*12/17)] tracking-[0.04em] text-muted">
 		Last updated: {updated}
 	</p>
 
-	<p class="text-[15px] leading-[1.6] text-ink-70">
+	<p class="text-[calc(var(--dt-base)*15/17)] leading-[1.6] text-ink-70">
 		Coffee Brew Log is a personal log for your coffee brewing. It is built to be private by default:
 		your data lives on your device, and syncs only through your own private iCloud (on iPhone) or
 		your own private account (optional, web). The developer of Coffee Brew Log cannot see your data.

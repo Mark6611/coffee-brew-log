@@ -94,7 +94,7 @@
 			<button
 				type="button"
 				onclick={() => connectScale()}
-				class="press flex w-full items-center justify-center gap-2 font-mono text-[11px] font-medium tracking-[0.1em] text-copper-dk uppercase"
+				class="press flex w-full items-center justify-center gap-2 font-mono text-[calc(var(--dt-base)*11/17)] font-medium tracking-[0.1em] text-copper-dk uppercase"
 			>
 				<svg
 					width="15"
@@ -112,17 +112,19 @@
 				Connect Acaia scale
 			</button>
 			{#if scale.error}
-				<p class="mt-2 text-center text-[11px] text-danger">{scale.error}</p>
+				<p class="mt-2 text-center text-[calc(var(--dt-base)*11/17)] text-danger">{scale.error}</p>
 			{/if}
 		{:else if scale.status === 'scanning' || scale.status === 'connecting'}
-			<p class="text-center font-mono text-[11px] tracking-[0.1em] text-muted uppercase">
+			<p
+				class="text-center font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.1em] text-muted uppercase"
+			>
 				{scale.status === 'scanning' ? 'Searching for scale…' : 'Connecting…'}
 			</p>
 		{:else if scale.status === 'connected'}
 			<!-- Header: name + battery + disconnect -->
 			<div class="mb-2.5 flex items-center justify-between">
 				<span
-					class="flex items-center gap-1.5 font-mono text-[10px] font-medium tracking-[0.12em] text-copper-dk uppercase"
+					class="flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
 				>
 					<span class="inline-block h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true"></span>
 					{scale.deviceName ?? 'Acaia'}
@@ -131,36 +133,38 @@
 				<button
 					type="button"
 					onclick={() => disconnectScale()}
-					class="text-[11px] text-muted hover:text-ink">Disconnect</button
+					class="text-[calc(var(--dt-base)*11/17)] text-muted hover:text-ink">Disconnect</button
 				>
 			</div>
 
 			{#if mode === 'idle' || mode === 'done'}
 				<div class="flex items-center justify-between gap-3">
 					<div class="font-mono">
-						<span class="text-[22px] font-medium tracking-[-0.02em] text-ink"
+						<span class="text-[calc(var(--dt-base)*22/17)] font-medium tracking-[-0.02em] text-ink"
 							>{liveWeight.toFixed(1)}</span
 						>
-						<span class="text-[12px] text-muted"> g</span>
+						<span class="text-[calc(var(--dt-base)*12/17)] text-muted"> g</span>
 					</div>
 					<div class="flex gap-2">
 						<button
 							type="button"
 							onclick={() => tareScale()}
-							class="press-sm rounded-lg border border-hairline px-3 py-2 text-[12px] font-medium text-muted hover:text-ink"
+							class="press-sm rounded-lg border border-hairline px-3 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-muted hover:text-ink"
 							>Tare</button
 						>
 						<button
 							type="button"
 							onclick={beginListening}
-							class="press-sm rounded-lg bg-copper px-3.5 py-2 text-[12px] font-medium text-paper hover:bg-copper-dk"
+							class="press-sm rounded-lg bg-copper px-3.5 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-paper hover:bg-copper-dk"
 						>
 							{mode === 'done' ? 'New shot' : 'Start shot'}
 						</button>
 					</div>
 				</div>
 				{#if mode === 'done'}
-					<p class="mt-2 font-mono text-[10.5px] tracking-[0.1em] text-success uppercase">
+					<p
+						class="mt-2 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.1em] text-success uppercase"
+					>
 						Captured {yieldGrams}g in {brewTimeSeconds}s
 					</p>
 				{/if}
@@ -168,32 +172,37 @@
 				<!-- listening / running: big live readout -->
 				<div class="flex items-end justify-between gap-4">
 					<div class="font-mono">
-						<span class="text-[34px] leading-none font-medium tracking-[-0.03em] text-copper"
+						<span
+							class="text-[calc(var(--dt-base)*34/17)] leading-none font-medium tracking-[-0.03em] text-copper"
 							>{liveWeight.toFixed(1)}</span
 						>
-						<span class="text-[13px] text-muted"> g</span>
+						<span class="text-[calc(var(--dt-base)*13/17)] text-muted"> g</span>
 					</div>
 					<div class="text-right font-mono">
-						<div class="text-[20px] font-medium tracking-[-0.02em] text-ink">
+						<div class="text-[calc(var(--dt-base)*20/17)] font-medium tracking-[-0.02em] text-ink">
 							{elapsed.toFixed(1)}s
 						</div>
-						<div class="text-[11px] text-muted">{liveFlow.toFixed(1)} g/s</div>
+						<div class="text-[calc(var(--dt-base)*11/17)] text-muted">
+							{liveFlow.toFixed(1)} g/s
+						</div>
 					</div>
 				</div>
 				<div class="mt-2.5 flex items-center gap-2">
 					{#if mode === 'listening'}
-						<span class="flex-1 font-mono text-[10.5px] tracking-[0.1em] text-muted uppercase"
+						<span
+							class="flex-1 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.1em] text-muted uppercase"
 							>Waiting for first drip…</span
 						>
 					{:else}
-						<span class="flex-1 font-mono text-[10.5px] tracking-[0.1em] text-copper uppercase"
+						<span
+							class="flex-1 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.1em] text-copper uppercase"
 							>Recording — auto-stops when flow settles</span
 						>
 					{/if}
 					<button
 						type="button"
 						onclick={finish}
-						class="press-sm rounded-lg bg-ink/[0.06] px-3.5 py-2 text-[12px] font-medium text-ink hover:bg-ink/[0.1]"
+						class="press-sm rounded-lg bg-ink/[0.06] px-3.5 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-ink hover:bg-ink/[0.1]"
 						>Stop</button
 					>
 				</div>

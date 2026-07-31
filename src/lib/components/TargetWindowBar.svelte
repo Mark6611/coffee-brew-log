@@ -49,7 +49,7 @@
 		{/each}
 	</div>
 	<div
-		class="mt-1 flex items-baseline justify-between font-mono text-[9px] tracking-[0.06em] text-muted"
+		class="mt-1 flex items-baseline justify-between font-mono text-[calc(var(--dt-base)*9/17)] tracking-[0.06em] text-muted"
 	>
 		<span>{railLo}s</span>
 		<span class="font-medium text-copper">{win[0]}–{win[1]}s TARGET</span>

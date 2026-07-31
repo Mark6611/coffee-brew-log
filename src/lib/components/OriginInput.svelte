@@ -69,12 +69,12 @@
 	/>
 	{#if blend}
 		<span
-			class="mr-2.5 rounded-full bg-copper-lt px-2 py-[3px] font-mono text-[10px] font-medium tracking-[0.12em] text-copper-dk uppercase"
+			class="mr-2.5 rounded-full bg-copper-lt px-2 py-[3px] font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
 			transition:fade={motion({ duration: 180 })}>Blend</span
 		>
 	{:else if resolved.length === 1}
 		<span
-			class="pr-3.5 font-mono text-[12px] font-medium tracking-[0.14em] text-copper"
+			class="pr-3.5 font-mono text-[calc(var(--dt-base)*12/17)] font-medium tracking-[0.14em] text-copper"
 			transition:fade={motion({ duration: 180 })}>{resolved[0].code}</span
 		>
 	{/if}
@@ -88,7 +88,7 @@
 			type="button"
 			onclick={() => toggle(o)}
 			aria-pressed={active}
-			class="press-sm inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[12.5px] font-medium {active
+			class="press-sm inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[calc(var(--dt-base)*12.5/17)] font-medium {active
 				? 'border-copper bg-copper text-paper'
 				: 'border-hairline bg-surface text-ink hover:border-copper/50'}"
 		>
@@ -99,7 +99,9 @@
 </div>
 
 <p
-	class="mt-1.5 text-[12px] {resolved.length ? 'text-copper-dk' : 'text-muted'}"
+	class="mt-1.5 text-[calc(var(--dt-base)*12/17)] {resolved.length
+		? 'text-copper-dk'
+		: 'text-muted'}"
 	aria-live="polite"
 >
 	{#if blend}

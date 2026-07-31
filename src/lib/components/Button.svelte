@@ -73,10 +73,20 @@
 	// which expands the TOUCH region with a pseudo-element without changing the
 	// painted box (growing the box would break the rows they sit in).
 	const SIZES: Record<Size, { box: string; text: string; pad: string; gap: string }> = {
-		large: { box: 'h-[52px]', text: 'text-[15px]', pad: 'px-5', gap: 'gap-2.5' },
-		medium: { box: 'h-11', text: 'text-[14px]', pad: 'px-4', gap: 'gap-2' },
-		regular: { box: 'h-9', text: 'text-[13px]', pad: 'px-3.5', gap: 'gap-1.5' },
-		small: { box: 'h-7', text: 'text-[12px]', pad: 'px-3', gap: 'gap-1.5' }
+		large: {
+			box: 'h-[52px]',
+			text: 'text-[calc(var(--dt-base)*15/17)]',
+			pad: 'px-5',
+			gap: 'gap-2.5'
+		},
+		medium: { box: 'h-11', text: 'text-[calc(var(--dt-base)*14/17)]', pad: 'px-4', gap: 'gap-2' },
+		regular: {
+			box: 'h-9',
+			text: 'text-[calc(var(--dt-base)*13/17)]',
+			pad: 'px-3.5',
+			gap: 'gap-1.5'
+		},
+		small: { box: 'h-7', text: 'text-[calc(var(--dt-base)*12/17)]', pad: 'px-3', gap: 'gap-1.5' }
 	};
 
 	// The glass material scales with the control (see .glass-lg/md/sm).

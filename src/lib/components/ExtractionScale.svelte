@@ -23,7 +23,9 @@
 	];
 </script>
 
-<div class="relative grid h-11 grid-cols-3 gap-1 rounded-xl border border-hairline bg-paper p-1">
+<div
+	class="relative grid min-h-11 grid-cols-3 gap-1 rounded-xl border border-hairline bg-paper p-1"
+>
 	{#each options as opt (opt.key)}
 		{@const active = value === opt.key}
 		<button
@@ -31,7 +33,7 @@
 			onclick={() => oninput?.(opt.key)}
 			disabled={readonly}
 			aria-pressed={active}
-			class="hit-44 {FOCUS_RING_INSET} relative h-full rounded-[8px] text-[13px] capitalize transition-all duration-200 {active
+			class="hit-44 {FOCUS_RING_INSET} relative h-full rounded-[8px] text-[calc(var(--dt-base)*13/17)] capitalize transition-all duration-200 {active
 				? 'bg-surface font-semibold text-ink shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.04)]'
 				: 'bg-transparent font-medium text-muted'} {readonly ? 'cursor-default' : ''}"
 		>

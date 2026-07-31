@@ -37,13 +37,15 @@
 		: 'border-b border-transparent'}"
 >
 	{#if eyebrow}
-		<div class="mb-1.5 font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase">
+		<div
+			class="mb-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+		>
 			{eyebrow}
 		</div>
 	{/if}
 	<div class="flex items-end justify-between gap-4">
 		<h1
-			class="m-0 font-display text-[34px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+			class="m-0 font-display text-[calc(var(--dt-base)*34/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 		>
 			{@render children()}
 		</h1>

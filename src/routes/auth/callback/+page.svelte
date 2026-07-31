@@ -84,16 +84,26 @@
 				</g>
 			</svg>
 		</div>
-		<p class="mt-6 font-display text-[15px] text-muted italic">Confirming your sign-in…</p>
+		<p class="mt-6 font-display text-[calc(var(--dt-base)*15/17)] text-muted italic">
+			Confirming your sign-in…
+		</p>
 	{:else if status === 'success'}
-		<p class="font-display text-[22px] font-medium tracking-[-0.005em] text-ink">Signed in.</p>
-		<p class="mt-2 font-display text-[14px] text-muted italic">Heading home…</p>
+		<p
+			class="font-display text-[calc(var(--dt-base)*22/17)] font-medium tracking-[-0.005em] text-ink"
+		>
+			Signed in.
+		</p>
+		<p class="mt-2 font-display text-[calc(var(--dt-base)*14/17)] text-muted italic">
+			Heading home…
+		</p>
 	{:else}
-		<p class="font-display text-[18px] font-medium text-danger">Sign-in link didn't work.</p>
-		<p class="mt-2 font-display text-[14px] text-muted italic">{errorMsg}</p>
+		<p class="font-display text-[calc(var(--dt-base)*18/17)] font-medium text-danger">
+			Sign-in link didn't work.
+		</p>
+		<p class="mt-2 font-display text-[calc(var(--dt-base)*14/17)] text-muted italic">{errorMsg}</p>
 		<a
 			href={resolve('/auth')}
-			class="mt-6 inline-block font-mono text-[11px] font-medium tracking-[0.14em] text-copper uppercase hover:underline"
+			class="mt-6 inline-block font-mono text-[calc(var(--dt-base)*11/17)] font-medium tracking-[0.14em] text-copper uppercase hover:underline"
 			>← Try again</a
 		>
 	{/if}

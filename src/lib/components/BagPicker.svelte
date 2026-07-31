@@ -104,7 +104,7 @@
 {#if selectedBag}
 	<!-- Selected (chip) -->
 	<div
-		class="flex h-14 items-center gap-3 rounded-[14px] border border-transparent bg-copper-lt px-3"
+		class="flex min-h-14 items-center gap-3 rounded-[14px] border border-transparent bg-copper-lt px-3 py-2"
 	>
 		<div class="grid h-8 w-8 shrink-0 place-items-center rounded-[9px] bg-copper text-paper">
 			<svg
@@ -123,10 +123,12 @@
 			</svg>
 		</div>
 		<div class="min-w-0 flex-1">
-			<div class="truncate font-display text-[17px] leading-[1.2] font-medium text-ink">
+			<div
+				class="truncate font-display text-[calc(var(--dt-base)*17/17)] leading-[1.2] font-medium text-ink"
+			>
 				{selectedBag.name}
 			</div>
-			<div class="truncate text-[12px] text-copper-dk">
+			<div class="truncate text-[calc(var(--dt-base)*12/17)] text-copper-dk">
 				{#if selectedBag.roaster}{selectedBag.roaster}{/if}
 				{#if selectedBag.roaster && (selectedBag.process || selectedBag.roastedAt)}
 					·
@@ -162,7 +164,7 @@
 	<div class="relative">
 		<!-- Idle / typing -->
 		<div
-			class="flex h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-3 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+			class="flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-3 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 		>
 			<svg
 				width="18"
@@ -193,7 +195,8 @@
 				aria-autocomplete="list"
 			/>
 			{#if hasQuery}
-				<span class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+				<span
+					class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 					>{filtered.length} match{filtered.length === 1 ? '' : 'es'}</span
 				>
 			{:else}
@@ -221,7 +224,7 @@
 			>
 				{#if filtered.length > 0}
 					<div
-						class="px-4 pt-3 pb-1 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+						class="px-4 pt-3 pb-1 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						{hasQuery
 							? `${filtered.length} match${filtered.length === 1 ? '' : 'es'}`
@@ -272,18 +275,21 @@
 								<div class="min-w-0 flex-1">
 									<div class="flex items-center justify-between gap-2">
 										<div
-											class="truncate font-display text-[16px] leading-[1.2] font-medium text-ink"
+											class="truncate font-display text-[calc(var(--dt-base)*16/17)] leading-[1.2] font-medium text-ink"
 										>
 											{bag.name}
 										</div>
 										{#if days != null}
-											<span class="shrink-0 font-mono text-[12px] font-medium" style="color: {tone}"
-												>{days}d</span
+											<span
+												class="shrink-0 font-mono text-[calc(var(--dt-base)*12/17)] font-medium"
+												style="color: {tone}">{days}d</span
 											>
 										{/if}
 									</div>
 									<div class="mt-0.5 flex items-center justify-between gap-2">
-										<div class="flex min-w-0 items-center gap-1.5 text-[12.5px] text-muted">
+										<div
+											class="flex min-w-0 items-center gap-1.5 text-[calc(var(--dt-base)*12.5/17)] text-muted"
+										>
 											{#if bag.roaster}
 												<span class="truncate">{bag.roaster}</span>
 											{/if}
@@ -303,7 +309,7 @@
 											{/if}
 										</div>
 										{#if bag.weightGrams}
-											<span class="shrink-0 font-mono text-[12px] text-muted">
+											<span class="shrink-0 font-mono text-[calc(var(--dt-base)*12/17)] text-muted">
 												{c.remaining != null
 													? `${Math.max(0, c.remaining).toFixed(0)}g`
 													: `${bag.weightGrams}g`}
@@ -347,20 +353,24 @@
 							</svg>
 						</div>
 						<div class="min-w-0 flex-1">
-							<div class="text-[14px] font-medium text-copper">
+							<div class="text-[calc(var(--dt-base)*14/17)] font-medium text-copper">
 								{hasQuery ? 'Create new bag' : 'Add a new bag'}
 							</div>
 							{#if hasQuery}
-								<div class="mt-0.5 truncate text-[12px] text-muted">"{query}"</div>
+								<div class="mt-0.5 truncate text-[calc(var(--dt-base)*12/17)] text-muted">
+									"{query}"
+								</div>
 							{:else}
-								<div class="mt-0.5 text-[12px] text-muted">Open the bag form →</div>
+								<div class="mt-0.5 text-[calc(var(--dt-base)*12/17)] text-muted">
+									Open the bag form →
+								</div>
 							{/if}
 						</div>
 					</div>
 				</button>
 
 				<div
-					class="border-t border-hairline bg-paper/50 px-4 py-2 font-mono text-[10px] font-medium tracking-[0.1em] text-muted uppercase"
+					class="border-t border-hairline bg-paper/50 px-4 py-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] text-muted uppercase"
 				>
 					↑↓ navigate · ↵ select · esc close
 				</div>

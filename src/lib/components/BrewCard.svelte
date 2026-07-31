@@ -55,11 +55,13 @@
 
 {#snippet metric(label: string, value: string, accent: boolean = false)}
 	<div>
-		<div class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase">
+		<div
+			class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+		>
 			{label}
 		</div>
 		<div
-			class="mt-0.5 font-mono text-[17px] font-medium tracking-[-0.01em] {accent
+			class="mt-0.5 font-mono text-[calc(var(--dt-base)*17/17)] font-medium tracking-[-0.01em] {accent
 				? 'text-copper'
 				: 'text-ink'}"
 		>
@@ -114,7 +116,7 @@
 			{/if}
 			{#if BLOG_ENABLED && brew.published}
 				<span
-					class="inline-flex h-[22px] items-center gap-1.5 rounded-full bg-copper-lt px-2 font-mono text-[10.5px] font-medium tracking-[0.12em] text-copper-dk uppercase"
+					class="inline-flex h-[22px] items-center gap-1.5 rounded-full bg-copper-lt px-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
 				>
 					<LiveDot color="var(--color-copper-dk)" size={4.5} />
 					Public
@@ -122,7 +124,7 @@
 			{/if}
 		</div>
 		<div class="flex items-center gap-1.5">
-			<span class="font-mono text-[11px] tracking-[0.04em] text-muted">
+			<span class="font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted">
 				{formatTimeAgo(brew.brewedAt)}
 			</span>
 			<button
@@ -150,7 +152,9 @@
 	</div>
 
 	{#if brew.coffeeName || bag}
-		<div class="font-display text-[22px] leading-[1.15] font-medium tracking-[-0.005em] text-ink">
+		<div
+			class="font-display text-[calc(var(--dt-base)*22/17)] leading-[1.15] font-medium tracking-[-0.005em] text-ink"
+		>
 			{bag?.name ?? brew.coffeeName}
 		</div>
 		{#if roasterText}
@@ -158,7 +162,7 @@
 				<a
 					href={resolve('/bags/[id]', { id: bag.id })}
 					onclick={(e) => e.stopPropagation()}
-					class="mt-1 inline-flex items-center gap-1 border-b border-copper/35 pb-px text-[13px] text-copper-dk transition-colors hover:text-copper"
+					class="mt-1 inline-flex items-center gap-1 border-b border-copper/35 pb-px text-[calc(var(--dt-base)*13/17)] text-copper-dk transition-colors hover:text-copper"
 				>
 					<svg
 						width="11"
@@ -181,14 +185,14 @@
 					{#if bag.process}<span class="text-muted"> · {bag.process}</span>{/if}
 				</a>
 			{:else}
-				<div class="mt-0.5 text-[13px] text-muted">{roasterText}</div>
+				<div class="mt-0.5 text-[calc(var(--dt-base)*13/17)] text-muted">{roasterText}</div>
 			{/if}
 		{/if}
 	{/if}
 
 	{#if bag && label && tone}
 		<div
-			class="mt-2 flex items-center gap-1.5 font-mono text-[10.5px] font-medium tracking-[0.14em] uppercase"
+			class="mt-2 flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase"
 			style="color: {tone}"
 		>
 			<span
@@ -209,7 +213,7 @@
 
 	{#if brew.notes}
 		<div
-			class="mt-3 border-t border-dashed border-hairline pt-3 font-display text-[14.5px] leading-[1.45] text-ink-70 italic"
+			class="mt-3 border-t border-dashed border-hairline pt-3 font-display text-[calc(var(--dt-base)*14.5/17)] leading-[1.45] text-ink-70 italic"
 		>
 			<MarkdownText text={brew.notes} />
 		</div>

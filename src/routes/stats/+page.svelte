@@ -98,7 +98,7 @@
 	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -119,7 +119,7 @@
 			{#each rangeOptions as opt (opt.value)}
 				<a
 					href={resolve(`/stats?range=${opt.value}`)}
-					class="press-sm hit-44 inline-flex h-9 items-center rounded-full px-3 font-mono text-[10px] font-medium tracking-[0.1em] {range ===
+					class="press-sm hit-44 inline-flex h-9 items-center rounded-full px-3 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] {range ===
 					opt.value
 						? 'bg-ink text-paper'
 						: 'border border-hairline text-muted hover:text-ink'}">{opt.label}</a
@@ -132,10 +132,14 @@
 		<p class="py-8 text-center text-sm text-muted">Loading…</p>
 	{:else if totalAll === 0}
 		<div class="px-[22px] pt-12 pb-20 text-center">
-			<h2 class="font-display text-[26px] leading-[1.15] font-medium tracking-[-0.01em] text-ink">
+			<h2
+				class="font-display text-[calc(var(--dt-base)*26/17)] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
+			>
 				Nothing to count yet.
 			</h2>
-			<p class="mt-2 max-w-[280px] font-display text-[15px] text-muted italic">
+			<p
+				class="mt-2 max-w-[280px] font-display text-[calc(var(--dt-base)*15/17)] text-muted italic"
+			>
 				Log a brew or two and stats appear here.
 			</p>
 			<Button size="medium" variant="prominent" href={resolve('/brews/new')} class="mt-6"
@@ -148,7 +152,7 @@
 			<div>
 				<Eyebrow>STATS</Eyebrow>
 				<h1
-					class="mt-1 font-display text-[34px] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+					class="mt-1 font-display text-[calc(var(--dt-base)*34/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 				>
 					{totalAll}
 					{totalAll === 1 ? 'brew' : 'brews'},<br />
@@ -162,7 +166,7 @@
 					<Eyebrow>LAST 12 WEEKS</Eyebrow>
 					{#if weekDelta !== 0 && prevWeek > 0}
 						<span
-							class="font-mono text-[11px] font-medium tracking-[0.04em]"
+							class="font-mono text-[calc(var(--dt-base)*11/17)] font-medium tracking-[0.04em]"
 							style="color: {weekDelta > 0 ? 'var(--color-success)' : 'var(--color-danger)'}"
 						>
 							{weekDelta > 0 ? '↑' : '↓'}
@@ -187,7 +191,9 @@
 			<!-- Quick stats -->
 			<div class="grid grid-cols-3 gap-2.5">
 				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
-					<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+					<div
+						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+					>
 						THIS WEEK
 					</div>
 					<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-copper">
@@ -195,7 +201,9 @@
 					</div>
 				</div>
 				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
-					<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+					<div
+						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+					>
 						AVG RATIO
 					</div>
 					<div class="mt-1 font-display font-mono text-2xl font-medium tracking-[-0.01em] text-ink">
@@ -203,7 +211,9 @@
 					</div>
 				</div>
 				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
-					<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+					<div
+						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+					>
 						AVG RATING
 					</div>
 					<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
@@ -219,24 +229,24 @@
 					<div class="flex items-end justify-between gap-4">
 						<div>
 							<div
-								class="font-display font-mono text-[28px] leading-none font-medium tracking-[-0.02em] text-copper"
+								class="font-display font-mono text-[calc(var(--dt-base)*28/17)] leading-none font-medium tracking-[-0.02em] text-copper"
 							>
 								{Math.round(ms.pourOverPct)}%
 							</div>
 							<div
-								class="mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								POUR-OVER · {ms.pourOver}
 							</div>
 						</div>
 						<div class="text-right">
 							<div
-								class="font-display font-mono text-[28px] leading-none font-medium tracking-[-0.02em] text-copper-dk"
+								class="font-display font-mono text-[calc(var(--dt-base)*28/17)] leading-none font-medium tracking-[-0.02em] text-copper-dk"
 							>
 								{Math.round(ms.espressoPct)}%
 							</div>
 							<div
-								class="mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								ESPRESSO · {ms.espresso}
 							</div>
@@ -260,12 +270,12 @@
 					<div class="flex items-end justify-between gap-4">
 						<div>
 							<div
-								class="font-display font-mono text-[28px] leading-none font-medium tracking-[-0.02em] text-copper"
+								class="font-display font-mono text-[calc(var(--dt-base)*28/17)] leading-none font-medium tracking-[-0.02em] text-copper"
 							>
 								{cost.costPerCup != null ? money(cost.costPerCup, 1) : '—'}
 							</div>
 							<div
-								class="mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								PER CUP{#if cost.cupsWithCost > 0}
 									· {cost.cupsWithCost} counted{/if}
@@ -273,19 +283,21 @@
 						</div>
 						<div class="text-right">
 							<div
-								class="font-display font-mono text-[28px] leading-none font-medium tracking-[-0.02em] text-copper-dk"
+								class="font-display font-mono text-[calc(var(--dt-base)*28/17)] leading-none font-medium tracking-[-0.02em] text-copper-dk"
 							>
 								{money(cost.totalBrewedValue)}
 							</div>
 							<div
-								class="mt-0.5 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-0.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								BREWED THIS RANGE
 							</div>
 						</div>
 					</div>
 					{#if cost.totalBeanSpend > 0}
-						<p class="mt-2.5 font-mono text-[10.5px] tracking-[0.04em] text-muted">
+						<p
+							class="mt-2.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted"
+						>
 							{money(cost.totalBeanSpend)} spent on beans all-time
 						</p>
 					{/if}
@@ -298,7 +310,9 @@
 					<div class="mb-2 flex items-center justify-between">
 						<Eyebrow>RATIO DISTRIBUTION</Eyebrow>
 						{#if ratios.median != null}
-							<span class="font-mono text-[11px] tracking-[0.04em] text-muted">
+							<span
+								class="font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
+							>
 								MEDIAN <span class="text-copper">1:{ratios.median.toFixed(1)}</span>
 							</span>
 						{/if}
@@ -318,7 +332,7 @@
 						{/each}
 					</div>
 					<div
-						class="mt-1 flex justify-between font-mono text-[9.5px] tracking-[0.04em] text-muted"
+						class="mt-1 flex justify-between font-mono text-[calc(var(--dt-base)*9.5/17)] tracking-[0.04em] text-muted"
 					>
 						<span>1:14</span>
 						<span>1:16</span>
@@ -340,21 +354,24 @@
 							>
 								<div class="flex items-center gap-3">
 									<span
-										class="w-5 font-display text-[20px] leading-none font-medium {i === 0
+										class="w-5 font-display text-[calc(var(--dt-base)*20/17)] leading-none font-medium {i ===
+										0
 											? 'text-copper'
 											: 'text-muted'}">{i + 1}</span
 									>
 									<div class="min-w-0">
-										<div class="truncate text-[14px] font-medium text-ink">
+										<div class="truncate text-[calc(var(--dt-base)*14/17)] font-medium text-ink">
 											{linkedBag?.name ?? brew.coffeeName ?? 'Untitled'}
 										</div>
-										<div class="mt-0.5 truncate font-mono text-[11px] tracking-[0.04em] text-muted">
+										<div
+											class="mt-0.5 truncate font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
+										>
 											{brew.method} · <span class="text-copper">{formatRatio(brew)}</span>
 										</div>
 									</div>
 								</div>
 								<div class="flex items-center gap-1.5">
-									<span class="font-mono text-[13px] font-medium text-ink">
+									<span class="font-mono text-[calc(var(--dt-base)*13/17)] font-medium text-ink">
 										{brew.rating?.toFixed(1)}
 									</span>
 									<StarRow value={brew.rating ?? 0} size={12} />
@@ -394,10 +411,14 @@
 									</svg>
 								</div>
 								<div class="min-w-0 flex-1">
-									<div class="truncate font-display text-[15px] leading-[1.2] font-medium text-ink">
+									<div
+										class="truncate font-display text-[calc(var(--dt-base)*15/17)] leading-[1.2] font-medium text-ink"
+									>
 										MOST BREWED · {topBag.bag.name}
 									</div>
-									<div class="mt-0.5 font-mono text-[11px] tracking-[0.04em] text-copper-dk">
+									<div
+										class="mt-0.5 font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-copper-dk"
+									>
 										{topBag.count} brew{topBag.count === 1 ? '' : 's'}
 									</div>
 								</div>
@@ -407,7 +428,7 @@
 						{#if freshness.total > 0}
 							<div class="rounded-[14px] border border-hairline bg-surface px-3.5 py-3">
 								<div
-									class="mb-2 font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+									class="mb-2 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 								>
 									FRESHNESS AT BREW
 								</div>
@@ -441,7 +462,7 @@
 									{/if}
 								</div>
 								<div
-									class="mt-2 flex justify-between font-mono text-[10px] tracking-[0.04em] text-muted"
+									class="mt-2 flex justify-between font-mono text-[calc(var(--dt-base)*10/17)] tracking-[0.04em] text-muted"
 								>
 									<span style="color: var(--color-success)">{freshness.fresh} FRESH</span>
 									<span style="color: var(--color-warning)">{freshness.careful} CAREFUL</span>
@@ -459,7 +480,9 @@
 					<div class="mb-2 flex items-center justify-between">
 						<Eyebrow>TIME OF DAY</Eyebrow>
 						{#if peak}
-							<span class="font-mono text-[11px] tracking-[0.04em] text-muted">
+							<span
+								class="font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
+							>
 								PEAK <span class="text-copper">{formatHour(peak.hour)}</span>
 							</span>
 						{/if}
@@ -478,7 +501,7 @@
 						{/each}
 					</div>
 					<div
-						class="mt-1.5 flex justify-between font-mono text-[9.5px] tracking-[0.04em] text-muted"
+						class="mt-1.5 flex justify-between font-mono text-[calc(var(--dt-base)*9.5/17)] tracking-[0.04em] text-muted"
 					>
 						<span>12 AM</span>
 						<span>6 AM</span>
@@ -490,7 +513,7 @@
 
 			<!-- Pull quote -->
 			<div
-				class="rounded-[18px] border border-hairline bg-surface px-4 py-4 text-center font-display text-[14px] leading-[1.55] text-ink-70 italic"
+				class="rounded-[18px] border border-hairline bg-surface px-4 py-4 text-center font-display text-[calc(var(--dt-base)*14/17)] leading-[1.55] text-ink-70 italic"
 			>
 				"{quote}"
 			</div>

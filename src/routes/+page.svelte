@@ -68,8 +68,10 @@
 		</div>
 	{:else if loadError}
 		<div class="px-[22px] pt-16 text-center">
-			<p class="font-display text-[20px] font-medium text-ink">Couldn't load your brews.</p>
-			<p class="mt-2 text-[14px] text-muted">
+			<p class="font-display text-[calc(var(--dt-base)*20/17)] font-medium text-ink">
+				Couldn't load your brews.
+			</p>
+			<p class="mt-2 text-[calc(var(--dt-base)*14/17)] text-muted">
 				Something went wrong reading your data on this device.
 			</p>
 			<Button size="medium" variant="prominent" onclick={load} class="mt-5">Try again</Button>
@@ -108,7 +110,9 @@
 				<Eyebrow class="mb-2.5">This week</Eyebrow>
 				<div class="grid grid-cols-3 gap-2.5">
 					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
-						<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+						<div
+							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+						>
 							BREWS
 						</div>
 						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
@@ -116,7 +120,9 @@
 						</div>
 					</div>
 					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
-						<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+						<div
+							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+						>
 							AVG RATIO
 						</div>
 						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
@@ -124,7 +130,9 @@
 						</div>
 					</div>
 					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
-						<div class="font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+						<div
+							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+						>
 							FAVORITES
 						</div>
 						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">

@@ -47,9 +47,13 @@
 		</svg>
 	</span>
 	<div class="min-w-0 flex-1">
-		<div class="truncate text-[14px] font-semibold tracking-[-0.005em] text-ink">{title}</div>
 		<div
-			class="mt-0.5 flex items-center gap-1.5 font-mono text-[10.5px] tracking-[0.08em] text-copper-dk uppercase"
+			class="truncate text-[calc(var(--dt-base)*14/17)] font-semibold tracking-[-0.005em] text-ink"
+		>
+			{title}
+		</div>
+		<div
+			class="mt-0.5 flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.08em] text-copper-dk uppercase"
 		>
 			<LiveDot color="var(--color-copper-dk)" size={4} />
 			{#if formatted}

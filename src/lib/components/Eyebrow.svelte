@@ -7,7 +7,9 @@
 	}: { children: Snippet; class?: string; dirty?: boolean } = $props();
 </script>
 
-<div class="font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase {cls}">
+<div
+	class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase {cls}"
+>
 	{@render children()}{#if dirty}<span
 			class="ml-1.5 inline-block h-1 w-1 rounded-full bg-copper align-middle"
 			aria-label="Changed"

@@ -61,7 +61,7 @@
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -87,13 +87,13 @@
 			{#if showArchived}
 				<a
 					href={resolve('/bags')}
-					class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+					class="font-mono text-[calc(var(--dt-base)*11/17)] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 					>← Active</a
 				>
 			{:else}
 				<a
 					href={resolve('/bags?show=archived')}
-					class="font-mono text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+					class="font-mono text-[calc(var(--dt-base)*11/17)] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 					>Show archived ({archivedCount}) →</a
 				>
 			{/if}
@@ -128,11 +128,13 @@
 					</svg>
 				</div>
 				<h2
-					class="m-0 font-display text-[26px] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
+					class="m-0 font-display text-[calc(var(--dt-base)*26/17)] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
 				>
 					No bags yet.
 				</h2>
-				<p class="mt-2 mb-7 max-w-[280px] font-display text-[15px] leading-[1.5] text-muted italic">
+				<p
+					class="mt-2 mb-7 max-w-[280px] font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-muted italic"
+				>
 					Add a bag once and reach for it across all the brews you make from it.
 				</p>
 				<Button size="large" variant="prominent" href={resolve('/bags/new')}>
@@ -173,13 +175,15 @@
 							{/if}
 							<div class="min-w-0 flex-1">
 								<div
-									class="flex flex-wrap items-center gap-2 font-display text-[22px] leading-[1.15] font-medium tracking-[-0.005em] text-ink"
+									class="flex flex-wrap items-center gap-2 font-display text-[calc(var(--dt-base)*22/17)] leading-[1.15] font-medium tracking-[-0.005em] text-ink"
 								>
 									{bag.name}
 									{#if bag.dialedRecipe}<DialedBadge />{/if}
 								</div>
 								{#if bag.roaster}
-									<div class="mt-0.5 text-[13px] text-muted">{bag.roaster}</div>
+									<div class="mt-0.5 text-[calc(var(--dt-base)*13/17)] text-muted">
+										{bag.roaster}
+									</div>
 								{/if}
 							</div>
 							{#if bag.process}
@@ -187,7 +191,9 @@
 							{/if}
 						</a>
 
-						<div class="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-muted">
+						<div
+							class="flex flex-wrap gap-x-3 gap-y-1 text-[calc(var(--dt-base)*12/17)] text-muted"
+						>
 							{#if bag.origin}
 								<span>
 									<OriginFlags origin={bag.origin} />{bag.origin}
@@ -202,31 +208,37 @@
 							<div class="mt-3 grid grid-cols-3 gap-2 border-t border-hairline pt-3">
 								<div>
 									<div
-										class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+										class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 									>
 										USED
 									</div>
-									<div class="mt-0.5 font-mono text-[15px] font-medium text-ink">
+									<div
+										class="mt-0.5 font-mono text-[calc(var(--dt-base)*15/17)] font-medium text-ink"
+									>
 										{c.used.toFixed(1)}g
 									</div>
 								</div>
 								<div>
 									<div
-										class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+										class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 									>
 										REMAINING
 									</div>
-									<div class="mt-0.5 font-mono text-[15px] font-medium text-copper">
+									<div
+										class="mt-0.5 font-mono text-[calc(var(--dt-base)*15/17)] font-medium text-copper"
+									>
 										{c.remaining != null ? Math.max(0, c.remaining).toFixed(1) + 'g' : '—'}
 									</div>
 								</div>
 								<div>
 									<div
-										class="font-mono text-[9.5px] font-medium tracking-[0.14em] text-muted uppercase"
+										class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 									>
 										BREWS
 									</div>
-									<div class="mt-0.5 font-mono text-[15px] font-medium text-ink">
+									<div
+										class="mt-0.5 font-mono text-[calc(var(--dt-base)*15/17)] font-medium text-ink"
+									>
 										{c.brewCount}
 									</div>
 								</div>
@@ -241,7 +253,7 @@
 							{/if}
 						{:else if c.brewCount > 0}
 							<div class="mt-3 border-t border-hairline pt-3">
-								<div class="text-[13px] text-muted">
+								<div class="text-[calc(var(--dt-base)*13/17)] text-muted">
 									{c.brewCount} brew{c.brewCount === 1 ? '' : 's'}
 									{#if c.used > 0}· {c.used.toFixed(1)}g used{/if}
 								</div>

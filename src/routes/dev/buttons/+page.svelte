@@ -18,7 +18,9 @@
 <svelte:head><title>Button matrix</title></svelte:head>
 
 <div class="mx-auto max-w-3xl px-[22px] py-10">
-	<h1 class="mb-6 font-display text-[28px] font-medium text-ink">Button matrix</h1>
+	<h1 class="mb-6 font-display text-[calc(var(--dt-base)*28/17)] font-medium text-ink">
+		Button matrix
+	</h1>
 
 	<!-- Glass needs something with structure behind it, or the material has
 	     nothing to refract and reads as flat grey. -->
@@ -49,7 +51,7 @@
 		     hardcoded dark ink too — text-ink would flip to cream in dark theme and
 		     vanish against a swatch that never changes. -->
 		<div
-			class="mb-3 font-mono text-[10px] font-medium tracking-[0.14em] uppercase"
+			class="mb-3 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] uppercase"
 			style="color: rgba(28,24,20,0.7)"
 		>
 			glassScrim · over media
@@ -64,7 +66,9 @@
 
 	{#each variants as variant (variant)}
 		<div class="border-t border-hairline py-5">
-			<div class="mb-3 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+			<div
+				class="mb-3 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+			>
 				{variant}
 			</div>
 			<div class="flex flex-wrap items-center gap-3">
@@ -87,7 +91,9 @@
 	{/each}
 
 	<div class="border-t border-hairline py-5">
-		<div class="mb-3 font-mono text-[10px] font-medium tracking-[0.14em] text-muted uppercase">
+		<div
+			class="mb-3 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+		>
 			full width
 		</div>
 		<Button size="large" variant="prominent" full>Save brew</Button>

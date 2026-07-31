@@ -61,6 +61,14 @@
 	--container-2xl: 672px;
 	--container-3xl: 768px;
 
+	/* The two Tailwind text presets this app uses. Redefined off --dt-base for
+	   the same reason as the arbitrary sizes: Tailwind's defaults are rem, which
+	   would track the Dynamic Type root DIRECTLY and so scale uncapped (1.5rem
+	   at AX5 = 79px) while every other size in the app is clamped. Same value as
+	   the defaults at the 17px default base. */
+	--text-sm: calc(var(--dt-base) * 14 / 17);
+	--text-2xl: calc(var(--dt-base) * 24 / 17);
+
 	/* Radii */
 	--radius-sm: 4px;
 	--radius-lg: 8px;
@@ -102,6 +110,41 @@
 }
 
 @layer base {
+	/* ── Dynamic Type ─────────────────────────────────────────────────────
+	   The app ships three custom faces, and a brand font makes the app its own
+	   type engine: system fonts get Dynamic Type free, custom ones do not. Every
+	   size here used to be a fixed px, so text ignored Settings > Display &
+	   Brightness > Text Size and Accessibility > Larger Text entirely.
+
+	   `font: -apple-system-body` is the one mechanism that works in WKWebView:
+	   it makes 1rem equal the LIVE Dynamic Type body size, updating without a
+	   reload. (`-webkit-text-size-adjust` is not a Dynamic Type hook — it stays
+	   put at every setting.) Measured ladder, xS→AX5:
+	   14 / 15 / 16 / 17 / 19 / 21 / 23 / 28 / 33 / 40 / 47 / 53px.
+
+	   Type sizes are expressed as calc(var(--dt-base) * N / 17), so at the
+	   default (Large = 17px) every size resolves to exactly the px it was
+	   before — this is a no-op until the user actually changes the setting.
+
+	   --dt-base is clamped rather than raw: uncapped AX5 is 3.1x, which would
+	   burst every fixed-width row in a layout that does not reflow. 26px caps
+	   the growth at ~1.53x, which is a real, useful increase that the existing
+	   layout survives. It lives on a custom property, NOT on the root's own
+	   font-size, because 1rem inside :root's font-size declaration resolves
+	   against the initial 16px, so the clamp could never see the scaled value
+	   there. Layout units are immune either way — --spacing and the radii are
+	   pinned to px (see @theme). */
+	:root {
+		/* Non-Apple platforms (and the SSR pass) keep today's exact baseline. */
+		--dt-base: 17px;
+	}
+	@supports (font: -apple-system-body) {
+		:root {
+			font: -apple-system-body;
+			--dt-base: clamp(16px, 1rem, 26px);
+		}
+	}
+
 	html,
 	body {
 		background-color: var(--color-paper);

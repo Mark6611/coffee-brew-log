@@ -4,7 +4,7 @@
 </script>
 
 <div
-	class="mt-2 flex items-start gap-2 rounded-[10px] bg-ink/[0.04] px-2.5 py-2 text-[12.5px] leading-[1.5] text-ink-70"
+	class="mt-2 flex items-start gap-2 rounded-[10px] bg-ink/[0.04] px-2.5 py-2 text-[calc(var(--dt-base)*12.5/17)] leading-[1.5] text-ink-70"
 >
 	<svg
 		width="13"

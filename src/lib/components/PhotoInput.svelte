@@ -111,7 +111,9 @@
 			class="press flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-rule py-6 text-muted hover:border-copper hover:text-copper-dk disabled:opacity-60"
 		>
 			{#if busy}
-				<span class="font-mono text-[11px] tracking-[0.1em] uppercase">Processing…</span>
+				<span class="font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.1em] uppercase"
+					>Processing…</span
+				>
 			{:else}
 				<svg
 					width="18"
@@ -128,12 +130,12 @@
 					<circle cx="10" cy="10.5" r="3" />
 					<path d="M6.5 4.5l1-1.8h5l1 1.8" />
 				</svg>
-				<span class="text-[13px] font-medium">Add {label.toLowerCase()}</span>
+				<span class="text-[calc(var(--dt-base)*13/17)] font-medium">Add {label.toLowerCase()}</span>
 			{/if}
 		</button>
 	{/if}
 
 	{#if error}
-		<p class="mt-1.5 text-[11.5px] text-danger">{error}</p>
+		<p class="mt-1.5 text-[calc(var(--dt-base)*11.5/17)] text-danger">{error}</p>
 	{/if}
 </div>

@@ -102,7 +102,7 @@
 	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[15px] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -164,7 +164,7 @@
 				bind:this={searchInputEl}
 				bind:value={searchQuery}
 				placeholder="Search coffee, roaster, notes…"
-				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+				class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 			/>
 		</div>
 	{/if}
@@ -215,11 +215,13 @@
 					</svg>
 				</div>
 				<h2
-					class="m-0 font-display text-[26px] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
+					class="m-0 font-display text-[calc(var(--dt-base)*26/17)] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
 				>
 					No brews yet.
 				</h2>
-				<p class="mt-2 mb-7 max-w-[280px] font-display text-[15px] leading-[1.5] text-muted italic">
+				<p
+					class="mt-2 mb-7 max-w-[280px] font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-muted italic"
+				>
 					Your first cup of the morning is also the start of a record. Log it and we'll watch the
 					numbers settle.
 				</p>
