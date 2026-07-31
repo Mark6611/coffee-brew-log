@@ -95,7 +95,7 @@
 
 <div class="mx-auto max-w-2xl pb-12">
 	<!-- Header row -->
-	<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
+	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -119,7 +119,7 @@
 			{#each rangeOptions as opt (opt.value)}
 				<a
 					href={resolve(`/stats?range=${opt.value}`)}
-					class="press-sm hit-44 inline-flex h-9 items-center rounded-full px-3 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] {range ===
+					class="press-sm hit-44 inline-flex h-9 items-center rounded-full px-3 font-mono text-micro font-medium tracking-[0.1em] {range ===
 					opt.value
 						? 'bg-ink text-paper'
 						: 'border border-hairline text-muted hover:text-ink'}">{opt.label}</a
@@ -191,9 +191,7 @@
 			<!-- Quick stats -->
 			<div class="grid grid-cols-3 gap-3">
 				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
-					<div
-						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
-					>
+					<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 						THIS WEEK
 					</div>
 					<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-copper">
@@ -201,9 +199,7 @@
 					</div>
 				</div>
 				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
-					<div
-						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
-					>
+					<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 						AVG RATIO
 					</div>
 					<div class="mt-1 font-display font-mono text-2xl font-medium tracking-[-0.01em] text-ink">
@@ -211,9 +207,7 @@
 					</div>
 				</div>
 				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
-					<div
-						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
-					>
+					<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 						AVG RATING
 					</div>
 					<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
@@ -234,7 +228,7 @@
 								{Math.round(ms.pourOverPct)}%
 							</div>
 							<div
-								class="mt-0.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-0.5 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								POUR-OVER · {ms.pourOver}
 							</div>
@@ -246,7 +240,7 @@
 								{Math.round(ms.espressoPct)}%
 							</div>
 							<div
-								class="mt-0.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-0.5 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								ESPRESSO · {ms.espresso}
 							</div>
@@ -275,7 +269,7 @@
 								{cost.costPerCup != null ? money(cost.costPerCup, 1) : '—'}
 							</div>
 							<div
-								class="mt-0.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-0.5 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								PER CUP{#if cost.cupsWithCost > 0}
 									· {cost.cupsWithCost} counted{/if}
@@ -288,16 +282,14 @@
 								{money(cost.totalBrewedValue)}
 							</div>
 							<div
-								class="mt-0.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-0.5 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								BREWED THIS RANGE
 							</div>
 						</div>
 					</div>
 					{#if cost.totalBeanSpend > 0}
-						<p
-							class="mt-3 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted"
-						>
+						<p class="mt-3 font-mono text-micro tracking-[0.04em] text-muted">
 							{money(cost.totalBeanSpend)} spent on beans all-time
 						</p>
 					{/if}
@@ -331,9 +323,7 @@
 							></div>
 						{/each}
 					</div>
-					<div
-						class="mt-1 flex justify-between font-mono text-[calc(var(--dt-base)*9.5/17)] tracking-[0.04em] text-muted"
-					>
+					<div class="mt-1 flex justify-between font-mono text-micro tracking-[0.04em] text-muted">
 						<span>1:14</span>
 						<span>1:16</span>
 						<span>1:18</span>
@@ -428,7 +418,7 @@
 						{#if freshness.total > 0}
 							<div class="rounded-[14px] border border-hairline bg-surface px-4 py-3">
 								<div
-									class="mb-2 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+									class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 								>
 									FRESHNESS AT BREW
 								</div>
@@ -462,7 +452,7 @@
 									{/if}
 								</div>
 								<div
-									class="mt-2 flex justify-between font-mono text-[calc(var(--dt-base)*10/17)] tracking-[0.04em] text-muted"
+									class="mt-2 flex justify-between font-mono text-micro tracking-[0.04em] text-muted"
 								>
 									<span style="color: var(--color-success)">{freshness.fresh} FRESH</span>
 									<span style="color: var(--color-warning)">{freshness.careful} CAREFUL</span>
@@ -500,9 +490,7 @@
 							></div>
 						{/each}
 					</div>
-					<div
-						class="mt-2 flex justify-between font-mono text-[calc(var(--dt-base)*9.5/17)] tracking-[0.04em] text-muted"
-					>
+					<div class="mt-2 flex justify-between font-mono text-micro tracking-[0.04em] text-muted">
 						<span>12 AM</span>
 						<span>6 AM</span>
 						<span>12 PM</span>

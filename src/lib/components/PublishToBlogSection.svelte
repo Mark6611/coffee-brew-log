@@ -44,7 +44,7 @@
 		<div class="flex items-center justify-between gap-3">
 			<div class="min-w-0">
 				<div
-					class="flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase {published
+					class="flex items-center gap-2 font-mono text-eyebrow font-medium tracking-[0.14em] uppercase {published
 						? 'text-copper-dk'
 						: 'text-muted'}"
 				>
@@ -93,7 +93,7 @@
 				<!-- POST TITLE -->
 				<div>
 					<div
-						class="mb-2 flex items-center justify-between font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+						class="mb-2 flex items-center justify-between font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						<span>POST TITLE</span>
 						<span
@@ -112,7 +112,7 @@
 				<!-- BODY -->
 				<div class="mt-4">
 					<div
-						class="mb-2 flex items-center justify-between font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+						class="mb-2 flex items-center justify-between font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						<span>BODY</span>
 						<span

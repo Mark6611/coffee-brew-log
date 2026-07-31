@@ -195,8 +195,7 @@
 				aria-autocomplete="list"
 			/>
 			{#if hasQuery}
-				<span
-					class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+				<span class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 					>{filtered.length} match{filtered.length === 1 ? '' : 'es'}</span
 				>
 			{:else}
@@ -224,7 +223,7 @@
 			>
 				{#if filtered.length > 0}
 					<div
-						class="px-4 pt-3 pb-1 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+						class="px-4 pt-3 pb-1 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						{hasQuery
 							? `${filtered.length} match${filtered.length === 1 ? '' : 'es'}`
@@ -370,7 +369,7 @@
 				</button>
 
 				<div
-					class="border-t border-hairline bg-paper/50 px-4 py-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] text-muted uppercase"
+					class="border-t border-hairline bg-paper/50 px-4 py-2 font-mono text-eyebrow font-medium tracking-[0.1em] text-muted uppercase"
 				>
 					↑↓ navigate · ↵ select · esc close
 				</div>

@@ -55,9 +55,7 @@
 
 {#snippet metric(label: string, value: string, accent: boolean = false)}
 	<div>
-		<div
-			class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
-		>
+		<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 			{label}
 		</div>
 		<div
@@ -116,7 +114,7 @@
 			{/if}
 			{#if BLOG_ENABLED && brew.published}
 				<span
-					class="inline-flex h-[22px] items-center gap-2 rounded-full bg-copper-lt px-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
+					class="inline-flex h-[22px] items-center gap-2 rounded-full bg-copper-lt px-2 font-mono text-eyebrow font-medium tracking-[0.12em] text-copper-dk uppercase"
 				>
 					<LiveDot color="var(--color-copper-dk)" size={4.5} />
 					Public
@@ -192,7 +190,7 @@
 
 	{#if bag && label && tone}
 		<div
-			class="mt-2 flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase"
+			class="mt-2 flex items-center gap-2 font-mono text-eyebrow font-medium tracking-[0.14em] uppercase"
 			style="color: {tone}"
 		>
 			<span

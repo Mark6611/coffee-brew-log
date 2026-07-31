@@ -46,7 +46,7 @@
 >
 	<div class="flex items-center justify-between">
 		<div
-			class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] uppercase {isHold
+			class="font-mono text-eyebrow font-medium tracking-[0.14em] uppercase {isHold
 				? 'text-success'
 				: isDiagnose
 					? 'text-warning-dk'
@@ -55,51 +55,44 @@
 			{eyebrow}
 		</div>
 		{#if !c.fromTaste}
-			<div
-				class="font-mono text-[calc(var(--dt-base)*9/17)] tracking-[0.12em] text-muted uppercase"
-			>
+			<div class="font-mono text-eyebrow tracking-[0.12em] text-muted uppercase">
 				from the numbers
 			</div>
 		{/if}
 	</div>
 
-	<!-- Metrics row -->
-	<div class="mt-3 flex items-baseline gap-4 font-mono">
+	<!-- Metrics row.
+	     Stacked label-over-value in a 3-column grid, matching BrewCard and the
+	     brew-detail DOSE/YIELD/RATIO rows. It used to lay each group out INLINE
+	     (`label value unit` on one baseline), which left under 14px of slack at
+	     393pt and already wrapped at 375pt — so any type increase, or a user
+	     raising their text size, broke it. Stacked, each column only has to fit
+	     the WIDER of its label and value rather than their sum. -->
+	<div class="mt-3 grid grid-cols-3 gap-2 font-mono">
 		<div>
-			<span
-				class="text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.12em] text-muted uppercase"
-				>Ratio
-			</span>
-			<span class="text-[calc(var(--dt-base)*15/17)] font-medium tracking-[-0.01em] text-ink"
-				>1:{c.ratio.toFixed(2)}</span
-			>
+			<div class="text-eyebrow font-medium tracking-[0.12em] text-muted uppercase">Ratio</div>
+			<div class="text-[calc(var(--dt-base)*15/17)] font-medium tracking-[-0.01em] text-ink">
+				1:{c.ratio.toFixed(2)}
+			</div>
 		</div>
 		<div>
-			<span
-				class="text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.12em] text-muted uppercase"
-				>Flow
-			</span>
-			<span class="text-[calc(var(--dt-base)*15/17)] font-medium tracking-[-0.01em] text-ink"
-				>{c.flowRate.toFixed(2)}</span
-			>
-			<span class="text-[calc(var(--dt-base)*10/17)] text-muted">g/s</span>
+			<div class="text-eyebrow font-medium tracking-[0.12em] text-muted uppercase">Flow</div>
+			<div class="text-[calc(var(--dt-base)*15/17)] font-medium tracking-[-0.01em] text-ink">
+				{c.flowRate.toFixed(2)}<span class="text-micro text-muted">g/s</span>
+			</div>
 		</div>
 		<div>
-			<span
-				class="text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.12em] text-muted uppercase"
-				>Time
-			</span>
-			<span class="text-[calc(var(--dt-base)*15/17)] font-medium tracking-[-0.01em] text-ink"
-				>{c.timeS}</span
-			>
-			<span class="text-[calc(var(--dt-base)*10/17)] text-muted">s</span>
+			<div class="text-eyebrow font-medium tracking-[0.12em] text-muted uppercase">Time</div>
+			<div class="text-[calc(var(--dt-base)*15/17)] font-medium tracking-[-0.01em] text-ink">
+				{c.timeS}<span class="text-micro text-muted">s</span>
+			</div>
 		</div>
 	</div>
 
 	<!-- Under ↔ over rail -->
 	<div class="mt-3">
 		<div
-			class="flex justify-between font-mono text-[calc(var(--dt-base)*8.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+			class="flex justify-between font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 		>
 			<span>Under</span><span>Balanced</span><span>Over</span>
 		</div>
@@ -126,8 +119,7 @@
 				>{actionValue}</span
 			>
 			{#if actionQualifier}
-				<span
-					class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
+				<span class="font-mono text-eyebrow font-medium tracking-[0.12em] text-copper-dk uppercase"
 					>{actionQualifier}</span
 				>
 			{/if}

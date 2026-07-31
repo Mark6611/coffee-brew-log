@@ -79,7 +79,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-20">
-	<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
+	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -101,7 +101,7 @@
 	</div>
 
 	<div class="px-5">
-		<Eyebrow>ACCOUNT</Eyebrow>
+		<Eyebrow class="min-w-0 truncate">ACCOUNT</Eyebrow>
 		<h1
 			class="mt-1 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 		>

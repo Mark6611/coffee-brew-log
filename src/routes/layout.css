@@ -61,6 +61,66 @@
 	--container-2xl: 672px;
 	--container-3xl: 768px;
 
+	/* ════════════════════════════════════════════════════════════════════
+	   TYPE RAMP — semantic steps replacing ad-hoc per-site sizes.
+
+	   Sizes are calc(var(--dt-base) * N / 17), so they inherit Dynamic Type
+	   (see @layer base) and resolve to exactly N px at the default setting.
+
+	   Line-heights are UNITLESS ratios, not px. A px leading would freeze
+	   while the font grew and the lines would collide at large text sizes.
+	   Ratios are taken from Apple's size/leading pairs but kept close to the
+	   1.5 these elements inherit today, so adopting a token never silently
+	   compacts a block: Apple's own 11/13 caption2 would TIGHTEN this app by
+	   2.75px a line across ~107 elements.
+
+	   Display/numeric steps keep their sub-1.3 leading — that tight setting is
+	   the editorial voice, not an oversight.
+	   ════════════════════════════════════════════════════════════════════ */
+
+	/* Mono uppercase LABEL voice — carries tracking + weight so ~89 call sites
+	   can drop `font-medium tracking-[0.14em]`. */
+	--text-eyebrow: calc(var(--dt-base) * 11 / 17);
+	--text-eyebrow--line-height: 1.36;
+	--text-eyebrow--letter-spacing: 0.12em;
+	--text-eyebrow--font-weight: 500;
+
+	/* NOT an eyebrow: chart axis ticks and sentence-case captions. Weight 400,
+	   near-zero tracking, no uppercase. Routing these through --text-eyebrow
+	   would triple their tracking and embolden them — a category error. */
+	--text-micro: calc(var(--dt-base) * 11 / 17);
+	--text-micro--line-height: 1.36;
+	--text-micro--letter-spacing: 0.04em;
+
+	--text-caption2: calc(var(--dt-base) * 11 / 17);
+	--text-caption2--line-height: 1.36;
+	--text-caption1: calc(var(--dt-base) * 12 / 17);
+	--text-caption1--line-height: 1.33;
+	--text-footnote: calc(var(--dt-base) * 13 / 17);
+	--text-footnote--line-height: 1.38;
+	--text-subheadline: calc(var(--dt-base) * 15 / 17);
+	--text-subheadline--line-height: 1.33;
+	--text-body: calc(var(--dt-base) * 17 / 17);
+	--text-body--line-height: 1.29;
+
+	/* Display / serif (Newsreader) */
+	--text-display-footnote: calc(var(--dt-base) * 13 / 17);
+	--text-display-footnote--line-height: 1.46;
+	/* 16, not 15: this lands on the five serif note textareas and 16px is the
+	   iOS focus-zoom threshold — at 15 the zoom guard becomes load-bearing. */
+	--text-display-aside: calc(var(--dt-base) * 16 / 17);
+	--text-display-aside--line-height: 1.44;
+	--text-display-headline: calc(var(--dt-base) * 17 / 17);
+	--text-display-headline--line-height: 1.29;
+	--text-display-title3: calc(var(--dt-base) * 20 / 17);
+	--text-display-title3--line-height: 1.25;
+	--text-display-title2: calc(var(--dt-base) * 22 / 17);
+	--text-display-title2--line-height: 1.27;
+	--text-display-title1: calc(var(--dt-base) * 28 / 17);
+	--text-display-title1--line-height: 1.21;
+	--text-display-large: calc(var(--dt-base) * 34 / 17);
+	--text-display-large--line-height: 1.21;
+
 	/* The two Tailwind text presets this app uses. Redefined off --dt-base for
 	   the same reason as the arbitrary sizes: Tailwind's defaults are rem, which
 	   would track the Dynamic Type root DIRECTLY and so scale uncapped (1.5rem

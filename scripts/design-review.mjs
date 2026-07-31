@@ -288,6 +288,11 @@ const brews = [
 ];
 
 const DETAIL_BREW = brews[0].id; // the dialed 5★ espresso
+// The latest shot on the NON-dialed blend bag — the only state in which
+// CompassCard renders, so without this screen the compass is never captured.
+const COMPASS_BREW = brews
+	.filter((b) => b.bagId === BAG4)
+	.sort((a, b) => b.brewedAt.localeCompare(a.brewedAt))[0].id;
 const DETAIL_BAG = BAG2; // dialed bag (dial-in + cost)
 
 async function seed(page) {
@@ -321,6 +326,7 @@ const SCREENS = [
 	['07-bags', '/bags'],
 	['08-bag-detail', `/bags/${DETAIL_BAG}`],
 	['08b-bag-calibrated', `/bags/${BAG4}`],
+	['03b-brew-compass', `/brews/${COMPASS_BREW}`],
 	['09-bag-edit', `/bags/${DETAIL_BAG}/edit`],
 	['10-bag-new', '/bags/new'],
 	['11-stats', '/stats'],

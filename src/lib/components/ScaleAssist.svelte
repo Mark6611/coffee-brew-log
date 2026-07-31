@@ -124,7 +124,7 @@
 			<!-- Header: name + battery + disconnect -->
 			<div class="mb-2 flex items-center justify-between">
 				<span
-					class="flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
+					class="flex items-center gap-2 font-mono text-eyebrow font-medium tracking-[0.12em] text-copper-dk uppercase"
 				>
 					<span class="inline-block h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true"></span>
 					{scale.deviceName ?? 'Acaia'}
@@ -162,9 +162,7 @@
 					</div>
 				</div>
 				{#if mode === 'done'}
-					<p
-						class="mt-2 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.1em] text-success uppercase"
-					>
+					<p class="mt-2 font-mono text-eyebrow tracking-[0.1em] text-success uppercase">
 						Captured {yieldGrams}g in {brewTimeSeconds}s
 					</p>
 				{/if}
@@ -189,13 +187,11 @@
 				</div>
 				<div class="mt-3 flex items-center gap-2">
 					{#if mode === 'listening'}
-						<span
-							class="flex-1 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.1em] text-muted uppercase"
+						<span class="flex-1 font-mono text-eyebrow tracking-[0.1em] text-muted uppercase"
 							>Waiting for first drip…</span
 						>
 					{:else}
-						<span
-							class="flex-1 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.1em] text-copper uppercase"
+						<span class="flex-1 font-mono text-eyebrow tracking-[0.1em] text-copper uppercase"
 							>Recording — auto-stops when flow settles</span
 						>
 					{/if}

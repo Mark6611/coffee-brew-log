@@ -53,7 +53,7 @@
 			{title}
 		</div>
 		<div
-			class="mt-0.5 flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.08em] text-copper-dk uppercase"
+			class="mt-0.5 flex items-center gap-2 font-mono text-eyebrow tracking-[0.08em] text-copper-dk uppercase"
 		>
 			<LiveDot color="var(--color-copper-dk)" size={4} />
 			{#if formatted}

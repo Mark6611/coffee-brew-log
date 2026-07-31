@@ -208,7 +208,7 @@
 							<div class="mt-3 grid grid-cols-3 gap-2 border-t border-hairline pt-3">
 								<div>
 									<div
-										class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+										class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 									>
 										USED
 									</div>
@@ -220,7 +220,7 @@
 								</div>
 								<div>
 									<div
-										class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+										class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 									>
 										REMAINING
 									</div>
@@ -232,7 +232,7 @@
 								</div>
 								<div>
 									<div
-										class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+										class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 									>
 										BREWS
 									</div>

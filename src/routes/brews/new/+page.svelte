@@ -490,7 +490,7 @@
 
 <form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 	<!-- Header row -->
-	<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
+	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/brews')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -509,7 +509,7 @@
 			</svg>
 			Cancel
 		</a>
-		<Eyebrow>{headerEyebrow}</Eyebrow>
+		<Eyebrow class="min-w-0 truncate">{headerEyebrow}</Eyebrow>
 		<span class="h-9 w-[60px]" aria-hidden="true"></span>
 	</div>
 
@@ -600,14 +600,12 @@
 				<div class="rounded-[18px] border border-copper/25 bg-copper-lt px-4 py-4">
 					<div class="flex items-center justify-between">
 						<div
-							class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-copper-dk uppercase"
+							class="font-mono text-eyebrow font-medium tracking-[0.14em] text-copper-dk uppercase"
 						>
 							Last shot · {formatTimeAgo(lastShot.brewedAt)}
 						</div>
 						{#if !lastCompass.fromTaste}
-							<div
-								class="font-mono text-[calc(var(--dt-base)*9/17)] tracking-[0.12em] text-muted uppercase"
-							>
+							<div class="font-mono text-eyebrow tracking-[0.12em] text-muted uppercase">
 								from the numbers
 							</div>
 						{/if}
@@ -677,8 +675,7 @@
 				<div class="mb-2 flex items-baseline justify-between">
 					<Eyebrow>GRIND · LAGOM CASA</Eyebrow>
 					{#if grindStaged}
-						<span
-							class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.12em] text-copper uppercase"
+						<span class="font-mono text-eyebrow font-medium tracking-[0.12em] text-copper uppercase"
 							>Staged from suggestion</span
 						>
 					{/if}
@@ -697,7 +694,7 @@
 				{#if grindStaged}
 					{@const d = grindStaged.deltaTicks}
 					<p
-						class="mt-2 flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.1em] text-copper-dk uppercase"
+						class="mt-2 flex items-center gap-2 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk uppercase"
 					>
 						<span class="inline-block h-[5px] w-[5px] rounded-full bg-copper" aria-hidden="true"
 						></span>
@@ -735,12 +732,12 @@
 								>Suggested <span class="font-mono font-medium">{espressoStage.value}</span></span
 							>
 							<span
-								class="mt-0.5 block font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
+								class="mt-0.5 block font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
 								>{espressoStage.provenance}</span
 							>
 						</span>
 						<span
-							class="shrink-0 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] text-copper uppercase"
+							class="shrink-0 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper uppercase"
 							>Tap to use</span
 						>
 					</button>
@@ -787,12 +784,12 @@
 									>Suggested <span class="font-mono font-medium">{sug.value}</span></span
 								>
 								<span
-									class="mt-0.5 block font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
+									class="mt-0.5 block font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
 									>{prov}</span
 								>
 							</span>
 							<span
-								class="shrink-0 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] text-copper uppercase"
+								class="shrink-0 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper uppercase"
 								>Tap to use</span
 							>
 						</button>
@@ -880,7 +877,7 @@
 				<button
 					type="button"
 					onclick={() => (moreOpen = !moreOpen)}
-					class="flex w-full items-center justify-between px-4 py-3 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+					class="flex w-full items-center justify-between px-4 py-3 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
 					aria-expanded={moreOpen}
 				>
 					Rating, balance, notes, temp
@@ -1089,12 +1086,12 @@
 									>Suggested <span class="font-mono font-medium">{sug.value}</span></span
 								>
 								<span
-									class="mt-0.5 block font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
+									class="mt-0.5 block font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
 									>{prov}</span
 								>
 							</span>
 							<span
-								class="shrink-0 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.1em] text-copper uppercase"
+								class="shrink-0 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper uppercase"
 								>Tap to use</span
 							>
 						</button>
@@ -1139,7 +1136,7 @@
 				<div class="grid grid-cols-2 gap-3">
 					<div>
 						<div
-							class="mb-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+							class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 						>
 							MIN
 						</div>
@@ -1155,7 +1152,7 @@
 					</div>
 					<div>
 						<div
-							class="mb-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+							class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 						>
 							SEC
 						</div>

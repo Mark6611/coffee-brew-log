@@ -398,7 +398,7 @@
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 		<!-- Header row -->
-		<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
+		<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/brews/[id]', { id: brewId })}
 				onclick={handleCancel}
@@ -420,14 +420,12 @@
 			</a>
 
 			<div class="text-center">
-				<div
-					class="font-mono text-[calc(var(--dt-base)*10/17)] font-semibold tracking-[0.18em] text-copper uppercase"
-				>
+				<div class="font-mono text-eyebrow font-semibold tracking-[0.18em] text-copper uppercase">
 					EDITING
 				</div>
 				{#if brewNumber != null}
 					<div
-						class="mt-0.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+						class="mt-0.5 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						BREW · #{brewNumber}
 					</div>
@@ -456,7 +454,7 @@
 				<button
 					type="button"
 					onclick={reset}
-					class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.1em] text-copper uppercase transition-colors hover:text-copper-dk"
+					class="font-mono text-eyebrow font-medium tracking-[0.1em] text-copper uppercase transition-colors hover:text-copper-dk"
 					>Reset</button
 				>
 			</div>
@@ -645,7 +643,7 @@
 					<div class="grid grid-cols-2 gap-3">
 						<div>
 							<div
-								class="mb-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								MIN
 							</div>
@@ -661,7 +659,7 @@
 						</div>
 						<div>
 							<div
-								class="mb-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								SEC
 							</div>

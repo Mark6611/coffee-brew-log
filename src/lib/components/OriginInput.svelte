@@ -69,7 +69,7 @@
 	/>
 	{#if blend}
 		<span
-			class="mr-2.5 rounded-full bg-copper-lt px-2 py-1 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
+			class="mr-2.5 rounded-full bg-copper-lt px-2 py-1 font-mono text-eyebrow font-medium tracking-[0.12em] text-copper-dk uppercase"
 			transition:fade={motion({ duration: 180 })}>Blend</span
 		>
 	{:else if resolved.length === 1}

@@ -11,7 +11,7 @@
 </script>
 
 <span
-	class="inline-flex h-[22px] items-center rounded-full px-3 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.12em] uppercase {styles[
+	class="inline-flex h-[22px] items-center rounded-full px-3 font-mono text-eyebrow font-medium tracking-[0.12em] uppercase {styles[
 		tone
 	]}">{@render children()}</span
 >

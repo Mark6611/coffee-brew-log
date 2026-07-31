@@ -51,7 +51,7 @@
 		     hardcoded dark ink too — text-ink would flip to cream in dark theme and
 		     vanish against a swatch that never changes. -->
 		<div
-			class="mb-3 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] uppercase"
+			class="mb-3 font-mono text-eyebrow font-medium tracking-[0.14em] uppercase"
 			style="color: rgba(28,24,20,0.7)"
 		>
 			glassScrim · over media
@@ -66,9 +66,7 @@
 
 	{#each variants as variant (variant)}
 		<div class="border-t border-hairline py-5">
-			<div
-				class="mb-3 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
-			>
+			<div class="mb-3 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 				{variant}
 			</div>
 			<div class="flex flex-wrap items-center gap-3">
@@ -91,9 +89,7 @@
 	{/each}
 
 	<div class="border-t border-hairline py-5">
-		<div
-			class="mb-3 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
-		>
+		<div class="mb-3 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 			full width
 		</div>
 		<Button size="large" variant="prominent" full>Save brew</Button>

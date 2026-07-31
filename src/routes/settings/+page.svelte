@@ -255,7 +255,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-12">
-	<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
+	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -277,7 +277,7 @@
 	</div>
 
 	<div class="px-5">
-		<Eyebrow>SETTINGS</Eyebrow>
+		<Eyebrow class="min-w-0 truncate">SETTINGS</Eyebrow>
 		<h1
 			class="mt-1 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 		>
@@ -357,9 +357,7 @@
 									<div class="truncate text-[calc(var(--dt-base)*14/17)] text-ink">
 										{auth.user.email}
 									</div>
-									<div
-										class="mt-0.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted uppercase"
-									>
+									<div class="mt-0.5 font-mono text-eyebrow tracking-[0.04em] text-muted uppercase">
 										Signed in
 									</div>
 								</div>
@@ -369,7 +367,7 @@
 							<div class="flex items-center justify-between gap-3 border-t border-hairline pt-3">
 								<div class="min-w-0 flex-1">
 									<div
-										class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+										class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 									>
 										SYNC
 									</div>

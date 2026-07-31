@@ -37,9 +37,7 @@
 		: 'border-b border-transparent'}"
 >
 	{#if eyebrow}
-		<div
-			class="mb-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
-		>
+		<div class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 			{eyebrow}
 		</div>
 	{/if}

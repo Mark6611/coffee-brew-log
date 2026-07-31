@@ -158,7 +158,7 @@
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
 		<!-- Header row -->
-		<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
+		<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/brews')}
 				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -194,7 +194,7 @@
 					<Badge>{brew.method}</Badge>
 					{#if brew.isFavorite}
 						<span
-							class="inline-flex h-[22px] items-center gap-1 rounded-full bg-success/10 px-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.12em] text-success uppercase"
+							class="inline-flex h-[22px] items-center gap-1 rounded-full bg-success/10 px-2 font-mono text-eyebrow font-medium tracking-[0.12em] text-success uppercase"
 						>
 							<svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor">
 								<polygon
@@ -246,7 +246,7 @@
 						{@const label = freshnessLabel(bag.roastedAt)}
 						{#if tone && label}
 							<div
-								class="mt-2 flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase"
+								class="mt-2 flex items-center gap-2 font-mono text-eyebrow font-medium tracking-[0.14em] uppercase"
 								style="color: {tone}"
 							>
 								<span
@@ -292,7 +292,7 @@
 						</div>
 						<a
 							href={resolve('/brews/[id]/edit', { id: brew.id })}
-							class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase hover:underline"
+							class="font-mono text-eyebrow font-medium tracking-[0.14em] uppercase hover:underline"
 							>Link →</a
 						>
 					</div>
@@ -333,7 +333,7 @@
 					<div class="mt-4 grid grid-cols-4 gap-1 border-t border-hairline pt-4">
 						<div>
 							<div
-								class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								DOSE
 							</div>
@@ -345,7 +345,7 @@
 						</div>
 						<div>
 							<div
-								class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								{outLabel}
 							</div>
@@ -357,7 +357,7 @@
 						</div>
 						<div>
 							<div
-								class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								TIME
 							</div>
@@ -369,7 +369,7 @@
 						</div>
 						<div>
 							<div
-								class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								RATIO
 							</div>
@@ -411,7 +411,7 @@
 						{#if brew.grindSetting}
 							<div>
 								<div
-									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+									class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 								>
 									GRIND
 								</div>
@@ -428,7 +428,7 @@
 						{#if brew.waterTempC != null}
 							<div>
 								<div
-									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+									class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 								>
 									{brew.method === 'espresso' ? 'BREW TEMP' : 'WATER TEMP'}
 								</div>
@@ -444,7 +444,7 @@
 					{#if espressoExtraction}
 						<div class="mt-4">
 							<div
-								class="mb-2 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								TASTE
 							</div>
@@ -455,7 +455,7 @@
 					{#if brew.balance}
 						<div class="mt-4">
 							<div
-								class="mb-2 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								BALANCE
 							</div>
@@ -476,7 +476,7 @@
 								{brew.rating.toFixed(1)}
 							</div>
 							<div
-								class="mt-1 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mt-1 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								out of 5
 							</div>
@@ -493,8 +493,7 @@
 						<StarRow value={0} size={16} />
 						<div class="text-[calc(var(--dt-base)*13/17)] text-muted">Rate this brew</div>
 					</div>
-					<span
-						class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-copper uppercase"
+					<span class="font-mono text-eyebrow font-medium tracking-[0.14em] text-copper uppercase"
 						>Add →</span
 					>
 				</a>
@@ -515,8 +514,7 @@
 					<div class="font-display text-[calc(var(--dt-base)*14/17)] text-muted italic">
 						What did it taste like?
 					</div>
-					<span
-						class="font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-copper uppercase"
+					<span class="font-mono text-eyebrow font-medium tracking-[0.14em] text-copper uppercase"
 						>Add →</span
 					>
 				</a>

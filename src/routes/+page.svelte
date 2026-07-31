@@ -110,9 +110,7 @@
 				<Eyebrow class="mb-2">This week</Eyebrow>
 				<div class="grid grid-cols-3 gap-3">
 					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
-						<div
-							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
-						>
+						<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 							BREWS
 						</div>
 						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
@@ -120,9 +118,7 @@
 						</div>
 					</div>
 					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
-						<div
-							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
-						>
+						<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 							AVG RATIO
 						</div>
 						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
@@ -130,9 +126,7 @@
 						</div>
 					</div>
 					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
-						<div
-							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
-						>
+						<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 							FAVORITES
 						</div>
 						<div class="mt-1 font-display text-2xl font-medium tracking-[-0.01em] text-ink">
