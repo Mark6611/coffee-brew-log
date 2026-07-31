@@ -12,7 +12,7 @@
 <div class="relative flex h-12 rounded-[14px] border border-hairline bg-paper p-1">
 	<!-- sliding thumb: width = one segment; translates to the selected index -->
 	<div
-		class="thumb pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-[10px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.04)]"
+		class="thumb pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-4px)] rounded-[10px] bg-surface shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.04)]"
 		style="transform: translateX({value === 'espresso' ? '0%' : '100%'})"
 	></div>
 	<button

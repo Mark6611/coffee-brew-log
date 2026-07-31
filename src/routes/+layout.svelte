@@ -72,7 +72,7 @@
 	type="button"
 	onclick={cycle}
 	class="press-sm glass glass-sm fixed right-3 z-50 grid h-9 w-9 place-items-center rounded-full text-ink"
-	style="top: calc(0.75rem + env(safe-area-inset-top, 0px))"
+	style="top: calc(12px + env(safe-area-inset-top, 0px))"
 	aria-label="Cycle theme (current: {theme})"
 	title="Theme: {theme}"
 >

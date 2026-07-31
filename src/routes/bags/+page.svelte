@@ -271,7 +271,7 @@
 			href={resolve('/bags/new')}
 			label="New bag"
 			class="fixed right-6 z-40 h-[60px] w-[60px]"
-			style="bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px))"
+			style="bottom: calc(24px + env(safe-area-inset-bottom, 0px))"
 		>
 			<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
 				<path
