@@ -31,7 +31,7 @@
 	}
 
 	// Marketing version — mirror ios/App CFBundleShortVersionString (MARKETING_VERSION).
-	const APP_VERSION = '1.3';
+	const APP_VERSION = '1.4';
 
 	let brewCount = $state(0);
 	let bagCount = $state(0);
