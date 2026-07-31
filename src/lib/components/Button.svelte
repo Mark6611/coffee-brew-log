@@ -65,7 +65,6 @@
 		[key: string]: unknown;
 	} = $props();
 
-
 	// Heights track the kit's ladder (Large 50, Medium 44, Regular 36, Small 30)
 	// nudged to the app's existing rhythm.
 	// NOTE: large (52) and medium (44) clear the 44pt touch target on their own.
@@ -125,7 +124,9 @@
 	// Small controls read better with the deeper compress (.press-sm).
 	const physics = $derived(size === 'small' || iconOnly ? 'press-sm' : 'press');
 	// Only the under-44 sizes need the expanded touch region.
-	const hit = $derived(size === 'regular' || size === 'small' ? (iconOnly ? 'hit-44-sq' : 'hit-44') : '');
+	const hit = $derived(
+		size === 'regular' || size === 'small' ? (iconOnly ? 'hit-44-sq' : 'hit-44') : ''
+	);
 	// A scrim button sits on a user photo, where copper can't be trusted to hold
 	// contrast; everything else takes the copper ring.
 	const focus = $derived(variant === 'glassScrim' ? FOCUS_RING_SCRIM : FOCUS_RING);
