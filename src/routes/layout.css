@@ -117,12 +117,19 @@
 	}
 
 	/* iOS zooms the page when a focused input's font-size is under 16px.
-	   Clamp form fields to 16px on phones so focusing never triggers zoom. */
+	   This is a FLOOR for fields that declare no size of their own — not an
+	   override. It used to carry !important, which (being in @layer base) beat
+	   every utility and silently discarded the declared size of ~19 fields on
+	   every iPhone: the mono dose/yield/temp readouts, the OTP field and the
+	   serif note areas all rendered at a flat 16px regardless of their class.
+	   That also made the field type unreachable by Dynamic Type.
+	   Every field that sets its own text-* is now >= 16px by construction, so
+	   excluding them keeps the no-zoom guarantee without clobbering them. */
 	@media (max-width: 600px) {
-		input,
-		textarea,
-		select {
-			font-size: 16px !important;
+		input:not([class*='text-']),
+		textarea:not([class*='text-']),
+		select:not([class*='text-']) {
+			font-size: 16px;
 		}
 	}
 
