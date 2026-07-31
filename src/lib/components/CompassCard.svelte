@@ -49,13 +49,13 @@
 			class="font-mono text-[9.5px] font-medium tracking-[0.14em] uppercase {isHold
 				? 'text-success'
 				: isDiagnose
-					? 'text-warning'
+					? 'text-warning-dk'
 					: 'text-copper-dk'}"
 		>
 			{eyebrow}
 		</div>
 		{#if !c.fromTaste}
-			<div class="font-mono text-[9px] tracking-[0.12em] text-faint uppercase">
+			<div class="font-mono text-[9px] tracking-[0.12em] text-muted uppercase">
 				from the numbers
 			</div>
 		{/if}

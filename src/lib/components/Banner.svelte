@@ -18,7 +18,7 @@
 	} = $props();
 
 	const toneClass = {
-		warning: 'border-warning/30 bg-warning/[0.08] text-warning',
+		warning: 'border-warning/30 bg-warning/[0.08] text-warning-dk',
 		danger: 'border-danger/30 bg-danger/[0.08] text-danger',
 		copper: 'border-copper/30 bg-copper-lt text-copper-dk'
 	};

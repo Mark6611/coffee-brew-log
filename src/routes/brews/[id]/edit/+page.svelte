@@ -506,7 +506,7 @@
 							required
 							inputmode="decimal"
 							placeholder="0.0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
 						/>
 						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
@@ -527,7 +527,7 @@
 								required
 								inputmode="decimal"
 								placeholder="0.0"
-								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
+								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
 							/>
 						{:else}
 							<input
@@ -538,7 +538,7 @@
 								required
 								inputmode="decimal"
 								placeholder="0"
-								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
+								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
 							/>
 						{/if}
 						<span class="font-mono text-[13px] text-muted">g</span>
@@ -580,7 +580,7 @@
 					bind:value={grindSetting}
 					required
 					placeholder={method === 'espresso' ? 'e.g. 1.3' : 'e.g. 5.5'}
-					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -605,7 +605,7 @@
 							max="100"
 							inputmode="numeric"
 							placeholder="0"
-							class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
+							class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-muted"
 						/>
 						<span class="font-mono text-[12px] text-muted">°C</span>
 					</div>
@@ -635,7 +635,7 @@
 							required
 							inputmode="numeric"
 							placeholder="0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
 						/>
 						<span class="font-mono text-[13px] text-muted">sec</span>
 					</div>
@@ -654,7 +654,7 @@
 								min="0"
 								inputmode="numeric"
 								placeholder="0"
-								class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+								class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 							/>
 						</div>
 						<div>
@@ -671,7 +671,7 @@
 								max="59"
 								inputmode="numeric"
 								placeholder="0"
-								class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+								class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 							/>
 						</div>
 					</div>
@@ -758,7 +758,7 @@
 					bind:value={notes}
 					rows="3"
 					placeholder="Stone fruit, jasmine on cool-down…"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 

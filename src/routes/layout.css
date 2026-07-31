@@ -19,7 +19,7 @@
 	/* Ink */
 	--color-ink: #1c1814;
 	--color-ink-70: #4a413a;
-	--color-muted: #7a6e63;
+	--color-muted: #736759; /* 4.81:1 on paper — was #7a6e63 at 4.33:1, under AA */
 	--color-faint: #a89d90;
 
 	/* Borders */
@@ -35,6 +35,11 @@
 	--color-success: #4f6b2e;
 	--color-warning: #b07a14;
 	--color-danger: #a6341b;
+	/* Warning splits fill from text: --color-warning stays the FILL (it is the lighter
+	   middle rung of the success/warning/danger lightness ladder in the freshness bar,
+	   and darkening it would collapse that encoding to hue-only). --color-warning-dk is
+	   the TEXT tone — the plain --color-warning is only 3.25:1 on paper. */
+	--color-warning-dk: #8a5f10;
 
 	/* Fonts */
 	--font-display: 'Newsreader Variable', Georgia, serif;
@@ -91,7 +96,9 @@
 	   dialed badge, banners, freshness/extraction dots) went muddy without this. */
 	--color-success: #7fa050;
 	--color-warning: #d09a2e;
-	--color-danger: #d0603f;
+	--color-danger: #d97a5c; /* was #d0603f — 4.12:1 on the elevated card, under AA */
+	/* Required: without a dark override the light warning-dk leaks in and goes invisible. */
+	--color-warning-dk: #d09a2e;
 }
 
 @layer base {

@@ -146,7 +146,9 @@
 	const calibration = $derived(bag ? calibrateGrind(bag, allBrews) : null);
 	function confTone(c: GrindCalibration['confidence']): string {
 		if (c === 'high') return 'var(--color-success)';
-		if (c === 'low') return 'var(--color-warning)';
+		// warning-dk, not warning: this is rendered as TEXT (the plain fill tone is
+		// only 3.25:1 on paper). The extraction dots below keep the brighter fill.
+		if (c === 'low') return 'var(--color-warning-dk)';
 		return 'var(--color-copper-dk)';
 	}
 	function calibrationBlurb(c: GrindCalibration): string {
@@ -390,7 +392,7 @@
 						></div>
 					</div>
 					{#if consumption.percentUsed != null && consumption.percentUsed > 100}
-						<div class="mt-1.5 font-mono text-[11px] text-warning">
+						<div class="mt-1.5 font-mono text-[11px] text-warning-dk">
 							{(consumption.used - bag.weightGrams).toFixed(1)}g over recorded weight
 						</div>
 					{/if}
@@ -563,7 +565,7 @@
 							<div class="mt-2 px-2.5 font-mono text-[11px] tracking-[0.04em] text-muted">
 								<span class="text-[9.5px] font-medium tracking-[0.14em] uppercase">Grind path</span>
 								{#each grindPath as g, i (i)}
-									{#if i > 0}<span class="text-faint"> → </span>{/if}
+									{#if i > 0}<span class="text-muted"> → </span>{/if}
 									<span class={i === grindPath.length - 1 ? 'font-semibold text-copper' : ''}
 										>{g}</span
 									>
@@ -668,7 +670,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="flex items-center gap-2 text-faint">
+								<div class="flex items-center gap-2 text-muted">
 									{#if brew.isFavorite}
 										<svg
 											class="text-copper"

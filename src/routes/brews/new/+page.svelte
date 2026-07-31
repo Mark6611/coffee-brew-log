@@ -561,7 +561,7 @@
 					stroke-width="1.5"
 					stroke-linecap="round"
 					stroke-linejoin="round"
-					class="shrink-0 text-faint"
+					class="shrink-0 text-muted"
 				>
 					<path d="M6 3l5 5-5 5" />
 				</svg>
@@ -603,7 +603,7 @@
 							Last shot · {formatTimeAgo(lastShot.brewedAt)}
 						</div>
 						{#if !lastCompass.fromTaste}
-							<div class="font-mono text-[9px] tracking-[0.12em] text-faint uppercase">
+							<div class="font-mono text-[9px] tracking-[0.12em] text-muted uppercase">
 								from the numbers
 							</div>
 						{/if}
@@ -682,7 +682,7 @@
 						bind:value={grindSetting}
 						required
 						placeholder="e.g. 0.5.5"
-						class="h-12 w-full rounded-[14px] border px-3.5 font-mono text-ink transition outline-none placeholder:text-faint {grindStaged
+						class="h-12 w-full rounded-[14px] border px-3.5 font-mono text-ink transition outline-none placeholder:text-muted {grindStaged
 							? 'border-copper bg-paper ring-[3px] ring-copper/[0.18]'
 							: 'border-hairline bg-paper focus:border-copper focus:ring-2 focus:ring-copper/25'}"
 					/>
@@ -741,7 +741,7 @@
 					<button
 						type="button"
 						onclick={applyStage}
-						class="mt-1.5 text-[12px] text-faint transition-colors hover:text-copper-dk"
+						class="mt-1.5 text-[12px] text-muted transition-colors hover:text-copper-dk"
 						>Suggested <span class="font-mono">{espressoStage.value}</span> · use instead</button
 					>
 				{:else if grindSuggestion}
@@ -795,7 +795,7 @@
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="mt-1.5 text-[12px] text-faint transition-colors hover:text-copper-dk"
+							class="mt-1.5 text-[12px] text-muted transition-colors hover:text-copper-dk"
 							>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
 						>
 					{/if}
@@ -826,7 +826,7 @@
 							required
 							inputmode="decimal"
 							placeholder="0.0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
 						/>
 						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
@@ -850,7 +850,7 @@
 							required
 							inputmode="numeric"
 							placeholder="0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
 						/>
 						<span class="font-mono text-[13px] text-muted">sec</span>
 					</div>
@@ -904,7 +904,7 @@
 										min="0.1"
 										required
 										inputmode="decimal"
-										class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
+										class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-muted"
 									/>
 									<span class="font-mono text-[12px] text-muted">g</span>
 								</div>
@@ -922,7 +922,7 @@
 										max="100"
 										inputmode="decimal"
 										placeholder="0"
-										class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
+										class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-muted"
 									/>
 									<span class="font-mono text-[12px] text-muted">°C</span>
 								</div>
@@ -965,7 +965,7 @@
 								bind:value={notes}
 								rows="3"
 								placeholder="Syrupy, chocolate finish…"
-								class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+								class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 							></textarea>
 						</div>
 
@@ -992,7 +992,7 @@
 							required
 							inputmode="decimal"
 							placeholder="0.0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
 						/>
 						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
@@ -1010,7 +1010,7 @@
 							required
 							inputmode="decimal"
 							placeholder="0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-faint"
+							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
 						/>
 						<span class="font-mono text-[13px] text-muted">g</span>
 					</div>
@@ -1041,7 +1041,7 @@
 					bind:value={grindSetting}
 					required
 					placeholder="e.g. 4.2"
-					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 
 				{#if grindSuggestion}
@@ -1095,7 +1095,7 @@
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="mt-1.5 text-[12px] text-faint transition-colors hover:text-copper-dk"
+							class="mt-1.5 text-[12px] text-muted transition-colors hover:text-copper-dk"
 							>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
 						>
 					{/if}
@@ -1116,7 +1116,7 @@
 						max="100"
 						inputmode="numeric"
 						placeholder="0"
-						class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
+						class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-muted"
 					/>
 					<span class="font-mono text-[12px] text-muted">°C</span>
 				</div>
@@ -1139,7 +1139,7 @@
 							min="0"
 							inputmode="numeric"
 							placeholder="0"
-							class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+							class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 						/>
 					</div>
 					<div>
@@ -1156,7 +1156,7 @@
 							max="59"
 							inputmode="numeric"
 							placeholder="0"
-							class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+							class="h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 						/>
 					</div>
 				</div>
@@ -1207,7 +1207,7 @@
 					bind:value={notes}
 					rows="3"
 					placeholder="Stone fruit, jasmine on cool-down…"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 

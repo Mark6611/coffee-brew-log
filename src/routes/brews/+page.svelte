@@ -161,7 +161,7 @@
 				bind:this={searchInputEl}
 				bind:value={searchQuery}
 				placeholder="Search coffee, roaster, notes…"
-				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 			/>
 		</div>
 	{/if}

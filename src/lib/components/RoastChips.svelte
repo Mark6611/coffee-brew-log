@@ -22,7 +22,7 @@
 			onclick={() => toggle(lvl.key)}
 			aria-pressed={active}
 			class="h-[38px] rounded-full px-[14px] font-sans text-[13.5px] transition-all duration-150"
-			style="background:{lvl.bg}; color:{lvl.fg}; opacity:{active ? 1 : 0.82}; font-weight:{active
+			style="background:{lvl.bg}; color:{lvl.fg}; font-weight:{active
 				? 600
 				: 500}; {active
 				? 'box-shadow: 0 0 0 2px var(--color-paper), 0 0 0 4px var(--color-copper);'

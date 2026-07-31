@@ -6,7 +6,7 @@
 	const styles: Record<Tone, string> = {
 		default: 'bg-copper-lt text-copper-dk',
 		success: 'bg-success/10 text-success',
-		warning: 'bg-warning/15 text-warning'
+		warning: 'bg-warning/15 text-warning-dk'
 	};
 </script>
 

@@ -64,7 +64,7 @@
 		type="text"
 		bind:value
 		placeholder="e.g. Ethiopia, or Brazil + Ethiopia"
-		class="min-h-12 min-w-0 flex-1 bg-transparent px-3.5 text-ink outline-none placeholder:text-faint"
+		class="min-h-12 min-w-0 flex-1 bg-transparent px-3.5 text-ink outline-none placeholder:text-muted"
 	/>
 	{#if blend}
 		<span
@@ -98,7 +98,7 @@
 </div>
 
 <p
-	class="mt-1.5 text-[12px] {resolved.length ? 'text-copper-dk' : 'text-faint'}"
+	class="mt-1.5 text-[12px] {resolved.length ? 'text-copper-dk' : 'text-muted'}"
 	aria-live="polite"
 >
 	{#if blend}

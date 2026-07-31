@@ -317,7 +317,7 @@
 										Synced {timeAgo(cloudLastSyncAt)}
 									{/if}
 								</div>
-								<p class="mt-1 text-[11px] leading-[1.4] text-faint">
+								<p class="mt-1 text-[11px] leading-[1.4] text-muted">
 									Through your private iCloud only — no account, nothing shared with us.
 								</p>
 							</div>
@@ -428,7 +428,7 @@
 									</svg>
 									{deletingAccount ? 'Deleting account…' : 'Delete account'}
 								</Button>
-								<p class="mt-1.5 text-[11px] leading-[1.4] text-faint">
+								<p class="mt-1.5 text-[11px] leading-[1.4] text-muted">
 									Permanently deletes your account and all synced data.
 								</p>
 							</div>

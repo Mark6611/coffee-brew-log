@@ -123,7 +123,7 @@
 						required
 						autocomplete="email"
 						placeholder="you@example.com"
-						class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
@@ -161,7 +161,7 @@
 						pattern="[0-9]*"
 						maxlength="10"
 						placeholder="00000000"
-						class="h-14 w-full rounded-[14px] border border-hairline bg-paper px-4 text-center font-mono text-[24px] font-medium tracking-[0.25em] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="h-14 w-full rounded-[14px] border border-hairline bg-paper px-4 text-center font-mono text-[24px] font-medium tracking-[0.25em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 

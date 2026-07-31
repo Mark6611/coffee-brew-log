@@ -186,7 +186,7 @@
 				onblur={() => setTimeout(() => (isOpen = false), 150)}
 				onkeydown={handleKeydown}
 				placeholder="Search or add a coffee…"
-				class="min-w-0 flex-1 bg-transparent text-ink outline-none placeholder:text-faint"
+				class="min-w-0 flex-1 bg-transparent text-ink outline-none placeholder:text-muted"
 				role="combobox"
 				aria-expanded={isOpen}
 				aria-controls="bag-listbox"

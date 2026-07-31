@@ -131,7 +131,7 @@
 				<button
 					type="button"
 					onclick={() => disconnectScale()}
-					class="text-[11px] text-faint hover:text-ink">Disconnect</button
+					class="text-[11px] text-muted hover:text-ink">Disconnect</button
 				>
 			</div>
 

@@ -285,7 +285,7 @@
 						</div>
 					</div>
 					{#if cost.totalBeanSpend > 0}
-						<p class="mt-2.5 font-mono text-[10.5px] tracking-[0.04em] text-faint">
+						<p class="mt-2.5 font-mono text-[10.5px] tracking-[0.04em] text-muted">
 							{money(cost.totalBeanSpend)} spent on beans all-time
 						</p>
 					{/if}

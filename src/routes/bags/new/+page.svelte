@@ -126,7 +126,7 @@
 				bind:value={name}
 				placeholder="e.g. Worka Sakaro"
 				required
-				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 			/>
 		</div>
 
@@ -141,7 +141,7 @@
 				type="text"
 				bind:value={roaster}
 				placeholder="e.g. Sey Coffee"
-				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 			/>
 		</div>
 
@@ -155,7 +155,7 @@
 			<input
 				type="date"
 				bind:value={roastedAt}
-				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+				class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 			/>
 		</div>
 
@@ -190,7 +190,7 @@
 						min="1"
 						inputmode="decimal"
 						placeholder="250"
-						class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-faint"
+						class="min-w-0 flex-1 font-mono text-[16px] tracking-[-0.01em] text-ink placeholder:text-muted"
 					/>
 					<span class="font-mono text-[12px] text-muted">g</span>
 				</div>
@@ -204,7 +204,7 @@
 					min="0"
 					inputmode="decimal"
 					placeholder="0.00"
-					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 		</div>
@@ -215,7 +215,7 @@
 				bind:value={notes}
 				rows="3"
 				placeholder="Taste notes from the roaster…"
-				class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+				class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[15px] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 			></textarea>
 		</div>
 

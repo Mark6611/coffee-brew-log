@@ -94,7 +94,7 @@
 						class="mb-2 flex items-center justify-between font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						<span>POST TITLE</span>
-						<span class="text-[11.5px] font-normal tracking-normal text-faint normal-case"
+						<span class="text-[11.5px] font-normal tracking-normal text-muted normal-case"
 							>separate from coffee name</span
 						>
 					</div>
@@ -102,7 +102,7 @@
 						type="text"
 						bind:value={blogTitle}
 						placeholder="A morning at home with the Yirgacheffe"
-						class="h-12 w-full rounded-[14px] border border-hairline bg-surface px-3.5 font-display text-[17px] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="h-12 w-full rounded-[14px] border border-hairline bg-surface px-3.5 font-display text-[17px] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
@@ -112,7 +112,7 @@
 						class="mb-2 flex items-center justify-between font-mono text-[10.5px] font-medium tracking-[0.14em] text-muted uppercase"
 					>
 						<span>BODY</span>
-						<span class="text-[11.5px] font-normal tracking-normal text-faint normal-case"
+						<span class="text-[11.5px] font-normal tracking-normal text-muted normal-case"
 							>Markdown supported</span
 						>
 					</div>
@@ -120,7 +120,7 @@
 						bind:value={blogBody}
 						rows="8"
 						placeholder={BODY_PLACEHOLDER}
-						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-3.5 py-3 text-[16px] leading-[1.55] text-ink transition outline-none placeholder:text-faint focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-3.5 py-3 text-[16px] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					></textarea>
 				</div>
 
