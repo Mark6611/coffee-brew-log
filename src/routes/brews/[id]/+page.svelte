@@ -151,14 +151,14 @@
 {#if loading}
 	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound || !brew}
-	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
+	<div class="mx-auto max-w-2xl px-5 pt-12 text-center">
 		<p class="text-muted">Brew not found.</p>
 		<a href={resolve('/brews')} class="mt-3 inline-block text-copper underline">Back to brews</a>
 	</div>
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
 		<!-- Header row -->
-		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
+		<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/brews')}
 				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -184,13 +184,13 @@
 			>
 		</div>
 
-		<div class="space-y-5 px-[22px]">
+		<div class="space-y-5 px-5">
 			<!-- Identity -->
 			<div>
 				{#if brewNumber != null}
 					<Eyebrow>BREW · #{brewNumber}</Eyebrow>
 				{/if}
-				<div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+				<div class="mt-2 flex flex-wrap items-center gap-2">
 					<Badge>{brew.method}</Badge>
 					{#if brew.isFavorite}
 						<span
@@ -218,7 +218,7 @@
 				{#if bag}
 					<a
 						href={resolve('/bags/[id]', { id: bag.id })}
-						class="mt-1.5 inline-flex items-center gap-1 text-[calc(var(--dt-base)*13/17)] text-copper-dk transition-colors hover:text-copper"
+						class="mt-2 inline-flex items-center gap-1 text-[calc(var(--dt-base)*13/17)] text-copper-dk transition-colors hover:text-copper"
 						style="border-bottom: 1px solid rgba(156,74,31,0.35); padding-bottom: 1px;"
 					>
 						<svg
@@ -246,7 +246,7 @@
 						{@const label = freshnessLabel(bag.roastedAt)}
 						{#if tone && label}
 							<div
-								class="mt-2 flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase"
+								class="mt-2 flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase"
 								style="color: {tone}"
 							>
 								<span
@@ -260,7 +260,7 @@
 						{/if}
 					{/if}
 				{:else if brew.roaster || brew.coffeeName}
-					<div class="mt-1.5 text-[calc(var(--dt-base)*13/17)] text-muted">
+					<div class="mt-2 text-[calc(var(--dt-base)*13/17)] text-muted">
 						{brew.roaster ?? ''}
 					</div>
 				{/if}
@@ -271,7 +271,7 @@
 
 				{#if !brew.bagId}
 					<div
-						class="mt-3 flex items-center justify-between gap-3 rounded-[14px] bg-copper-lt px-3.5 py-2.5 text-[calc(var(--dt-base)*12.5/17)] text-copper-dk"
+						class="mt-3 flex items-center justify-between gap-3 rounded-[14px] bg-copper-lt px-4 py-3 text-[calc(var(--dt-base)*12.5/17)] text-copper-dk"
 					>
 						<div class="flex items-center gap-2">
 							<svg
@@ -315,9 +315,7 @@
 			{/if}
 
 			<!-- Hero ratio block -->
-			<div
-				class="relative overflow-hidden rounded-[22px] border border-hairline bg-surface px-[22px] py-[24px]"
-			>
+			<div class="relative overflow-hidden rounded-[22px] border border-hairline bg-surface p-5">
 				<div
 					class="pointer-events-none absolute -top-[30px] -right-[30px] h-[140px] w-[140px] rounded-full bg-copper-lt opacity-40"
 				></div>
@@ -408,7 +406,7 @@
 
 			<!-- Variables card -->
 			{#if showVariables}
-				<div class="rounded-[18px] border border-hairline bg-surface px-4 py-[14px]">
+				<div class="rounded-[18px] border border-hairline bg-surface px-4 py-4">
 					<div class="grid grid-cols-2 gap-4">
 						{#if brew.grindSetting}
 							<div>
@@ -446,7 +444,7 @@
 					{#if espressoExtraction}
 						<div class="mt-4">
 							<div
-								class="mb-1.5 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-2 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								TASTE
 							</div>
@@ -457,7 +455,7 @@
 					{#if brew.balance}
 						<div class="mt-4">
 							<div
-								class="mb-1.5 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-2 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								BALANCE
 							</div>
@@ -469,7 +467,7 @@
 
 			<!-- Rating card -->
 			{#if brew.rating != null}
-				<div class="rounded-[18px] border border-hairline bg-surface px-4 py-[16px]">
+				<div class="rounded-[18px] border border-hairline bg-surface px-4 py-4">
 					<div class="flex items-end justify-between gap-4">
 						<div>
 							<div
@@ -489,7 +487,7 @@
 			{:else}
 				<a
 					href={resolve('/brews/[id]/edit', { id: brew.id })}
-					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] hover:border-copper/50"
+					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-4 hover:border-copper/50"
 				>
 					<div class="flex items-center gap-3">
 						<StarRow value={0} size={16} />
@@ -505,14 +503,14 @@
 			<!-- Notes card -->
 			{#if brew.notes}
 				<div
-					class="rounded-[18px] border border-hairline bg-surface px-4 py-3.5 font-display text-[calc(var(--dt-base)*15.5/17)] leading-[1.5] text-ink-70 italic"
+					class="rounded-[18px] border border-hairline bg-surface px-4 py-4 font-display text-[calc(var(--dt-base)*15.5/17)] leading-[1.5] text-ink-70 italic"
 				>
 					<MarkdownText text={brew.notes} />
 				</div>
 			{:else}
 				<a
 					href={resolve('/brews/[id]/edit', { id: brew.id })}
-					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-[16px] hover:border-copper/50"
+					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-4 hover:border-copper/50"
 				>
 					<div class="font-display text-[calc(var(--dt-base)*14/17)] text-muted italic">
 						What did it taste like?
@@ -528,7 +526,7 @@
 			{#if bag && bagConsumptionData}
 				<a
 					href={resolve('/bags/[id]', { id: bag.id })}
-					class="press block rounded-[18px] border border-hairline bg-surface px-4 py-[14px] hover:bg-paper/50"
+					class="press block rounded-[18px] border border-hairline bg-surface px-4 py-4 hover:bg-paper/50"
 				>
 					<div class="flex items-start gap-3">
 						<div
@@ -580,7 +578,7 @@
 			{/if}
 
 			<!-- Footer actions -->
-			<div class="mt-6 grid grid-cols-2 gap-2.5">
+			<div class="mt-6 grid grid-cols-2 gap-3">
 				<Button size="medium" variant="glass" full onclick={handleDuplicate}>
 					<svg
 						width="14"

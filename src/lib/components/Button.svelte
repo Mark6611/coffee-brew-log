@@ -77,16 +77,16 @@
 			box: 'h-[52px]',
 			text: 'text-[calc(var(--dt-base)*15/17)]',
 			pad: 'px-5',
-			gap: 'gap-2.5'
+			gap: 'gap-3'
 		},
 		medium: { box: 'h-11', text: 'text-[calc(var(--dt-base)*14/17)]', pad: 'px-4', gap: 'gap-2' },
 		regular: {
 			box: 'h-9',
 			text: 'text-[calc(var(--dt-base)*13/17)]',
-			pad: 'px-3.5',
-			gap: 'gap-1.5'
+			pad: 'px-4',
+			gap: 'gap-2'
 		},
-		small: { box: 'h-7', text: 'text-[calc(var(--dt-base)*12/17)]', pad: 'px-3', gap: 'gap-1.5' }
+		small: { box: 'h-7', text: 'text-[calc(var(--dt-base)*12/17)]', pad: 'px-3', gap: 'gap-2' }
 	};
 
 	// The glass material scales with the control (see .glass-lg/md/sm).

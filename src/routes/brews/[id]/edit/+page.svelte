@@ -391,14 +391,14 @@
 {#if loading}
 	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound}
-	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
+	<div class="mx-auto max-w-2xl px-5 pt-12 text-center">
 		<p class="text-muted">Brew not found.</p>
 		<a href={resolve('/brews')} class="mt-3 inline-block text-copper underline">Back to brews</a>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 		<!-- Header row -->
-		<div class="flex items-center justify-between px-[18px] pe-14 pt-[10px] pb-[10px] sm:pe-[18px]">
+		<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/brews/[id]', { id: brewId })}
 				onclick={handleCancel}
@@ -442,7 +442,7 @@
 		<!-- Reset bar when dirty -->
 		{#if dirty}
 			<div
-				class="mx-[22px] mb-2.5 flex items-center justify-between gap-3 rounded-[10px] bg-copper-lt px-3 py-2 text-copper-dk"
+				class="mx-5 mb-2 flex items-center justify-between gap-3 rounded-[10px] bg-copper-lt px-3 py-2 text-copper-dk"
 			>
 				<div class="flex items-center gap-2 text-[calc(var(--dt-base)*12.5/17)]">
 					<span class="inline-block h-1.5 w-1.5 rounded-full bg-copper" aria-hidden="true"></span>
@@ -462,7 +462,7 @@
 			</div>
 		{/if}
 
-		<div class="space-y-[18px] px-[22px] pt-2">
+		<div class="space-y-5 px-5 pt-2">
 			<!-- Method -->
 			<div class="relative">
 				{#if isDirty('method')}
@@ -488,7 +488,7 @@
 			</div>
 
 			<!-- Dose + Yield/Water -->
-			<div class="relative grid grid-cols-2 gap-2.5">
+			<div class="relative grid grid-cols-2 gap-3">
 				{#if isDirty('doseGrams', 'yieldGrams', 'waterGrams')}
 					<div
 						class="absolute top-1 bottom-1 -left-2 w-1 rounded-full bg-copper"
@@ -498,7 +498,7 @@
 				<div>
 					<Eyebrow class="mb-2" dirty={isDirty('doseGrams')}>DOSE</Eyebrow>
 					<div
-						class="field-wrapper flex min-h-14 items-center gap-1.5 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-14 items-center gap-2 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -518,7 +518,7 @@
 						>{method === 'espresso' ? 'YIELD' : 'WATER'}</Eyebrow
 					>
 					<div
-						class="field-wrapper flex min-h-14 items-center gap-1.5 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-14 items-center gap-2 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						{#if method === 'espresso'}
 							<input
@@ -558,7 +558,7 @@
 						{/each}
 						{#if actualRatio !== null}
 							<span
-								class="inline-flex h-9 items-center rounded-full bg-copper-lt px-2.5 font-mono text-[calc(var(--dt-base)*12/17)] tracking-[-0.01em] text-copper"
+								class="inline-flex h-9 items-center rounded-full bg-copper-lt px-3 font-mono text-[calc(var(--dt-base)*12/17)] tracking-[-0.01em] text-copper"
 								>= 1:{actualRatio.toFixed(1)} actual</span
 							>
 						{/if}
@@ -582,7 +582,7 @@
 					bind:value={grindSetting}
 					required
 					placeholder={method === 'espresso' ? 'e.g. 1.3' : 'e.g. 5.5'}
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -597,7 +597,7 @@
 					{/if}
 					<Eyebrow class="mb-2" dirty={isDirty('waterTempC')}>WATER TEMP (OPTIONAL)</Eyebrow>
 					<div
-						class="field-wrapper flex min-h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -627,7 +627,7 @@
 				>
 				{#if method === 'espresso'}
 					<div
-						class="field-wrapper flex min-h-14 items-center gap-1.5 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-14 items-center gap-2 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -642,10 +642,10 @@
 						<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">sec</span>
 					</div>
 				{:else}
-					<div class="grid grid-cols-2 gap-2.5">
+					<div class="grid grid-cols-2 gap-3">
 						<div>
 							<div
-								class="mb-1.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								MIN
 							</div>
@@ -661,7 +661,7 @@
 						</div>
 						<div>
 							<div
-								class="mb-1.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
+								class="mb-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 							>
 								SEC
 							</div>
@@ -745,7 +745,7 @@
 					type="datetime-local"
 					bind:value={brewedAtLocal}
 					required
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -762,7 +762,7 @@
 					bind:value={notes}
 					rows="3"
 					placeholder="Stone fruit, jasmine on cool-down…"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[calc(var(--dt-base)*16/17)] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-4 py-4 font-display text-[calc(var(--dt-base)*16/17)] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 

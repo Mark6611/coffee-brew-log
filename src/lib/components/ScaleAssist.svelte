@@ -122,9 +122,9 @@
 			</p>
 		{:else if scale.status === 'connected'}
 			<!-- Header: name + battery + disconnect -->
-			<div class="mb-2.5 flex items-center justify-between">
+			<div class="mb-2 flex items-center justify-between">
 				<span
-					class="flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
+					class="flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
 				>
 					<span class="inline-block h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true"></span>
 					{scale.deviceName ?? 'Acaia'}
@@ -155,7 +155,7 @@
 						<button
 							type="button"
 							onclick={beginListening}
-							class="press-sm rounded-lg bg-copper px-3.5 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-paper hover:bg-copper-dk"
+							class="press-sm rounded-lg bg-copper px-4 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-paper hover:bg-copper-dk"
 						>
 							{mode === 'done' ? 'New shot' : 'Start shot'}
 						</button>
@@ -187,7 +187,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="mt-2.5 flex items-center gap-2">
+				<div class="mt-3 flex items-center gap-2">
 					{#if mode === 'listening'}
 						<span
 							class="flex-1 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.1em] text-muted uppercase"
@@ -202,7 +202,7 @@
 					<button
 						type="button"
 						onclick={finish}
-						class="press-sm rounded-lg bg-ink/[0.06] px-3.5 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-ink hover:bg-ink/[0.1]"
+						class="press-sm rounded-lg bg-ink/[0.06] px-4 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-ink hover:bg-ink/[0.1]"
 						>Stop</button
 					>
 				</div>

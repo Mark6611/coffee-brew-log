@@ -99,7 +99,7 @@
 </svelte:head>
 
 <div class="relative mx-auto max-w-2xl pb-24">
-	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
+	<div class="flex items-center justify-between px-5 pt-2 pb-0">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -158,26 +158,26 @@
 	</AppHeader>
 
 	{#if searchOpen && allBrews.length > 0}
-		<div class="px-[22px] pb-3">
+		<div class="px-5 pb-3">
 			<input
 				type="search"
 				bind:this={searchInputEl}
 				bind:value={searchQuery}
 				placeholder="Search coffee, roaster, notes…"
-				class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+				class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 			/>
 		</div>
 	{/if}
 
 	{#if allBrews.length > 0}
-		<div class="flex gap-2 overflow-x-auto px-[22px] pb-3">
+		<div class="flex gap-2 overflow-x-auto px-5 pb-3">
 			<Chip active={filter === 'all'} onclick={() => (filter = 'all')}>All</Chip>
 			<Chip active={filter === 'pour-over'} onclick={() => (filter = 'pour-over')}>Pour-over</Chip>
 			<Chip active={filter === 'espresso'} onclick={() => (filter = 'espresso')}>Espresso</Chip>
 			<Chip active={filter === 'favorites'} onclick={() => (filter = 'favorites')}>Favorites</Chip>
 			{#if BLOG_ENABLED && publishedCount > 0}
 				<Chip active={filter === 'published'} onclick={() => (filter = 'published')}>
-					<span class="inline-flex items-center gap-1.5">
+					<span class="inline-flex items-center gap-2">
 						<LiveDot color="var(--color-copper)" size={4.5} />
 						On the blog · {publishedCount}
 					</span>
@@ -186,7 +186,7 @@
 		</div>
 	{/if}
 
-	<div class="px-[22px]">
+	<div class="px-5">
 		{#if loading}
 			<p class="py-8 text-center text-sm text-muted">Loading…</p>
 		{:else if allBrews.length === 0}
@@ -220,7 +220,7 @@
 					No brews yet.
 				</h2>
 				<p
-					class="mt-2 mb-7 max-w-[280px] font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-muted italic"
+					class="mt-2 mb-6 max-w-[280px] font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-muted italic"
 				>
 					Your first cup of the morning is also the start of a record. Log it and we'll watch the
 					numbers settle.
@@ -247,7 +247,7 @@
 		{:else}
 			{#each groups as group (group.dayKey)}
 				<DayHeader>{group.dayKey}</DayHeader>
-				<div class="mb-5 flex flex-col gap-2.5">
+				<div class="mb-5 flex flex-col gap-3">
 					{#each group.brews as brew, i (brew.id)}
 						<div
 							in:fly={motion({ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 })}
@@ -267,7 +267,7 @@
 		variant="prominent"
 		href={resolve('/brews/new')}
 		label="New brew"
-		class="fixed right-6 z-40 h-[60px] w-[60px]"
+		class="fixed right-5 z-40 h-[60px] w-[60px]"
 		style="bottom: calc(24px + env(safe-area-inset-bottom, 0px))"
 	>
 		<svg width="20" height="20" viewBox="0 0 20 20" fill="none">

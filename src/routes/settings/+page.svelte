@@ -255,7 +255,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-12">
-	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
+	<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -276,7 +276,7 @@
 		</a>
 	</div>
 
-	<div class="px-[22px]">
+	<div class="px-5">
 		<Eyebrow>SETTINGS</Eyebrow>
 		<h1
 			class="mt-1 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
@@ -294,7 +294,7 @@
 	</div>
 
 	{#if !loading}
-		<div class="mt-6 space-y-[18px] px-[22px]">
+		<div class="mt-6 space-y-5 px-5">
 			{#if isNative}
 				<!-- iCloud sync (native): no account, no login — the device's own
 				     iCloud moves the data between the user's devices. -->
@@ -430,7 +430,7 @@
 									</svg>
 									{deletingAccount ? 'Deleting account…' : 'Delete account'}
 								</Button>
-								<p class="mt-1.5 text-[calc(var(--dt-base)*11/17)] leading-[1.4] text-muted">
+								<p class="mt-2 text-[calc(var(--dt-base)*11/17)] leading-[1.4] text-muted">
 									Permanently deletes your account and all synced data.
 								</p>
 							</div>
@@ -463,7 +463,7 @@
 					onchange={handleFileChange}
 					class="hidden"
 				/>
-				<div class="flex flex-col gap-2.5">
+				<div class="flex flex-col gap-3">
 					<Button
 						size="medium"
 						variant="bordered"
@@ -519,7 +519,7 @@
 
 			{#if message}
 				<div
-					class="rounded-[14px] bg-success/10 px-3 py-2.5 text-[calc(var(--dt-base)*13/17)] text-success"
+					class="rounded-[14px] bg-success/10 px-3 py-3 text-[calc(var(--dt-base)*13/17)] text-success"
 				>
 					{message}
 				</div>

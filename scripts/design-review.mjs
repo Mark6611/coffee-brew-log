@@ -10,7 +10,10 @@ import { mkdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const BASE = process.argv[2] ?? 'http://localhost:5179';
-const OUT = resolve('design-review');
+// Width override so a layout change can be checked at the tight iPhone widths
+// (393 = 14/15/16, 375 = SE/mini) where rows have the least horizontal slack.
+const WIDTH = Number(process.env.DR_WIDTH ?? 440);
+const OUT = resolve(process.env.DR_OUT ?? 'design-review');
 
 // ── Sample data (valid UUIDs; timestamps relative to now) ────────────────
 // Mirrors scripts/screenshots.mjs so a design pass and an App Store capture
@@ -330,7 +333,7 @@ const errors = [];
 for (const theme of ['light', 'dark']) {
 	const browser = await chromium.launch();
 	const ctx = await browser.newContext({
-		viewport: { width: 440, height: 956 },
+		viewport: { width: WIDTH, height: 956 },
 		deviceScaleFactor: 2,
 		colorScheme: theme
 	});

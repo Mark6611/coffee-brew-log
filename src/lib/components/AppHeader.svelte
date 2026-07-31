@@ -32,13 +32,13 @@
 
 <div
 	bind:this={el}
-	class="header sticky top-0 z-30 px-[22px] pt-[14px] pb-[18px] transition-[background-color,border-color] duration-300 {scrolled
+	class="header sticky top-0 z-30 px-5 pt-3 pb-4 transition-[background-color,border-color] duration-300 {scrolled
 		? 'is-scrolled border-b'
 		: 'border-b border-transparent'}"
 >
 	{#if eyebrow}
 		<div
-			class="mb-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
+			class="mb-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 		>
 			{eyebrow}
 		</div>
@@ -50,10 +50,10 @@
 			{@render children()}
 		</h1>
 		{#if action}
-			<!-- Clears the app's fixed theme toggle (right-3, w-9 → 48px occupied),
+			<!-- Clears the app's fixed theme toggle (right-5, w-9 → 48px occupied),
 			     which otherwise overlaps and steals taps from this action button once
 			     the header pins; no clearance needed once the column has side margins (sm+). -->
-			<div class="pe-14 sm:pe-0">{@render action()}</div>
+			<div class="pe-16 sm:pe-0">{@render action()}</div>
 		{/if}
 	</div>
 </div>

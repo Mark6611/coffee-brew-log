@@ -17,7 +17,7 @@
 
 <svelte:head><title>Button matrix</title></svelte:head>
 
-<div class="mx-auto max-w-3xl px-[22px] py-10">
+<div class="mx-auto max-w-3xl px-5 py-10">
 	<h1 class="mb-6 font-display text-[calc(var(--dt-base)*28/17)] font-medium text-ink">
 		Button matrix
 	</h1>

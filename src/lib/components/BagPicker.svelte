@@ -245,7 +245,7 @@
 								selectBag(bag);
 							}}
 							onmouseenter={() => (highlightedIndex = i)}
-							class="block w-full px-4 py-2.5 text-left transition-colors {highlightedIndex === i
+							class="block w-full px-4 py-3 text-left transition-colors {highlightedIndex === i
 								? 'bg-paper'
 								: 'hover:bg-paper/60'} {c.remaining != null && c.remaining <= 0
 								? 'opacity-50'
@@ -288,7 +288,7 @@
 									</div>
 									<div class="mt-0.5 flex items-center justify-between gap-2">
 										<div
-											class="flex min-w-0 items-center gap-1.5 text-[calc(var(--dt-base)*12.5/17)] text-muted"
+											class="flex min-w-0 items-center gap-2 text-[calc(var(--dt-base)*12.5/17)] text-muted"
 										>
 											{#if bag.roaster}
 												<span class="truncate">{bag.roaster}</span>

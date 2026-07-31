@@ -58,7 +58,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-24">
-	<div class="flex items-center justify-between px-[18px] pt-[6px] pb-[2px]">
+	<div class="flex items-center justify-between px-5 pt-2 pb-0">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -83,7 +83,7 @@
 	</AppHeader>
 
 	{#if archivedCount > 0 || showArchived}
-		<div class="px-[22px] pb-3">
+		<div class="px-5 pb-3">
 			{#if showArchived}
 				<a
 					href={resolve('/bags')}
@@ -100,7 +100,7 @@
 		</div>
 	{/if}
 
-	<div class="px-[22px]">
+	<div class="px-5">
 		{#if loading}
 			<p class="py-8 text-center text-sm text-muted">Loading…</p>
 		{:else if visibleBags.length === 0 && !bags.length}
@@ -133,7 +133,7 @@
 					No bags yet.
 				</h2>
 				<p
-					class="mt-2 mb-7 max-w-[280px] font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-muted italic"
+					class="mt-2 mb-6 max-w-[280px] font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-muted italic"
 				>
 					Add a bag once and reach for it across all the brews you make from it.
 				</p>
@@ -154,13 +154,13 @@
 				{showArchived ? 'No archived bags.' : 'All bags are archived.'}
 			</p>
 		{:else}
-			<div class="flex flex-col gap-2.5">
+			<div class="flex flex-col gap-3">
 				{#each visibleBags as bag, i (bag.id)}
 					{@const c = bagConsumption(bag, brews)}
 					<div
 						in:fly={motion({ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 })}
 						out:slide={motion({ duration: 220 })}
-						class="rounded-[18px] border border-hairline bg-surface px-[18px] pt-[16px] pb-[18px] transition-transform duration-[180ms] ease-out has-[a:active]:scale-[0.985]"
+						class="rounded-[18px] border border-hairline bg-surface p-4 transition-transform duration-[180ms] ease-out has-[a:active]:scale-[0.985]"
 					>
 						<a
 							href={resolve('/bags/[id]', { id: bag.id })}
@@ -283,7 +283,7 @@
 			variant="prominent"
 			href={resolve('/bags/new')}
 			label="New bag"
-			class="fixed right-6 z-40 h-[60px] w-[60px]"
+			class="fixed right-5 z-40 h-[60px] w-[60px]"
 			style="bottom: calc(24px + env(safe-area-inset-bottom, 0px))"
 		>
 			<svg width="20" height="20" viewBox="0 0 20 20" fill="none">

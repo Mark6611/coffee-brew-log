@@ -95,7 +95,7 @@
 
 <div class="mx-auto max-w-2xl pb-12">
 	<!-- Header row -->
-	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
+	<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -115,7 +115,7 @@
 			Home
 		</a>
 
-		<div class="flex gap-1.5">
+		<div class="flex gap-2">
 			{#each rangeOptions as opt (opt.value)}
 				<a
 					href={resolve(`/stats?range=${opt.value}`)}
@@ -131,7 +131,7 @@
 	{#if loading}
 		<p class="py-8 text-center text-sm text-muted">Loading…</p>
 	{:else if totalAll === 0}
-		<div class="px-[22px] pt-12 pb-20 text-center">
+		<div class="px-5 pt-12 pb-20 text-center">
 			<h2
 				class="font-display text-[calc(var(--dt-base)*26/17)] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
 			>
@@ -147,7 +147,7 @@
 			>
 		</div>
 	{:else}
-		<div class="space-y-7 px-[22px]">
+		<div class="space-y-6 px-5">
 			<!-- Headline -->
 			<div>
 				<Eyebrow>STATS</Eyebrow>
@@ -189,8 +189,8 @@
 			</div>
 
 			<!-- Quick stats -->
-			<div class="grid grid-cols-3 gap-2.5">
-				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+			<div class="grid grid-cols-3 gap-3">
+				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
 					<div
 						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 					>
@@ -200,7 +200,7 @@
 						{thisWeek}
 					</div>
 				</div>
-				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
 					<div
 						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 					>
@@ -210,7 +210,7 @@
 						{avgR != null ? `1:${avgR.toFixed(1)}` : '—'}
 					</div>
 				</div>
-				<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
 					<div
 						class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 					>
@@ -296,7 +296,7 @@
 					</div>
 					{#if cost.totalBeanSpend > 0}
 						<p
-							class="mt-2.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted"
+							class="mt-3 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.04em] text-muted"
 						>
 							{money(cost.totalBeanSpend)} spent on beans all-time
 						</p>
@@ -350,7 +350,7 @@
 							{@const linkedBag = allBags.find((b) => b.id === brew.bagId)}
 							<a
 								href={resolve('/brews/[id]', { id: brew.id })}
-								class="flex items-center justify-between gap-3 bg-surface px-3.5 py-3 transition-colors hover:bg-paper/50"
+								class="flex items-center justify-between gap-3 bg-surface px-4 py-3 transition-colors hover:bg-paper/50"
 							>
 								<div class="flex items-center gap-3">
 									<span
@@ -370,7 +370,7 @@
 										</div>
 									</div>
 								</div>
-								<div class="flex items-center gap-1.5">
+								<div class="flex items-center gap-2">
 									<span class="font-mono text-[calc(var(--dt-base)*13/17)] font-medium text-ink">
 										{brew.rating?.toFixed(1)}
 									</span>
@@ -390,7 +390,7 @@
 						{#if topBag.bag}
 							<a
 								href={resolve('/bags/[id]', { id: topBag.bag.id })}
-								class="flex items-center gap-3 rounded-[14px] bg-copper-lt px-3 py-2.5 transition-colors hover:bg-copper-lt/80"
+								class="flex items-center gap-3 rounded-[14px] bg-copper-lt px-3 py-3 transition-colors hover:bg-copper-lt/80"
 							>
 								<div
 									class="grid h-8 w-8 shrink-0 place-items-center rounded-[9px] bg-copper text-paper"
@@ -426,7 +426,7 @@
 						{/if}
 
 						{#if freshness.total > 0}
-							<div class="rounded-[14px] border border-hairline bg-surface px-3.5 py-3">
+							<div class="rounded-[14px] border border-hairline bg-surface px-4 py-3">
 								<div
 									class="mb-2 font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 								>
@@ -501,7 +501,7 @@
 						{/each}
 					</div>
 					<div
-						class="mt-1.5 flex justify-between font-mono text-[calc(var(--dt-base)*9.5/17)] tracking-[0.04em] text-muted"
+						class="mt-2 flex justify-between font-mono text-[calc(var(--dt-base)*9.5/17)] tracking-[0.04em] text-muted"
 					>
 						<span>12 AM</span>
 						<span>6 AM</span>

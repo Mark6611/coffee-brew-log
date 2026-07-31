@@ -96,13 +96,13 @@
 {#if loading}
 	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound}
-	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
+	<div class="mx-auto max-w-2xl px-5 pt-12 text-center">
 		<p class="text-muted">Bag not found.</p>
 		<a href={resolve('/bags')} class="mt-3 inline-block text-copper underline">Back to bags</a>
 	</div>
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
-		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
+		<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/bags/[id]', { id: bagId })}
 				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -126,19 +126,19 @@
 		</div>
 
 		<h1
-			class="mx-[22px] mt-1.5 mb-[18px] font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+			class="mx-5 mt-2 mb-5 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
 		>
 			Edit bag
 		</h1>
 
-		<div class="space-y-[18px] px-[22px]">
+		<div class="space-y-5 px-5">
 			<div>
 				<Eyebrow class="mb-2">NAME</Eyebrow>
 				<input
 					type="text"
 					bind:value={name}
 					required
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -152,7 +152,7 @@
 				<input
 					type="text"
 					bind:value={roaster}
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -166,7 +166,7 @@
 				<input
 					type="date"
 					bind:value={roastedAt}
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -188,11 +188,11 @@
 				<RoastChips bind:value={roastLevel} />
 			</div>
 
-			<div class="grid grid-cols-2 gap-2.5">
+			<div class="grid grid-cols-2 gap-3">
 				<div>
 					<Eyebrow class="mb-2">WEIGHT (G)</Eyebrow>
 					<div
-						class="field-wrapper flex min-h-12 items-center gap-1.5 rounded-[14px] border border-hairline bg-paper px-3.5 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -213,7 +213,7 @@
 						step="0.01"
 						min="0"
 						inputmode="decimal"
-						class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 			</div>
@@ -223,7 +223,7 @@
 				<textarea
 					bind:value={notes}
 					rows="3"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-3.5 py-3.5 font-display text-[calc(var(--dt-base)*16/17)] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-4 py-4 font-display text-[calc(var(--dt-base)*16/17)] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 

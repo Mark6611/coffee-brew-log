@@ -256,14 +256,14 @@
 {#if loading}
 	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound || !bag}
-	<div class="mx-auto max-w-2xl px-[22px] pt-12 text-center">
+	<div class="mx-auto max-w-2xl px-5 pt-12 text-center">
 		<p class="text-muted">Bag not found.</p>
 		<a href={resolve('/bags')} class="mt-3 inline-block text-copper underline">Back to bags</a>
 	</div>
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
 		<!-- Header row -->
-		<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
+		<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/bags')}
 				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -290,7 +290,7 @@
 			>
 		</div>
 
-		<div class="px-[22px]">
+		<div class="px-5">
 			<!-- Identity -->
 			{#if bagNumber != null}
 				<Eyebrow
@@ -300,13 +300,13 @@
 				>
 			{/if}
 			<h1
-				class="mt-1 flex flex-wrap items-center gap-2.5 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.1] font-medium tracking-[-0.015em] text-ink"
+				class="mt-1 flex flex-wrap items-center gap-3 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.1] font-medium tracking-[-0.015em] text-ink"
 			>
 				{bag.name}
 				{#if bag.dialedRecipe}<DialedBadge />{/if}
 			</h1>
 			<div
-				class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[calc(var(--dt-base)*13/17)] text-muted"
+				class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[calc(var(--dt-base)*13/17)] text-muted"
 			>
 				{#if bag.roaster}
 					<span>{bag.roaster}</span>
@@ -415,7 +415,7 @@
 						></div>
 					</div>
 					{#if consumption.percentUsed != null && consumption.percentUsed > 100}
-						<div class="mt-1.5 font-mono text-[calc(var(--dt-base)*11/17)] text-warning-dk">
+						<div class="mt-2 font-mono text-[calc(var(--dt-base)*11/17)] text-warning-dk">
 							{(consumption.used - bag.weightGrams).toFixed(1)}g over recorded weight
 						</div>
 					{/if}
@@ -448,7 +448,7 @@
 				<div class="mt-5">
 					<Eyebrow class="mb-2">ROAST LEVEL</Eyebrow>
 					<span
-						class="inline-flex h-[34px] items-center rounded-full px-[14px] font-sans text-[calc(var(--dt-base)*13/17)] font-medium"
+						class="inline-flex h-[34px] items-center rounded-full px-4 font-sans text-[calc(var(--dt-base)*13/17)] font-medium"
 						style="background:{rm.bg}; color:{rm.fg}">{rm.label}</span
 					>
 				</div>
@@ -460,7 +460,7 @@
 					>
 						{#each [{ label: 'Pour-over', s: grindPourOver }, { label: 'Espresso', s: grindEspresso }] as row (row.label)}
 							{#if row.s}
-								<div class="flex items-center justify-between gap-3 px-3.5 py-2.5">
+								<div class="flex items-center justify-between gap-3 px-4 py-3">
 									<span class="text-[calc(var(--dt-base)*13/17)] text-ink">{row.label}</span>
 									<span class="flex items-center gap-2">
 										<span
@@ -516,7 +516,7 @@
 							</div>
 							{#if shots.length === 0}
 								<p
-									class="mt-2.5 font-display text-[calc(var(--dt-base)*13/17)] leading-[1.45] text-muted italic"
+									class="mt-3 font-display text-[calc(var(--dt-base)*13/17)] leading-[1.45] text-muted italic"
 								>
 									No shots yet. The window is where {bag.roastLevel} roasts usually land — your dots will
 									appear here as you pull.
@@ -553,7 +553,7 @@
 										: ''}
 								</span>
 							</div>
-							<p class="mt-1.5 font-display text-[calc(var(--dt-base)*12.5/17)] text-muted italic">
+							<p class="mt-2 font-display text-[calc(var(--dt-base)*12.5/17)] text-muted italic">
 								Declared after two consistent shots.
 							</p>
 						</div>
@@ -565,7 +565,7 @@
 								{@const latest = i === shots.length - 1}
 								<a
 									href={resolve('/brews/[id]', { id: s.id })}
-									class="flex items-center gap-2.5 rounded-[12px] px-2.5 py-2 transition-colors {latest
+									class="flex items-center gap-3 rounded-[12px] px-3 py-2 transition-colors {latest
 										? 'border border-hairline bg-surface'
 										: 'hover:bg-paper/60'}"
 								>
@@ -599,7 +599,7 @@
 
 						{#if grindPath.length >= 2}
 							<div
-								class="mt-2 px-2.5 font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
+								class="mt-2 px-3 font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
 							>
 								<span
 									class="text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] uppercase"
@@ -616,7 +616,7 @@
 					{/if}
 
 					{#if calibration}
-						<div class="mt-3.5 rounded-[14px] border border-copper/30 bg-copper/[0.06] px-3.5 py-3">
+						<div class="mt-4 rounded-[14px] border border-copper/30 bg-copper/[0.06] px-4 py-3">
 							<div class="flex items-center justify-between">
 								<span
 									class="font-mono text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.14em] text-copper-dk uppercase"
@@ -648,7 +648,7 @@
 					{/if}
 
 					{#if !bag.dialedRecipe}
-						<div class="mt-3.5 flex flex-wrap items-center gap-2">
+						<div class="mt-4 flex flex-wrap items-center gap-2">
 							<Button size="regular" variant="prominent" href={pullShotHref}
 								>{shots.length === 0 ? 'Pull first shot' : 'Pull next shot'}</Button
 							>
@@ -656,14 +656,14 @@
 								<button
 									type="button"
 									onclick={handleMarkDialed}
-									class="press inline-flex h-9 items-center rounded-full border px-3.5 text-[calc(var(--dt-base)*13/17)] font-medium {dialReady
+									class="press inline-flex h-9 items-center rounded-full border px-4 text-[calc(var(--dt-base)*13/17)] font-medium {dialReady
 										? 'border-copper bg-copper-lt text-copper'
 										: 'border-hairline text-muted hover:text-ink'}">Mark dialed</button
 								>
 							{/if}
 						</div>
 					{:else}
-						<div class="mt-3.5">
+						<div class="mt-4">
 							<Button size="regular" variant="bordered" href={pullShotHref}>Log a shot</Button>
 						</div>
 					{/if}
@@ -675,7 +675,7 @@
 				<div class="mt-5">
 					<Eyebrow class="mb-2">NOTES</Eyebrow>
 					<div
-						class="rounded-2xl border border-hairline bg-paper px-4 py-3.5 font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-ink-70 italic"
+						class="rounded-2xl border border-hairline bg-paper px-4 py-4 font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-ink-70 italic"
 					>
 						<MarkdownText text={bag.notes} />
 					</div>
@@ -695,7 +695,7 @@
 					</div>
 					<div class="divide-y divide-hairline overflow-hidden rounded-2xl border border-hairline">
 						{#each brews as brew (brew.id)}
-							<div class="flex items-center justify-between gap-3 bg-surface px-3.5 py-3">
+							<div class="flex items-center justify-between gap-3 bg-surface px-4 py-3">
 								<div class="flex items-center gap-3">
 									<span
 										class="w-[62px] shrink-0 font-mono text-[calc(var(--dt-base)*17/17)] font-medium tracking-[-0.01em] text-copper"

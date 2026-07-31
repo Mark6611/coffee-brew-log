@@ -36,7 +36,7 @@
 		></div>
 	{/if}
 	<div
-		class="rounded-[18px] border p-[18px] transition-[background-color,border-color] duration-200 {published
+		class="rounded-[18px] border p-4 transition-[background-color,border-color] duration-200 {published
 			? 'border-copper/20 bg-copper-lt'
 			: 'border-hairline bg-surface'}"
 	>
@@ -44,7 +44,7 @@
 		<div class="flex items-center justify-between gap-3">
 			<div class="min-w-0">
 				<div
-					class="flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase {published
+					class="flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase {published
 						? 'text-copper-dk'
 						: 'text-muted'}"
 				>
@@ -54,7 +54,7 @@
 					{/if}
 				</div>
 				<div
-					class="mt-1.5 font-display text-[calc(var(--dt-base)*19/17)] leading-[1.2] font-medium tracking-[-0.005em] {published
+					class="mt-2 font-display text-[calc(var(--dt-base)*19/17)] leading-[1.2] font-medium tracking-[-0.005em] {published
 						? 'text-ink'
 						: 'text-muted'}"
 				>
@@ -89,7 +89,7 @@
 		</div>
 
 		{#if published}
-			<div class="mt-[18px]" style="animation: brewSlide 0.22s ease;">
+			<div class="mt-4" style="animation: brewSlide 0.22s ease;">
 				<!-- POST TITLE -->
 				<div>
 					<div
@@ -105,12 +105,12 @@
 						type="text"
 						bind:value={blogTitle}
 						placeholder="A morning at home with the Yirgacheffe"
-						class="min-h-12 w-full rounded-[14px] border border-hairline bg-surface px-3.5 py-2 font-display text-[calc(var(--dt-base)*17/17)] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-[14px] border border-hairline bg-surface px-4 py-2 font-display text-[calc(var(--dt-base)*17/17)] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				<!-- BODY -->
-				<div class="mt-[18px]">
+				<div class="mt-4">
 					<div
 						class="mb-2 flex items-center justify-between font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] text-muted uppercase"
 					>
@@ -124,7 +124,7 @@
 						bind:value={blogBody}
 						rows="8"
 						placeholder={BODY_PLACEHOLDER}
-						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-3.5 py-3 text-[calc(var(--dt-base)*16/17)] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-4 py-3 text-[calc(var(--dt-base)*16/17)] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					></textarea>
 				</div>
 

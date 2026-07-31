@@ -76,16 +76,16 @@
 	onclick={openDetail}
 	onkeydown={handleCardKeydown}
 	class="relative cursor-pointer overflow-hidden border border-hairline bg-surface transition duration-[180ms] ease-out hover:border-rule active:scale-[0.985] {hero
-		? 'rounded-[22px] p-[22px]'
-		: 'rounded-[18px] px-[18px] pt-[16px] pb-[18px]'}"
+		? 'rounded-[22px] p-5'
+		: 'rounded-[18px] p-4'}"
 >
 	{#if hero}
 		<div
 			class="pointer-events-none absolute -top-[30px] -right-[30px] h-[140px] w-[140px] rounded-full bg-copper-lt opacity-50"
 		></div>
 	{/if}
-	<div class="relative mb-2.5 flex items-center justify-between">
-		<div class="flex items-center gap-1.5">
+	<div class="relative mb-2 flex items-center justify-between">
+		<div class="flex items-center gap-2">
 			<Badge>{brew.method}</Badge>
 			{#if ontogglefavorite}
 				<button
@@ -116,14 +116,14 @@
 			{/if}
 			{#if BLOG_ENABLED && brew.published}
 				<span
-					class="inline-flex h-[22px] items-center gap-1.5 rounded-full bg-copper-lt px-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
+					class="inline-flex h-[22px] items-center gap-2 rounded-full bg-copper-lt px-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
 				>
 					<LiveDot color="var(--color-copper-dk)" size={4.5} />
 					Public
 				</span>
 			{/if}
 		</div>
-		<div class="flex items-center gap-1.5">
+		<div class="flex items-center gap-2">
 			<span class="font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted">
 				{formatTimeAgo(brew.brewedAt)}
 			</span>
@@ -192,7 +192,7 @@
 
 	{#if bag && label && tone}
 		<div
-			class="mt-2 flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase"
+			class="mt-2 flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] font-medium tracking-[0.14em] uppercase"
 			style="color: {tone}"
 		>
 			<span
@@ -205,7 +205,7 @@
 		</div>
 	{/if}
 
-	<div class="mt-[14px] grid grid-cols-3 gap-1 border-t border-hairline pt-[12px]">
+	<div class="mt-4 grid grid-cols-3 gap-1 border-t border-hairline pt-3">
 		{@render metric('DOSE', `${brew.doseGrams}g`)}
 		{@render metric(outLabel, outValue)}
 		{@render metric('RATIO', formatRatio(brew), true)}

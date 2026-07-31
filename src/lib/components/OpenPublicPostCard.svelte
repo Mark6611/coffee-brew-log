@@ -28,7 +28,7 @@
 	{href}
 	target="_blank"
 	rel="external noopener noreferrer"
-	class="mt-3 flex items-center gap-3 rounded-[14px] border border-copper/20 bg-copper-lt px-3.5 py-3 transition-colors hover:bg-copper-lt/85"
+	class="mt-3 flex items-center gap-3 rounded-[14px] border border-copper/20 bg-copper-lt px-4 py-3 transition-colors hover:bg-copper-lt/85"
 >
 	<span
 		class="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-copper text-paper"
@@ -53,7 +53,7 @@
 			{title}
 		</div>
 		<div
-			class="mt-0.5 flex items-center gap-1.5 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.08em] text-copper-dk uppercase"
+			class="mt-0.5 flex items-center gap-2 font-mono text-[calc(var(--dt-base)*10.5/17)] tracking-[0.08em] text-copper-dk uppercase"
 		>
 			<LiveDot color="var(--color-copper-dk)" size={4} />
 			{#if formatted}

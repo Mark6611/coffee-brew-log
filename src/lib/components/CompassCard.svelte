@@ -38,7 +38,7 @@
 </script>
 
 <div
-	class="rounded-[18px] border px-4 py-[16px] {isHold
+	class="rounded-[18px] border px-4 py-4 {isHold
 		? 'border-success/25 bg-success/[0.07]'
 		: isDiagnose
 			? 'border-warning/30 bg-warning/[0.07]'
@@ -64,7 +64,7 @@
 	</div>
 
 	<!-- Metrics row -->
-	<div class="mt-2.5 flex items-baseline gap-4 font-mono">
+	<div class="mt-3 flex items-baseline gap-4 font-mono">
 		<div>
 			<span
 				class="text-[calc(var(--dt-base)*9.5/17)] font-medium tracking-[0.12em] text-muted uppercase"
@@ -120,7 +120,7 @@
 		{c.headline}
 	</div>
 	{#if actionValue}
-		<div class="mt-1.5 flex items-baseline gap-2.5">
+		<div class="mt-2 flex items-baseline gap-3">
 			<span
 				class="font-mono text-[calc(var(--dt-base)*24/17)] font-medium tracking-[-0.02em] text-copper"
 				>{actionValue}</span
@@ -135,13 +135,13 @@
 	{/if}
 	<p class="mt-2 text-[calc(var(--dt-base)*13/17)] leading-[1.5] text-ink-70">{c.prose}</p>
 	{#if c.aside}
-		<p class="mt-1.5 text-[calc(var(--dt-base)*12/17)] leading-[1.5] text-muted italic">
+		<p class="mt-2 text-[calc(var(--dt-base)*12/17)] leading-[1.5] text-muted italic">
 			{c.aside}
 		</p>
 	{/if}
 
 	{#if footer}
-		<div class="mt-3.5 flex flex-wrap items-center gap-2">
+		<div class="mt-4 flex flex-wrap items-center gap-2">
 			{@render footer()}
 		</div>
 	{/if}

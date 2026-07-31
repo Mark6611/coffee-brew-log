@@ -79,7 +79,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-20">
-	<div class="flex items-center justify-between px-[18px] pe-14 pt-[6px] pb-[10px] sm:pe-[18px]">
+	<div class="flex items-center justify-between px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
@@ -100,7 +100,7 @@
 		</a>
 	</div>
 
-	<div class="px-[22px]">
+	<div class="px-5">
 		<Eyebrow>ACCOUNT</Eyebrow>
 		<h1
 			class="mt-1 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
@@ -116,7 +116,7 @@
 				here — they'll migrate to your account on first sign-in.
 			</p>
 
-			<form onsubmit={sendCode} class="mt-6 space-y-[18px]">
+			<form onsubmit={sendCode} class="mt-6 space-y-5">
 				<div>
 					<Eyebrow class="mb-2">EMAIL</Eyebrow>
 					<input
@@ -125,7 +125,7 @@
 						required
 						autocomplete="email"
 						placeholder="you@example.com"
-						class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-3.5 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
@@ -153,7 +153,7 @@
 				the code below — or tap the link to sign in this browser.
 			</p>
 
-			<form onsubmit={verifyCode} class="mt-6 space-y-[18px]">
+			<form onsubmit={verifyCode} class="mt-6 space-y-5">
 				<div>
 					<Eyebrow class="mb-2">CODE FROM EMAIL</Eyebrow>
 					<input

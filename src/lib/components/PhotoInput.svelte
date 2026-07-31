@@ -136,6 +136,6 @@
 	{/if}
 
 	{#if error}
-		<p class="mt-1.5 text-[calc(var(--dt-base)*11.5/17)] text-danger">{error}</p>
+		<p class="mt-2 text-[calc(var(--dt-base)*11.5/17)] text-danger">{error}</p>
 	{/if}
 </div>

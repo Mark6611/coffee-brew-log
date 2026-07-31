@@ -50,7 +50,7 @@
 
 <div
 	class="flex min-h-12 w-full items-center rounded-[14px] border bg-paper transition-all duration-200 {resolved.length
-		? 'border-copper ring-[3px] ring-copper/[0.18]'
+		? 'border-copper ring-2 ring-copper/25'
 		: 'border-hairline focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25'}"
 >
 	{#if resolved.length}
@@ -65,30 +65,30 @@
 		type="text"
 		bind:value
 		placeholder="e.g. Ethiopia, or Brazil + Ethiopia"
-		class="min-h-12 min-w-0 flex-1 bg-transparent px-3.5 text-ink outline-none placeholder:text-muted"
+		class="min-h-12 min-w-0 flex-1 bg-transparent px-4 text-ink outline-none placeholder:text-muted"
 	/>
 	{#if blend}
 		<span
-			class="mr-2.5 rounded-full bg-copper-lt px-2 py-[3px] font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
+			class="mr-2.5 rounded-full bg-copper-lt px-2 py-1 font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.12em] text-copper-dk uppercase"
 			transition:fade={motion({ duration: 180 })}>Blend</span
 		>
 	{:else if resolved.length === 1}
 		<span
-			class="pr-3.5 font-mono text-[calc(var(--dt-base)*12/17)] font-medium tracking-[0.14em] text-copper"
+			class="pr-4 font-mono text-[calc(var(--dt-base)*12/17)] font-medium tracking-[0.14em] text-copper"
 			transition:fade={motion({ duration: 180 })}>{resolved[0].code}</span
 		>
 	{/if}
 </div>
 
 <!-- Quick-pick popular origins. Multi-select: tap two for a blend. -->
-<div class="mt-2 flex flex-wrap gap-1.5">
+<div class="mt-2 flex flex-wrap gap-2">
 	{#each POPULAR_ORIGINS as o (o.code)}
 		{@const active = activeCodes.has(o.code)}
 		<button
 			type="button"
 			onclick={() => toggle(o)}
 			aria-pressed={active}
-			class="press-sm inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1.5 text-[calc(var(--dt-base)*12.5/17)] font-medium {active
+			class="press-sm inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-[calc(var(--dt-base)*12.5/17)] font-medium {active
 				? 'border-copper bg-copper text-paper'
 				: 'border-hairline bg-surface text-ink hover:border-copper/50'}"
 		>
@@ -99,9 +99,7 @@
 </div>
 
 <p
-	class="mt-1.5 text-[calc(var(--dt-base)*12/17)] {resolved.length
-		? 'text-copper-dk'
-		: 'text-muted'}"
+	class="mt-2 text-[calc(var(--dt-base)*12/17)] {resolved.length ? 'text-copper-dk' : 'text-muted'}"
 	aria-live="polite"
 >
 	{#if blend}

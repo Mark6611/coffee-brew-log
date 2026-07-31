@@ -37,7 +37,7 @@
 				? 'bg-surface font-semibold text-ink shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.04)]'
 				: 'bg-transparent font-medium text-muted'} {readonly ? 'cursor-default' : ''}"
 		>
-			<span class="inline-flex items-center gap-1.5">
+			<span class="inline-flex items-center gap-2">
 				{#if active}
 					<span
 						class="inline-block h-[5px] w-[5px] rounded-full"

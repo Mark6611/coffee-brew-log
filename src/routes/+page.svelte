@@ -63,11 +63,11 @@
 
 <div class="mx-auto max-w-2xl pb-10">
 	{#if loading}
-		<div class="px-[22px] pt-16 text-center">
+		<div class="px-5 pt-16 text-center">
 			<p class="text-sm text-muted">Loading…</p>
 		</div>
 	{:else if loadError}
-		<div class="px-[22px] pt-16 text-center">
+		<div class="px-5 pt-16 text-center">
 			<p class="font-display text-[calc(var(--dt-base)*20/17)] font-medium text-ink">
 				Couldn't load your brews.
 			</p>
@@ -85,13 +85,13 @@
 		</AppHeader>
 
 		{#if lastBrew}
-			<div class="px-[22px]">
-				<Eyebrow class="mb-2.5">Last brew · {formatTimeAgo(lastBrew.brewedAt)}</Eyebrow>
+			<div class="px-5">
+				<Eyebrow class="mb-2">Last brew · {formatTimeAgo(lastBrew.brewedAt)}</Eyebrow>
 				<BrewCard brew={lastBrew} bag={lastBrewBag} hero />
 			</div>
 		{/if}
 
-		<div class="px-[22px] pt-[18px]">
+		<div class="px-5 pt-4">
 			<Button size="large" variant="prominent" href={resolve('/brews/new')} full>
 				<svg width="18" height="18" viewBox="0 0 18 18" fill="none">
 					<path
@@ -106,10 +106,10 @@
 		</div>
 
 		{#if allBrews.length > 0}
-			<div class="px-[22px] pt-[18px]">
-				<Eyebrow class="mb-2.5">This week</Eyebrow>
-				<div class="grid grid-cols-3 gap-2.5">
-					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+			<div class="px-5 pt-4">
+				<Eyebrow class="mb-2">This week</Eyebrow>
+				<div class="grid grid-cols-3 gap-3">
+					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
 						<div
 							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 						>
@@ -119,7 +119,7 @@
 							{stats.count}
 						</div>
 					</div>
-					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
 						<div
 							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 						>
@@ -129,7 +129,7 @@
 							{stats.avgRatio ?? '—'}
 						</div>
 					</div>
-					<div class="rounded-2xl border border-hairline bg-surface px-3.5 pt-3.5 pb-4">
+					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
 						<div
 							class="font-mono text-[calc(var(--dt-base)*10/17)] font-medium tracking-[0.14em] text-muted uppercase"
 						>
@@ -146,7 +146,7 @@
 		<!-- Primary navigation. This was four 11px mono links on one line; as a
 		     grouped inset list every destination gets a real 52px touch target and
 		     room for the counts, which is what the row was missing. -->
-		<div class="px-[22px] pt-[22px]">
+		<div class="px-5 pt-6">
 			<ListGroup>
 				<ListRow
 					href={resolve('/brews')}
