@@ -334,6 +334,24 @@ const SCREENS = [
 	['13-buttons', '/dev/buttons']
 ];
 
+// The dev server has died mid-run repeatedly, turning a 3-minute capture into an
+// ERR_CONNECTION_REFUSED stack trace with nothing to show. Fail fast and clearly
+// instead of half-writing an output directory.
+async function ensureServer() {
+	try {
+		const r = await fetch(BASE, { signal: AbortSignal.timeout(4000) });
+		if (r.ok || r.status < 500) return;
+	} catch {
+		/* fall through to the explicit error below */
+	}
+	console.error(
+		`\nDev server is not answering at ${BASE}.\n` +
+			`Start it first (npm run dev, or the preview tool) and re-run.\n`
+	);
+	process.exit(1);
+}
+await ensureServer();
+
 const errors = [];
 
 for (const theme of ['light', 'dark']) {
