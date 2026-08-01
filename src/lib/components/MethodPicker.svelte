@@ -29,7 +29,7 @@
 		type="button"
 		onclick={() => (value = 'pour-over')}
 		aria-pressed={value === 'pour-over'}
-		class="relative z-10 h-full flex-1 text-[calc(var(--dt-base)*14.5/17)] transition-colors duration-200 {value ===
+		class="hit-44 {FOCUS_RING_INSET} relative z-10 h-full flex-1 text-[calc(var(--dt-base)*14.5/17)] transition-colors duration-200 {value ===
 		'pour-over'
 			? 'font-semibold text-ink'
 			: 'font-medium text-muted'}">Pour-over</button

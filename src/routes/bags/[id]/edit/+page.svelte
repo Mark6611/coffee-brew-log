@@ -200,7 +200,7 @@
 							step="1"
 							min="1"
 							inputmode="decimal"
-							class="min-w-0 flex-1 font-mono text-[calc(var(--dt-base)*16/17)] tracking-[-0.01em] text-ink placeholder:text-muted"
+							class="min-w-0 flex-1 font-mono text-[max(16px,calc(var(--dt-base)*16/17))] tracking-[-0.01em] text-ink placeholder:text-muted"
 						/>
 						<span class="font-mono text-[calc(var(--dt-base)*12/17)] text-muted">g</span>
 					</div>
@@ -223,7 +223,7 @@
 				<textarea
 					bind:value={notes}
 					rows="3"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-4 py-4 font-display text-[calc(var(--dt-base)*16/17)] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 

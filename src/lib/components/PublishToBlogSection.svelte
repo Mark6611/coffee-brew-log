@@ -124,7 +124,7 @@
 						bind:value={blogBody}
 						rows="8"
 						placeholder={BODY_PLACEHOLDER}
-						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-4 py-3 text-[calc(var(--dt-base)*16/17)] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-4 py-3 text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					></textarea>
 				</div>
 

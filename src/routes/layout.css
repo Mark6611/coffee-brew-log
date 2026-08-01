@@ -226,13 +226,25 @@
 	   every iPhone: the mono dose/yield/temp readouts, the OTP field and the
 	   serif note areas all rendered at a flat 16px regardless of their class.
 	   That also made the field type unreachable by Dynamic Type.
-	   Every field that sets its own text-* is now >= 16px by construction, so
-	   excluding them keeps the no-zoom guarantee without clobbering them. */
+
+	   The exclusion matches SIZE classes only — `text-[…]` arbitrary values and
+	   `text-2xl`, the only two forms any field here actually uses. It used to be
+	   `[class*='text-']`, which also matched COLOUR utilities: 16 fields (the
+	   auth email, and most bag/brew text inputs) carry `text-ink` and no size,
+	   so they fell out of the floor entirely and inherited @tailwindcss/forms'
+	   `font-size: 1rem`. With `font: -apple-system-body` on :root that rem is
+	   the UNCLAMPED Dynamic Type root — 14px at xSmall (focus zoom returns) and
+	   53px at AX5, while every other size in the app clamps at 26px.
+
+	   The value is --dt-base, not a flat 16px: it is clamp(16px, 1rem, 26px), so
+	   it can never dip under the zoom threshold AND still tracks Dynamic Type
+	   under the same cap as the rest of the type. At the default setting it is
+	   17px, identical to the 1rem these fields resolve to today. */
 	@media (max-width: 600px) {
-		input:not([class*='text-']),
-		textarea:not([class*='text-']),
-		select:not([class*='text-']) {
-			font-size: 16px;
+		input:not([class*='text-[']):not([class~='text-2xl']),
+		textarea:not([class*='text-[']):not([class~='text-2xl']),
+		select:not([class*='text-[']):not([class~='text-2xl']) {
+			font-size: var(--dt-base);
 		}
 	}
 
@@ -346,10 +358,20 @@
 	   Deliberately in @layer components, not a utility: `position: relative`
 	   here must LOSE to the `.fixed` utility, or the two FABs would drop out of
 	   fixed positioning. Component layer sorts before utilities, so it does. */
-	.hit-44 {
+	/* .hit-44-sq is listed in BOTH rules below, not just the override. It is
+	   never emitted alongside .hit-44 — Button.svelte picks one or the other
+	   (`iconOnly ? 'hit-44-sq' : 'hit-44'`) and BrewCard's two icon buttons use
+	   it standalone — so when it only carried the ::after overrides it inherited
+	   no `content`, no `position: absolute`, no `height`, and its host got no
+	   `position: relative`. The pseudo-element was never generated at all and
+	   every icon-only regular/small Button stayed a 36pt target. That shipped in
+	   builds 12 and 13. */
+	.hit-44,
+	.hit-44-sq {
 		position: relative;
 	}
-	.hit-44::after {
+	.hit-44::after,
+	.hit-44-sq::after {
 		content: '';
 		position: absolute;
 		top: 50%;
