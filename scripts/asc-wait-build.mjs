@@ -37,7 +37,7 @@ const stamp = () => new Date().toTimeString().slice(0, 8);
 console.log(`Waiting for build ${version} (timeout ${TIMEOUT_S}s, polling every ${INTERVAL_S}s)`);
 
 while ((Date.now() - started) / 1000 < TIMEOUT_S) {
-	let state = 'ABSENT';
+	let state;
 	try {
 		const r = await asc(
 			'GET',
