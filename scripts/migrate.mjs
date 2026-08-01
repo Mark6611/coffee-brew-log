@@ -41,7 +41,9 @@ const urlRef = (env.VITE_SUPABASE_URL || '').match(/https:\/\/([a-z0-9]+)\.supab
 const ref = env.SUPABASE_PROJECT_REF || urlRef;
 
 if (!ref) {
-	console.error('FATAL: cannot derive the project ref — expected VITE_SUPABASE_URL (or SUPABASE_PROJECT_REF) in .env.local');
+	console.error(
+		'FATAL: cannot derive the project ref — expected VITE_SUPABASE_URL (or SUPABASE_PROJECT_REF) in .env.local'
+	);
 	process.exit(1);
 }
 if (!token) {
@@ -62,7 +64,11 @@ async function sql(query) {
 	});
 	const text = await res.text();
 	if (!res.ok) throw new Error(`HTTP ${res.status}: ${text.slice(0, 500)}`);
-	try { return JSON.parse(text); } catch { return text; }
+	try {
+		return JSON.parse(text);
+	} catch {
+		return text;
+	}
 }
 
 // --- main ---------------------------------------------------------------------
@@ -72,7 +78,10 @@ const oneFile = args.includes('--file') ? args[args.indexOf('--file') + 1] : nul
 
 const files = oneFile
 	? [resolve(oneFile)]
-	: readdirSync(MIG_DIR).filter((f) => f.endsWith('.sql')).sort().map((f) => join(MIG_DIR, f));
+	: readdirSync(MIG_DIR)
+			.filter((f) => f.endsWith('.sql'))
+			.sort()
+			.map((f) => join(MIG_DIR, f));
 if (files.length === 0) {
 	console.log(`nothing to do — no .sql files in ${MIG_DIR}`);
 	process.exit(0);
@@ -87,7 +96,8 @@ const applied = new Set((Array.isArray(appliedRows) ? appliedRows : []).map((r) 
 
 const pending = files.filter((f) => !applied.has(basename(f)));
 console.log(`project ${ref}: ${applied.size} applied, ${pending.length} pending`);
-for (const f of files) console.log(`  ${applied.has(basename(f)) ? '✓ applied' : '· pending'}  ${basename(f)}`);
+for (const f of files)
+	console.log(`  ${applied.has(basename(f)) ? '✓ applied' : '· pending'}  ${basename(f)}`);
 
 if (dryRun || pending.length === 0) process.exit(0);
 
@@ -96,7 +106,9 @@ for (const f of pending) {
 	const body = readFileSync(f, 'utf8');
 	process.stdout.write(`applying ${name} … `);
 	// one transaction: the migration and its ledger row commit or roll back together
-	await sql(`begin;\n${body}\n;insert into _migrations (name) values ('${name.replace(/'/g, "''")}');\ncommit;`);
+	await sql(
+		`begin;\n${body}\n;insert into _migrations (name) values ('${name.replace(/'/g, "''")}');\ncommit;`
+	);
 	console.log('done');
 }
 console.log(`${pending.length} migration(s) applied.`);
