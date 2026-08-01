@@ -11,13 +11,100 @@
 // data loss on sync pull once already.
 
 import { BrewSchema, BagSchema, type Brew, type Bag } from './db/types';
+import type { EspressoBrew, PourOverBrew } from './db/types';
 
-// Shape a local row for the Supabase upsert: attach the owning user, and strip
-// `updatedAt` — that field is the LOCAL iCloud-merge clock and has no column in
-// the Supabase tables (pushing it would 400 the whole upsert).
-export function withUserId<T extends { updatedAt?: string }>(row: T, userId: string) {
-	const { updatedAt: _localOnly, ...rest } = row;
-	return { ...rest, userId };
+// ─── Push: local row → upsert payload ────────────────────────────────
+//
+// Built from a FIXED column list that sends an explicit `null` for every absent
+// optional field, rather than spreading the row.
+//
+// The spread version lost data. Clearing a field stores `undefined`
+// (brews/[id]/edit: `notes.trim() || undefined`, `rating ?? undefined`,
+// `balance || undefined`), JSON.stringify drops undefined-valued keys, so the
+// column never entered PostgREST's ON CONFLICT DO UPDATE SET list and kept its
+// OLD server value — then the next pull bulkPut it back over the cleared local
+// copy. Clearing a note and syncing resurrected the note. `photo` and
+// `dialedRecipe` escaped only because their UIs set an explicit null, which
+// survives JSON; that was accidental, not designed.
+//
+// Record<…, true> makes each column set compile-time exhaustive: a new schema
+// field that is missing here fails `npm run check` instead of silently never
+// syncing, and a typo fails as an excess key.
+//
+// `updatedAt` is deliberately EXCLUDED from both sets. It is the LOCAL
+// iCloud-merge clock and has no column in the Supabase tables — naming it here
+// would 400 every push, and because toServerRow always names every column that
+// would fail ALL pushes, not just rows that happen to carry the field.
+
+const BAG_COLUMN_FLAGS: Record<Exclude<keyof Bag, 'updatedAt'>, true> = {
+	id: true,
+	name: true,
+	roaster: true,
+	origin: true,
+	roastedAt: true,
+	process: true,
+	roastLevel: true,
+	weightGrams: true,
+	pricePaid: true,
+	notes: true,
+	archived: true,
+	photo: true,
+	createdAt: true,
+	dialedRecipe: true,
+	deletedAt: true
+};
+
+const BREW_COLUMN_FLAGS: Record<
+	Exclude<keyof EspressoBrew | keyof PourOverBrew, 'updatedAt'>,
+	true
+> = {
+	id: true,
+	method: true,
+	brewedAt: true,
+	coffeeName: true,
+	roaster: true,
+	bagId: true,
+	doseGrams: true,
+	brewTimeSeconds: true,
+	grindSetting: true,
+	notes: true,
+	rating: true,
+	balance: true,
+	isFavorite: true,
+	photo: true,
+	deletedAt: true,
+	published: true,
+	publishedAt: true,
+	blogTitle: true,
+	blogBody: true,
+	bagSnapshot: true,
+	yieldGrams: true,
+	extraction: true,
+	waterGrams: true,
+	waterTempC: true
+};
+
+export const BAG_COLUMNS = Object.keys(BAG_COLUMN_FLAGS);
+export const BREW_COLUMNS = Object.keys(BREW_COLUMN_FLAGS);
+
+function toServerRow(
+	row: Record<string, unknown>,
+	columns: string[],
+	userId: string
+): Record<string, unknown> {
+	const payload: Record<string, unknown> = { userId };
+	for (const column of columns) {
+		payload[column] = row[column] === undefined ? null : row[column];
+	}
+	return payload;
+}
+
+export function bagToServerRow(bag: Bag, userId: string): Record<string, unknown> {
+	return toServerRow(bag as unknown as Record<string, unknown>, BAG_COLUMNS, userId);
+}
+
+export function brewToServerRow(brew: Brew, userId: string): Record<string, unknown> {
+	return toServerRow(brew as unknown as Record<string, unknown>, BREW_COLUMNS, userId);
 }
 
 const BAG_NUMERIC_KEYS = new Set(['weightGrams', 'pricePaid']);

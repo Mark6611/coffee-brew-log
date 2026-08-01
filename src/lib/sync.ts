@@ -9,7 +9,12 @@ import { BrewSchema, BagSchema, type Brew, type Bag } from './db/types';
 import { syncStatus } from './syncStatus.svelte';
 // Row shaping (push upsert shape + pull normalization/validation) lives in
 // syncRows.ts so it stays import-light and unit-tested — see syncRows.test.ts.
-import { withUserId, parseBagFromServer, parseBrewFromServer } from './syncRows';
+import {
+	bagToServerRow,
+	brewToServerRow,
+	parseBagFromServer,
+	parseBrewFromServer
+} from './syncRows';
 
 // `syncStatus` (a rune store) is the single source of truth for sync state.
 // getSyncStatus() exposes it to non-reactive callers; components read the
@@ -26,7 +31,7 @@ export function pushBag(bag: Bag): void {
 	if (!user) return;
 	void supabase
 		.from('bags')
-		.upsert(withUserId(bag, user.id))
+		.upsert(bagToServerRow(bag, user.id))
 		.then(({ error }) => {
 			if (error) {
 				console.warn('Push bag failed:', error.message);
@@ -39,7 +44,7 @@ export function pushBrew(brew: Brew): void {
 	if (isNative) return; // native syncs via iCloud, never Supabase
 	const user = auth.user;
 	if (!user) return;
-	const row = withUserId(brew, user.id) as never;
+	const row = brewToServerRow(brew, user.id) as never;
 	void supabase
 		.from('brews')
 		.upsert(row)
@@ -69,10 +74,10 @@ export async function pushWipeTombstones(bags: Bag[], brews: Brew[]): Promise<vo
 	const now = new Date().toISOString();
 	const bagRows = bags
 		.filter((b) => !b.deletedAt)
-		.map((b) => withUserId(BagSchema.parse({ ...b, deletedAt: now }), user.id));
+		.map((b) => bagToServerRow(BagSchema.parse({ ...b, deletedAt: now }), user.id));
 	const brewRows = brews
 		.filter((b) => !b.deletedAt)
-		.map((b) => withUserId(BrewSchema.parse({ ...b, deletedAt: now }), user.id));
+		.map((b) => brewToServerRow(BrewSchema.parse({ ...b, deletedAt: now }), user.id));
 	if (bagRows.length) {
 		const { error } = await supabase.from('bags').upsert(bagRows as never);
 		if (error) throw new Error(error.message);
@@ -123,7 +128,7 @@ export async function fullSync(): Promise<void> {
 		if (localBags.length > 0) {
 			const ok = await upsertChunked(
 				'bags',
-				localBags.map((b) => withUserId(b, user.id))
+				localBags.map((b) => bagToServerRow(b, user.id))
 			);
 			pushOk = pushOk && ok;
 		}
@@ -131,9 +136,19 @@ export async function fullSync(): Promise<void> {
 		if (localBrews.length > 0) {
 			const ok = await upsertChunked(
 				'brews',
-				localBrews.map((b) => withUserId(b, user.id))
+				localBrews.map((b) => brewToServerRow(b, user.id))
 			);
 			pushOk = pushOk && ok;
+		}
+
+		// A failed push means local still holds edits the server has never seen.
+		// The pull below bulkPuts whole server rows over local, so continuing
+		// would overwrite exactly those un-pushed edits with the stale server
+		// copy — turning a transient network failure into silent data loss.
+		// Bail and let the next sync retry the push first.
+		if (!pushOk) {
+			console.warn('Sync: push failed — skipping pull so local edits survive.');
+			return;
 		}
 
 		// 2. Pull all server rows
@@ -162,7 +177,13 @@ export async function fullSync(): Promise<void> {
 
 		// 3. Update local cache by MERGING server data in.
 		// Never clear local — that risks data loss if the server is empty/RLS-blocked.
-		// Trade-off: deletes on other devices don't propagate until we add tombstones in a future pass.
+		// Deletes DO propagate: they travel as deletedAt tombstones on the rows
+		// themselves (see pushWipeTombstones above and repository.deleteBag), so a
+		// merge carries them without needing a clear.
+		// Still whole-row LAST-WRITE-BY-ARRIVAL, not last-write-wins: a pulled row
+		// overwrites local unconditionally. That is only safe because the push
+		// above is now gated — real LWW needs a server updatedAt column and is a
+		// deliberate follow-up, not something to bolt on here.
 		await db.transaction('rw', db.bags, db.brews, async () => {
 			if (serverBags.length > 0) await db.bags.bulkPut(serverBags);
 			if (serverBrews.length > 0) await db.brews.bulkPut(serverBrews);

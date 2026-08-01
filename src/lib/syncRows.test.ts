@@ -4,14 +4,20 @@
 // `timestamptz` comes back with a "+00:00" offset instead of "Z". A coercion
 // gap between that shape and the Zod schemas made the pull path drop every
 // row once — production data loss. This test runs the app's REAL functions
-// (withUserId → simulated PostgREST serialization → parseBagFromServer /
+// (bagToServerRow/brewToServerRow → simulated PostgREST serialization →
+// parseBagFromServer /
 // parseBrewFromServer) and asserts zero dropped rows with numerics restored
 // to numbers.
 //
 // Run: npm test  (vitest picks up src/**/*.test.ts)
 
 import { describe, expect, it } from 'vitest';
-import { parseBagFromServer, parseBrewFromServer, withUserId } from '$lib/syncRows';
+import {
+	bagToServerRow,
+	brewToServerRow,
+	parseBagFromServer,
+	parseBrewFromServer
+} from '$lib/syncRows';
 import { bag, espresso, pourOver } from '$lib/test/factories';
 
 const USER_ID = '99999999-9999-4999-8999-999999999999';
@@ -80,11 +86,11 @@ describe('sync round-trip (push shape → PostgREST echo → pull parse)', () =>
 	];
 
 	const pulledBags = bags
-		.map((b) => postgrestEcho(withUserId(b, USER_ID)))
+		.map((b) => postgrestEcho(bagToServerRow(b, USER_ID)))
 		.map(parseBagFromServer)
 		.filter((b) => b !== null);
 	const pulledBrews = brews
-		.map((b) => postgrestEcho(withUserId(b, USER_ID)))
+		.map((b) => postgrestEcho(brewToServerRow(b, USER_ID)))
 		.map(parseBrewFromServer)
 		.filter((b) => b !== null);
 
@@ -132,5 +138,68 @@ describe('sync round-trip (push shape → PostgREST echo → pull parse)', () =>
 		expect(pulledBags[0]).not.toHaveProperty('updatedAt');
 		expect(pulledBrews[0]).not.toHaveProperty('userId');
 		expect(pulledBrews[0]).not.toHaveProperty('updatedAt');
+	});
+});
+
+// The bug this column list exists to prevent, pinned at the wire level.
+//
+// Clearing an optional field stores `undefined` (brews/[id]/edit does
+// `notes.trim() || undefined`, `rating ?? undefined`, `balance || undefined`).
+// The old spread-based push then lost the key to JSON.stringify, PostgREST left
+// the column at its previous value, and the next pull wrote the stale value
+// back over the cleared local copy — a cleared note came back.
+//
+// Every assertion goes through JSON.parse(JSON.stringify(...)) on purpose: on
+// the raw object `undefined` and `null` both "exist", and an accidental
+// undefined would pass. Only the serialized body proves what reaches the server.
+describe('push payload: cleared fields serialize as explicit null', () => {
+	const wire = (row: Record<string, unknown>) => JSON.parse(JSON.stringify(row));
+
+	it('sends null for a brew whose optional fields were cleared', () => {
+		const cleared = brewToServerRow(
+			espresso({
+				id: ID(900),
+				notes: undefined,
+				rating: undefined,
+				balance: undefined,
+				bagId: undefined
+			}),
+			USER_ID
+		);
+		const body = wire(cleared);
+		for (const key of ['notes', 'rating', 'balance', 'bagId']) {
+			expect(Object.hasOwn(body, key), `${key} must survive JSON as an explicit null`).toBe(true);
+			expect(body[key]).toBeNull();
+		}
+	});
+
+	it('sends null for a bag whose optional fields were cleared', () => {
+		const body = wire(
+			bagToServerRow(bag({ id: ID(901), notes: undefined, roastedAt: undefined }), USER_ID)
+		);
+		for (const key of ['notes', 'roastedAt']) {
+			expect(Object.hasOwn(body, key)).toBe(true);
+			expect(body[key]).toBeNull();
+		}
+	});
+
+	// deleteBag unlinks by dropping the key entirely (`const { bagId, ...rest }`),
+	// so the unlink only reaches the server because a missing key also becomes null.
+	it('sends bagId: null when the key was removed outright, not just undefined', () => {
+		const { bagId: _dropped, ...unlinked } = espresso({ id: ID(902), bagId: ID(1) });
+		const body = wire(brewToServerRow(unlinked as never, USER_ID));
+		expect(body.bagId).toBeNull();
+	});
+
+	// updatedAt is the LOCAL iCloud clock with no Supabase column. If it ever
+	// entered the column list every push would 400, because toServerRow names
+	// every column on every row.
+	it('never sends updatedAt', () => {
+		expect(
+			Object.hasOwn(wire(brewToServerRow(espresso({ id: ID(903) }), USER_ID)), 'updatedAt')
+		).toBe(false);
+		expect(Object.hasOwn(wire(bagToServerRow(bag({ id: ID(904) }), USER_ID)), 'updatedAt')).toBe(
+			false
+		);
 	});
 });
