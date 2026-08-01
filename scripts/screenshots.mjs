@@ -369,7 +369,6 @@ const DEVICES = [
 ];
 
 const HIDE_CSS = `
-	[aria-label^="Cycle theme"] { display: none !important; }
 	* { transition: none !important; animation: none !important; }
 `;
 

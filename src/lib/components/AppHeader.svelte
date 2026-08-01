@@ -4,25 +4,37 @@
 	let {
 		eyebrow,
 		children,
-		action
+		action,
+		back
 	}: {
 		eyebrow?: string;
 		children: Snippet;
 		action?: Snippet;
+		/** Optional leading back link, rendered INSIDE the sticky bar so it
+		 *  stays reachable once the header pins (it used to sit in a separate
+		 *  row above the bar and scrolled away). */
+		back?: Snippet;
 	} = $props();
 
 	// iOS large-title behaviour: the bar is flush with the page at rest, then
-	// gains a translucent material blur + hairline once it PINS and content scrolls
-	// beneath it. Derive "pinned" from the element itself, not window.scrollY: on
-	// pages where the header sits below a "Home" link row (/brews, /bags) a fixed
-	// scrollY threshold frosted the bar ~40px before it actually stuck. `rect.top <= 0`
-	// means it's stuck to the top; `scrollY > 0` keeps a header that's naturally at the
-	// top (home) flush at rest instead of frosting immediately.
+	// gains a translucent material blur + hairline once it PINS and content
+	// scrolls beneath it. Derive "pinned" from the element itself, not a fixed
+	// window.scrollY threshold: the header's flow position varies per page (it
+	// used to sit below separate "Home" rows on /brews and /bags — those are
+	// folded into the bar now — and on iOS the safe-area offsets it), so only
+	// the element's own rect knows when it actually sticks. The sticky offset
+	// is env(safe-area-inset-top) (0 on the web), so compare rect.top against
+	// the element's computed `top`, not against 0.
 	let el = $state<HTMLDivElement | undefined>();
 	let scrolled = $state(false);
 	onMount(() => {
 		const onScroll = () => {
-			scrolled = !!el && el.getBoundingClientRect().top <= 0.5 && window.scrollY > 0;
+			if (!el) {
+				scrolled = false;
+				return;
+			}
+			const stickyTop = parseFloat(getComputedStyle(el).top) || 0;
+			scrolled = el.getBoundingClientRect().top <= stickyTop + 0.5 && window.scrollY > 0;
 		};
 		onScroll();
 		window.addEventListener('scroll', onScroll, { passive: true });
@@ -32,10 +44,16 @@
 
 <div
 	bind:this={el}
-	class="header sticky top-0 z-30 px-5 pt-3 pb-4 transition-[background-color,border-color] duration-300 {scrolled
+	class="header sticky top-[env(safe-area-inset-top,0px)] z-30 px-5 pt-3 pb-4 transition-[background-color,border-color] duration-300 {scrolled
 		? 'is-scrolled border-b'
 		: 'border-b border-transparent'}"
 >
+	{#if back}
+		<!-- Constant-height leading row — the bar must NOT collapse or grow on
+		     scroll (a sticky element that changes height re-lays out everything
+		     below it and flickers under momentum scroll on short lists). -->
+		<div class="mb-1 flex">{@render back()}</div>
+	{/if}
 	{#if eyebrow}
 		<div class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 			{eyebrow}
@@ -48,10 +66,7 @@
 			{@render children()}
 		</h1>
 		{#if action}
-			<!-- Clears the app's fixed theme toggle (right-5, w-9 → 48px occupied),
-			     which otherwise overlaps and steals taps from this action button once
-			     the header pins; no clearance needed once the column has side margins (sm+). -->
-			<div class="pe-16 sm:pe-0">{@render action()}</div>
+			<div>{@render action()}</div>
 		{/if}
 	</div>
 </div>
@@ -66,10 +81,26 @@
 		-webkit-backdrop-filter: saturate(180%) blur(20px);
 		backdrop-filter: saturate(180%) blur(20px);
 	}
+	/* The bar pins BELOW the status bar (sticky top: env(safe-area-inset-top)),
+	   so its height never changes — no layout jump at the pin moment. This
+	   strip extends the frosted material up over the status bar instead. Zero
+	   height on the web (env() resolves to 0px). */
+	.header.is-scrolled::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 100%;
+		height: env(safe-area-inset-top, 0px);
+		background-color: rgb(var(--color-paper-rgb) / 0.72);
+		-webkit-backdrop-filter: saturate(180%) blur(20px);
+		backdrop-filter: saturate(180%) blur(20px);
+	}
 	/* Same contract as .glass — "Reduce Transparency" turns the bar opaque
 	   rather than leaving unblurred content showing through a tinted panel. */
 	@media (prefers-reduced-transparency: reduce) {
-		.header.is-scrolled {
+		.header.is-scrolled,
+		.header.is-scrolled::before {
 			background-color: var(--color-paper);
 			-webkit-backdrop-filter: none;
 			backdrop-filter: none;

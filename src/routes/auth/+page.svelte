@@ -79,7 +79,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-20">
-	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
+	<div class="flex items-center justify-between gap-2 px-5 pt-2 pb-2">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"

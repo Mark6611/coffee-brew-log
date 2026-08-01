@@ -5,6 +5,7 @@
 	import { resolve } from '$app/paths';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { listBags, listBrews, deleteBag } from '$lib/db/repository';
+	import { confirmSheet } from '$lib/confirm.svelte';
 	import { bagConsumption, formatRoastedAt } from '$lib/bags/compute';
 	import { fly, slide } from 'svelte/transition';
 	import AppHeader from '$lib/components/AppHeader.svelte';
@@ -43,11 +44,15 @@
 
 	async function handleDelete(bag: Bag) {
 		const c = bagConsumption(bag, brews);
-		const msg =
-			c.brewCount > 0
-				? `This bag has ${c.brewCount} linked brews. Deleting will unlink them (brews are kept). Continue?`
-				: 'Delete this bag?';
-		if (!confirm(msg)) return;
+		const ok = await confirmSheet({
+			title: 'Delete this bag?',
+			body:
+				c.brewCount > 0
+					? `This bag has ${c.brewCount} linked brew${c.brewCount === 1 ? '' : 's'}. Deleting unlinks them — the brews are kept.`
+					: 'This permanently removes the bag.',
+			verb: 'Delete Bag'
+		});
+		if (!ok) return;
 		await deleteBag(bag.id);
 		await refresh();
 	}
@@ -58,28 +63,28 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-24">
-	<div class="flex items-center justify-between px-5 pt-2 pb-0">
-		<a
-			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
-		>
-			<svg
-				width="14"
-				height="14"
-				viewBox="0 0 16 16"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.8"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
-				<path d="M10 3L4 8l6 5" />
-			</svg>
-			Home
-		</a>
-	</div>
 	<AppHeader eyebrow={showArchived ? `ARCHIVED · ${archivedCount}` : `ACTIVE · ${activeCount}`}>
 		Bags
+		{#snippet back()}
+			<a
+				href={resolve('/')}
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
+			>
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 16 16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.8"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M10 3L4 8l6 5" />
+				</svg>
+				Home
+			</a>
+		{/snippet}
 	</AppHeader>
 
 	{#if archivedCount > 0 || showArchived}

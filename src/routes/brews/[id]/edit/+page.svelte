@@ -5,6 +5,7 @@
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { getBrewById, updateBrew, listBrews, listBags } from '$lib/db/repository';
+	import { confirmSheet } from '$lib/confirm.svelte';
 	import { BrewSchema, type Bag, type BagSnapshot, type Extraction } from '$lib/db/types';
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
@@ -252,11 +253,16 @@
 		return null;
 	});
 
-	function reset() {
+	async function reset() {
 		const orig = originalSnapshot;
 		if (!orig) return;
-		if (!confirm(`Discard ${dirtyFields.length} change${dirtyFields.length === 1 ? '' : 's'}?`))
-			return;
+		const n = dirtyFields.length;
+		const ok = await confirmSheet({
+			title: 'Discard changes?',
+			body: `Reverts ${n} edited field${n === 1 ? '' : 's'} back to the saved brew.`,
+			verb: 'Discard Changes'
+		});
+		if (!ok) return;
 		method = orig.method;
 		bagId = orig.bagId;
 		doseGrams = orig.doseGrams;
@@ -288,16 +294,24 @@
 		goto(resolve(`/bags/new?returnTo=${returnTo}${nameParam}`));
 	}
 
-	function handleCancel(e: MouseEvent) {
+	async function handleCancel(e: MouseEvent) {
+		// Modified clicks (cmd/ctrl/shift/middle) keep native open-in-new-tab —
+		// a background tab doesn't lose this tab's edits.
+		if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+		// preventDefault FIRST, unconditionally. The sheet is awaited — with the
+		// old pattern (prevent only on "no") the anchor would navigate the moment
+		// this handler yields, losing the edits with no prompt at all.
+		e.preventDefault();
 		if (dirty) {
-			if (
-				!confirm(
-					`Discard ${dirtyFields.length} unsaved change${dirtyFields.length === 1 ? '' : 's'}?`
-				)
-			) {
-				e.preventDefault();
-			}
+			const n = dirtyFields.length;
+			const ok = await confirmSheet({
+				title: 'Discard changes?',
+				body: `Leaves this page and loses ${n} unsaved change${n === 1 ? '' : 's'}.`,
+				verb: 'Discard Changes'
+			});
+			if (!ok) return;
 		}
+		await goto(resolve('/brews/[id]', { id: brewId }));
 	}
 
 	async function handleSubmit(e: SubmitEvent) {
@@ -403,7 +417,7 @@
 {:else}
 	<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
 		<!-- Header row -->
-		<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
+		<div class="flex items-center justify-between gap-2 px-5 pt-2 pb-2">
 			<a
 				href={resolve('/brews/[id]', { id: brewId })}
 				onclick={handleCancel}

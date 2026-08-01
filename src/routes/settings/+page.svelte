@@ -13,6 +13,11 @@
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ListGroup from '$lib/components/ListGroup.svelte';
 	import ListRow from '$lib/components/ListRow.svelte';
+	import { confirmSheet } from '$lib/confirm.svelte';
+	import { theme, type ThemePref } from '$lib/theme.svelte';
+	import { FOCUS_RING_INSET } from '$lib/components/focus';
+
+	const THEME_PREFS: ThemePref[] = ['light', 'dark', 'system'];
 
 	// ── iCloud sync state (native only) ────────────────────────────────
 	let cloudAvailable = $state<boolean | null>(null); // null = still checking
@@ -42,6 +47,10 @@
 	let fileInput = $state<HTMLInputElement | undefined>();
 	let syncing = $state(false);
 	let wiping = $state(false);
+	// Deliberately NOT $state: re-entrancy guards for the confirm-sheet window,
+	// with no rendered consequence.
+	let confirmingWipe = false;
+	let confirmingDelete = false;
 	let lastSyncAt = $state<string | null>(null);
 	let lastSyncError = $state<string | null>(null);
 
@@ -128,7 +137,7 @@
 		// pass, then pushes tombstones), so it can run for seconds with nothing on
 		// screen changing. Without this guard a second tap re-enters against the
 		// still-populated tables and races the first pass.
-		if (wiping) return;
+		if (wiping || confirmingWipe) return;
 		const total = brewCount + bagCount;
 		if (total === 0) return;
 		const where = auth.user
@@ -136,12 +145,17 @@
 			: isNative
 				? 'this device and your iCloud'
 				: 'this device';
-		if (
-			!confirm(
-				`Delete all ${brewCount} brew${brewCount === 1 ? '' : 's'} and ${bagCount} bag${bagCount === 1 ? '' : 's'} from ${where}? This permanently erases them and cannot be undone.`
-			)
-		)
-			return;
+		// Guard BEFORE the await — a second tap while the sheet is open must not
+		// queue a second wipe. A plain (non-$state) flag: `wiping` also drives
+		// the button's "Erasing…" label, which must not flip while merely asking.
+		confirmingWipe = true;
+		const ok = await confirmSheet({
+			title: 'Erase all data?',
+			body: `Deletes all ${brewCount} brew${brewCount === 1 ? '' : 's'} and ${bagCount} bag${bagCount === 1 ? '' : 's'} from ${where}. This permanently erases them and cannot be undone.`,
+			verb: 'Erase Everything'
+		});
+		confirmingWipe = false;
+		if (!ok) return;
 		wiping = true;
 		try {
 			await wipeAllData();
@@ -161,12 +175,16 @@
 	let deletingAccount = $state(false);
 	async function handleDeleteAccount() {
 		if (!auth.user) return;
-		if (
-			!confirm(
-				`Delete your account (${auth.user.email}) and everything in it? This removes your account and all synced data permanently and cannot be undone.`
-			)
-		)
-			return;
+		if (deletingAccount || confirmingDelete) return;
+		// Same guard-before-await as handleWipe, same non-$state flag reasoning.
+		confirmingDelete = true;
+		const ok = await confirmSheet({
+			title: 'Delete your account?',
+			body: `Removes your account (${auth.user.email}) and all synced data permanently. This cannot be undone.`,
+			verb: 'Delete Account'
+		});
+		confirmingDelete = false;
+		if (!ok) return;
 		deletingAccount = true;
 		error = null;
 		message = null;
@@ -255,7 +273,7 @@
 </svelte:head>
 
 <div class="mx-auto max-w-2xl pb-12">
-	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
+	<div class="flex items-center justify-between gap-2 px-5 pt-2 pb-2">
 		<a
 			href={resolve('/')}
 			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
@@ -295,6 +313,39 @@
 
 	{#if !loading}
 		<div class="mt-6 space-y-5 px-5">
+			<!-- Appearance — replaces the floating theme-cycle button that used to
+			     occupy the top-right of every screen (and cost each header a pe-16
+			     clearance hack). Same segmented anatomy as BalanceScale. -->
+			<div>
+				<Eyebrow class="mb-2">APPEARANCE</Eyebrow>
+				<div class="rounded-card border border-hairline bg-surface px-4 py-3">
+					<!-- Toggle-button group (aria-pressed), NOT role=radiogroup: radio
+					     semantics promise roving tabindex + arrow-key movement, which
+					     three tab-stop buttons don't deliver. Same pattern as
+					     BalanceScale's segments. -->
+					<div
+						class="grid min-h-11 grid-cols-3 gap-1 rounded-input border border-hairline bg-paper p-1"
+						role="group"
+						aria-label="Appearance"
+					>
+						{#each THEME_PREFS as p (p)}
+							<button
+								type="button"
+								aria-pressed={theme.pref === p}
+								onclick={() => theme.set(p)}
+								class="hit-44 {FOCUS_RING_INSET} h-full rounded-control text-[calc(var(--dt-base)*13/17)] capitalize transition-all duration-200 {theme.pref ===
+								p
+									? 'bg-surface font-semibold text-ink shadow-[0_1px_2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.04)]'
+									: 'bg-transparent font-medium text-muted'}">{p}</button
+							>
+						{/each}
+					</div>
+					<p class="mt-2 text-[calc(var(--dt-base)*11/17)] leading-[1.4] text-muted">
+						System follows your device's light and dark setting.
+					</p>
+				</div>
+			</div>
+
 			{#if isNative}
 				<!-- iCloud sync (native): no account, no login — the device's own
 				     iCloud moves the data between the user's devices. -->

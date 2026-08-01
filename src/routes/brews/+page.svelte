@@ -99,28 +99,28 @@
 </svelte:head>
 
 <div class="relative mx-auto max-w-2xl pb-24">
-	<div class="flex items-center justify-between px-5 pt-2 pb-0">
-		<a
-			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
-		>
-			<svg
-				width="14"
-				height="14"
-				viewBox="0 0 16 16"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.8"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
-				<path d="M10 3L4 8l6 5" />
-			</svg>
-			Home
-		</a>
-	</div>
 	<AppHeader eyebrow="ALL TIME · {allBrews.length}">
 		Brews
+		{#snippet back()}
+			<a
+				href={resolve('/')}
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
+			>
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 16 16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.8"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				>
+					<path d="M10 3L4 8l6 5" />
+				</svg>
+				Home
+			</a>
+		{/snippet}
 		{#snippet action()}
 			<Button
 				size="medium"

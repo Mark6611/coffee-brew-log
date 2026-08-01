@@ -4,6 +4,7 @@
 	import { resolve } from '$app/paths';
 	import type { Brew, Bag } from '$lib/db/types';
 	import { getBrewById, getBagById, listBrews, deleteBrew } from '$lib/db/repository';
+	import { confirmSheet } from '$lib/confirm.svelte';
 	import { formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
 	import { resolveOrigins, originLabel } from '$lib/origin/resolve';
@@ -130,7 +131,12 @@
 
 	async function handleDelete() {
 		if (!brew) return;
-		if (!confirm('Delete this brew?')) return;
+		const ok = await confirmSheet({
+			title: 'Delete this brew?',
+			body: 'This permanently removes the brew from your log.',
+			verb: 'Delete Brew'
+		});
+		if (!ok) return;
 		await deleteBrew(brew.id);
 		await goto(resolve('/brews'));
 	}
@@ -158,7 +164,7 @@
 {:else}
 	<div class="mx-auto max-w-2xl pb-12">
 		<!-- Header row -->
-		<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
+		<div class="flex items-center justify-between gap-2 px-5 pt-2 pb-2">
 			<a
 				href={resolve('/brews')}
 				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
