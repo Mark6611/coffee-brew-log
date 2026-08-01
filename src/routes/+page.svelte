@@ -109,7 +109,7 @@
 			<div class="px-5 pt-4">
 				<Eyebrow class="mb-2">This week</Eyebrow>
 				<div class="grid grid-cols-3 gap-3">
-					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
+					<div class="rounded-card border border-hairline bg-surface px-4 pt-4 pb-4">
 						<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 							BREWS
 						</div>
@@ -117,7 +117,7 @@
 							{stats.count}
 						</div>
 					</div>
-					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
+					<div class="rounded-card border border-hairline bg-surface px-4 pt-4 pb-4">
 						<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 							AVG RATIO
 						</div>
@@ -125,7 +125,7 @@
 							{stats.avgRatio ?? '—'}
 						</div>
 					</div>
-					<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
+					<div class="rounded-card border border-hairline bg-surface px-4 pt-4 pb-4">
 						<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 							FAVORITES
 						</div>

@@ -28,10 +28,10 @@
 	{href}
 	target="_blank"
 	rel="external noopener noreferrer"
-	class="mt-3 flex items-center gap-3 rounded-[14px] border border-copper/20 bg-copper-lt px-4 py-3 transition-colors hover:bg-copper-lt/85"
+	class="mt-3 flex items-center gap-3 rounded-input border border-copper/20 bg-copper-lt px-4 py-3 transition-colors hover:bg-copper-lt/85"
 >
 	<span
-		class="grid h-9 w-9 shrink-0 place-items-center rounded-[10px] bg-copper text-paper"
+		class="grid h-9 w-9 shrink-0 place-items-center rounded-control bg-copper text-paper"
 		aria-hidden="true"
 	>
 		<svg

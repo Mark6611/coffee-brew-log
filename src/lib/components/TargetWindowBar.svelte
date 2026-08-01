@@ -34,7 +34,7 @@
 		></div>
 		<!-- roast window band -->
 		<div
-			class="absolute top-1/2 h-[14px] -translate-y-1/2 rounded-[4px] border border-copper/40 bg-copper/[0.22]"
+			class="absolute top-1/2 h-[14px] -translate-y-1/2 rounded-sm border border-copper/40 bg-copper/[0.22]"
 			style="left: {pct(win[0])}%; width: {pct(win[1]) - pct(win[0])}%"
 		></div>
 		<!-- shot dots -->

@@ -104,9 +104,9 @@
 {#if selectedBag}
 	<!-- Selected (chip) -->
 	<div
-		class="flex min-h-14 items-center gap-3 rounded-[14px] border border-transparent bg-copper-lt px-3 py-2"
+		class="flex min-h-14 items-center gap-3 rounded-input border border-transparent bg-copper-lt px-3 py-2"
 	>
-		<div class="grid h-8 w-8 shrink-0 place-items-center rounded-[9px] bg-copper text-paper">
+		<div class="grid h-8 w-8 shrink-0 place-items-center rounded-control bg-copper text-paper">
 			<svg
 				width="16"
 				height="16"
@@ -164,7 +164,7 @@
 	<div class="relative">
 		<!-- Idle / typing -->
 		<div
-			class="flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-3 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+			class="flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-3 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 		>
 			<svg
 				width="18"
@@ -218,7 +218,7 @@
 		{#if isOpen}
 			<div
 				id="bag-listbox"
-				class="absolute top-full right-0 left-0 z-50 mt-1 max-h-80 overflow-hidden rounded-2xl border border-hairline bg-surface shadow-[0_12px_32px_rgba(28,24,20,0.10)]"
+				class="absolute top-full right-0 left-0 z-50 mt-1 max-h-80 overflow-hidden rounded-card border border-hairline bg-surface shadow-[0_12px_32px_rgba(28,24,20,0.10)]"
 				role="listbox"
 			>
 				{#if filtered.length > 0}
@@ -254,7 +254,7 @@
 						>
 							<div class="flex items-center gap-3">
 								<div
-									class="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg border border-hairline bg-paper text-muted"
+									class="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-control border border-hairline bg-paper text-muted"
 								>
 									<svg
 										width="14"
@@ -337,7 +337,7 @@
 				>
 					<div class="flex items-center gap-3">
 						<div
-							class="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-lg bg-copper text-paper"
+							class="grid h-[30px] w-[30px] shrink-0 place-items-center rounded-control bg-copper text-paper"
 						>
 							<svg
 								width="14"

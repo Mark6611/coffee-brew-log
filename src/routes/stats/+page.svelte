@@ -98,7 +98,7 @@
 	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -190,7 +190,7 @@
 
 			<!-- Quick stats -->
 			<div class="grid grid-cols-3 gap-3">
-				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
+				<div class="rounded-card border border-hairline bg-surface px-4 pt-4 pb-4">
 					<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 						THIS WEEK
 					</div>
@@ -198,7 +198,7 @@
 						{thisWeek}
 					</div>
 				</div>
-				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
+				<div class="rounded-card border border-hairline bg-surface px-4 pt-4 pb-4">
 					<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 						AVG RATIO
 					</div>
@@ -206,7 +206,7 @@
 						{avgR != null ? `1:${avgR.toFixed(1)}` : '—'}
 					</div>
 				</div>
-				<div class="rounded-2xl border border-hairline bg-surface px-4 pt-4 pb-4">
+				<div class="rounded-card border border-hairline bg-surface px-4 pt-4 pb-4">
 					<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 						AVG RATING
 					</div>
@@ -335,7 +335,7 @@
 			{#if top3.length > 0}
 				<div>
 					<Eyebrow class="mb-2">BEST BREWS</Eyebrow>
-					<div class="divide-y divide-hairline overflow-hidden rounded-2xl border border-hairline">
+					<div class="divide-y divide-hairline overflow-hidden rounded-card border border-hairline">
 						{#each top3 as brew, i (brew.id)}
 							{@const linkedBag = allBags.find((b) => b.id === brew.bagId)}
 							<a
@@ -380,10 +380,10 @@
 						{#if topBag.bag}
 							<a
 								href={resolve('/bags/[id]', { id: topBag.bag.id })}
-								class="flex items-center gap-3 rounded-[14px] bg-copper-lt px-3 py-3 transition-colors hover:bg-copper-lt/80"
+								class="flex items-center gap-3 rounded-input bg-copper-lt px-3 py-3 transition-colors hover:bg-copper-lt/80"
 							>
 								<div
-									class="grid h-8 w-8 shrink-0 place-items-center rounded-[9px] bg-copper text-paper"
+									class="grid h-8 w-8 shrink-0 place-items-center rounded-control bg-copper text-paper"
 								>
 									<svg
 										width="16"
@@ -416,7 +416,7 @@
 						{/if}
 
 						{#if freshness.total > 0}
-							<div class="rounded-[14px] border border-hairline bg-surface px-4 py-3">
+							<div class="rounded-input border border-hairline bg-surface px-4 py-3">
 								<div
 									class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
 								>
@@ -501,7 +501,7 @@
 
 			<!-- Pull quote -->
 			<div
-				class="rounded-[18px] border border-hairline bg-surface px-4 py-4 text-center font-display text-[calc(var(--dt-base)*14/17)] leading-[1.55] text-ink-70 italic"
+				class="rounded-card border border-hairline bg-surface px-4 py-4 text-center font-display text-[calc(var(--dt-base)*14/17)] leading-[1.55] text-ink-70 italic"
 			>
 				"{quote}"
 			</div>

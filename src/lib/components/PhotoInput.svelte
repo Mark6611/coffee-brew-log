@@ -52,7 +52,7 @@
 	<input bind:this={input} type="file" accept="image/*" class="hidden" onchange={onFile} />
 
 	{#if photo}
-		<div class="relative overflow-hidden rounded-2xl border border-hairline bg-surface">
+		<div class="relative overflow-hidden rounded-card border border-hairline bg-surface">
 			<img src={photo} alt="{label} photo" class="max-h-[220px] w-full object-cover" />
 			<!-- Controls sit ON the photo, so they use the over-media material
 			     (dark vibrancy) rather than the card-tinted glass. -->
@@ -108,7 +108,7 @@
 			type="button"
 			onclick={pick}
 			disabled={busy}
-			class="press flex w-full items-center justify-center gap-2 rounded-2xl border border-dashed border-rule py-6 text-muted hover:border-copper hover:text-copper-dk disabled:opacity-60"
+			class="press flex w-full items-center justify-center gap-2 rounded-card border border-dashed border-rule py-6 text-muted hover:border-copper hover:text-copper-dk disabled:opacity-60"
 		>
 			{#if busy}
 				<span class="font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.1em] uppercase"

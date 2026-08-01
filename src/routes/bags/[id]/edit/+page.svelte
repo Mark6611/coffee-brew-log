@@ -105,7 +105,7 @@
 		<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/bags/[id]', { id: bagId })}
-				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -137,8 +137,11 @@
 				<input
 					type="text"
 					bind:value={name}
+					autocapitalize="words"
+					autocorrect="off"
+					spellcheck="false"
 					required
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -152,7 +155,10 @@
 				<input
 					type="text"
 					bind:value={roaster}
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					autocapitalize="words"
+					autocorrect="off"
+					spellcheck="false"
+					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -166,7 +172,7 @@
 				<input
 					type="date"
 					bind:value={roastedAt}
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -192,7 +198,7 @@
 				<div>
 					<Eyebrow class="mb-2">WEIGHT (G)</Eyebrow>
 					<div
-						class="field-wrapper flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -213,7 +219,7 @@
 						step="0.01"
 						min="0"
 						inputmode="decimal"
-						class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 			</div>
@@ -223,12 +229,12 @@
 				<textarea
 					bind:value={notes}
 					rows="3"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-input border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 
 			{#if error}
-				<div class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
+				<div class="rounded-input border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
 					{error}
 				</div>
 			{/if}

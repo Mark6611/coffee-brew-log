@@ -25,7 +25,7 @@
 	<!-- Glass needs something with structure behind it, or the material has
 	     nothing to refract and reads as flat grey. -->
 	<div
-		class="mb-8 rounded-[22px] p-5"
+		class="mb-8 rounded-card-lg p-5"
 		style="background: linear-gradient(120deg, var(--color-copper) 0%, var(--color-paper) 45%, var(--color-success) 100%)"
 	>
 		<div class="flex flex-wrap items-center gap-3">
@@ -44,7 +44,7 @@
 	     card-tinted glass above would lose contrast. Shown on a bright backdrop
 	     because that's the case it exists to survive. -->
 	<div
-		class="mb-8 rounded-[22px] p-5"
+		class="mb-8 rounded-card-lg p-5"
 		style="background: linear-gradient(115deg, #f7f3e8 0%, #d8c9a8 40%, #8fae6a 100%)"
 	>
 		<!-- The backdrop is a hardcoded bright gradient, so this caption is a

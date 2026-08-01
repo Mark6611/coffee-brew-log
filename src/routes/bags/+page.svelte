@@ -61,7 +61,7 @@
 	<div class="flex items-center justify-between px-5 pt-2 pb-0">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -160,17 +160,17 @@
 					<div
 						in:fly={motion({ y: 8, duration: 220, delay: firstReveal ? i * 30 : 0 })}
 						out:slide={motion({ duration: 220 })}
-						class="rounded-[18px] border border-hairline bg-surface p-4 transition-transform duration-[180ms] ease-out has-[a:active]:scale-[0.985]"
+						class="rounded-card border border-hairline bg-surface p-4 transition-transform duration-[180ms] ease-out has-[a:active]:scale-[0.985]"
 					>
 						<a
 							href={resolve('/bags/[id]', { id: bag.id })}
-							class="-m-2 mb-2 flex items-start justify-between gap-3 rounded-lg p-2 transition-colors hover:bg-paper/40"
+							class="-m-2 mb-2 flex items-start justify-between gap-3 rounded-control p-2 transition-colors hover:bg-paper/40"
 						>
 							{#if bag.photo}
 								<img
 									src={bag.photo}
 									alt=""
-									class="h-[46px] w-[46px] shrink-0 rounded-[11px] border border-hairline object-cover"
+									class="h-[46px] w-[46px] shrink-0 rounded-control border border-hairline object-cover"
 								/>
 							{/if}
 							<div class="min-w-0 flex-1">

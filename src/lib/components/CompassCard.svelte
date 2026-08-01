@@ -38,7 +38,7 @@
 </script>
 
 <div
-	class="rounded-[18px] border px-4 py-4 {isHold
+	class="rounded-card border px-4 py-4 {isHold
 		? 'border-success/25 bg-success/[0.07]'
 		: isDiagnose
 			? 'border-warning/30 bg-warning/[0.07]'

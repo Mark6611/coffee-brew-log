@@ -71,7 +71,9 @@
 	const classes = $derived(
 		[
 			'flex w-full min-h-[52px] items-center gap-3 px-4 py-3 text-left',
-			interactive ? `press-sm hover:bg-paper/60 ${FOCUS}` : '',
+			interactive
+				? `transition-colors duration-100 hover:bg-paper/60 active:bg-paper active:duration-0 dark:active:bg-card ${FOCUS}`
+				: '',
 			disabled ? 'pointer-events-none opacity-50' : '',
 			cls
 		]

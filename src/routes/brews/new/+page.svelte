@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { FOCUS_RING } from '$lib/components/focus';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -16,6 +17,7 @@
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
+	import BalanceScale from '$lib/components/BalanceScale.svelte';
 	import ExtractionScale from '$lib/components/ExtractionScale.svelte';
 	import ScaleAssist from '$lib/components/ScaleAssist.svelte';
 	import PhotoInput from '$lib/components/PhotoInput.svelte';
@@ -493,7 +495,7 @@
 	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/brews')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -527,7 +529,7 @@
 			<button
 				type="button"
 				onclick={repeatLast}
-				class="press flex w-full items-center gap-3 rounded-2xl border border-hairline bg-surface px-4 py-3 text-left hover:border-copper/50"
+				class="press flex w-full items-center gap-3 rounded-card border border-hairline bg-surface px-4 py-3 text-left hover:border-copper/50"
 			>
 				<span
 					class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-copper-lt text-copper"
@@ -584,7 +586,7 @@
 					type="datetime-local"
 					bind:value={brewedAtLocal}
 					required
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -597,7 +599,7 @@
 			<!-- LAST SHOT card — logged history + the compass's standing start point -->
 			{#if isEspresso && selectedBag && lastShot && lastCompass}
 				{@const a = lastCompass.action}
-				<div class="rounded-[18px] border border-copper/25 bg-copper-lt px-4 py-4">
+				<div class="rounded-card border border-copper/25 bg-copper-lt px-4 py-4">
 					<div class="flex items-center justify-between">
 						<div
 							class="font-mono text-eyebrow font-medium tracking-[0.14em] text-copper-dk uppercase"
@@ -653,7 +655,7 @@
 		{#if showQuickChrome && lastShot}
 			<!-- Carried-over strip -->
 			<div
-				class="flex flex-wrap items-center gap-x-2 rounded-[12px] border border-hairline bg-surface px-3 py-2 font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
+				class="flex flex-wrap items-center gap-x-2 rounded-control border border-hairline bg-surface px-3 py-2 font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
 			>
 				<span class="font-medium text-ink uppercase">Same as shot {shotNumber - 1}</span>
 				<span aria-hidden="true">·</span>
@@ -686,7 +688,10 @@
 						bind:value={grindSetting}
 						required
 						placeholder="e.g. 0.5.5"
-						class="min-h-12 w-full rounded-[14px] border px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted {grindStaged
+						autocorrect="off"
+						autocapitalize="none"
+						spellcheck="false"
+						class="min-h-12 w-full rounded-input border px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted {grindStaged
 							? 'border-copper bg-paper ring-2 ring-copper/25'
 							: 'border-hairline bg-paper focus:border-copper focus:ring-2 focus:ring-copper/25'}"
 					/>
@@ -712,7 +717,7 @@
 					<button
 						type="button"
 						onclick={applyStage}
-						class="press mt-2 flex w-full items-center gap-3 rounded-[12px] bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
+						class="press mt-2 flex w-full items-center gap-3 rounded-control bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
 					>
 						<svg
 							width="18"
@@ -764,7 +769,7 @@
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="press mt-2 flex w-full items-center gap-3 rounded-[12px] bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
+							class="press mt-2 flex w-full items-center gap-3 rounded-control bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
 						>
 							<svg
 								width="18"
@@ -816,7 +821,7 @@
 				<div>
 					<Eyebrow class="mb-2">YIELD</Eyebrow>
 					<div
-						class="field-wrapper relative flex min-h-14 items-center gap-2 overflow-hidden rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper relative flex min-h-14 items-center gap-2 overflow-hidden rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<span
 							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving
@@ -840,7 +845,7 @@
 				<div>
 					<Eyebrow class="mb-2">SHOT TIME</Eyebrow>
 					<div
-						class="field-wrapper relative flex min-h-14 items-center gap-2 overflow-hidden rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper relative flex min-h-14 items-center gap-2 overflow-hidden rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<span
 							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving
@@ -873,7 +878,7 @@
 			</div>
 
 			<!-- Collapsed group: dose, temp, rating, balance, notes -->
-			<div class="rounded-[14px] border border-dashed border-hairline">
+			<div class="rounded-input border border-dashed border-hairline">
 				<button
 					type="button"
 					onclick={() => (moreOpen = !moreOpen)}
@@ -901,7 +906,7 @@
 							<div>
 								<Eyebrow class="mb-2">DOSE</Eyebrow>
 								<div
-									class="field-wrapper flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+									class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 								>
 									<input
 										type="number"
@@ -918,7 +923,7 @@
 							<div>
 								<Eyebrow class="mb-2">TEMP (OPTIONAL)</Eyebrow>
 								<div
-									class="field-wrapper flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+									class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 								>
 									<input
 										type="number"
@@ -946,7 +951,7 @@
 									<button
 										type="button"
 										onclick={() => (rating = null)}
-										class="ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+										class="hit-44-sq {FOCUS_RING} ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
 										>Clear</button
 									>
 								{/if}
@@ -955,14 +960,15 @@
 
 						<div>
 							<Eyebrow class="mb-2">BALANCE (BODY · OPTIONAL)</Eyebrow>
-							<div class="flex flex-wrap gap-2">
-								<Chip active={balance === ''} onclick={() => (balance = '')}>—</Chip>
-								<Chip active={balance === 'light'} onclick={() => (balance = 'light')}>Light</Chip>
-								<Chip active={balance === 'balanced'} onclick={() => (balance = 'balanced')}
-									>Balanced</Chip
+							<BalanceScale value={balance || undefined} oninput={(v) => (balance = v)} />
+							{#if balance}
+								<button
+									type="button"
+									onclick={() => (balance = '')}
+									class="hit-44-sq {FOCUS_RING} mt-1 text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+									>Clear</button
 								>
-								<Chip active={balance === 'heavy'} onclick={() => (balance = 'heavy')}>Heavy</Chip>
-							</div>
+							{/if}
 						</div>
 
 						<div>
@@ -971,7 +977,7 @@
 								bind:value={notes}
 								rows="3"
 								placeholder="Syrupy, chocolate finish…"
-								class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+								class="w-full resize-none rounded-input border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 							></textarea>
 						</div>
 
@@ -988,7 +994,7 @@
 				<div>
 					<Eyebrow class="mb-2">DOSE</Eyebrow>
 					<div
-						class="field-wrapper flex min-h-14 items-center gap-2 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -1006,7 +1012,7 @@
 				<div>
 					<Eyebrow class="mb-2">WATER</Eyebrow>
 					<div
-						class="field-wrapper flex min-h-14 items-center gap-2 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -1047,7 +1053,10 @@
 					bind:value={grindSetting}
 					required
 					placeholder="e.g. 4.2"
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					autocorrect="off"
+					autocapitalize="none"
+					spellcheck="false"
+					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 
 				{#if grindSuggestion}
@@ -1066,7 +1075,7 @@
 						<button
 							type="button"
 							onclick={applyGrind}
-							class="press mt-2 flex w-full items-center gap-3 rounded-[12px] bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
+							class="press mt-2 flex w-full items-center gap-3 rounded-control bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
 						>
 							<svg
 								width="18"
@@ -1114,7 +1123,7 @@
 			<div>
 				<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
 				<div
-					class="field-wrapper flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+					class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 				>
 					<input
 						type="number"
@@ -1147,7 +1156,7 @@
 							min="0"
 							inputmode="numeric"
 							placeholder="0"
-							class="min-h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+							class="min-h-14 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 						/>
 					</div>
 					<div>
@@ -1164,7 +1173,7 @@
 							max="59"
 							inputmode="numeric"
 							placeholder="0"
-							class="min-h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+							class="min-h-14 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 						/>
 					</div>
 				</div>
@@ -1189,7 +1198,7 @@
 						<button
 							type="button"
 							onclick={() => (rating = null)}
-							class="ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+							class="hit-44-sq {FOCUS_RING} ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
 							>Clear</button
 						>
 					{/if}
@@ -1199,14 +1208,15 @@
 			<!-- Balance -->
 			<div>
 				<Eyebrow class="mb-2">BALANCE (OPTIONAL)</Eyebrow>
-				<div class="flex flex-wrap gap-2">
-					<Chip active={balance === ''} onclick={() => (balance = '')}>—</Chip>
-					<Chip active={balance === 'light'} onclick={() => (balance = 'light')}>Light</Chip>
-					<Chip active={balance === 'balanced'} onclick={() => (balance = 'balanced')}
-						>Balanced</Chip
+				<BalanceScale value={balance || undefined} oninput={(v) => (balance = v)} />
+				{#if balance}
+					<button
+						type="button"
+						onclick={() => (balance = '')}
+						class="hit-44-sq {FOCUS_RING} mt-1 text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+						>Clear</button
 					>
-					<Chip active={balance === 'heavy'} onclick={() => (balance = 'heavy')}>Heavy</Chip>
-				</div>
+				{/if}
 			</div>
 
 			<!-- Notes -->
@@ -1216,7 +1226,7 @@
 					bind:value={notes}
 					rows="3"
 					placeholder="Stone fruit, jasmine on cool-down…"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-input border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 
@@ -1228,7 +1238,7 @@
 		{/if}
 
 		{#if error}
-			<div class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
+			<div class="rounded-input border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
 				{error}
 			</div>
 		{/if}

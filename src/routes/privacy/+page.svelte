@@ -15,7 +15,7 @@
 <article class="policy mx-auto max-w-2xl px-5 pt-6 pb-16">
 	<a
 		href={resolve('/settings')}
-		class="mb-6 inline-flex items-center gap-1 text-[calc(var(--dt-base)*14/17)] text-muted transition-colors hover:text-ink"
+		class="mb-6 inline-flex items-center gap-1 text-[calc(var(--dt-base)*14/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper"
 	>
 		<svg
 			width="14"

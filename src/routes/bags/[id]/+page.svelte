@@ -266,7 +266,7 @@
 		<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/bags')}
-				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -285,7 +285,7 @@
 			<span aria-hidden="true"></span>
 			<a
 				href={resolve('/bags/[id]/edit', { id: bag.id })}
-				class="h-9 px-2 text-[calc(var(--dt-base)*14/17)] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center px-2 text-[calc(var(--dt-base)*14/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 				>Edit</a
 			>
 		</div>
@@ -325,13 +325,13 @@
 
 			<!-- Label photo -->
 			{#if bag.photo}
-				<div class="mt-5 overflow-hidden rounded-2xl border border-hairline bg-surface">
+				<div class="mt-5 overflow-hidden rounded-card border border-hairline bg-surface">
 					<img src={bag.photo} alt="{bag.name} label" class="max-h-[320px] w-full object-cover" />
 				</div>
 			{/if}
 
 			<!-- Key facts card -->
-			<div class="mt-5 grid grid-cols-3 gap-3 rounded-2xl border border-hairline bg-surface p-4">
+			<div class="mt-5 grid grid-cols-3 gap-3 rounded-card border border-hairline bg-surface p-4">
 				<div>
 					<div class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase">
 						ROASTED
@@ -438,7 +438,7 @@
 				<div class="mt-5">
 					<Eyebrow class="mb-2">SUGGESTED GRIND</Eyebrow>
 					<div
-						class="divide-y divide-hairline overflow-hidden rounded-2xl border border-hairline bg-surface"
+						class="divide-y divide-hairline overflow-hidden rounded-card border border-hairline bg-surface"
 					>
 						{#each [{ label: 'Pour-over', s: grindPourOver }, { label: 'Espresso', s: grindEspresso }] as row (row.label)}
 							{#if row.s}
@@ -483,7 +483,7 @@
 					</div>
 
 					{#if roastTarget != null && bag.roastLevel}
-						<div class="rounded-2xl border border-hairline bg-surface p-4">
+						<div class="rounded-card border border-hairline bg-surface p-4">
 							<div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
 								<span
 									class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
@@ -509,7 +509,7 @@
 
 					{#if bag.dialedRecipe}
 						{@const r = bag.dialedRecipe}
-						<div class="mt-3 rounded-2xl border border-success/25 bg-success/[0.06] p-4">
+						<div class="mt-3 rounded-card border border-success/25 bg-success/[0.06] p-4">
 							<div class="flex items-baseline justify-between">
 								<span
 									class="font-mono text-eyebrow font-medium tracking-[0.14em] uppercase"
@@ -547,7 +547,7 @@
 								{@const latest = i === shots.length - 1}
 								<a
 									href={resolve('/brews/[id]', { id: s.id })}
-									class="flex items-center gap-3 rounded-[12px] px-3 py-2 transition-colors {latest
+									class="flex items-center gap-3 rounded-control px-3 py-2 transition-colors {latest
 										? 'border border-hairline bg-surface'
 										: 'hover:bg-paper/60'}"
 								>
@@ -595,7 +595,7 @@
 					{/if}
 
 					{#if calibration}
-						<div class="mt-4 rounded-[14px] border border-copper/30 bg-copper/[0.06] px-4 py-3">
+						<div class="mt-4 rounded-input border border-copper/30 bg-copper/[0.06] px-4 py-3">
 							<div class="flex items-center justify-between">
 								<span
 									class="font-mono text-eyebrow font-medium tracking-[0.14em] text-copper-dk uppercase"
@@ -654,7 +654,7 @@
 				<div class="mt-5">
 					<Eyebrow class="mb-2">NOTES</Eyebrow>
 					<div
-						class="rounded-2xl border border-hairline bg-paper px-4 py-4 font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-ink-70 italic"
+						class="rounded-card border border-hairline bg-paper px-4 py-4 font-display text-[calc(var(--dt-base)*15/17)] leading-[1.5] text-ink-70 italic"
 					>
 						<MarkdownText text={bag.notes} />
 					</div>
@@ -672,7 +672,7 @@
 							>See all →</a
 						>
 					</div>
-					<div class="divide-y divide-hairline overflow-hidden rounded-2xl border border-hairline">
+					<div class="divide-y divide-hairline overflow-hidden rounded-card border border-hairline">
 						{#each brews as brew (brew.id)}
 							<div class="flex items-center justify-between gap-3 bg-surface px-4 py-3">
 								<div class="flex items-center gap-3">

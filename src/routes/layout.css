@@ -135,7 +135,9 @@
 	--radius-xl: 12px;
 	--radius-2xl: 16px;
 	--radius-card: 18px; /* was 1.125rem */
+	--radius-card-lg: 22px; /* hero cards */
 	--radius-input: 14px; /* was 0.875rem */
+	--radius-control: 10px; /* inner controls: segmented thumbs, photo wells, small chips */
 }
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));

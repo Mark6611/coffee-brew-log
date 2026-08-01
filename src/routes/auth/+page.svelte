@@ -82,7 +82,7 @@
 	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -125,13 +125,13 @@
 						required
 						autocomplete="email"
 						placeholder="you@example.com"
-						class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				{#if error}
 					<div
-						class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
+						class="rounded-input border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
 					>
 						{error}
 					</div>
@@ -165,13 +165,13 @@
 						pattern="[0-9]*"
 						maxlength="10"
 						placeholder="00000000"
-						class="min-h-14 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-center font-mono text-[calc(var(--dt-base)*24/17)] font-medium tracking-[0.25em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-14 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-center font-mono text-[calc(var(--dt-base)*24/17)] font-medium tracking-[0.25em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
 				{#if error}
 					<div
-						class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
+						class="rounded-input border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
 					>
 						{error}
 					</div>

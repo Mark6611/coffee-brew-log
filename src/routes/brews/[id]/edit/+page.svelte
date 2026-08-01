@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { FOCUS_RING } from '$lib/components/focus';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -386,7 +387,11 @@
 </svelte:head>
 
 <!-- Mode chrome: 3px copper bar fixed at top -->
-<div class="fixed inset-x-0 top-0 z-[100] h-[3px] bg-copper" aria-hidden="true"></div>
+<div
+	class="fixed inset-x-0 z-[100] h-[3px] bg-copper"
+	style="top: env(safe-area-inset-top, 0px)"
+	aria-hidden="true"
+></div>
 
 {#if loading}
 	<p class="py-8 text-center text-sm text-muted">Loading…</p>
@@ -402,7 +407,7 @@
 			<a
 				href={resolve('/brews/[id]', { id: brewId })}
 				onclick={handleCancel}
-				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -440,7 +445,7 @@
 		<!-- Reset bar when dirty -->
 		{#if dirty}
 			<div
-				class="mx-5 mb-2 flex items-center justify-between gap-3 rounded-[10px] bg-copper-lt px-3 py-2 text-copper-dk"
+				class="mx-5 mb-2 flex items-center justify-between gap-3 rounded-control bg-copper-lt px-3 py-2 text-copper-dk"
 			>
 				<div class="flex items-center gap-2 text-[calc(var(--dt-base)*12.5/17)]">
 					<span class="inline-block h-1.5 w-1.5 rounded-full bg-copper" aria-hidden="true"></span>
@@ -496,7 +501,7 @@
 				<div>
 					<Eyebrow class="mb-2" dirty={isDirty('doseGrams')}>DOSE</Eyebrow>
 					<div
-						class="field-wrapper flex min-h-14 items-center gap-2 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -516,7 +521,7 @@
 						>{method === 'espresso' ? 'YIELD' : 'WATER'}</Eyebrow
 					>
 					<div
-						class="field-wrapper flex min-h-14 items-center gap-2 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						{#if method === 'espresso'}
 							<input
@@ -578,9 +583,12 @@
 				<input
 					type="text"
 					bind:value={grindSetting}
+					autocorrect="off"
+					autocapitalize="none"
+					spellcheck="false"
 					required
 					placeholder={method === 'espresso' ? 'e.g. 1.3' : 'e.g. 5.5'}
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -595,7 +603,7 @@
 					{/if}
 					<Eyebrow class="mb-2" dirty={isDirty('waterTempC')}>WATER TEMP (OPTIONAL)</Eyebrow>
 					<div
-						class="field-wrapper flex min-h-12 items-center gap-2 rounded-[14px] border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -625,7 +633,7 @@
 				>
 				{#if method === 'espresso'}
 					<div
-						class="field-wrapper flex min-h-14 items-center gap-2 rounded-[14px] border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 					>
 						<input
 							type="number"
@@ -654,7 +662,7 @@
 								min="0"
 								inputmode="numeric"
 								placeholder="0"
-								class="min-h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+								class="min-h-14 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 							/>
 						</div>
 						<div>
@@ -671,7 +679,7 @@
 								max="59"
 								inputmode="numeric"
 								placeholder="0"
-								class="min-h-14 w-full rounded-[14px] border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+								class="min-h-14 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 							/>
 						</div>
 					</div>
@@ -699,7 +707,7 @@
 					<button
 						type="button"
 						onclick={() => (balance = '')}
-						class="mt-1 text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+						class="hit-44-sq {FOCUS_RING} mt-1 text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
 						>Clear</button
 					>
 				{/if}
@@ -723,7 +731,7 @@
 						<button
 							type="button"
 							onclick={() => (rating = null)}
-							class="ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+							class="hit-44-sq {FOCUS_RING} ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
 							>Clear</button
 						>
 					{/if}
@@ -743,7 +751,7 @@
 					type="datetime-local"
 					bind:value={brewedAtLocal}
 					required
-					class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
 				/>
 			</div>
 
@@ -760,7 +768,7 @@
 					bind:value={notes}
 					rows="3"
 					placeholder="Stone fruit, jasmine on cool-down…"
-					class="w-full resize-none rounded-[14px] border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					class="w-full resize-none rounded-input border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 				></textarea>
 			</div>
 
@@ -789,10 +797,17 @@
 			{/if}
 
 			{#if error}
-				<div class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
+				<div class="rounded-input border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
 					{error}
 				</div>
 			{/if}
+
+			<!-- Bottom Save. The only other submit lives in the non-sticky header, a
+			     13-section scroll away — every sibling form ends with a reachable
+			     full-width Save, and this one didn't. -->
+			<Button size="large" variant="prominent" type="submit" full disabled={!dirty || submitting}
+				>{submitting ? 'Saving…' : 'Save changes'}</Button
+			>
 		</div>
 	</form>
 {/if}

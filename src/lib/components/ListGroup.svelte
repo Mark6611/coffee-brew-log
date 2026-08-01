@@ -33,7 +33,7 @@
 {/if}
 
 <div
-	class="overflow-hidden rounded-2xl border border-hairline bg-surface [&>*+*]:border-t [&>*+*]:border-hairline {cls}"
+	class="overflow-hidden rounded-card border border-hairline bg-surface [&>*+*]:border-t [&>*+*]:border-hairline {cls}"
 >
 	{@render children()}
 </div>

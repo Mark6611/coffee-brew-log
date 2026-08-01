@@ -161,7 +161,7 @@
 		<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 			<a
 				href={resolve('/brews')}
-				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 			>
 				<svg
 					width="14"
@@ -179,7 +179,7 @@
 			</a>
 			<a
 				href={resolve('/brews/[id]/edit', { id: brew.id })}
-				class="h-9 px-2 text-[calc(var(--dt-base)*14/17)] text-muted transition-colors hover:text-ink"
+				class="flex h-9 items-center px-2 text-[calc(var(--dt-base)*14/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 				>Edit</a
 			>
 		</div>
@@ -271,7 +271,7 @@
 
 				{#if !brew.bagId}
 					<div
-						class="mt-3 flex items-center justify-between gap-3 rounded-[14px] bg-copper-lt px-4 py-3 text-[calc(var(--dt-base)*12.5/17)] text-copper-dk"
+						class="mt-3 flex items-center justify-between gap-3 rounded-input bg-copper-lt px-4 py-3 text-[calc(var(--dt-base)*12.5/17)] text-copper-dk"
 					>
 						<div class="flex items-center gap-2">
 							<svg
@@ -309,13 +309,13 @@
 
 			<!-- Photo -->
 			{#if brew.photo}
-				<div class="overflow-hidden rounded-[22px] border border-hairline bg-surface">
+				<div class="overflow-hidden rounded-card-lg border border-hairline bg-surface">
 					<img src={brew.photo} alt="This brew" class="max-h-[340px] w-full object-cover" />
 				</div>
 			{/if}
 
 			<!-- Hero ratio block -->
-			<div class="relative overflow-hidden rounded-[22px] border border-hairline bg-surface p-5">
+			<div class="relative overflow-hidden rounded-card-lg border border-hairline bg-surface p-5">
 				<div
 					class="pointer-events-none absolute -top-[30px] -right-[30px] h-[140px] w-[140px] rounded-full bg-copper-lt opacity-40"
 				></div>
@@ -406,7 +406,7 @@
 
 			<!-- Variables card -->
 			{#if showVariables}
-				<div class="rounded-[18px] border border-hairline bg-surface px-4 py-4">
+				<div class="rounded-card border border-hairline bg-surface px-4 py-4">
 					<div class="grid grid-cols-2 gap-4">
 						{#if brew.grindSetting}
 							<div>
@@ -467,7 +467,7 @@
 
 			<!-- Rating card -->
 			{#if brew.rating != null}
-				<div class="rounded-[18px] border border-hairline bg-surface px-4 py-4">
+				<div class="rounded-card border border-hairline bg-surface px-4 py-4">
 					<div class="flex items-end justify-between gap-4">
 						<div>
 							<div
@@ -487,7 +487,7 @@
 			{:else}
 				<a
 					href={resolve('/brews/[id]/edit', { id: brew.id })}
-					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-4 hover:border-copper/50"
+					class="press group flex items-center justify-between gap-3 rounded-card border border-dashed border-hairline px-4 py-4 hover:border-copper/50"
 				>
 					<div class="flex items-center gap-3">
 						<StarRow value={0} size={16} />
@@ -502,14 +502,14 @@
 			<!-- Notes card -->
 			{#if brew.notes}
 				<div
-					class="rounded-[18px] border border-hairline bg-surface px-4 py-4 font-display text-[calc(var(--dt-base)*15.5/17)] leading-[1.5] text-ink-70 italic"
+					class="rounded-card border border-hairline bg-surface px-4 py-4 font-display text-[calc(var(--dt-base)*15.5/17)] leading-[1.5] text-ink-70 italic"
 				>
 					<MarkdownText text={brew.notes} />
 				</div>
 			{:else}
 				<a
 					href={resolve('/brews/[id]/edit', { id: brew.id })}
-					class="press group flex items-center justify-between gap-3 rounded-[18px] border border-dashed border-hairline px-4 py-4 hover:border-copper/50"
+					class="press group flex items-center justify-between gap-3 rounded-card border border-dashed border-hairline px-4 py-4 hover:border-copper/50"
 				>
 					<div class="font-display text-[calc(var(--dt-base)*14/17)] text-muted italic">
 						What did it taste like?
@@ -524,11 +524,11 @@
 			{#if bag && bagConsumptionData}
 				<a
 					href={resolve('/bags/[id]', { id: bag.id })}
-					class="press block rounded-[18px] border border-hairline bg-surface px-4 py-4 hover:bg-paper/50"
+					class="press block rounded-card border border-hairline bg-surface px-4 py-4 hover:bg-paper/50"
 				>
 					<div class="flex items-start gap-3">
 						<div
-							class="grid h-[44px] w-[44px] shrink-0 place-items-center rounded-[10px] bg-copper text-paper"
+							class="grid h-[44px] w-[44px] shrink-0 place-items-center rounded-control bg-copper text-paper"
 						>
 							<svg
 								width="22"

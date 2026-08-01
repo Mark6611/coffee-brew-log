@@ -36,7 +36,7 @@
 		></div>
 	{/if}
 	<div
-		class="rounded-[18px] border p-4 transition-[background-color,border-color] duration-200 {published
+		class="rounded-card border p-4 transition-[background-color,border-color] duration-200 {published
 			? 'border-copper/20 bg-copper-lt'
 			: 'border-hairline bg-surface'}"
 	>
@@ -105,7 +105,7 @@
 						type="text"
 						bind:value={blogTitle}
 						placeholder="A morning at home with the Yirgacheffe"
-						class="min-h-12 w-full rounded-[14px] border border-hairline bg-surface px-4 py-2 font-display text-[calc(var(--dt-base)*17/17)] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="min-h-12 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-display text-[calc(var(--dt-base)*17/17)] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
 
@@ -124,7 +124,7 @@
 						bind:value={blogBody}
 						rows="8"
 						placeholder={BODY_PLACEHOLDER}
-						class="w-full resize-none rounded-[14px] border border-hairline bg-surface px-4 py-3 text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+						class="w-full resize-none rounded-input border border-hairline bg-surface px-4 py-3 text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.55] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 					></textarea>
 				</div>
 

@@ -258,7 +258,7 @@
 	<div class="flex items-center justify-between gap-2 px-5 pe-16 pt-2 pb-2 sm:pe-5">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -300,7 +300,7 @@
 				     iCloud moves the data between the user's devices. -->
 				<div>
 					<Eyebrow class="mb-2">ICLOUD SYNC</Eyebrow>
-					<div class="rounded-2xl border border-hairline bg-surface px-4 py-3">
+					<div class="rounded-card border border-hairline bg-surface px-4 py-3">
 						<div class="flex items-center justify-between gap-3">
 							<div class="min-w-0 flex-1">
 								<div class="mt-0.5 text-[calc(var(--dt-base)*13/17)] text-ink">
@@ -351,7 +351,7 @@
 				<div>
 					<Eyebrow class="mb-2">ACCOUNT</Eyebrow>
 					{#if auth.user}
-						<div class="space-y-3 rounded-2xl border border-hairline bg-surface px-4 py-3">
+						<div class="space-y-3 rounded-card border border-hairline bg-surface px-4 py-3">
 							<div class="flex items-center justify-between gap-3">
 								<div class="min-w-0">
 									<div class="truncate text-[calc(var(--dt-base)*14/17)] text-ink">
@@ -517,14 +517,14 @@
 
 			{#if message}
 				<div
-					class="rounded-[14px] bg-success/10 px-3 py-3 text-[calc(var(--dt-base)*13/17)] text-success"
+					class="rounded-input bg-success/10 px-3 py-3 text-[calc(var(--dt-base)*13/17)] text-success"
 				>
 					{message}
 				</div>
 			{/if}
 			{#if error}
 				<div
-					class="rounded-[14px] border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
+					class="rounded-input border border-danger/20 bg-danger/8 p-3 text-[calc(var(--dt-base)*13/17)] text-danger"
 				>
 					{error}
 				</div>
@@ -535,7 +535,7 @@
 				<Eyebrow class="mb-2 text-danger">DANGER ZONE</Eyebrow>
 				<!-- Destructive actions stay on a grouped inset row, the way iOS keeps
 				     "Erase All Content and Settings" carded rather than floating. -->
-				<div class="overflow-hidden rounded-2xl border border-hairline bg-surface">
+				<div class="overflow-hidden rounded-card border border-hairline bg-surface">
 					<Button
 						size="medium"
 						variant="destructive"

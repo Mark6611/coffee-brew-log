@@ -102,7 +102,7 @@
 	<div class="flex items-center justify-between px-5 pt-2 pb-0">
 		<a
 			href={resolve('/')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-muted transition-colors hover:text-ink"
+			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 		>
 			<svg
 				width="14"
@@ -164,7 +164,13 @@
 				bind:this={searchInputEl}
 				bind:value={searchQuery}
 				placeholder="Search coffee, roaster, notes…"
-				class="min-h-12 w-full rounded-[14px] border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+				enterkeyhint="search"
+				autocapitalize="none"
+				onkeydown={(e) => {
+					// The list filters live; the Search key's job is just to drop the keyboard.
+					if (e.key === 'Enter') e.currentTarget.blur();
+				}}
+				class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
 			/>
 		</div>
 	{/if}

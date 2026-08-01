@@ -89,7 +89,7 @@
 {#if scale.status === 'unsupported'}
 	<!-- Scale feature disabled for 1.0 (see scale.svelte.ts) — render nothing. -->
 {:else}
-	<div class="mt-1 rounded-[14px] border border-hairline bg-surface p-3">
+	<div class="mt-1 rounded-input border border-hairline bg-surface p-3">
 		{#if scale.status === 'idle' || scale.status === 'disconnected'}
 			<button
 				type="button"
@@ -149,13 +149,13 @@
 						<button
 							type="button"
 							onclick={() => tareScale()}
-							class="press-sm rounded-lg border border-hairline px-3 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-muted hover:text-ink"
+							class="press-sm rounded-control border border-hairline px-3 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-muted hover:text-ink"
 							>Tare</button
 						>
 						<button
 							type="button"
 							onclick={beginListening}
-							class="press-sm rounded-lg bg-copper px-4 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-paper hover:bg-copper-dk"
+							class="press-sm rounded-control bg-copper px-4 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-paper hover:bg-copper-dk"
 						>
 							{mode === 'done' ? 'New shot' : 'Start shot'}
 						</button>
@@ -198,7 +198,7 @@
 					<button
 						type="button"
 						onclick={finish}
-						class="press-sm rounded-lg bg-ink/[0.06] px-4 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-ink hover:bg-ink/[0.1]"
+						class="press-sm rounded-control bg-ink/[0.06] px-4 py-2 text-[calc(var(--dt-base)*12/17)] font-medium text-ink hover:bg-ink/[0.1]"
 						>Stop</button
 					>
 				</div>

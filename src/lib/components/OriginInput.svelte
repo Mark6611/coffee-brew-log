@@ -49,7 +49,7 @@
 </script>
 
 <div
-	class="flex min-h-12 w-full items-center rounded-[14px] border bg-paper transition-all duration-200 {resolved.length
+	class="flex min-h-12 w-full items-center rounded-input border bg-paper transition-all duration-200 {resolved.length
 		? 'border-copper ring-2 ring-copper/25'
 		: 'border-hairline focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25'}"
 >
@@ -65,6 +65,9 @@
 		type="text"
 		bind:value
 		placeholder="e.g. Ethiopia, or Brazil + Ethiopia"
+		autocapitalize="words"
+		autocorrect="off"
+		spellcheck="false"
 		class="min-h-12 min-w-0 flex-1 bg-transparent px-4 text-ink outline-none placeholder:text-muted"
 	/>
 	{#if blend}

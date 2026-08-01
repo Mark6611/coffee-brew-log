@@ -35,21 +35,9 @@
 	const roasterText = $derived(bag?.roaster ?? brew.roaster);
 	const originFlags = $derived(bag ? resolveOrigins(bag.origin) : []);
 
-	function openDetail() {
-		goto(resolve('/brews/[id]', { id: brew.id }));
-	}
-
-	function brewAgain(e: MouseEvent) {
-		e.stopPropagation();
+	function brewAgain() {
 		stageBrewAgain(brew);
 		goto(resolve('/brews/new'));
-	}
-
-	function handleCardKeydown(e: KeyboardEvent) {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			openDetail();
-		}
 	}
 </script>
 
@@ -68,14 +56,14 @@
 	</div>
 {/snippet}
 
+<!-- Stretched-link card: the root is a plain div, the TITLE anchor's ::after
+     covers the whole card, and every nested control sits above it on z-10. This
+     replaces a role="button" div that nested a link and two buttons — invalid
+     for assistive tech, and Enter/Space needed hand-rolled key handling. -->
 <div
-	role="button"
-	tabindex="0"
-	onclick={openDetail}
-	onkeydown={handleCardKeydown}
-	class="relative cursor-pointer overflow-hidden border border-hairline bg-surface transition duration-[180ms] ease-out hover:border-rule active:scale-[0.985] {hero
-		? 'rounded-[22px] p-5'
-		: 'rounded-[18px] p-4'}"
+	class="relative overflow-hidden border border-hairline bg-surface transition duration-[180ms] ease-out hover:border-rule has-[a.card-link:active]:scale-[0.985] {hero
+		? 'rounded-card-lg p-5'
+		: 'rounded-card p-4'}"
 >
 	{#if hero}
 		<div
@@ -88,11 +76,8 @@
 			{#if ontogglefavorite}
 				<button
 					type="button"
-					onclick={(e) => {
-						e.stopPropagation();
-						ontogglefavorite?.(brew.id);
-					}}
-					class="press-sm hit-44-sq -m-[7px] grid h-9 w-9 place-items-center rounded-full {brew.isFavorite
+					onclick={() => ontogglefavorite?.(brew.id)}
+					class="press-sm hit-44-sq z-10 -m-[7px] grid h-9 w-9 place-items-center rounded-full {brew.isFavorite
 						? 'text-copper hover:bg-copper-lt'
 						: 'text-muted hover:bg-hairline'}"
 					aria-label={brew.isFavorite ? 'Remove favorite' : 'Mark favorite'}
@@ -128,7 +113,7 @@
 			<button
 				type="button"
 				onclick={brewAgain}
-				class="press-sm hit-44-sq -m-[7px] grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-copper-lt hover:text-copper"
+				class="press-sm hit-44-sq z-10 -m-[7px] grid h-9 w-9 place-items-center rounded-full text-muted hover:bg-copper-lt hover:text-copper"
 				aria-label="Brew this again"
 				title="Brew again"
 			>
@@ -149,18 +134,20 @@
 		</div>
 	</div>
 
-	{#if brew.coffeeName || bag}
-		<div
-			class="font-display text-[calc(var(--dt-base)*22/17)] leading-[1.15] font-medium tracking-[-0.005em] text-ink"
-		>
+	<a
+		href={resolve('/brews/[id]', { id: brew.id })}
+		class="card-link block font-display text-[calc(var(--dt-base)*22/17)] leading-[1.15] font-medium tracking-[-0.005em] text-ink after:absolute after:inset-0 after:content-['']"
+	>
+		{#if brew.coffeeName || bag}
 			{bag?.name ?? brew.coffeeName}
-		</div>
+		{:else}<span class="text-muted">Untitled brew</span>{/if}
+	</a>
+	{#if brew.coffeeName || bag}
 		{#if roasterText}
 			{#if bag}
 				<a
 					href={resolve('/bags/[id]', { id: bag.id })}
-					onclick={(e) => e.stopPropagation()}
-					class="mt-1 inline-flex items-center gap-1 border-b border-copper/35 pb-px text-[calc(var(--dt-base)*13/17)] text-copper-dk transition-colors hover:text-copper"
+					class="relative z-10 mt-1 inline-flex items-center gap-1 border-b border-copper/35 pb-px text-[calc(var(--dt-base)*13/17)] text-copper-dk transition-colors hover:text-copper"
 				>
 					<svg
 						width="11"
@@ -211,14 +198,14 @@
 
 	{#if brew.notes}
 		<div
-			class="mt-3 border-t border-dashed border-hairline pt-3 font-display text-[calc(var(--dt-base)*14.5/17)] leading-[1.45] text-ink-70 italic"
+			class="relative z-10 mt-3 border-t border-dashed border-hairline pt-3 font-display text-[calc(var(--dt-base)*14.5/17)] leading-[1.45] text-ink-70 italic"
 		>
 			<MarkdownText text={brew.notes} />
 		</div>
 	{/if}
 
 	{#if brew.photo}
-		<div class="mt-3 overflow-hidden rounded-[12px] border border-hairline">
+		<div class="mt-3 overflow-hidden rounded-control border border-hairline">
 			<img src={brew.photo} alt="" class="max-h-[160px] w-full object-cover" />
 		</div>
 	{/if}
