@@ -20,3 +20,5 @@ jobs:
         run: npm run check
       - name: Unit tests
         run: npm test
+      - name: Bundle CSS gate (built output, not source)
+        run: npm run build && node scripts/verify-bundle-css.mjs

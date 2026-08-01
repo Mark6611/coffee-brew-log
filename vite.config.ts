@@ -10,6 +10,31 @@ import { defineConfig } from 'vite';
 const native = process.env.BUILD_TARGET === 'capacitor';
 
 export default defineConfig({
+	build: {
+		// Pin the CSS minify pass to the app's real browser floor. Tailwind v4's
+		// own pipeline emits media-query RANGE syntax — `(width>=40rem)` for its
+		// breakpoints, and it even rewrites hand-written `(max-width: 600px)`
+		// source into `(width<=600px)` — which Safari < 16.4 cannot parse, so
+		// every responsive rule inside is silently dropped there. With cssTarget
+		// set, Vite's Lightning CSS minifier compiles them back to min-/max-width
+		// (and keeps/adds vendor prefixes the targets need).
+		//
+		// PLUMBING GOTCHA: this must be build.cssTarget. Vite's minify pass
+		// hard-overrides `targets` with convertTargets(build.cssTarget), so
+		// css.lightningcss.targets is silently ignored. Unset, cssTarget converts
+		// to {} and Lightning lowers nothing — which is how the range syntax
+		// shipped. The result is gated by scripts/verify-bundle-css.mjs in CI.
+		cssTarget: [
+			// iOS/Safari floor per App Store deployment target.
+			'safari15',
+			'ios15',
+			// Desktop entries so Lightning keeps unprefixed forms alive (e.g. plain
+			// backdrop-filter, which Safari-only targets would consider dead).
+			'chrome100',
+			'firefox100'
+		],
+		cssMinify: 'lightningcss'
+	},
 	plugins: [
 		tailwindcss(),
 		sveltekit(),
