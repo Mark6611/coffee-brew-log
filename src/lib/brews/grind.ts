@@ -51,7 +51,14 @@ export function resolveGrindSuggestion(
 	// never prefill a pour-over field (different grinder, different scale).
 	const sameBag = allBrews
 		.filter((b) => b.bagId === bag.id && b.method === method && b.grindSetting && !b.deletedAt)
-		.sort((a, b) => (a.brewedAt < b.brewedAt ? 1 : -1))[0];
+		// Deterministic, and tie-broken by id. brewedAt comes from a
+		// minute-precision datetime-local, so back-to-back shots routinely share a
+		// timestamp — and the old comparator never returned 0, which is an
+		// inconsistent comparator whose behaviour on ties is engine-defined. That
+		// let the bag detail advertise one shot's grind as "your last brew" while
+		// the dial-in section on the same screen treated a different shot as the
+		// latest. Matches espressoShotsFor() in dialin.ts, which ties the same way.
+		.sort((a, b) => b.brewedAt.localeCompare(a.brewedAt) || b.id.localeCompare(a.id))[0];
 	if (sameBag) return { kind: 'prefill', value: sameBag.grindSetting, grinder };
 
 	// No roast level → silent.

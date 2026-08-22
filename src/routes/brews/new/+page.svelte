@@ -98,6 +98,17 @@
 		rating = null;
 		balance = '';
 		extraction = '';
+		// Claim the grind context this function's own `bagId` assignment is about
+		// to hand the effect below. That effect re-runs on the bagId change with
+		// firstInit=false, and its else-branch is `grindSetting = autoFill ?? ''`
+		// — which erased the grind staged one line above whenever the bag has an
+		// espresso dial-in stage that is a chip-only move/hold rather than a
+		// settled `dialed` recipe. Yield/time/dose survived, so Save was blocked
+		// on a field the card had visibly filled.
+		// Pre-claiming makes the effect short-circuit, which is what the sibling
+		// "Brew again" path gets for free by restoring its draft before bags load.
+		grindCtx = `${bagId ?? ''}|${method}`;
+		grindApplied = false;
 	}
 
 	onMount(async () => {

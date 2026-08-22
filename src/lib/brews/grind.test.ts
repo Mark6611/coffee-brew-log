@@ -41,6 +41,38 @@ describe('resolveGrindSuggestion — precedence', () => {
 		expect(r).toEqual({ kind: 'prefill', value: 'Ode 9', grinder: 'Fellow Ode Gen 2' });
 	});
 
+	// Same-minute ties: brewedAt comes from a minute-precision datetime-local, so
+	// back-to-back shots routinely share a timestamp. The old comparator was
+	// `a.brewedAt < b.brewedAt ? 1 : -1` — it never returned 0, which makes it an
+	// inconsistent comparator whose result on ties is engine-defined, so the bag
+	// detail could advertise one shot's grind as "your last brew" while the
+	// dial-in section on the same screen treated a different shot as the latest.
+	it('RULE 1: breaks same-timestamp ties by id, matching dialin.ts', () => {
+		const target = bag({ roastLevel: 'dark' });
+		const SAME = '2026-05-10T08:00:00.000Z';
+		const lo = espresso({
+			id: 'aaaaaaaa-0000-4000-8000-000000000001',
+			bagId: target.id,
+			grindSetting: '3.2.0',
+			brewedAt: SAME
+		});
+		const hi = espresso({
+			id: 'ffffffff-0000-4000-8000-000000000002',
+			bagId: target.id,
+			grindSetting: '3.0.0',
+			brewedAt: SAME
+		});
+
+		// The highest id wins the tie, whichever order the array arrives in.
+		for (const brews of [
+			[lo, hi],
+			[hi, lo]
+		]) {
+			const r = resolveGrindSuggestion(target, 'espresso', brews, [target]);
+			expect(r).toMatchObject({ kind: 'prefill', value: '3.0.0' });
+		}
+	});
+
 	it('RULE 1: is method-scoped — an espresso brew never prefills pour-over', () => {
 		const target = bag({ roastLevel: 'dark' });
 		// The bag was only ever brewed as espresso. Asking for pour-over must NOT

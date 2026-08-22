@@ -112,9 +112,9 @@ Everything below is verifiable in this repo:
 
 - **222 unit tests in 16 Vitest files** (`npm test`) covering the domain logic: brew/ratio math, dial-in and grind calibration, stats and cost aggregation, BLE scale protocol parsing, sync row mapping, origin resolution, photo resizing.
 - **CI on every push and PR** ([ci.yml](.github/workflows/ci.yml)): typecheck (svelte-check) → unit tests → production build → built-bundle CSS gate.
-- **Built-output CSS gate** ([`scripts/verify-bundle-css.mjs`](scripts/verify-bundle-css.mjs)): scans the *emitted* CSS bundle — not the source — for three bug classes that previously reached users: missing unprefixed `backdrop-filter`, `color-mix()` outside an `@supports` guard, and media-query range syntax unsupported below Safari 16.4.
+- **Built-output CSS gate** ([`scripts/verify-bundle-css.mjs`](scripts/verify-bundle-css.mjs)): scans the _emitted_ CSS bundle — not the source — for three bug classes that previously reached users: missing unprefixed `backdrop-filter`, `color-mix()` outside an `@supports` guard, and media-query range syntax unsupported below Safari 16.4.
 - **One-command gate:** `npm run verify` = typecheck → tests → lint → build → bundle-CSS gate.
-- **Scripted App Store releases** (`scripts/asc-*.mjs`): `asc-preflight.mjs` validates App Store Connect prerequisites *before* archiving, then `asc-wait-build`, `asc-screenshots`, and `asc-submit` handle build polling, screenshot upload, and submission.
+- **Scripted App Store releases** (`scripts/asc-*.mjs`): `asc-preflight.mjs` validates App Store Connect prerequisites _before_ archiving, then `asc-wait-build`, `asc-screenshots`, and `asc-submit` handle build polling, screenshot upload, and submission.
 - **Push gate for parallel work** ([`scripts/sync-check.mjs`](scripts/sync-check.mjs)): reports divergence from `origin/main` — and which incoming files the current branch also touches — before a push or a long verify run.
 - **Dynamic Type on iOS:** user text-size settings scale the app inside the WKWebView shell via `font: -apple-system-body` on `:root` ([src/routes/layout.css](src/routes/layout.css)).
 
