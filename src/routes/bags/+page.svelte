@@ -13,10 +13,12 @@
 	import Button from '$lib/components/Button.svelte';
 	import OriginFlags from '$lib/components/OriginFlags.svelte';
 	import DialedBadge from '$lib/components/DialedBadge.svelte';
+	import LoadFailed from '$lib/components/LoadFailed.svelte';
 
 	let bags = $state<Bag[]>([]);
 	let brews = $state<Brew[]>([]);
 	let loading = $state(true);
+	let loadError = $state(false);
 
 	const showArchived = $derived(page.url.searchParams.get('show') === 'archived');
 	const visibleBags = $derived(bags.filter((b) => !!b.archived === showArchived));
@@ -27,11 +29,18 @@
 	let firstReveal = $state(true);
 
 	async function refresh() {
-		[bags, brews] = await Promise.all([listBags(), listBrews()]);
-		loading = false;
-		if (firstReveal) {
-			await tick();
-			firstReveal = false;
+		try {
+			loadError = false;
+			[bags, brews] = await Promise.all([listBags(), listBrews()]);
+			if (firstReveal) {
+				await tick();
+				firstReveal = false;
+			}
+		} catch (e) {
+			console.error('bags load failed:', e);
+			loadError = true;
+		} finally {
+			loading = false;
 		}
 	}
 
@@ -108,6 +117,8 @@
 	<div class="px-5">
 		{#if loading}
 			<p class="py-8 text-center text-sm text-muted">Loading…</p>
+		{:else if loadError}
+			<LoadFailed noun="bags" onretry={refresh} />
 		{:else if visibleBags.length === 0 && !bags.length}
 			<div class="flex flex-col items-center px-6 pt-12 pb-20 text-center">
 				<div class="mb-6 grid h-24 w-24 place-items-center rounded-full bg-copper-lt text-copper">

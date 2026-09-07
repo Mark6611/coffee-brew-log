@@ -12,6 +12,7 @@
 	import { roastMeta } from '$lib/bags/roast';
 	import { costPerGram, costPerCupForBag } from '$lib/stats/cost';
 	import Button from '$lib/components/Button.svelte';
+	import LoadFailed from '$lib/components/LoadFailed.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import ProcessBadge from '$lib/components/ProcessBadge.svelte';
 	import OriginFlags from '$lib/components/OriginFlags.svelte';
@@ -26,6 +27,7 @@
 	let allBrews = $state<Brew[]>([]);
 	let brews = $state<Brew[]>([]);
 	let loading = $state(true);
+	let loadError = $state(false);
 	let notFound = $state(false);
 
 	$effect(() => {
@@ -35,22 +37,29 @@
 	async function load(id: string) {
 		loading = true;
 		notFound = false;
-		const [found, bags, allBrewsData] = await Promise.all([
-			getBagById(id),
-			listBags(),
-			listBrews()
-		]);
-		if (!found) {
-			notFound = true;
-			bag = null;
-			brews = [];
-		} else {
-			bag = found;
-			allBrews = allBrewsData;
-			brews = allBrewsData.filter((b) => b.bagId === id);
-			allBags = bags;
+		loadError = false;
+		try {
+			const [found, bags, allBrewsData] = await Promise.all([
+				getBagById(id),
+				listBags(),
+				listBrews()
+			]);
+			if (!found) {
+				notFound = true;
+				bag = null;
+				brews = [];
+			} else {
+				bag = found;
+				allBrews = allBrewsData;
+				brews = allBrewsData.filter((b) => b.bagId === id);
+				allBags = bags;
+			}
+		} catch (e) {
+			console.error('bag load failed:', e);
+			loadError = true;
+		} finally {
+			loading = false;
 		}
-		loading = false;
 	}
 
 	const consumption = $derived(bag ? bagConsumption(bag, brews) : null);
@@ -253,7 +262,9 @@
 	<title>{bag?.name ?? 'Bag'}</title>
 </svelte:head>
 
-{#if loading}
+{#if loadError}
+	<LoadFailed noun="bag" onretry={() => load(page.params.id!)} />
+{:else if loading}
 	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound || !bag}
 	<div class="mx-auto max-w-2xl px-5 pt-12 text-center">

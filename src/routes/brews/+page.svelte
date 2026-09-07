@@ -12,6 +12,7 @@
 	import Chip from '$lib/components/Chip.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import LiveDot from '$lib/components/LiveDot.svelte';
+	import LoadFailed from '$lib/components/LoadFailed.svelte';
 	import { BLOG_ENABLED } from '$lib/blog/config';
 
 	type Filter = 'all' | 'espresso' | 'pour-over' | 'favorites' | 'published';
@@ -19,6 +20,7 @@
 	let allBrews = $state<Brew[]>([]);
 	let allBags = $state<Bag[]>([]);
 	let loading = $state(true);
+	let loadError = $state(false);
 	let filter = $state<Filter>('all');
 	let searchOpen = $state(false);
 	let searchInputEl = $state<HTMLInputElement | undefined>();
@@ -47,11 +49,18 @@
 	let firstReveal = $state(true);
 
 	async function refresh() {
-		[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
-		loading = false;
-		if (firstReveal) {
-			await tick();
-			firstReveal = false;
+		try {
+			loadError = false;
+			[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
+			if (firstReveal) {
+				await tick();
+				firstReveal = false;
+			}
+		} catch (e) {
+			console.error('brews load failed:', e);
+			loadError = true;
+		} finally {
+			loading = false;
 		}
 	}
 
@@ -195,6 +204,8 @@
 	<div class="px-5">
 		{#if loading}
 			<p class="py-8 text-center text-sm text-muted">Loading…</p>
+		{:else if loadError}
+			<LoadFailed noun="brews" onretry={refresh} />
 		{:else if allBrews.length === 0}
 			<!-- Rich empty state -->
 			<div class="flex flex-col items-center px-6 pt-12 pb-20 text-center">

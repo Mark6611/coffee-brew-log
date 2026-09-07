@@ -5,6 +5,7 @@
 	import type { Brew, Bag } from '$lib/db/types';
 	import { getBrewById, getBagById, listBrews, deleteBrew } from '$lib/db/repository';
 	import { confirmSheet } from '$lib/confirm.svelte';
+	import LoadFailed from '$lib/components/LoadFailed.svelte';
 	import { formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { freshnessTone, freshnessLabel, freshnessStale, bagConsumption } from '$lib/bags/compute';
 	import { resolveOrigins, originLabel } from '$lib/origin/resolve';
@@ -32,6 +33,7 @@
 	const originText = $derived(bag ? originLabel(bag.origin) : '');
 	let allBrews = $state<Brew[]>([]);
 	let loading = $state(true);
+	let loadError = $state(false);
 	let notFound = $state(false);
 
 	$effect(() => {
@@ -41,22 +43,28 @@
 	async function load(id: string) {
 		loading = true;
 		notFound = false;
-		const found = await getBrewById(id);
-		if (!found) {
-			notFound = true;
-			brew = null;
-			bag = null;
+		loadError = false;
+		try {
+			const found = await getBrewById(id);
+			if (!found) {
+				notFound = true;
+				brew = null;
+				bag = null;
+				return;
+			}
+			brew = found;
+			allBrews = await listBrews();
+			if (found.bagId) {
+				bag = (await getBagById(found.bagId)) ?? null;
+			} else {
+				bag = null;
+			}
+		} catch (e) {
+			console.error('brew load failed:', e);
+			loadError = true;
+		} finally {
 			loading = false;
-			return;
 		}
-		brew = found;
-		allBrews = await listBrews();
-		if (found.bagId) {
-			bag = (await getBagById(found.bagId)) ?? null;
-		} else {
-			bag = null;
-		}
-		loading = false;
 	}
 
 	const brewNumber = $derived.by(() => {
@@ -154,7 +162,9 @@
 	<title>{brew?.coffeeName ?? bag?.name ?? 'Brew'}</title>
 </svelte:head>
 
-{#if loading}
+{#if loadError}
+	<LoadFailed noun="brew" onretry={() => load(page.params.id!)} />
+{:else if loading}
 	<p class="py-8 text-center text-sm text-muted">Loading…</p>
 {:else if notFound || !brew}
 	<div class="mx-auto max-w-2xl px-5 pt-12 text-center">

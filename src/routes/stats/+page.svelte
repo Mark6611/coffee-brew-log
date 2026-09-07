@@ -23,6 +23,7 @@
 	import { formatRatio } from '$lib/brews/compute';
 	import { costSummary } from '$lib/stats/cost';
 	import Button from '$lib/components/Button.svelte';
+	import LoadFailed from '$lib/components/LoadFailed.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import StarRow from '$lib/components/StarRow.svelte';
 
@@ -35,14 +36,24 @@
 	let allBrews = $state<Brew[]>([]);
 	let allBags = $state<Bag[]>([]);
 	let loading = $state(true);
+	let loadError = $state(false);
 
 	const range = $derived((page.url.searchParams.get('range') as Range | null) ?? '12w');
 	const filtered = $derived(filterByRange(allBrews, range));
 
-	onMount(async () => {
-		[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
-		loading = false;
-	});
+	async function load() {
+		try {
+			loadError = false;
+			[allBrews, allBags] = await Promise.all([listBrews(), listBags()]);
+		} catch (e) {
+			console.error('stats load failed:', e);
+			loadError = true;
+		} finally {
+			loading = false;
+		}
+	}
+
+	onMount(load);
 
 	const totalAll = $derived(allBrews.length);
 	const weekly = $derived(brewsByWeek(filtered, 12));
@@ -130,6 +141,8 @@
 
 	{#if loading}
 		<p class="py-8 text-center text-sm text-muted">Loading…</p>
+	{:else if loadError}
+		<LoadFailed noun="stats" onretry={load} />
 	{:else if totalAll === 0}
 		<div class="px-5 pt-12 pb-20 text-center">
 			<h2
