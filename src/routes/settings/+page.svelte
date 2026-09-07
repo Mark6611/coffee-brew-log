@@ -13,6 +13,7 @@
 	import ListRow from '$lib/components/ListRow.svelte';
 	import { confirmSheet } from '$lib/confirm.svelte';
 	import { theme, type ThemePref } from '$lib/theme.svelte';
+	import { storage } from '$lib/storage.svelte';
 	import { FOCUS_RING_INSET } from '$lib/components/focus';
 
 	const THEME_PREFS: ThemePref[] = ['light', 'dark', 'system'];
@@ -346,6 +347,23 @@
 			{/if}
 
 			<!-- Counts — grouped inset rows: label left, value right -->
+			{#if storage.persisted === false}
+				<!-- Only shown on a real denial (false), never on null/unknown: a
+				     warning the user cannot act on is noise. -->
+				<p
+					class="rounded-card border border-hairline bg-surface px-4 py-3 text-[calc(var(--dt-base)*13/17)] leading-[1.5] text-muted"
+				>
+					<span class="text-danger">This browser hasn’t granted persistent storage.</span>
+					{#if isNative}
+						Your brews are also in your iCloud, but this device’s copy could be cleared if storage
+						runs low.
+					{:else}
+						Your brews live only in this browser, and it may clear them if storage runs low or you
+						don’t open the app for a while. Download a backup to be safe.
+					{/if}
+				</p>
+			{/if}
+
 			<ListGroup header="ON THIS DEVICE">
 				<ListRow title="Brews" value={brewCount} />
 				<ListRow title="Bags" value={bagCount} />

@@ -11,6 +11,7 @@
 	import { page } from '$app/state';
 	import { hideSplash, isNative } from '$lib/native';
 	import { theme } from '$lib/theme.svelte';
+	import { storage } from '$lib/storage.svelte';
 	import { runCloudSync } from '$lib/cloudSync';
 	import ConfirmSheet from '$lib/components/ConfirmSheet.svelte';
 	import PwaUpdatePrompt from '$lib/components/PwaUpdatePrompt.svelte';
@@ -23,6 +24,12 @@
 		const stopTheme = theme.init();
 		// App has painted with the right theme — fade the native splash out.
 		void hideSplash();
+
+		// Ask the browser to make IndexedDB persistent. On the web it is the only
+		// copy of the data; native has iCloud behind it but eviction still costs
+		// the local cache. The answer is recorded, not discarded — Settings warns
+		// when it comes back false.
+		void storage.requestPersistence();
 
 		// Native: sync with iCloud on launch and every return to the foreground
 		// (visibilitychange covers app-switch in the WKWebView — no extra plugin).
