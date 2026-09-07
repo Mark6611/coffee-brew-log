@@ -61,9 +61,9 @@
 
 		<p>
 			Coffee Brew Log is a personal log for your coffee brewing. It is built to be private by
-			default: your data lives on your device, and syncs only through your own private iCloud (on
-			iPhone) or your own private account (optional, web). The developer of Coffee Brew Log cannot
-			see your data.
+			default: your data lives on your device. There are no accounts and no sign-in, and the app
+			sends nothing to any server the developer controls. On iPhone it can sync between your own
+			devices through your private iCloud; that is the only place your data travels.
 		</p>
 
 		<h2>What the app stores, and where</h2>
@@ -85,20 +85,17 @@
 				the developer has no access to it and runs no server for the iOS app.
 			</li>
 			<li>
-				<strong>Web app — optional account sync:</strong> on the web version only, you can sign
-				in to mirror your data to your own private database so browsers stay in sync. Access is
-				scoped to your account by row-level security — other users cannot read it, and the
-				developer does not access it.
+				<strong>Web app — on-device only:</strong> the web version stores everything in your
+				browser and has no account, no sign-in, and no server component. Data does not move
+				between browsers; use the JSON backup in Settings to carry it across.
 			</li>
 		</ul>
 
-		<h2>Account &amp; email</h2>
+		<h2>Accounts &amp; email</h2>
 		<p>
-			The iPhone app has no accounts — it never asks for or collects your email. On the web app,
-			signing in is optional and only needed for cross-browser sync; it uses a one-time code sent
-			to your email address (magic-link sign-in), used solely to send that code and to identify
-			your account — never for marketing, advertising, or profiling. If you never sign in, Coffee
-			Brew Log collects no personal information at all.
+			There are no accounts. Coffee Brew Log never asks for your email address, and collects no
+			personal information at all — on either platform. Nothing is used for marketing,
+			advertising, or profiling, because nothing is collected.
 		</p>
 
 		<h2>Analytics &amp; tracking</h2>
@@ -110,12 +107,11 @@
 
 		<h2>Your control &amp; data deletion</h2>
 		<ul>
-			<li>Delete any bag or brew inside the app; deletions propagate to your other synced devices.</li>
-			<li>On the web app, sign out at any time — this wipes the local copy of your data from that browser.</li>
+			<li>Delete any bag or brew inside the app; on iPhone the deletion carries to your other devices through iCloud.</li>
 			<li>Export a full backup (JSON) of your bags and brews from Settings whenever you like.</li>
 			<li>
-				Delete your account and all of its synced data from Settings → Account → “Delete account.”
-				You can also email us and we will remove it.
+				Wipe every bag and brew from Settings at any time. On iPhone this also removes them from
+				your iCloud, so they disappear from your other devices too.
 			</li>
 			<li>Deleting the app removes all on-device data.</li>
 		</ul>

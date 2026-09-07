@@ -1,11 +1,9 @@
 import { db } from './database';
 import { BrewSchema, BagSchema, type Brew, type Bag, type BagSnapshot } from './types';
-import * as sync from '../sync';
 import { isNative } from '../native';
 
 // Every local mutation gets a fresh updatedAt — the iCloud last-write-wins
-// clock. Stamped here (the single write choke point) so no caller can forget;
-// stripped again before any Supabase upsert (sync.withUserId).
+// clock. Stamped here (the single write choke point) so no caller can forget.
 function stamp<T extends object>(row: T): T & { updatedAt: string } {
 	return { ...row, updatedAt: new Date().toISOString() };
 }
@@ -72,7 +70,6 @@ export async function addBrew(brew: Brew): Promise<string> {
 	const enriched = await applyPublishTransition(brew, undefined);
 	const parsed = stamp(BrewSchema.parse(enriched));
 	await db.brews.add(parsed);
-	sync.pushBrew(parsed);
 	notifyCloud();
 	return parsed.id;
 }
@@ -93,8 +90,8 @@ export async function getBrewById(id: string): Promise<Brew | undefined> {
 
 export async function listBrews(): Promise<Brew[]> {
 	const rows = await db.brews.orderBy('brewedAt').reverse().toArray();
-	// safeParse + skip: one malformed row (e.g. a future-schema row pulled from
-	// the server) must not throw and blank the whole list — matches the sync layer.
+	// safeParse + skip: one malformed row (e.g. written by a newer build, or
+	// restored from a future-schema backup) must not throw and blank the list.
 	return rows.flatMap((row) => {
 		const r = BrewSchema.safeParse(row);
 		if (!r.success) {
@@ -110,7 +107,6 @@ export async function updateBrew(brew: Brew): Promise<void> {
 	const enriched = await applyPublishTransition(brew, existing);
 	const parsed = stamp(BrewSchema.parse(enriched));
 	await db.brews.put(parsed);
-	sync.pushBrew(parsed);
 	notifyCloud();
 }
 
@@ -122,7 +118,6 @@ export async function deleteBrew(id: string): Promise<void> {
 	// listBrews / getBrewById.
 	const tombstoned = stamp(BrewSchema.parse({ ...row, deletedAt: new Date().toISOString() }));
 	await db.brews.put(tombstoned);
-	sync.pushBrew(tombstoned);
 	notifyCloud();
 }
 
@@ -131,7 +126,6 @@ export async function toggleFavorite(id: string): Promise<void> {
 	if (!row) return;
 	const updated = stamp(BrewSchema.parse({ ...row, isFavorite: !row.isFavorite }));
 	await db.brews.put(updated);
-	sync.pushBrew(updated);
 	notifyCloud();
 }
 
@@ -174,7 +168,6 @@ export async function getBagById(id: string): Promise<Bag | undefined> {
 export async function addBag(bag: Bag): Promise<string> {
 	const parsed = stamp(BagSchema.parse(bag));
 	await db.bags.add(parsed);
-	sync.pushBag(parsed);
 	notifyCloud();
 	return parsed.id;
 }
@@ -182,20 +175,17 @@ export async function addBag(bag: Bag): Promise<string> {
 export async function updateBag(bag: Bag): Promise<void> {
 	const parsed = stamp(BagSchema.parse(bag));
 	await db.bags.put(parsed);
-	sync.pushBag(parsed);
 	notifyCloud();
 }
 
 export async function wipeAllData(): Promise<void> {
-	// Read current rows first, then TOMBSTONE them on the server (awaited, throws on
-	// failure) BEFORE clearing local. A hard delete used to be fire-and-forget: the UI
-	// reported success even when the server delete failed offline, and any other
-	// signed-in device would re-push its copy on the next fullSync, silently undoing
-	// the "permanent" wipe. Tombstones ride the normal soft-delete path so every device
-	// converges to deleted.
+	// Read current rows first, then TOMBSTONE them in iCloud (awaited, throws on
+	// failure) before clearing locally. Fire-and-forget once reported success even
+	// when the delete never landed, and any other device would then re-push live
+	// copies over the tombstones on its next pass.
 	const [localBags, localBrews] = await Promise.all([db.bags.toArray(), db.brews.toArray()]);
 	if (isNative) {
-		// Same resurrection hazard as the server path, but against iCloud: clearing
+		// Resurrection hazard against iCloud: clearing
 		// local without cloud tombstones means the next sync pulls everything back.
 		// Quiesce first — a queued/in-flight pass that snapshotted pre-wipe rows
 		// would blindly re-push live copies over the tombstones. Awaited + throws,
@@ -204,44 +194,12 @@ export async function wipeAllData(): Promise<void> {
 		await quiesceCloudSync();
 		await pushWipeTombstonesToCloud(localBags, localBrews);
 	}
-	await sync.pushWipeTombstones(localBags, localBrews);
-	// Clear local only after the server tombstones are in — a mid-op failure must not
-	// have already wiped the device while leaving the account intact.
+	// Clear local only after the iCloud tombstones are in — a mid-op failure must
+	// not have already wiped the device while leaving the cloud copy intact.
 	await db.transaction('rw', db.brews, db.bags, async () => {
 		await db.brews.clear();
 		await db.bags.clear();
 	});
-}
-
-/**
- * Clear ONLY the local IndexedDB cache — used on sign-out so a signed-in user's
- * data doesn't linger on a shared device (matches the privacy policy). Unlike
- * wipeAllData this does NOT touch the server: the account keeps its synced data
- * and re-pulls it on the next sign-in.
- */
-export async function clearLocalCache(): Promise<void> {
-	await db.transaction('rw', db.brews, db.bags, async () => {
-		await db.brews.clear();
-		await db.bags.clear();
-	});
-}
-
-/**
- * Delete the signed-in user's account and ALL of their data — required by App
- * Review 5.1.1(v) for any app that offers account creation. Calls the
- * `delete_account` Postgres RPC (SECURITY DEFINER: removes the user's rows and
- * their auth.users record in one transaction, scoped to auth.uid()), then wipes
- * the local cache and ends the session. Throws if the RPC fails.
- */
-export async function deleteAccount(): Promise<void> {
-	const { supabase } = await import('$lib/supabase');
-	const { error } = await supabase.rpc('delete_account');
-	if (error) throw new Error(error.message);
-	await clearLocalCache();
-	await supabase.auth.signOut();
-	if (typeof window !== 'undefined') {
-		window.dispatchEvent(new Event('brewlog:synced'));
-	}
 }
 
 export async function bulkImport(brews: Brew[], bags: Bag[]): Promise<void> {
@@ -251,8 +209,6 @@ export async function bulkImport(brews: Brew[], bags: Bag[]): Promise<void> {
 		await db.bags.bulkPut(parsedBags);
 		await db.brews.bulkPut(parsedBrews);
 	});
-	// Push the lot to the server in one go via a full sync.
-	void sync.fullSync();
 	notifyCloud();
 }
 
@@ -261,7 +217,6 @@ export async function archiveBag(id: string, archived: boolean): Promise<void> {
 	if (!row) return;
 	const updated = stamp(BagSchema.parse({ ...row, archived }));
 	await db.bags.put(updated);
-	sync.pushBag(updated);
 	notifyCloud();
 }
 
@@ -286,8 +241,6 @@ export async function deleteBag(id: string): Promise<void> {
 	});
 	// Push the soft-deleted bag + the unlinked brews up so other devices see
 	// the same shape on their next pull.
-	sync.pushBag(tombstoned);
-	for (const brew of unlinkedBrews) sync.pushBrew(brew);
 	notifyCloud();
 }
 

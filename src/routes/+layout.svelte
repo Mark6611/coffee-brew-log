@@ -4,7 +4,6 @@
 	import '@fontsource-variable/geist/index.css';
 	import '@fontsource-variable/geist-mono/index.css';
 	import './layout.css';
-	import '$lib/sync'; // side effect: registers auth listener for sync
 
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -13,7 +12,6 @@
 	import { hideSplash, isNative } from '$lib/native';
 	import { theme } from '$lib/theme.svelte';
 	import { runCloudSync } from '$lib/cloudSync';
-	import SyncBanner from '$lib/components/SyncBanner.svelte';
 	import ConfirmSheet from '$lib/components/ConfirmSheet.svelte';
 	import PwaUpdatePrompt from '$lib/components/PwaUpdatePrompt.svelte';
 
@@ -45,7 +43,6 @@
 </script>
 
 <PwaUpdatePrompt />
-<SyncBanner />
 <ConfirmSheet />
 
 {#key page.url.pathname}

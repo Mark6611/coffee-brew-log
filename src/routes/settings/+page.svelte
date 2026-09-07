@@ -3,9 +3,7 @@
 	import { resolve } from '$app/paths';
 	import type { Bag, Brew } from '$lib/db/types';
 	import { BagSchema, BrewSchema } from '$lib/db/types';
-	import { listBags, listBrews, bulkImport, wipeAllData, deleteAccount } from '$lib/db/repository';
-	import { auth, signOut } from '$lib/auth.svelte';
-	import { fullSync, getSyncStatus } from '$lib/sync';
+	import { listBags, listBrews, bulkImport, wipeAllData } from '$lib/db/repository';
 	import { isNative } from '$lib/native';
 	import { cloudSyncIsAvailable } from '$lib/native';
 	import { runCloudSync, LAST_CLOUD_SYNC_KEY } from '$lib/cloudSync';
@@ -45,14 +43,10 @@
 	let message = $state<string | null>(null);
 	let error = $state<string | null>(null);
 	let fileInput = $state<HTMLInputElement | undefined>();
-	let syncing = $state(false);
 	let wiping = $state(false);
 	// Deliberately NOT $state: re-entrancy guards for the confirm-sheet window,
 	// with no rendered consequence.
 	let confirmingWipe = false;
-	let confirmingDelete = false;
-	let lastSyncAt = $state<string | null>(null);
-	let lastSyncError = $state<string | null>(null);
 
 	function timeAgo(iso: string | null): string {
 		if (!iso) return 'never';
@@ -68,17 +62,6 @@
 		return `${d}d ago`;
 	}
 
-	async function handleSyncNow() {
-		syncing = true;
-		await fullSync();
-		const status = getSyncStatus();
-		lastSyncAt = status.lastSyncAt;
-		lastSyncError = status.lastError;
-		// Refresh local counts after sync
-		await loadCounts();
-		syncing = false;
-	}
-
 	async function loadCounts() {
 		const [brews, bags] = await Promise.all([listBrews(), listBags()]);
 		brewCount = brews.length;
@@ -88,17 +71,12 @@
 
 	onMount(() => {
 		loadCounts();
-		const status = getSyncStatus();
-		lastSyncAt = status.lastSyncAt;
-		lastSyncError = status.lastError;
 		if (isNative) {
 			cloudLastSyncAt = localStorage.getItem(LAST_CLOUD_SYNC_KEY);
 			void cloudSyncIsAvailable().then((a) => (cloudAvailable = a));
 		}
+		// iCloud is the only sync rail now; it dispatches the same event.
 		const onSynced = () => {
-			const s = getSyncStatus();
-			lastSyncAt = s.lastSyncAt;
-			lastSyncError = s.lastError;
 			if (isNative) cloudLastSyncAt = localStorage.getItem(LAST_CLOUD_SYNC_KEY);
 			loadCounts();
 		};
@@ -140,11 +118,7 @@
 		if (wiping || confirmingWipe) return;
 		const total = brewCount + bagCount;
 		if (total === 0) return;
-		const where = auth.user
-			? 'this device and your synced account'
-			: isNative
-				? 'this device and your iCloud'
-				: 'this device';
+		const where = isNative ? 'this device and your iCloud' : 'this device';
 		// Guard BEFORE the await — a second tap while the sheet is open must not
 		// queue a second wipe. A plain (non-$state) flag: `wiping` also drives
 		// the button's "Erasing…" label, which must not flip while merely asking.
@@ -162,41 +136,14 @@
 			message = 'All data wiped.';
 			error = null;
 		} catch (e) {
-			// wipeAllData now awaits the server tombstones and throws if they don't land —
-			// don't claim success for a wipe that didn't reach the account.
-			error = e instanceof Error ? `Couldn’t wipe your account — ${e.message}` : 'Wipe failed.';
+			// wipeAllData awaits the iCloud tombstones on native and throws if they
+			// don't land — don't claim success for a wipe that didn't reach iCloud.
+			error = e instanceof Error ? `Couldn’t wipe — ${e.message}` : 'Wipe failed.';
 			message = null;
 		} finally {
 			wiping = false;
 		}
 		await loadCounts();
-	}
-
-	let deletingAccount = $state(false);
-	async function handleDeleteAccount() {
-		if (!auth.user) return;
-		if (deletingAccount || confirmingDelete) return;
-		// Same guard-before-await as handleWipe, same non-$state flag reasoning.
-		confirmingDelete = true;
-		const ok = await confirmSheet({
-			title: 'Delete your account?',
-			body: `Removes your account (${auth.user.email}) and all synced data permanently. This cannot be undone.`,
-			verb: 'Delete Account'
-		});
-		confirmingDelete = false;
-		if (!ok) return;
-		deletingAccount = true;
-		error = null;
-		message = null;
-		try {
-			await deleteAccount();
-			await loadCounts();
-			message = 'Your account and all data were deleted.';
-		} catch (err) {
-			error = `Could not delete your account: ${err instanceof Error ? err.message : String(err)}. Please email us and we'll remove it.`;
-		} finally {
-			deletingAccount = false;
-		}
 	}
 
 	async function handleFileChange(e: Event) {
@@ -305,8 +252,7 @@
 			{#if isNative}
 				Your brews live on this device, and sync through your own iCloud. Back up regularly.
 			{:else}
-				Your brews live on this device, and sync to your account when you're signed in. Back up
-				regularly.
+				Your brews live in this browser. Back up regularly.
 			{/if}
 		</p>
 	</div>
@@ -396,103 +342,6 @@
 							</Button>
 						</div>
 					</div>
-				</div>
-			{:else}
-				<!-- Account (web) -->
-				<div>
-					<Eyebrow class="mb-2">ACCOUNT</Eyebrow>
-					{#if auth.user}
-						<div class="space-y-3 rounded-card border border-hairline bg-surface px-4 py-3">
-							<div class="flex items-center justify-between gap-3">
-								<div class="min-w-0">
-									<div class="truncate text-[calc(var(--dt-base)*14/17)] text-ink">
-										{auth.user.email}
-									</div>
-									<div class="mt-0.5 font-mono text-eyebrow tracking-[0.04em] text-muted uppercase">
-										Signed in
-									</div>
-								</div>
-								<Button size="regular" variant="plain" onclick={signOut}>Sign out</Button>
-							</div>
-
-							<div class="flex items-center justify-between gap-3 border-t border-hairline pt-3">
-								<div class="min-w-0 flex-1">
-									<div
-										class="font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
-									>
-										SYNC
-									</div>
-									<div class="mt-0.5 text-[calc(var(--dt-base)*13/17)] text-ink">
-										{#if syncing}
-											<span class="text-copper">Syncing…</span>
-										{:else if lastSyncError}
-											<span class="text-danger">{lastSyncError}</span>
-										{:else}
-											Synced {timeAgo(lastSyncAt)}
-										{/if}
-									</div>
-								</div>
-								<Button
-									size="regular"
-									variant="bordered"
-									onclick={handleSyncNow}
-									disabled={syncing}
-								>
-									<svg
-										width="12"
-										height="12"
-										viewBox="0 0 16 16"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="1.6"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										class={syncing ? 'animate-spin' : ''}
-									>
-										<path d="M14 4v4h-4M2 12V8h4" />
-										<path d="M2 8a6 6 0 0 1 10.5-4M14 8a6 6 0 0 1-10.5 4" />
-									</svg>
-									Sync now
-								</Button>
-							</div>
-
-							<div class="border-t border-hairline pt-3">
-								<Button
-									size="regular"
-									variant="destructive"
-									onclick={handleDeleteAccount}
-									disabled={deletingAccount}
-								>
-									<svg
-										width="12"
-										height="12"
-										viewBox="0 0 16 16"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="1.6"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-									>
-										<path
-											d="M3 4h10M6 4V2.5h4V4M5 4v9c0 .8.7 1.5 1.5 1.5h3c.8 0 1.5-.7 1.5-1.5V4"
-										/>
-									</svg>
-									{deletingAccount ? 'Deleting account…' : 'Delete account'}
-								</Button>
-								<p class="mt-2 text-[calc(var(--dt-base)*11/17)] leading-[1.4] text-muted">
-									Permanently deletes your account and all synced data.
-								</p>
-							</div>
-						</div>
-					{:else}
-						<ListGroup>
-							<ListRow
-								href={resolve('/auth')}
-								title="Sign in"
-								subtitle="Sync brews across devices."
-							/>
-						</ListGroup>
-					{/if}
 				</div>
 			{/if}
 
@@ -609,17 +458,12 @@
 						{#if wiping}
 							Erasing…
 						{:else}
-							{auth.user ? 'Delete all data' : 'Wipe all data'}
+							Wipe all data
 						{/if}
 					</Button>
 				</div>
 				<p class="mt-2 px-4 text-[calc(var(--dt-base)*12.5/17)] leading-[1.5] text-muted">
-					{#if auth.user}
-						Deletes every brew and bag — from this device <strong class="text-ink-70"
-							>and your account</strong
-						> — but keeps the account itself. Cannot be undone; download a backup first. To remove your
-						account entirely, use “Delete account” above.
-					{:else if isNative}
+					{#if isNative}
 						Deletes every brew and bag — from this device <strong class="text-ink-70"
 							>and your iCloud</strong
 						>, so they also disappear from your other devices. Cannot be undone — download a backup

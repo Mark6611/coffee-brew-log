@@ -44,9 +44,10 @@ const config = {
 				// Photos are stored as data: URLs (canvas.toDataURL, see photo/resize.ts).
 				'img-src': ['self', 'data:'],
 				'font-src': ['self'],
-				// Supabase sync/auth on the web build. Wildcarded at the subdomain so a
-				// project rotation doesn't silently break sync; native uses no network.
-				'connect-src': ['self', 'https://*.supabase.co', 'wss://*.supabase.co'],
+				// The app makes no network requests of its own: local IndexedDB, and
+				// iCloud on native (handled by the OS, not the web view). 'self' is
+				// what the service worker needs to fetch its own precached assets.
+				'connect-src': ['self'],
 				'manifest-src': ['self'],
 				'worker-src': ['self'],
 				'object-src': ['none'],

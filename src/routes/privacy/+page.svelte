@@ -4,8 +4,9 @@
 	// Privacy policy — required by App Review 5.1.1 (a URL in App Store Connect
 	// AND an in-app link, under Settings). Reachable at /privacy. Kept honest to
 	// the split architecture: iOS = on-device + the user's private iCloud (no
-	// accounts at all); web = optional email sign-in sync. Mirror any edits in
-	// static/privacy-policy.html (the raw-fetchable App Store URL).
+	// accounts at all); web = on-device only. Accounts and server sync were
+	// removed entirely, so this page no longer describes either. Mirror any
+	// edits in static/privacy-policy.html (the raw-fetchable App Store URL).
 	const updated = 'July 2026';
 	const CONTACT = 'kornkranmarwin@gmail.com';
 </script>
@@ -41,8 +42,9 @@
 
 	<p class="text-[calc(var(--dt-base)*15/17)] leading-[1.6] text-ink-70">
 		Coffee Brew Log is a personal log for your coffee brewing. It is built to be private by default:
-		your data lives on your device, and syncs only through your own private iCloud (on iPhone) or
-		your own private account (optional, web). The developer of Coffee Brew Log cannot see your data.
+		your data lives on your device. There are no accounts and no sign-in, and the app sends nothing
+		to any server the developer controls. On iPhone it can sync between your own devices through
+		your private iCloud; that is the only place your data travels.
 	</p>
 
 	<h2>What the app stores, and where</h2>
@@ -53,8 +55,8 @@
 			<strong>settings</strong> are stored on your device.
 		</li>
 		<li>
-			<strong>Photos</strong> you attach to a bag or brew are downscaled and stored with that item. Photos
-			sync along with the rest of your data (see below), so they are available on your other devices.
+			<strong>Photos</strong> you attach to a bag or brew are downscaled and stored with that item on
+			your device. On iPhone they travel with the rest of your data through your private iCloud.
 		</li>
 		<li>
 			<strong>iPhone app — iCloud sync:</strong> the iOS app has no accounts and no sign-in. If your device
@@ -63,19 +65,17 @@
 			no server for the iOS app.
 		</li>
 		<li>
-			<strong>Web app — optional account sync:</strong> on the web version only, you can sign in to mirror
-			your data to your own private database so browsers stay in sync. Access is scoped to your account
-			by row-level security — other users cannot read it, and the developer does not access it.
+			<strong>Web app — on-device only:</strong> the web version stores everything in your browser and
+			has no account, no sign-in, and no server component. Data does not move between browsers; use the
+			JSON backup in Settings to carry it across.
 		</li>
 	</ul>
 
-	<h2>Account &amp; email</h2>
+	<h2>Accounts &amp; email</h2>
 	<p>
-		The iPhone app has no accounts — it never asks for or collects your email. On the web app,
-		signing in is optional and only needed for cross-browser sync; it uses a one-time code sent to
-		your email address (magic-link sign-in), used solely to send that code and to identify your
-		account — never for marketing, advertising, or profiling. If you never sign in, Coffee Brew Log
-		collects no personal information at all.
+		There are no accounts. Coffee Brew Log never asks for your email address, and collects no
+		personal information at all — on either platform. Nothing is used for marketing, advertising, or
+		profiling, because nothing is collected.
 	</p>
 
 	<h2>Analytics &amp; tracking</h2>
@@ -90,14 +90,11 @@
 		<li>
 			Delete any bag or brew inside the app; deletions propagate to your other synced devices.
 		</li>
-		<li>
-			On the web app, sign out at any time — this wipes the local copy of your data from that
-			browser.
-		</li>
+
 		<li>Export a full backup (JSON) of your bags and brews from Settings whenever you like.</li>
 		<li>
-			To delete all of your synced account data, use the delete option in Settings or email us at
-			the address below and we will remove it.
+			Wipe every bag and brew from Settings at any time. On iPhone this also removes them from your
+			iCloud, so they disappear from your other devices too.
 		</li>
 		<li>Deleting the app removes all on-device data.</li>
 	</ul>
