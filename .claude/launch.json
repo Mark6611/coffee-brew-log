@@ -6,6 +6,12 @@
 			"runtimeExecutable": "npm",
 			"runtimeArgs": ["run", "dev", "--", "--port", "5179"],
 			"port": 5179
+		},
+		{
+			"name": "askhr-pilot-static",
+			"runtimeExecutable": "python3",
+			"runtimeArgs": ["-m", "http.server", "8790", "--directory", "/Users/kornkrankeeratitejakarn/Desktop/askhr-pilot/dist", "--bind", "127.0.0.1"],
+			"port": 8790
 		}
 	]
 }
