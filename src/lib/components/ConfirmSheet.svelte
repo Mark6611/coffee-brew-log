@@ -99,8 +99,8 @@
 		aria-labelledby="confirm-title"
 		aria-describedby="confirm-body"
 		tabindex="-1"
-		class="fixed inset-x-3 z-[102] rounded-card-lg border border-hairline bg-surface p-5 shadow-[0_18px_50px_rgba(28,24,20,0.25)] outline-none"
-		style="bottom: calc(12px + env(safe-area-inset-bottom, 0px))"
+		class="fixed z-[102] rounded-card-lg border border-hairline bg-surface p-5 shadow-[0_18px_50px_rgba(28,24,20,0.25)] outline-none"
+		style="left: calc(12px + env(safe-area-inset-left, 0px)); right: calc(12px + env(safe-area-inset-right, 0px)); bottom: calc(12px + env(safe-area-inset-bottom, 0px))"
 		transition:fly={motion({ y: 24, duration: 200 })}
 	>
 		<h2

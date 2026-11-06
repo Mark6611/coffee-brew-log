@@ -37,7 +37,8 @@ export async function hideSplash(): Promise<void> {
 // records in/out of CloudKit's private database; all merge logic lives in JS
 // ($lib/cloudSync). registerPlugin is safe to call on web — every wrapper
 // no-ops before touching it.
-import { registerPlugin } from '@capacitor/core';
+import { registerPlugin, type PluginListenerHandle } from '@capacitor/core';
+import { parseHingeState, type HingeState } from './hinge';
 
 export interface CloudRecord {
 	id: string;
@@ -74,4 +75,33 @@ export async function cloudSyncPull(type: string): Promise<CloudRecord[]> {
 export async function cloudSyncPush(type: string, records: CloudRecord[]): Promise<void> {
 	if (!isNative || records.length === 0) return;
 	await CloudSync.push({ type, recordsJson: JSON.stringify(records) });
+}
+
+// ─── iPhone Duo hinge (HingePlugin.swift, registered in ViewController) ──────
+// Why the layout needs it: src/lib/hinge.ts.
+interface HingeBridge {
+	getState(): Promise<{ state: string }>;
+	addListener(event: 'change', cb: (e: { state: string }) => void): Promise<PluginListenerHandle>;
+}
+const Hinge = registerPlugin<HingeBridge>('Hinge');
+
+/** Follow the iPhone Duo's hinge. Devices without a hinge only ever report 'none';
+ *  on the web this never calls back at all. */
+export async function watchHinge(onChange: (state: HingeState) => void): Promise<void> {
+	if (!isNative) return;
+	try {
+		// Subscribe first, then read the current state — and drop that read if a
+		// change event already landed while it was in flight, or a stale state could
+		// overwrite a newer one mid-fold.
+		let events = 0;
+		await Hinge.addListener('change', (e) => {
+			events++;
+			onChange(parseHingeState(e.state));
+		});
+		const before = events;
+		const { state } = await Hinge.getState();
+		if (events === before) onChange(parseHingeState(state));
+	} catch {
+		/* native shell without the plugin: width-only layout, as before */
+	}
 }

@@ -7,5 +7,6 @@ import UIKit
 class ViewController: CAPBridgeViewController {
 	override func capacitorDidLoad() {
 		bridge?.registerPluginInstance(CloudSyncPlugin())
+		bridge?.registerPluginInstance(HingePlugin())
 	}
 }

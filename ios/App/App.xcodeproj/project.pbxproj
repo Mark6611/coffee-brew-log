@@ -13,11 +13,13 @@
 		504EC3081FED79650016851F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504EC3071FED79650016851F /* AppDelegate.swift */; };
 		C0FFEE0000000000000000B1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F1 /* ViewController.swift */; };
 		C0FFEE0000000000000000B2 /* CloudSyncPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F2 /* CloudSyncPlugin.swift */; };
+		C0FFEE0000000000000000B4 /* HingePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F7 /* HingePlugin.swift */; };
 		C0FFEE0000000000000000B3 /* CloudSyncSafeContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F3 /* CloudSyncSafeContainer.m */; };
 		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
 		504EC3121FED79650016851F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC3101FED79650016851F /* LaunchScreen.storyboard */; };
 		50B271D11FEDC1A000F3C39B /* public in Resources */ = {isa = PBXBuildFile; fileRef = 50B271D01FEDC1A000F3C39B /* public */; };
+		EE24B1E5D1544CE0BB660B16 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A9CAB9371EF4D708ABF5C42 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,7 @@
 		504EC3071FED79650016851F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F2 /* CloudSyncPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncPlugin.swift; sourceTree = "<group>"; };
+		C0FFEE0000000000000000F7 /* HingePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HingePlugin.swift; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F3 /* CloudSyncSafeContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CloudSyncSafeContainer.m; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F4 /* CloudSyncSafeContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CloudSyncSafeContainer.h; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F5 /* App-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "App-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -37,6 +40,7 @@
 		504EC3131FED79650016851F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		50B271D01FEDC1A000F3C39B /* public */ = {isa = PBXFileReference; lastKnownFileType = folder; path = public; sourceTree = "<group>"; };
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		5A9CAB9371EF4D708ABF5C42 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,7 @@
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				C0FFEE0000000000000000F1 /* ViewController.swift */,
 				C0FFEE0000000000000000F2 /* CloudSyncPlugin.swift */,
+				C0FFEE0000000000000000F7 /* HingePlugin.swift */,
 				C0FFEE0000000000000000F4 /* CloudSyncSafeContainer.h */,
 				C0FFEE0000000000000000F3 /* CloudSyncSafeContainer.m */,
 				C0FFEE0000000000000000F5 /* App-Bridging-Header.h */,
@@ -85,6 +90,7 @@
 				504EC3131FED79650016851F /* Info.plist */,
 				2FAD9762203C412B000D30F8 /* config.xml */,
 				50B271D01FEDC1A000F3C39B /* public */,
+				5A9CAB9371EF4D708ABF5C42 /* SceneDelegate.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -173,7 +179,9 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				C0FFEE0000000000000000B1 /* ViewController.swift in Sources */,
 				C0FFEE0000000000000000B2 /* CloudSyncPlugin.swift in Sources */,
+				C0FFEE0000000000000000B4 /* HingePlugin.swift in Sources */,
 				C0FFEE0000000000000000B3 /* CloudSyncSafeContainer.m in Sources */,
+				EE24B1E5D1544CE0BB660B16 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

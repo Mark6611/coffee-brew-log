@@ -216,9 +216,16 @@
 		font-family: var(--font-sans);
 		/* With viewport-fit=cover (native shell + installed PWA) content spans
 		   under the notch / home indicator; these insets pull it back out.
-		   On regular browsers env() is 0 and this is a no-op. */
+		   On regular browsers env() is 0 and this is a no-op.
+		   Left and right are handled SEPARATELY, not as one symmetric gutter:
+		   on the iPhone Duo's inner display the system controls run down ONE
+		   edge, and which edge depends on pose and Split View placement. The
+		   paper background still paints the full canvas, so nothing looks
+		   letterboxed — content just steps inside the occupied edge. */
 		padding-top: env(safe-area-inset-top, 0);
 		padding-bottom: env(safe-area-inset-bottom, 0);
+		padding-left: env(safe-area-inset-left, 0);
+		padding-right: env(safe-area-inset-right, 0);
 	}
 
 	/* iOS zooms the page when a focused input's font-size is under 16px.
@@ -248,6 +255,15 @@
 		select:not([class*='text-[']):not([class~='text-2xl']) {
 			font-size: var(--dt-base);
 		}
+	}
+	/* The iPhone Duo's inner display is 669pt turned and 951pt unfolded — both
+	   above the 600px band, so without this its size-less fields would lose the
+	   zoom floor AND the 26px Dynamic Type cap (1rem there is the unclamped root).
+	   html[data-foldable] is set only by the native HingePlugin ($lib/hinge). */
+	:root[data-foldable] input:not([class*='text-[']):not([class~='text-2xl']),
+	:root[data-foldable] textarea:not([class*='text-[']):not([class~='text-2xl']),
+	:root[data-foldable] select:not([class*='text-[']):not([class~='text-2xl']) {
+		font-size: var(--dt-base);
 	}
 
 	/* Native-app feel on touch: kill the gray iOS tap flash and the 300ms
@@ -620,4 +636,20 @@
 [data-theme='dark'] .process-anaerobic {
 	background: rgba(79, 107, 46, 0.24);
 	color: #aec98a;
+}
+
+/* iPhone Duo: the page column fills the display in every pose. Every page is a
+   `mx-auto max-w-2xl` column (672px), which already fills the folded outer
+   display (466pt) and the turned inner one (669pt) — but unfolded the inner
+   display is 951×669pt LANDSCAPE with the hinge down the middle, where a
+   centred 672px column leaves ~140pt of paper either side: the phone-in-a-window
+   look the iOS 27 SDK build exists to remove. html[data-foldable] is set only by
+   the native HingePlugin ($lib/hinge explains why CSS alone can't tell the Duo
+   from an iPad), so iPad, desktop and the web keep the centred column. The side
+   safe-area insets (the Duo's status column takes the right edge) come from the
+   body padding in @layer base, which applies everywhere.
+   UNLAYERED on purpose: Tailwind's `max-w-2xl` lives in @layer utilities, which
+   beats any layered rule here regardless of specificity. */
+:root[data-foldable] .max-w-2xl {
+	max-width: none;
 }

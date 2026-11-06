@@ -9,7 +9,8 @@
 	import { fade } from 'svelte/transition';
 	import { motion } from '$lib/motion.svelte';
 	import { page } from '$app/state';
-	import { hideSplash, isNative } from '$lib/native';
+	import { hideSplash, isNative, watchHinge } from '$lib/native';
+	import { applyHingeState } from '$lib/hinge';
 	import { theme } from '$lib/theme.svelte';
 	import { storage } from '$lib/storage.svelte';
 	import { runCloudSync } from '$lib/cloudSync';
@@ -24,6 +25,9 @@
 		const stopTheme = theme.init();
 		// App has painted with the right theme — fade the native splash out.
 		void hideSplash();
+		// iPhone Duo: the page column fills every display, unfolded too
+		// (layout.css, html[data-foldable]; why: $lib/hinge).
+		void watchHinge((state) => applyHingeState(document.documentElement, state));
 
 		// Ask the browser to make IndexedDB persistent. On the web it is the only
 		// copy of the data; native has iCloud behind it but eviction still costs

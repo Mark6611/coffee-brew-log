@@ -284,8 +284,8 @@
 		variant="prominent"
 		href={resolve('/brews/new')}
 		label="New brew"
-		class="fixed right-5 z-40 h-[60px] w-[60px]"
-		style="bottom: calc(24px + env(safe-area-inset-bottom, 0px))"
+		class="fixed z-40 h-[60px] w-[60px]"
+		style="right: calc(20px + env(safe-area-inset-right, 0px)); bottom: calc(24px + env(safe-area-inset-bottom, 0px))"
 	>
 		<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
 			<path
