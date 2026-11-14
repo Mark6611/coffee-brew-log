@@ -231,7 +231,7 @@
 					</div>
 				{/if}
 
-				<div class="max-h-64 overflow-y-auto">
+				<div class="max-h-64 overflow-y-auto overscroll-contain">
 					{#each filtered as bag, i (bag.id)}
 						{@const c = bagConsumption(bag, allBrews)}
 						{@const days = daysSinceRoast(bag.roastedAt)}

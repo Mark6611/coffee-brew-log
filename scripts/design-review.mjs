@@ -14,6 +14,9 @@ const BASE = process.argv[2] ?? 'http://localhost:5179';
 // (393 = 14/15/16, 375 = SE/mini) where rows have the least horizontal slack.
 const WIDTH = Number(process.env.DR_WIDTH ?? 440);
 const OUT = resolve(process.env.DR_OUT ?? 'design-review');
+// DR_CONTRAST=more captures with iOS "Increase Contrast" emulated
+// (prefers-contrast: more), for the token overrides in layout.css.
+const CONTRAST = process.env.DR_CONTRAST;
 
 // ── Sample data (valid UUIDs; timestamps relative to now) ────────────────
 // Mirrors scripts/screenshots.mjs so a design pass and an App Store capture
@@ -359,7 +362,8 @@ for (const theme of ['light', 'dark']) {
 	const ctx = await browser.newContext({
 		viewport: { width: WIDTH, height: 956 },
 		deviceScaleFactor: 2,
-		colorScheme: theme
+		colorScheme: theme,
+		...(CONTRAST ? { contrast: CONTRAST } : {})
 	});
 	await ctx.addInitScript((t) => localStorage.setItem('theme', t), theme);
 	const page = await ctx.newPage();

@@ -260,7 +260,7 @@
 								</div>
 							</div>
 							{#if c.percentUsed != null}
-								<div class="mt-3 h-1 overflow-hidden rounded-full bg-hairline">
+								<div class="mt-3 h-1 overflow-hidden rounded-full bg-track">
 									<div
 										class="h-full bg-copper transition-all"
 										style="width: {Math.min(100, c.percentUsed)}%"

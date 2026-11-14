@@ -30,7 +30,7 @@
 	<div class="relative h-8">
 		<!-- rail -->
 		<div
-			class="absolute top-1/2 right-0 left-0 h-[3px] -translate-y-1/2 rounded-full bg-hairline"
+			class="absolute top-1/2 right-0 left-0 h-[3px] -translate-y-1/2 rounded-full bg-track"
 		></div>
 		<!-- roast window band -->
 		<div

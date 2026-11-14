@@ -403,7 +403,7 @@
 							<span class="text-muted"> / {bag.weightGrams}g</span>
 						</div>
 					</div>
-					<div class="mt-2 h-2.5 overflow-hidden rounded-full bg-hairline">
+					<div class="mt-2 h-2.5 overflow-hidden rounded-full bg-track">
 						<div
 							class="h-full bg-copper transition-[width] duration-300 ease-out"
 							style="width: {Math.max(0, 100 - (consumption.percentUsed ?? 0))}%"

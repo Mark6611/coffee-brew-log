@@ -579,7 +579,7 @@
 								{/if}
 							</div>
 							{#if bag.weightGrams != null && bagConsumptionData.percentUsed != null}
-								<div class="mt-2 h-1 overflow-hidden rounded-full bg-hairline">
+								<div class="mt-2 h-1 overflow-hidden rounded-full bg-track">
 									<div
 										class="h-full bg-copper"
 										style="width: {Math.max(0, 100 - bagConsumptionData.percentUsed)}%"

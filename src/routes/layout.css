@@ -25,6 +25,10 @@
 	/* Borders */
 	--color-hairline: #e6dfd2;
 	--color-rule: #d9d0bf;
+	/* The unfilled part of a progress bar. Same value as --color-hairline, but
+	   its own role: Increase Contrast darkens borders (below), and a track that
+	   darkened with them would swallow the amber fill sitting on it. */
+	--color-track: #e6dfd2;
 
 	/* Brand — single accent */
 	--color-copper: #9c4a1f;
@@ -158,6 +162,7 @@
 	--color-paper-rgb: 22 18 14;
 	--color-hairline: #2d261d;
 	--color-rule: #3a3127;
+	--color-track: #2d261d;
 	--color-copper: #d2825a;
 	--color-copper-dk: #b5683f;
 	--color-copper-lt: rgba(210, 130, 90, 0.1);
@@ -169,6 +174,42 @@
 	--color-danger: #d97a5c; /* was #d0603f — 4.12:1 on the elevated card, under AA */
 	/* Required: without a dark override the light warning-dk leaks in and goes invisible. */
 	--color-warning-dk: #d09a2e;
+}
+
+/* iOS "Increase Contrast" (Settings > Accessibility > Display & Text Size). The
+   same three moves the system makes in its own apps: hairlines that are
+   decorative at the default become real boundaries, secondary and tertiary text
+   step up a tone each, and glass gives up its translucency. Each token takes
+   roughly the value of the next-stronger one, so the hierarchy survives:
+     light  muted 4.8 -> 7.2:1   ink-70 8.7 -> 12.0:1   hairline 1.2 -> 2.3:1
+     dark   muted 5.8 -> 8.4:1   ink-70 10.2 -> 12.7:1  hairline 1.3 -> 3.0:1
+   (ratios on paper). The copper accent and the semantic trio are left alone.
+   UNLAYERED and after the dark palette on purpose: it must beat both the @theme
+   tokens and [data-theme='dark'] above. The light half is scoped with :not() so
+   it can never leak a light value into dark through source order. */
+@media (prefers-contrast: more) {
+	:root:not([data-theme='dark']) {
+		--color-ink-70: #332c26;
+		--color-muted: #574d44;
+		--color-faint: #736759;
+		--color-hairline: #a89d90;
+		--color-rule: #736759;
+	}
+	[data-theme='dark'] {
+		--color-ink-70: #ddd4c4;
+		--color-muted: #b8ad9b;
+		--color-faint: #9a8e7e;
+		--color-hairline: #6b6052;
+		--color-rule: #9a8e7e;
+	}
+	/* Unlayered, so these beat the per-size --glass-opacity in @layer components.
+	   The over-photo scrim takes the value its reduced-transparency rule uses. */
+	.glass {
+		--glass-opacity: 0.96;
+	}
+	.glass-scrim {
+		--glass-opacity: 0.82;
+	}
 }
 
 @layer base {
@@ -276,6 +317,68 @@
 	label {
 		-webkit-tap-highlight-color: transparent;
 		touch-action: manipulation;
+	}
+
+	/* Controls are not text: no selection handles on a long press, and no
+	   "Copy / Look Up / Open in New Tab" callout on a button or an in-app link.
+	   Scoped to controls — logged numbers, notes and history stay selectable.
+	   PREFIXED FIRST, the same trap as backdrop-filter on .glass: Lightning CSS
+	   folds the pair into one property, and WebKit still needs the prefix, so
+	   verify-bundle-css.mjs checks that the built bundle kept both. */
+	button,
+	a,
+	label,
+	summary,
+	[role='button'],
+	[role='switch'],
+	[role='option'] {
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		user-select: none;
+	}
+	/* Links that leave the app are content, not controls: the published blog
+	   post and the privacy contact address keep the long-press menu (Copy, Share). */
+	a[href^='http'],
+	a[href^='mailto:'] {
+		-webkit-touch-callout: default;
+		-webkit-user-select: auto;
+		user-select: auto;
+	}
+	/* Fields are restored explicitly: a field inside a <label> resolves
+	   user-select from it, and WebKit has treated an inherited `none` as "cannot
+	   type here" before. */
+	input,
+	textarea,
+	select,
+	[contenteditable] {
+		-webkit-user-select: text;
+		user-select: text;
+		caret-color: var(--color-copper);
+	}
+
+	/* Tell the engine which palette is showing, so what it draws itself — the
+	   date fields' picker glyphs, scroll indicators, autofill — follows the
+	   IN-APP theme, not the OS one. data-theme is set before first paint
+	   (app.html); light is the fallback because the light tokens are. The native
+	   half (keyboard, pickers, alerts) is UIKit's, not CSS's. */
+	:root {
+		color-scheme: light;
+		accent-color: var(--color-copper);
+	}
+	[data-theme='dark'] {
+		color-scheme: dark;
+	}
+
+	/* Titles wrap into lines of similar length; running text avoids leaving one
+	   word alone on the last line (iOS 17.5+ and 26+; plain wrapping before). */
+	h1,
+	h2,
+	h3,
+	.card-link {
+		text-wrap: balance;
+	}
+	p {
+		text-wrap: pretty;
 	}
 
 	/* Inputs inside a .field-wrapper container should inherit the wrapper's styling, not the

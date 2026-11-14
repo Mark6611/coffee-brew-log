@@ -198,7 +198,7 @@
 
 	{#if brew.notes}
 		<div
-			class="relative z-10 mt-3 border-t border-dashed border-hairline pt-3 font-display text-[calc(var(--dt-base)*14.5/17)] leading-[1.45] text-ink-70 italic"
+			class="relative z-10 mt-3 border-t border-dashed border-hairline pt-3 font-display text-[calc(var(--dt-base)*14.5/17)] leading-[1.45] text-pretty text-ink-70 italic"
 		>
 			<MarkdownText text={brew.notes} />
 		</div>

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// verify-bundle-css.mjs — gate the BUILT css bundle against three shipped bugs.
+// verify-bundle-css.mjs — gate the BUILT css bundle against three shipped bugs
+// (and a fourth of the same shape as the first, caught before it shipped).
 //
 // WHY: source linting cannot see what the bundler emits. Three CSS bugs reached
 // users exactly that way:
@@ -18,6 +19,10 @@
 //   A. every declaration block that sets backdrop-filter sets BOTH the
 //      -webkit- prefixed and unprefixed forms (property names only — mentions
 //      inside transition-property values or selectors don't count);
+//   D. the same pairing for user-select: WebKit still needs the prefix, so a
+//      bundle that kept only the unprefixed form would silently give iOS back
+//      the long-press selection handles on every button (layout.css, "Controls
+//      are not text");
 //   B. every color-mix( usage sits inside an @supports block whose own
 //      condition tests color-mix support (Tailwind's guard pattern; a hex
 //      fallback precedes the guarded block);
@@ -137,16 +142,16 @@ for (const file of cssFiles) {
 		const decls = declarationsOf(chunk);
 		const props = new Set(decls.map((d) => d.prop));
 
-		// A. backdrop-filter must ship prefixed AND unprefixed in the same block.
-		const hasUnprefixed = props.has('backdrop-filter');
-		const hasWebkit = props.has('-webkit-backdrop-filter');
-		if (hasUnprefixed !== hasWebkit) {
-			violation(
-				'backdrop-filter-unpaired',
-				rel,
-				chunk.stack.join(' > ') || '(top level)',
-				snippetAt(css, chunk.offset)
-			);
+		// A + D. These must ship prefixed AND unprefixed in the same block.
+		for (const prop of ['backdrop-filter', 'user-select']) {
+			if (props.has(prop) !== props.has(`-webkit-${prop}`)) {
+				violation(
+					`${prop}-unpaired`,
+					rel,
+					chunk.stack.join(' > ') || '(top level)',
+					snippetAt(css, chunk.offset)
+				);
+			}
 		}
 
 		// B. color-mix() only inside an @supports block that tests color-mix.
@@ -184,7 +189,8 @@ if (violations.length > 0) {
 		console.error(`      snippet: ${v.snippet}\n`);
 	}
 	console.error(
-		'Fix patterns: pair -webkit-/unprefixed backdrop-filter; guard color-mix with ' +
+		'Fix patterns: pair -webkit-/unprefixed backdrop-filter and user-select (write the ' +
+			'prefixed one FIRST); guard color-mix with ' +
 			'@supports (color: color-mix(...)); avoid media range syntax (the lightningcss ' +
 			'targets in vite.config.ts lower it — check they are still in place).'
 	);
@@ -193,5 +199,5 @@ if (violations.length > 0) {
 
 console.log(
 	`verify-bundle-css: OK — ${cssFiles.length} css file(s) scanned, ` +
-		'backdrop-filter pairing / color-mix guards / media range syntax all clean.'
+		'backdrop-filter + user-select pairing / color-mix guards / media range syntax all clean.'
 );
