@@ -36,8 +36,9 @@
 - Safe areas: left and right are handled SEPARATELY — the Duo's status column
   takes **84pt on the right** (+34pt bottom) on both displays, sometimes 82pt at
   the top instead on the outer one. `body` pads every side by its inset; anything
-  `position: fixed` (the FABs, ConfirmSheet) sits outside that padding and must
-  add its own. Any new edge-anchored overlay needs the same.
+  `position: fixed` (the FABs, ConfirmSheet, Sheet) sits outside that padding and
+  must add its own. Any new edge-anchored overlay needs the same, and a check in
+  `verify:duo` beside the two sheets'.
 - The input focus-zoom floor's band stops at 600px, so the Duo's inner poses get
   it only through `data-foldable` — keep both rules in step (layout.css).
 - Never cache `innerWidth` or branch on orientation: folding resizes the window

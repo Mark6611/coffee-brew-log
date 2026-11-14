@@ -13,6 +13,9 @@
 	import MethodPicker from '$lib/components/MethodPicker.svelte';
 	import BagPicker from '$lib/components/BagPicker.svelte';
 	import { brewAgainDraft } from '$lib/brews/repeat';
+	import { bagHistory, tasteLabel } from '$lib/brews/bagHistory';
+	import BagHistory from '$lib/components/BagHistory.svelte';
+	import Sheet from '$lib/components/Sheet.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import Chip from '$lib/components/Chip.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
@@ -335,14 +338,13 @@
 		const d = Math.floor((Date.now() - new Date(lastShot.brewedAt).getTime()) / 86_400_000);
 		return d;
 	});
-	const lastShotTaste = $derived.by(() => {
-		const s = lastShot;
-		if (!s) return null;
-		const parts: string[] = [];
-		if (s.extraction) parts.push(s.extraction);
-		if (s.balance && s.balance !== 'balanced') parts.push(s.balance === 'light' ? 'thin' : 'heavy');
-		return parts.length ? parts.join(' · ') : null;
-	});
+	const lastShotTaste = $derived(lastShot ? tasteLabel(lastShot) : null);
+
+	// ── History sheet ──────────────────────────────────────────────────────
+	// This bag's recent brews on the current method, its learned grind and the
+	// next move, from the bags and brews already loaded above. Read-time only.
+	const history = $derived(selectedBag ? bagHistory(selectedBag, method, allBrews, allBags) : null);
+	let historyOpen = $state(false);
 
 	// Carried-over strip content (quick mode): what repeats from the last shot.
 	const carriedTempC = $derived(
@@ -523,7 +525,19 @@
 			Cancel
 		</a>
 		<Eyebrow class="min-w-0 truncate">{headerEyebrow}</Eyebrow>
-		<span class="h-9 w-[60px]" aria-hidden="true"></span>
+		{#if history}
+			<!-- Trailing bar action, as Edit is on the bag page. Offered once a bag
+			     is picked — in quick mode too, where the bag picker is hidden. -->
+			<button
+				type="button"
+				onclick={() => (historyOpen = true)}
+				aria-haspopup="dialog"
+				class="hit-44 flex h-9 min-w-[60px] items-center justify-end rounded-control text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink {FOCUS_RING}"
+				>History</button
+			>
+		{:else}
+			<span class="h-9 w-[60px]" aria-hidden="true"></span>
+		{/if}
 	</div>
 
 	{#if !quickMode}
@@ -1260,3 +1274,14 @@
 		>
 	</div>
 </form>
+
+<!-- Outside the form: the sheet's Close button is not one of its controls. -->
+{#if selectedBag && history}
+	<Sheet
+		bind:open={historyOpen}
+		eyebrow="History · {method === 'espresso' ? 'espresso' : 'pour-over'}"
+		title={selectedBag.name}
+	>
+		<BagHistory {history} />
+	</Sheet>
+{/if}

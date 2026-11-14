@@ -7,7 +7,7 @@
 	import { ratio, formatRatio, formatBrewTime, formatTimeAgo } from '$lib/brews/compute';
 	import { resolveGrindSuggestion } from '$lib/brews/grind';
 	import { espressoShotsFor, readyToDial, ROAST_TARGETS } from '$lib/brews/dialin';
-	import { calibrateGrind, type GrindCalibration } from '$lib/brews/calibrate';
+	import { calibrateGrind } from '$lib/brews/calibrate';
 	import { brewCompass } from '$lib/brews/compass';
 	import { roastMeta } from '$lib/bags/roast';
 	import { costPerGram, costPerCupForBag } from '$lib/stats/cost';
@@ -18,6 +18,8 @@
 	import OriginFlags from '$lib/components/OriginFlags.svelte';
 	import MarkdownText from '$lib/components/MarkdownText.svelte';
 	import TargetWindowBar from '$lib/components/TargetWindowBar.svelte';
+	import GrindSweetSpot from '$lib/components/GrindSweetSpot.svelte';
+	import { extractionTone } from '$lib/components/tones';
 	import DialedBadge from '$lib/components/DialedBadge.svelte';
 
 	const bagId = $derived(page.params.id as string);
@@ -153,26 +155,6 @@
 	// Learned grind sweet spot — converges across the bag's good shots (see
 	// $lib/brews/calibrate). Null until there are ≥2 good ones.
 	const calibration = $derived(bag ? calibrateGrind(bag, allBrews) : null);
-	function confTone(c: GrindCalibration['confidence']): string {
-		if (c === 'high') return 'var(--color-success)';
-		// warning-dk, not warning: this is rendered as TEXT (the plain fill tone is
-		// only 3.25:1 on paper). The extraction dots below keep the brighter fill.
-		if (c === 'low') return 'var(--color-warning-dk)';
-		return 'var(--color-copper-dk)';
-	}
-	function calibrationBlurb(c: GrindCalibration): string {
-		const basis =
-			c.basis === 'balanced'
-				? 'balanced shots'
-				: c.basis === 'rated'
-					? 'your top-rated shots'
-					: 'balanced and top-rated shots';
-		if (c.confidence === 'high')
-			return `A tight cluster across ${basis} — treat this as your grind for this bag.`;
-		if (c.confidence === 'low')
-			return `An early read from ${basis}; it sharpens as you log a few more.`;
-		return `Weighted toward your recent ${basis}. Keep logging to tighten it.`;
-	}
 	const nextMove = $derived.by(() => {
 		const b = bag;
 		if (!b) return null;
@@ -211,12 +193,6 @@
 		const declared = b.dialedRecipe.declaredAt;
 		return shots.filter((s) => s.brewedAt <= declared).length;
 	});
-	function extractionTone(e: string | undefined): string {
-		if (e === 'sour') return 'var(--color-warning)';
-		if (e === 'balanced') return 'var(--color-success)';
-		if (e === 'bitter') return 'var(--color-danger)';
-		return 'var(--color-faint)';
-	}
 
 	async function handleMarkDialed() {
 		const b = bag;
@@ -606,35 +582,7 @@
 					{/if}
 
 					{#if calibration}
-						<div class="mt-4 rounded-input border border-copper/30 bg-copper/[0.06] px-4 py-3">
-							<div class="flex items-center justify-between">
-								<span
-									class="font-mono text-eyebrow font-medium tracking-[0.14em] text-copper-dk uppercase"
-									>Grind sweet spot</span
-								>
-								<span
-									class="font-mono text-eyebrow font-medium tracking-[0.12em] uppercase"
-									style="color: {confTone(calibration.confidence)}"
-									>{calibration.confidence} confidence</span
-								>
-							</div>
-							<div class="mt-1 flex items-baseline gap-2">
-								<span
-									class="font-mono text-[calc(var(--dt-base)*22/17)] font-semibold tracking-[-0.01em] text-copper"
-									>{calibration.grind}</span
-								>
-								<span class="text-[calc(var(--dt-base)*12/17)] text-muted"
-									>from {calibration.sampleCount} good shot{calibration.sampleCount === 1
-										? ''
-										: 's'}{calibration.totalShots > calibration.sampleCount
-										? ` of ${calibration.totalShots}`
-										: ''}</span
-								>
-							</div>
-							<p class="mt-1 text-[calc(var(--dt-base)*11.5/17)] leading-[1.45] text-muted">
-								{calibrationBlurb(calibration)}
-							</p>
-						</div>
+						<GrindSweetSpot {calibration} class="mt-4" />
 					{/if}
 
 					{#if !bag.dialedRecipe}

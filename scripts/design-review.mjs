@@ -319,6 +319,14 @@ async function seed(page) {
 	);
 }
 
+// A third entry is an action to run once the route has rendered — for states
+// a URL cannot reach (an open sheet).
+async function openHistory(page) {
+	await page.getByRole('button', { name: 'History' }).click();
+	await page.getByRole('dialog').waitFor({ state: 'visible', timeout: 3000 });
+	await page.waitForTimeout(350); // the sheet's fly-in
+}
+
 const SCREENS = [
 	['01-home', '/'],
 	['02-brews', '/brews'],
@@ -326,6 +334,19 @@ const SCREENS = [
 	['04-brew-edit', `/brews/${DETAIL_BREW}/edit`],
 	['05-brew-new', '/brews/new'],
 	['06-brew-new-dialin', `/brews/new?bagId=${BAG1}&method=espresso`],
+	// The history sheet: dialing in (sweet spot + compass), a dialed bag (all
+	// three taste verdicts + the settled recipe), no shots yet, and pour-over.
+	['06b-history-dialing', `/brews/new?bagId=${BAG4}&method=espresso`, openHistory],
+	['06c-history-dialed', `/brews/new?bagId=${BAG2}&method=espresso`, openHistory],
+	['06d-history-empty', `/brews/new?bagId=${BAG1}&method=espresso`, openHistory],
+	[
+		'06e-history-pour-over',
+		`/brews/new?bagId=${BAG1}`,
+		async (page) => {
+			await page.getByRole('button', { name: 'Pour-over' }).click();
+			await openHistory(page);
+		}
+	],
 	['07-bags', '/bags'],
 	['08-bag-detail', `/bags/${DETAIL_BAG}`],
 	['08b-bag-calibrated', `/bags/${BAG4}`],
@@ -380,10 +401,14 @@ for (const theme of ['light', 'dark']) {
 	await page.reload({ waitUntil: 'networkidle' });
 
 	await mkdir(`${OUT}/${theme}`, { recursive: true });
-	for (const [file, route] of SCREENS) {
+	for (const [file, route, act] of SCREENS) {
 		await page.goto(`${BASE}${route}`, { waitUntil: 'networkidle' });
 		await page.waitForTimeout(450);
+		if (act) await act(page);
 		await page.screenshot({ path: `${OUT}/${theme}/${file}.png`, fullPage: true });
+		// An action leaves the pointer where it last clicked, and the next screens
+		// would be captured with whatever sits there in its :hover colour.
+		if (act) await page.mouse.move(0, 0);
 	}
 	await browser.close();
 	console.log(`captured ${SCREENS.length} screens (${theme})`);

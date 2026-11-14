@@ -444,6 +444,42 @@ try {
 		await page.keyboard.press('Escape');
 		await dlg.waitFor({ state: 'detached', timeout: 3000 });
 		console.log(`   ${c.name.padEnd(15)} sheet gaps L${gapL} R${gapR} B${Math.round(gapB)}`);
+
+		// The brew form's history sheet is the other fixed overlay, with the same
+		// 12px gutter plus each inset. It differs in two ways: it is capped to the
+		// page column and centred (so on a wide display its side gaps are equal,
+		// not 12), and its body scrolls — so its height must stop short of the top
+		// inset. The injected min-height makes the content tall enough to bind.
+		await gotoRendered(page, `/brews/new?bagId=${BAG1}&method=espresso`);
+		await page.getByRole('button', { name: 'History' }).click();
+		const hist = page.locator('[role="dialog"]');
+		await hist.waitFor({ state: 'visible', timeout: 3000 });
+		await page.addStyleTag({ content: '[role="dialog"] ol { min-height: 1400px; }' });
+		await page.waitForTimeout(300);
+		const h = await hist.boundingBox();
+		const hL = h.x - c.inset.left;
+		const hR = c.w - (h.x + h.width) - c.inset.right;
+		const hB = c.h - (h.y + h.height) - c.inset.bottom;
+		const hT = h.y - c.inset.top;
+		const capped = h.width > 648 - 0.5;
+		if (capped ? Math.abs(hL - hR) > 1 || hL < 11.5 : Math.abs(hL - 12) > 0.5)
+			fail(
+				`inset ${c.name} history`,
+				`left gap ${hL} inside the inset, want ${capped ? 'centred' : 12}`
+			);
+		if (!capped && Math.abs(hR - 12) > 0.5)
+			fail(`inset ${c.name} history`, `right gap ${hR} inside the inset, want 12`);
+		if (Math.abs(hB - 12) > 0.5)
+			fail(`inset ${c.name} history`, `bottom gap ${hB} inside the inset, want 12`);
+		if (Math.abs(hT - 56) > 0.5)
+			fail(`inset ${c.name} history`, `top gap ${hT} below the inset, want 56 when full`);
+		await page.screenshot({ path: join(OUT, `inset-${c.name}--history.png`) });
+		await page.keyboard.press('Escape');
+		await hist.waitFor({ state: 'detached', timeout: 3000 });
+		console.log(
+			`   ${c.name.padEnd(15)} history gaps inside the insets L${hL} R${hR} B${hB} T${hT}` +
+				(capped ? ' (capped, centred)' : '')
+		);
 	}
 	insets = { top: 0, right: 0, bottom: 0, left: 0 };
 

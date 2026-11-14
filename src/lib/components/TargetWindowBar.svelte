@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { TIME_RAIL } from '$lib/brews/dialin';
 	import type { Extraction } from '$lib/db/types';
+	import { extractionTone as tone } from './tones';
 
 	// Horizontal shot-time rail (fixed 18–36s domain) with the roast window as
 	// a copper band and each shot as a dot positioned by its time, colored by
@@ -17,12 +18,6 @@
 	const span = railHi - railLo;
 	function pct(t: number): number {
 		return Math.min(98, Math.max(2, ((t - railLo) / span) * 100));
-	}
-	function tone(e: Extraction | undefined): string {
-		if (e === 'sour') return 'var(--color-warning)';
-		if (e === 'balanced') return 'var(--color-success)';
-		if (e === 'bitter') return 'var(--color-danger)';
-		return 'var(--color-faint)';
 	}
 </script>
 
