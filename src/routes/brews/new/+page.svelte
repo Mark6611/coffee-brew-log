@@ -503,297 +503,252 @@
 	<title>New brew</title>
 </svelte:head>
 
-<form onsubmit={handleSubmit} class="mx-auto max-w-2xl pb-20">
-	<!-- Header row -->
-	<div class="flex items-center justify-between gap-2 px-5 pt-2 pb-2">
-		<a
-			href={resolve('/brews')}
-			class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
-		>
-			<svg
-				width="14"
-				height="14"
-				viewBox="0 0 16 16"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="1.8"
-				stroke-linecap="round"
-				stroke-linejoin="round"
+<!-- .split: on the unfolded iPhone Duo the form takes the left half and the bag's
+     history the right (layout.css). Everywhere else it is this one column, and
+     the same history opens as a sheet from the History button. -->
+<div class="split">
+	<form onsubmit={handleSubmit} class="split-main mx-auto max-w-2xl pb-20">
+		<!-- Header row -->
+		<div class="flex items-center justify-between gap-2 px-5 pt-2 pb-2">
+			<a
+				href={resolve('/brews')}
+				class="flex h-9 items-center gap-1 text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink"
 			>
-				<path d="M10 3L4 8l6 5" />
-			</svg>
-			Cancel
-		</a>
-		<Eyebrow class="min-w-0 truncate">{headerEyebrow}</Eyebrow>
-		{#if history}
-			<!-- Trailing bar action, as Edit is on the bag page. Offered once a bag
-			     is picked — in quick mode too, where the bag picker is hidden. -->
-			<button
-				type="button"
-				onclick={() => (historyOpen = true)}
-				aria-haspopup="dialog"
-				class="hit-44 flex h-9 min-w-[60px] items-center justify-end rounded-control text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink {FOCUS_RING}"
-				>History</button
-			>
-		{:else}
-			<span class="h-9 w-[60px]" aria-hidden="true"></span>
-		{/if}
-	</div>
-
-	{#if !quickMode}
-		<h1
-			class="mx-5 mt-2 mb-5 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
-		>
-			New brew
-		</h1>
-	{/if}
-
-	<div class="space-y-5 px-5 {quickMode ? 'pt-2' : ''}">
-		{#if !quickMode && pristine && mostRecentBrew}
-			<!-- Repeat last brew — copy the most recent log, then edit the deltas. -->
-			<button
-				type="button"
-				onclick={repeatLast}
-				class="press flex w-full items-center gap-3 rounded-card border border-hairline bg-surface px-4 py-3 text-left hover:border-copper/50"
-			>
-				<span
-					class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-copper-lt text-copper"
+				<svg
+					width="14"
+					height="14"
+					viewBox="0 0 16 16"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.8"
+					stroke-linecap="round"
+					stroke-linejoin="round"
 				>
+					<path d="M10 3L4 8l6 5" />
+				</svg>
+				Cancel
+			</a>
+			<Eyebrow class="min-w-0 truncate">{headerEyebrow}</Eyebrow>
+			{#if history}
+				<!-- Trailing bar action, as Edit is on the bag page. Offered once a bag
+			     is picked — in quick mode too, where the bag picker is hidden. -->
+				<button
+					type="button"
+					onclick={() => (historyOpen = true)}
+					aria-haspopup="dialog"
+					class="split-hide hit-44 flex h-9 min-w-[60px] items-center justify-end rounded-control text-[calc(var(--dt-base)*15/17)] text-copper-dk transition-colors hover:text-copper dark:text-copper dark:hover:text-ink {FOCUS_RING}"
+					>History</button
+				>
+			{:else}
+				<span class="h-9 w-[60px]" aria-hidden="true"></span>
+			{/if}
+		</div>
+
+		{#if !quickMode}
+			<h1
+				class="mx-5 mt-2 mb-5 font-display text-[calc(var(--dt-base)*30/17)] leading-[1.05] font-medium tracking-[-0.015em] text-ink"
+			>
+				New brew
+			</h1>
+		{/if}
+
+		<div class="space-y-5 px-5 {quickMode ? 'pt-2' : ''}">
+			{#if !quickMode && pristine && mostRecentBrew}
+				<!-- Repeat last brew — copy the most recent log, then edit the deltas. -->
+				<button
+					type="button"
+					onclick={repeatLast}
+					class="press flex w-full items-center gap-3 rounded-card border border-hairline bg-surface px-4 py-3 text-left hover:border-copper/50"
+				>
+					<span
+						class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-copper-lt text-copper"
+					>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 16 16"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.6"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />
+							<path d="M13.5 2.5V5H11" />
+						</svg>
+					</span>
+					<span class="min-w-0 flex-1">
+						<span class="block text-[calc(var(--dt-base)*14/17)] font-medium text-ink"
+							>Repeat last brew</span
+						>
+						<span class="block truncate text-[calc(var(--dt-base)*12.5/17)] text-muted"
+							>Start from {repeatLabel}, then edit what changed</span
+						>
+					</span>
 					<svg
 						width="16"
 						height="16"
 						viewBox="0 0 16 16"
 						fill="none"
 						stroke="currentColor"
-						stroke-width="1.6"
+						stroke-width="1.5"
 						stroke-linecap="round"
 						stroke-linejoin="round"
+						class="shrink-0 text-muted"
 					>
-						<path d="M13.5 8a5.5 5.5 0 1 1-1.6-3.9" />
-						<path d="M13.5 2.5V5H11" />
+						<path d="M6 3l5 5-5 5" />
 					</svg>
-				</span>
-				<span class="min-w-0 flex-1">
-					<span class="block text-[calc(var(--dt-base)*14/17)] font-medium text-ink"
-						>Repeat last brew</span
-					>
-					<span class="block truncate text-[calc(var(--dt-base)*12.5/17)] text-muted"
-						>Start from {repeatLabel}, then edit what changed</span
-					>
-				</span>
-				<svg
-					width="16"
-					height="16"
-					viewBox="0 0 16 16"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="1.5"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					class="shrink-0 text-muted"
-				>
-					<path d="M6 3l5 5-5 5" />
-				</svg>
-			</button>
-		{/if}
-
-		{#if !quickMode}
-			<!-- Method -->
-			<div>
-				<Eyebrow class="mb-2">METHOD</Eyebrow>
-				<MethodPicker bind:value={method} />
-			</div>
-
-			<!-- Brewed at -->
-			<div>
-				<Eyebrow class="mb-2">BREWED AT</Eyebrow>
-				<input
-					type="datetime-local"
-					bind:value={brewedAtLocal}
-					required
-					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
-				/>
-			</div>
-
-			<!-- Coffee (bag) -->
-			<div>
-				<Eyebrow class="mb-2">COFFEE</Eyebrow>
-				<BagPicker bind:bagId oncreatenew={handleCreateNewBag} />
-			</div>
-
-			<!-- LAST SHOT card — logged history + the compass's standing start point -->
-			{#if isEspresso && selectedBag && lastShot && lastCompass}
-				{@const a = lastCompass.action}
-				<div class="rounded-card border border-copper/25 bg-copper-lt px-4 py-4">
-					<div class="flex items-center justify-between">
-						<div
-							class="font-mono text-eyebrow font-medium tracking-[0.14em] text-copper-dk uppercase"
-						>
-							Last shot · {formatTimeAgo(lastShot.brewedAt)}
-						</div>
-						{#if !lastCompass.fromTaste}
-							<div class="font-mono text-eyebrow tracking-[0.12em] text-muted uppercase">
-								from the numbers
-							</div>
-						{/if}
-					</div>
-					<div class="mt-2 font-mono text-[calc(var(--dt-base)*13/17)] tracking-[-0.01em] text-ink">
-						<span class="font-medium">{lastShot.grindSetting}</span>
-						<span class="text-muted"> grind · </span>{lastShot.doseGrams}g
-						<span class="text-muted">→</span>
-						{lastShot.yieldGrams}g
-						<span class="text-muted"> · </span>{lastShot.brewTimeSeconds}s
-						{#if lastShotTaste}<span class="text-copper-dk"> · {lastShotTaste}</span>{/if}
-					</div>
-					<div
-						class="mt-2 font-display text-[calc(var(--dt-base)*16/17)] leading-[1.25] font-medium text-ink"
-					>
-						{lastCompass.headline}{#if a.kind === 'grind' && a.target}
-							<span class="text-copper">&nbsp;→ {a.target}</span>
-						{:else if a.kind === 'yield'}
-							<span class="text-copper">&nbsp;→ {a.targetG}g</span>
-						{/if}
-					</div>
-					{#if daysSinceLastShot != null && daysSinceLastShot > 7}
-						<p class="mt-1 text-[calc(var(--dt-base)*12/17)] leading-[1.4] text-muted italic">
-							Beans have aged {daysSinceLastShot} days since — they may run a touch faster.
-						</p>
-					{/if}
-					<div class="mt-3 flex flex-wrap items-center gap-2">
-						<Button size="regular" variant="prominent" onclick={applyCompassStart}>
-							{#if a.kind === 'grind' && a.target}Start at {a.target}{:else if a.kind === 'yield'}Pull
-								to {a.targetG}g{:else}Same again{/if}
-						</Button>
-						{#if a.kind === 'grind' && a.target}
-							<button
-								type="button"
-								onclick={repeatLastShot}
-								class="px-2 text-[calc(var(--dt-base)*13/17)] text-muted transition-colors hover:text-ink"
-								>Repeat {lastShot.grindSetting}</button
-							>
-						{/if}
-					</div>
-				</div>
+				</button>
 			{/if}
-		{/if}
 
-		{#if showQuickChrome && lastShot}
-			<!-- Carried-over strip -->
-			<div
-				class="flex flex-wrap items-center gap-x-2 rounded-control border border-hairline bg-surface px-3 py-2 font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
-			>
-				<span class="font-medium text-ink uppercase">Same as shot {shotNumber - 1}</span>
-				<span aria-hidden="true">·</span>
-				<span>{doseGrams ?? ESPRESSO_DEFAULT_DOSE}g dose</span>
-				{#if carriedTempC != null}
-					<span aria-hidden="true">·</span>
-					<span>{carriedTempC}°C</span>
-				{/if}
-				{#if selectedBag?.roastLevel}
-					<span aria-hidden="true">·</span>
-					<span>{selectedBag.roastLevel}</span>
-				{/if}
-			</div>
-		{/if}
-
-		{#if isEspresso}
-			<!-- Grind (staged) -->
-			<div>
-				<div class="mb-2 flex items-baseline justify-between">
-					<Eyebrow>GRIND · LAGOM CASA</Eyebrow>
-					{#if grindStaged}
-						<span class="font-mono text-eyebrow font-medium tracking-[0.12em] text-copper uppercase"
-							>Staged from suggestion</span
-						>
-					{/if}
+			{#if !quickMode}
+				<!-- Method -->
+				<div>
+					<Eyebrow class="mb-2">METHOD</Eyebrow>
+					<MethodPicker bind:value={method} />
 				</div>
-				<div class="relative">
+
+				<!-- Brewed at -->
+				<div>
+					<Eyebrow class="mb-2">BREWED AT</Eyebrow>
 					<input
-						type="text"
-						bind:value={grindSetting}
+						type="datetime-local"
+						bind:value={brewedAtLocal}
 						required
-						placeholder="e.g. 0.5.5"
-						autocorrect="off"
-						autocapitalize="none"
-						spellcheck="false"
-						class="min-h-12 w-full rounded-input border px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted {grindStaged
-							? 'border-copper bg-paper ring-2 ring-copper/25'
-							: 'border-hairline bg-paper focus:border-copper focus:ring-2 focus:ring-copper/25'}"
+						class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 text-ink transition outline-none focus:border-copper focus:ring-2 focus:ring-copper/25"
 					/>
 				</div>
-				{#if grindStaged}
-					{@const d = grindStaged.deltaTicks}
-					<p
-						class="mt-2 flex items-center gap-2 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk uppercase"
-					>
-						<span class="inline-block h-[5px] w-[5px] rounded-full bg-copper" aria-hidden="true"
-						></span>
-						{#if d != null && d !== 0}
-							{d < 0 ? '−' : '+'}{Math.abs(d)} ticks {d < 0 ? 'finer' : 'coarser'} · {grindStaged.provenance.split(
-								' · '
-							)[0]}
-						{:else}
-							{grindStaged.provenance}
-						{/if}
-					</p>
-				{:else if espressoStage != null && grindSetting.trim() === '' && (quickMode || lastCompass == null)}
-					<!-- Computed dial-in move/hold: chip-only, never auto-applied.
-					     Hidden when the LAST SHOT card is on screen — it says the same thing. -->
-					<button
-						type="button"
-						onclick={applyStage}
-						class="press mt-2 flex w-full items-center gap-3 rounded-control bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
-					>
-						<svg
-							width="18"
-							height="18"
-							viewBox="0 0 18 18"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.3"
-							class="shrink-0 text-copper-dk"
-							aria-hidden="true"
-						>
-							<circle cx="9" cy="9" r="6.5" />
-							<circle cx="9" cy="9" r="2.5" />
-						</svg>
-						<span class="min-w-0 flex-1">
-							<span class="block text-[calc(var(--dt-base)*13/17)] text-copper-dk"
-								>Suggested <span class="font-mono font-medium">{espressoStage.value}</span></span
+
+				<!-- Coffee (bag) -->
+				<div>
+					<Eyebrow class="mb-2">COFFEE</Eyebrow>
+					<BagPicker bind:bagId oncreatenew={handleCreateNewBag} />
+				</div>
+
+				<!-- LAST SHOT card — logged history + the compass's standing start point -->
+				{#if isEspresso && selectedBag && lastShot && lastCompass}
+					{@const a = lastCompass.action}
+					<div class="rounded-card border border-copper/25 bg-copper-lt px-4 py-4">
+						<div class="flex items-center justify-between">
+							<div
+								class="font-mono text-eyebrow font-medium tracking-[0.14em] text-copper-dk uppercase"
 							>
-							<span
-								class="mt-0.5 block font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
-								>{espressoStage.provenance}</span
-							>
-						</span>
-						<span
-							class="shrink-0 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper uppercase"
-							>Tap to use</span
+								Last shot · {formatTimeAgo(lastShot.brewedAt)}
+							</div>
+							{#if !lastCompass.fromTaste}
+								<div class="font-mono text-eyebrow tracking-[0.12em] text-muted uppercase">
+									from the numbers
+								</div>
+							{/if}
+						</div>
+						<div
+							class="mt-2 font-mono text-[calc(var(--dt-base)*13/17)] tracking-[-0.01em] text-ink"
 						>
-					</button>
-				{:else if espressoStage != null}
-					<button
-						type="button"
-						onclick={applyStage}
-						class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted transition-colors hover:text-copper-dk"
-						>Suggested <span class="font-mono">{espressoStage.value}</span> · use instead</button
-					>
-				{:else if grindSuggestion}
-					{@const sug = grindSuggestion}
-					{@const prov =
-						sug.kind === 'history'
-							? `FROM YOUR HISTORY · ${sug.brews} BREW${sug.brews === 1 ? '' : 'S'}`
-							: 'STARTING POINT'}
-					{#if sug.kind === 'prefill'}
-						{#if grindSetting === sug.value}
-							<p class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted">
-								Prefilled from your last brew of this bag.
+							<span class="font-medium">{lastShot.grindSetting}</span>
+							<span class="text-muted"> grind · </span>{lastShot.doseGrams}g
+							<span class="text-muted">→</span>
+							{lastShot.yieldGrams}g
+							<span class="text-muted"> · </span>{lastShot.brewTimeSeconds}s
+							{#if lastShotTaste}<span class="text-copper-dk"> · {lastShotTaste}</span>{/if}
+						</div>
+						<div
+							class="mt-2 font-display text-[calc(var(--dt-base)*16/17)] leading-[1.25] font-medium text-ink"
+						>
+							{lastCompass.headline}{#if a.kind === 'grind' && a.target}
+								<span class="text-copper">&nbsp;→ {a.target}</span>
+							{:else if a.kind === 'yield'}
+								<span class="text-copper">&nbsp;→ {a.targetG}g</span>
+							{/if}
+						</div>
+						{#if daysSinceLastShot != null && daysSinceLastShot > 7}
+							<p class="mt-1 text-[calc(var(--dt-base)*12/17)] leading-[1.4] text-muted italic">
+								Beans have aged {daysSinceLastShot} days since — they may run a touch faster.
 							</p>
 						{/if}
-					{:else if grindSetting.trim() === ''}
+						<div class="mt-3 flex flex-wrap items-center gap-2">
+							<Button size="regular" variant="prominent" onclick={applyCompassStart}>
+								{#if a.kind === 'grind' && a.target}Start at {a.target}{:else if a.kind === 'yield'}Pull
+									to {a.targetG}g{:else}Same again{/if}
+							</Button>
+							{#if a.kind === 'grind' && a.target}
+								<button
+									type="button"
+									onclick={repeatLastShot}
+									class="px-2 text-[calc(var(--dt-base)*13/17)] text-muted transition-colors hover:text-ink"
+									>Repeat {lastShot.grindSetting}</button
+								>
+							{/if}
+						</div>
+					</div>
+				{/if}
+			{/if}
+
+			{#if showQuickChrome && lastShot}
+				<!-- Carried-over strip -->
+				<div
+					class="flex flex-wrap items-center gap-x-2 rounded-control border border-hairline bg-surface px-3 py-2 font-mono text-[calc(var(--dt-base)*11/17)] tracking-[0.04em] text-muted"
+				>
+					<span class="font-medium text-ink uppercase">Same as shot {shotNumber - 1}</span>
+					<span aria-hidden="true">·</span>
+					<span>{doseGrams ?? ESPRESSO_DEFAULT_DOSE}g dose</span>
+					{#if carriedTempC != null}
+						<span aria-hidden="true">·</span>
+						<span>{carriedTempC}°C</span>
+					{/if}
+					{#if selectedBag?.roastLevel}
+						<span aria-hidden="true">·</span>
+						<span>{selectedBag.roastLevel}</span>
+					{/if}
+				</div>
+			{/if}
+
+			{#if isEspresso}
+				<!-- Grind (staged) -->
+				<div>
+					<div class="mb-2 flex items-baseline justify-between">
+						<Eyebrow>GRIND · LAGOM CASA</Eyebrow>
+						{#if grindStaged}
+							<span
+								class="font-mono text-eyebrow font-medium tracking-[0.12em] text-copper uppercase"
+								>Staged from suggestion</span
+							>
+						{/if}
+					</div>
+					<div class="relative">
+						<input
+							type="text"
+							bind:value={grindSetting}
+							required
+							placeholder="e.g. 0.5.5"
+							autocorrect="off"
+							autocapitalize="none"
+							spellcheck="false"
+							class="min-h-12 w-full rounded-input border px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted {grindStaged
+								? 'border-copper bg-paper ring-2 ring-copper/25'
+								: 'border-hairline bg-paper focus:border-copper focus:ring-2 focus:ring-copper/25'}"
+						/>
+					</div>
+					{#if grindStaged}
+						{@const d = grindStaged.deltaTicks}
+						<p
+							class="mt-2 flex items-center gap-2 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk uppercase"
+						>
+							<span class="inline-block h-[5px] w-[5px] rounded-full bg-copper" aria-hidden="true"
+							></span>
+							{#if d != null && d !== 0}
+								{d < 0 ? '−' : '+'}{Math.abs(d)} ticks {d < 0 ? 'finer' : 'coarser'} · {grindStaged.provenance.split(
+									' · '
+								)[0]}
+							{:else}
+								{grindStaged.provenance}
+							{/if}
+						</p>
+					{:else if espressoStage != null && grindSetting.trim() === '' && (quickMode || lastCompass == null)}
+						<!-- Computed dial-in move/hold: chip-only, never auto-applied.
+					     Hidden when the LAST SHOT card is on screen — it says the same thing. -->
 						<button
 							type="button"
-							onclick={applyGrind}
+							onclick={applyStage}
 							class="press mt-2 flex w-full items-center gap-3 rounded-control bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
 						>
 							<svg
@@ -811,11 +766,11 @@
 							</svg>
 							<span class="min-w-0 flex-1">
 								<span class="block text-[calc(var(--dt-base)*13/17)] text-copper-dk"
-									>Suggested <span class="font-mono font-medium">{sug.value}</span></span
+									>Suggested <span class="font-mono font-medium">{espressoStage.value}</span></span
 								>
 								<span
 									class="mt-0.5 block font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
-									>{prov}</span
+									>{espressoStage.provenance}</span
 								>
 							</span>
 							<span
@@ -823,457 +778,532 @@
 								>Tap to use</span
 							>
 						</button>
-					{:else if grindApplied && grindSetting === sug.value}
-						<p class="mt-2 text-[calc(var(--dt-base)*12/17)] text-copper-dk">
-							Applied the suggestion.
-						</p>
-					{:else}
+					{:else if espressoStage != null}
 						<button
 							type="button"
-							onclick={applyGrind}
+							onclick={applyStage}
 							class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted transition-colors hover:text-copper-dk"
-							>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
+							>Suggested <span class="font-mono">{espressoStage.value}</span> · use instead</button
 						>
-					{/if}
-				{/if}
-			</div>
-
-			<!-- Live scale assist — fills the yield/time fields below -->
-			<ScaleAssist {doseGrams} bind:yieldGrams bind:brewTimeSeconds />
-
-			<!-- Yield + Shot time (the two manual fields; assist-ready notches) -->
-			<div class="grid grid-cols-2 gap-3">
-				<div>
-					<Eyebrow class="mb-2">YIELD</Eyebrow>
-					<div
-						class="field-wrapper relative flex min-h-14 items-center gap-2 overflow-hidden rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
-					>
-						<span
-							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving
-								? 'freshness-pulse bg-copper'
-								: 'bg-hairline'}"
-							aria-hidden="true"
-						></span>
-						<input
-							type="number"
-							bind:value={yieldGrams}
-							step="0.1"
-							min="0.1"
-							required
-							inputmode="decimal"
-							placeholder="0.0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
-						/>
-						<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">g</span>
-					</div>
-				</div>
-				<div>
-					<Eyebrow class="mb-2">SHOT TIME</Eyebrow>
-					<div
-						class="field-wrapper relative flex min-h-14 items-center gap-2 overflow-hidden rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
-					>
-						<span
-							class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving
-								? 'freshness-pulse bg-copper'
-								: 'bg-hairline'}"
-							aria-hidden="true"
-						></span>
-						<input
-							type="number"
-							bind:value={brewTimeSeconds}
-							step="1"
-							min="1"
-							required
-							inputmode="numeric"
-							placeholder="0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
-						/>
-						<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">sec</span>
-					</div>
-				</div>
-			</div>
-
-			<!-- Taste (extraction axis) -->
-			<div>
-				<Eyebrow class="mb-2">TASTE</Eyebrow>
-				<ExtractionScale
-					value={extraction || undefined}
-					oninput={(v) => (extraction = extraction === v ? '' : v)}
-				/>
-			</div>
-
-			<!-- Collapsed group: dose, temp, rating, balance, notes -->
-			<div class="rounded-input border border-dashed border-hairline">
-				<button
-					type="button"
-					onclick={() => (moreOpen = !moreOpen)}
-					class="flex w-full items-center justify-between px-4 py-3 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
-					aria-expanded={moreOpen}
-				>
-					Rating, balance, notes, temp
-					<svg
-						width="12"
-						height="12"
-						viewBox="0 0 12 12"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="transition-transform {moreOpen ? 'rotate-180' : ''}"
-					>
-						<path d="M3 4.5l3 3 3-3" />
-					</svg>
-				</button>
-				{#if moreOpen}
-					<div class="space-y-4 px-4 pb-4">
-						<div class="grid grid-cols-2 gap-3">
-							<div>
-								<Eyebrow class="mb-2">DOSE</Eyebrow>
-								<div
-									class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+					{:else if grindSuggestion}
+						{@const sug = grindSuggestion}
+						{@const prov =
+							sug.kind === 'history'
+								? `FROM YOUR HISTORY · ${sug.brews} BREW${sug.brews === 1 ? '' : 'S'}`
+								: 'STARTING POINT'}
+						{#if sug.kind === 'prefill'}
+							{#if grindSetting === sug.value}
+								<p class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted">
+									Prefilled from your last brew of this bag.
+								</p>
+							{/if}
+						{:else if grindSetting.trim() === ''}
+							<button
+								type="button"
+								onclick={applyGrind}
+								class="press mt-2 flex w-full items-center gap-3 rounded-control bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
+							>
+								<svg
+									width="18"
+									height="18"
+									viewBox="0 0 18 18"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.3"
+									class="shrink-0 text-copper-dk"
+									aria-hidden="true"
 								>
-									<input
-										type="number"
-										bind:value={doseGrams}
-										step="0.1"
-										min="0.1"
-										required
-										inputmode="decimal"
-										class="min-w-0 flex-1 font-mono text-[max(16px,calc(var(--dt-base)*16/17))] tracking-[-0.01em] text-ink placeholder:text-muted"
-									/>
-									<span class="font-mono text-[calc(var(--dt-base)*12/17)] text-muted">g</span>
-								</div>
-							</div>
-							<div>
-								<Eyebrow class="mb-2">TEMP (OPTIONAL)</Eyebrow>
-								<div
-									class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
-								>
-									<input
-										type="number"
-										bind:value={waterTempC}
-										step="0.5"
-										min="1"
-										max="100"
-										inputmode="decimal"
-										placeholder="0"
-										class="min-w-0 flex-1 font-mono text-[max(16px,calc(var(--dt-base)*16/17))] tracking-[-0.01em] text-ink placeholder:text-muted"
-									/>
-									<span class="font-mono text-[calc(var(--dt-base)*12/17)] text-muted">°C</span>
-								</div>
-							</div>
-						</div>
-
-						<div>
-							<Eyebrow class="mb-2">RATING (OPTIONAL)</Eyebrow>
-							<div class="flex items-center gap-4">
-								<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
-								<span class="font-mono text-[calc(var(--dt-base)*15/17)] font-medium text-ink">
-									{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
+									<circle cx="9" cy="9" r="6.5" />
+									<circle cx="9" cy="9" r="2.5" />
+								</svg>
+								<span class="min-w-0 flex-1">
+									<span class="block text-[calc(var(--dt-base)*13/17)] text-copper-dk"
+										>Suggested <span class="font-mono font-medium">{sug.value}</span></span
+									>
+									<span
+										class="mt-0.5 block font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
+										>{prov}</span
+									>
 								</span>
-								{#if rating != null}
+								<span
+									class="shrink-0 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper uppercase"
+									>Tap to use</span
+								>
+							</button>
+						{:else if grindApplied && grindSetting === sug.value}
+							<p class="mt-2 text-[calc(var(--dt-base)*12/17)] text-copper-dk">
+								Applied the suggestion.
+							</p>
+						{:else}
+							<button
+								type="button"
+								onclick={applyGrind}
+								class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted transition-colors hover:text-copper-dk"
+								>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
+							>
+						{/if}
+					{/if}
+				</div>
+
+				<!-- Live scale assist — fills the yield/time fields below -->
+				<ScaleAssist {doseGrams} bind:yieldGrams bind:brewTimeSeconds />
+
+				<!-- Yield + Shot time (the two manual fields; assist-ready notches) -->
+				<div class="grid grid-cols-2 gap-3">
+					<div>
+						<Eyebrow class="mb-2">YIELD</Eyebrow>
+						<div
+							class="field-wrapper relative flex min-h-14 items-center gap-2 overflow-hidden rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						>
+							<span
+								class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving
+									? 'freshness-pulse bg-copper'
+									: 'bg-hairline'}"
+								aria-hidden="true"
+							></span>
+							<input
+								type="number"
+								bind:value={yieldGrams}
+								step="0.1"
+								min="0.1"
+								required
+								inputmode="decimal"
+								placeholder="0.0"
+								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
+							/>
+							<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">g</span>
+						</div>
+					</div>
+					<div>
+						<Eyebrow class="mb-2">SHOT TIME</Eyebrow>
+						<div
+							class="field-wrapper relative flex min-h-14 items-center gap-2 overflow-hidden rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+						>
+							<span
+								class="absolute top-1/2 left-0 h-6 w-[3px] -translate-y-1/2 rounded-r transition-colors {scaleReceiving
+									? 'freshness-pulse bg-copper'
+									: 'bg-hairline'}"
+								aria-hidden="true"
+							></span>
+							<input
+								type="number"
+								bind:value={brewTimeSeconds}
+								step="1"
+								min="1"
+								required
+								inputmode="numeric"
+								placeholder="0"
+								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
+							/>
+							<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">sec</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Taste (extraction axis) -->
+				<div>
+					<Eyebrow class="mb-2">TASTE</Eyebrow>
+					<ExtractionScale
+						value={extraction || undefined}
+						oninput={(v) => (extraction = extraction === v ? '' : v)}
+					/>
+				</div>
+
+				<!-- Collapsed group: dose, temp, rating, balance, notes -->
+				<div class="rounded-input border border-dashed border-hairline">
+					<button
+						type="button"
+						onclick={() => (moreOpen = !moreOpen)}
+						class="flex w-full items-center justify-between px-4 py-3 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase transition-colors hover:text-ink"
+						aria-expanded={moreOpen}
+					>
+						Rating, balance, notes, temp
+						<svg
+							width="12"
+							height="12"
+							viewBox="0 0 12 12"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.5"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							class="transition-transform {moreOpen ? 'rotate-180' : ''}"
+						>
+							<path d="M3 4.5l3 3 3-3" />
+						</svg>
+					</button>
+					{#if moreOpen}
+						<div class="space-y-4 px-4 pb-4">
+							<div class="grid grid-cols-2 gap-3">
+								<div>
+									<Eyebrow class="mb-2">DOSE</Eyebrow>
+									<div
+										class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+									>
+										<input
+											type="number"
+											bind:value={doseGrams}
+											step="0.1"
+											min="0.1"
+											required
+											inputmode="decimal"
+											class="min-w-0 flex-1 font-mono text-[max(16px,calc(var(--dt-base)*16/17))] tracking-[-0.01em] text-ink placeholder:text-muted"
+										/>
+										<span class="font-mono text-[calc(var(--dt-base)*12/17)] text-muted">g</span>
+									</div>
+								</div>
+								<div>
+									<Eyebrow class="mb-2">TEMP (OPTIONAL)</Eyebrow>
+									<div
+										class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+									>
+										<input
+											type="number"
+											bind:value={waterTempC}
+											step="0.5"
+											min="1"
+											max="100"
+											inputmode="decimal"
+											placeholder="0"
+											class="min-w-0 flex-1 font-mono text-[max(16px,calc(var(--dt-base)*16/17))] tracking-[-0.01em] text-ink placeholder:text-muted"
+										/>
+										<span class="font-mono text-[calc(var(--dt-base)*12/17)] text-muted">°C</span>
+									</div>
+								</div>
+							</div>
+
+							<div>
+								<Eyebrow class="mb-2">RATING (OPTIONAL)</Eyebrow>
+								<div class="flex items-center gap-4">
+									<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
+									<span class="font-mono text-[calc(var(--dt-base)*15/17)] font-medium text-ink">
+										{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
+									</span>
+									{#if rating != null}
+										<button
+											type="button"
+											onclick={() => (rating = null)}
+											class="hit-44-sq {FOCUS_RING} ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+											>Clear</button
+										>
+									{/if}
+								</div>
+							</div>
+
+							<div>
+								<Eyebrow class="mb-2">BALANCE (BODY · OPTIONAL)</Eyebrow>
+								<BalanceScale value={balance || undefined} oninput={(v) => (balance = v)} />
+								{#if balance}
 									<button
 										type="button"
-										onclick={() => (rating = null)}
-										class="hit-44-sq {FOCUS_RING} ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+										onclick={() => (balance = '')}
+										class="hit-44-sq {FOCUS_RING} mt-1 text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
 										>Clear</button
 									>
 								{/if}
 							</div>
-						</div>
 
-						<div>
-							<Eyebrow class="mb-2">BALANCE (BODY · OPTIONAL)</Eyebrow>
-							<BalanceScale value={balance || undefined} oninput={(v) => (balance = v)} />
-							{#if balance}
-								<button
-									type="button"
-									onclick={() => (balance = '')}
-									class="hit-44-sq {FOCUS_RING} mt-1 text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
-									>Clear</button
-								>
-							{/if}
-						</div>
+							<div>
+								<Eyebrow class="mb-2">NOTES</Eyebrow>
+								<textarea
+									bind:value={notes}
+									rows="3"
+									placeholder="Syrupy, chocolate finish…"
+									class="w-full resize-none rounded-input border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+								></textarea>
+							</div>
 
-						<div>
-							<Eyebrow class="mb-2">NOTES</Eyebrow>
-							<textarea
-								bind:value={notes}
-								rows="3"
-								placeholder="Syrupy, chocolate finish…"
-								class="w-full resize-none rounded-input border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
-							></textarea>
+							<div>
+								<Eyebrow class="mb-2">PHOTO</Eyebrow>
+								<PhotoInput bind:photo label="photo" />
+							</div>
 						</div>
-
-						<div>
-							<Eyebrow class="mb-2">PHOTO</Eyebrow>
-							<PhotoInput bind:photo label="photo" />
-						</div>
-					</div>
-				{/if}
-			</div>
-		{:else}
-			<!-- ── Pour-over: unchanged layout ── -->
-			<div class="grid grid-cols-2 gap-3">
-				<div>
-					<Eyebrow class="mb-2">DOSE</Eyebrow>
-					<div
-						class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
-					>
-						<input
-							type="number"
-							bind:value={doseGrams}
-							step="0.1"
-							min="0.1"
-							required
-							inputmode="decimal"
-							placeholder="0.0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
-						/>
-						<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">g</span>
-					</div>
-				</div>
-				<div>
-					<Eyebrow class="mb-2">WATER</Eyebrow>
-					<div
-						class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
-					>
-						<input
-							type="number"
-							bind:value={waterGrams}
-							step="1"
-							min="1"
-							required
-							inputmode="decimal"
-							placeholder="0"
-							class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
-						/>
-						<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">g</span>
-					</div>
-				</div>
-			</div>
-
-			<!-- Ratio quick-pick -->
-			<div>
-				<Eyebrow class="mb-2">RATIO · QUICK</Eyebrow>
-				<div class="flex flex-wrap items-center gap-2">
-					{#each [15, 16, 17, 18] as r (r)}
-						<Chip onclick={() => applyRatio(r)}>1:{r}</Chip>
-					{/each}
-					{#if actualRatio !== null}
-						<span
-							class="inline-flex h-9 items-center rounded-full bg-copper-lt px-3 font-mono text-[calc(var(--dt-base)*12/17)] tracking-[-0.01em] text-copper"
-							>= 1:{actualRatio.toFixed(1)} actual</span
-						>
 					{/if}
 				</div>
-			</div>
-
-			<!-- Grind -->
-			<div>
-				<Eyebrow class="mb-2">GRIND · FELLOW ODE 2</Eyebrow>
-				<input
-					type="text"
-					bind:value={grindSetting}
-					required
-					placeholder="e.g. 4.2"
-					autocorrect="off"
-					autocapitalize="none"
-					spellcheck="false"
-					class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
-				/>
-
-				{#if grindSuggestion}
-					{@const sug = grindSuggestion}
-					{@const prov =
-						sug.kind === 'history'
-							? `FROM YOUR HISTORY · ${sug.brews} BREW${sug.brews === 1 ? '' : 'S'}`
-							: 'STARTING POINT'}
-					{#if sug.kind === 'prefill'}
-						{#if grindSetting === sug.value}
-							<p class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted">
-								Prefilled from your last brew of this bag.
-							</p>
-						{/if}
-					{:else if grindSetting.trim() === ''}
-						<button
-							type="button"
-							onclick={applyGrind}
-							class="press mt-2 flex w-full items-center gap-3 rounded-control bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
-						>
-							<svg
-								width="18"
-								height="18"
-								viewBox="0 0 18 18"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.3"
-								class="shrink-0 text-copper-dk"
-								aria-hidden="true"
-							>
-								<circle cx="9" cy="9" r="6.5" />
-								<circle cx="9" cy="9" r="2.5" />
-							</svg>
-							<span class="min-w-0 flex-1">
-								<span class="block text-[calc(var(--dt-base)*13/17)] text-copper-dk"
-									>Suggested <span class="font-mono font-medium">{sug.value}</span></span
-								>
-								<span
-									class="mt-0.5 block font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
-									>{prov}</span
-								>
-							</span>
-							<span
-								class="shrink-0 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper uppercase"
-								>Tap to use</span
-							>
-						</button>
-					{:else if grindApplied && grindSetting === sug.value}
-						<p class="mt-2 text-[calc(var(--dt-base)*12/17)] text-copper-dk">
-							Applied the suggestion.
-						</p>
-					{:else}
-						<button
-							type="button"
-							onclick={applyGrind}
-							class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted transition-colors hover:text-copper-dk"
-							>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
-						>
-					{/if}
-				{/if}
-			</div>
-
-			<!-- Water temp -->
-			<div>
-				<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
-				<div
-					class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
-				>
-					<input
-						type="number"
-						bind:value={waterTempC}
-						step="1"
-						min="1"
-						max="100"
-						inputmode="numeric"
-						placeholder="0"
-						class="min-w-0 flex-1 font-mono text-[max(16px,calc(var(--dt-base)*16/17))] tracking-[-0.01em] text-ink placeholder:text-muted"
-					/>
-					<span class="font-mono text-[calc(var(--dt-base)*12/17)] text-muted">°C</span>
-				</div>
-			</div>
-
-			<!-- Brew time -->
-			<div>
-				<Eyebrow class="mb-2">BREW TIME</Eyebrow>
+			{:else}
+				<!-- ── Pour-over: unchanged layout ── -->
 				<div class="grid grid-cols-2 gap-3">
 					<div>
+						<Eyebrow class="mb-2">DOSE</Eyebrow>
 						<div
-							class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
+							class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 						>
-							MIN
+							<input
+								type="number"
+								bind:value={doseGrams}
+								step="0.1"
+								min="0.1"
+								required
+								inputmode="decimal"
+								placeholder="0.0"
+								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
+							/>
+							<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">g</span>
 						</div>
-						<input
-							type="number"
-							bind:value={brewMinutes}
-							step="1"
-							min="0"
-							inputmode="numeric"
-							placeholder="0"
-							class="min-h-14 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
-						/>
 					</div>
 					<div>
+						<Eyebrow class="mb-2">WATER</Eyebrow>
 						<div
-							class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
+							class="field-wrapper flex min-h-14 items-center gap-2 rounded-input border border-hairline bg-surface px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 						>
-							SEC
+							<input
+								type="number"
+								bind:value={waterGrams}
+								step="1"
+								min="1"
+								required
+								inputmode="decimal"
+								placeholder="0"
+								class="min-w-0 flex-1 font-mono text-2xl font-medium tracking-[-0.02em] text-ink placeholder:text-muted"
+							/>
+							<span class="font-mono text-[calc(var(--dt-base)*13/17)] text-muted">g</span>
 						</div>
-						<input
-							type="number"
-							bind:value={brewSecondsPart}
-							step="1"
-							min="0"
-							max="59"
-							inputmode="numeric"
-							placeholder="0"
-							class="min-h-14 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
-						/>
 					</div>
 				</div>
-				<div class="mt-2 flex flex-wrap gap-2">
-					{#each [150, 165, 180, 195, 210, 240] as s (s)}
-						<Chip onclick={() => applyTimeSeconds(s)}>
-							{Math.floor(s / 60)}:{(s % 60).toString().padStart(2, '0')}
-						</Chip>
-					{/each}
-				</div>
-			</div>
 
-			<!-- Rating -->
-			<div>
-				<Eyebrow class="mb-2">RATING (OPTIONAL)</Eyebrow>
-				<div class="flex items-center gap-4">
-					<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
-					<span class="font-mono text-[calc(var(--dt-base)*15/17)] font-medium text-ink">
-						{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
-					</span>
-					{#if rating != null}
+				<!-- Ratio quick-pick -->
+				<div>
+					<Eyebrow class="mb-2">RATIO · QUICK</Eyebrow>
+					<div class="flex flex-wrap items-center gap-2">
+						{#each [15, 16, 17, 18] as r (r)}
+							<Chip onclick={() => applyRatio(r)}>1:{r}</Chip>
+						{/each}
+						{#if actualRatio !== null}
+							<span
+								class="inline-flex h-9 items-center rounded-full bg-copper-lt px-3 font-mono text-[calc(var(--dt-base)*12/17)] tracking-[-0.01em] text-copper"
+								>= 1:{actualRatio.toFixed(1)} actual</span
+							>
+						{/if}
+					</div>
+				</div>
+
+				<!-- Grind -->
+				<div>
+					<Eyebrow class="mb-2">GRIND · FELLOW ODE 2</Eyebrow>
+					<input
+						type="text"
+						bind:value={grindSetting}
+						required
+						placeholder="e.g. 4.2"
+						autocorrect="off"
+						autocapitalize="none"
+						spellcheck="false"
+						class="min-h-12 w-full rounded-input border border-hairline bg-paper px-4 py-2 font-mono text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					/>
+
+					{#if grindSuggestion}
+						{@const sug = grindSuggestion}
+						{@const prov =
+							sug.kind === 'history'
+								? `FROM YOUR HISTORY · ${sug.brews} BREW${sug.brews === 1 ? '' : 'S'}`
+								: 'STARTING POINT'}
+						{#if sug.kind === 'prefill'}
+							{#if grindSetting === sug.value}
+								<p class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted">
+									Prefilled from your last brew of this bag.
+								</p>
+							{/if}
+						{:else if grindSetting.trim() === ''}
+							<button
+								type="button"
+								onclick={applyGrind}
+								class="press mt-2 flex w-full items-center gap-3 rounded-control bg-copper-lt px-3 py-3 text-left hover:brightness-[0.98]"
+							>
+								<svg
+									width="18"
+									height="18"
+									viewBox="0 0 18 18"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.3"
+									class="shrink-0 text-copper-dk"
+									aria-hidden="true"
+								>
+									<circle cx="9" cy="9" r="6.5" />
+									<circle cx="9" cy="9" r="2.5" />
+								</svg>
+								<span class="min-w-0 flex-1">
+									<span class="block text-[calc(var(--dt-base)*13/17)] text-copper-dk"
+										>Suggested <span class="font-mono font-medium">{sug.value}</span></span
+									>
+									<span
+										class="mt-0.5 block font-mono text-eyebrow font-medium tracking-[0.1em] text-copper-dk/70 uppercase"
+										>{prov}</span
+									>
+								</span>
+								<span
+									class="shrink-0 font-mono text-eyebrow font-medium tracking-[0.1em] text-copper uppercase"
+									>Tap to use</span
+								>
+							</button>
+						{:else if grindApplied && grindSetting === sug.value}
+							<p class="mt-2 text-[calc(var(--dt-base)*12/17)] text-copper-dk">
+								Applied the suggestion.
+							</p>
+						{:else}
+							<button
+								type="button"
+								onclick={applyGrind}
+								class="mt-2 text-[calc(var(--dt-base)*12/17)] text-muted transition-colors hover:text-copper-dk"
+								>Suggested <span class="font-mono">{sug.value}</span> · use instead</button
+							>
+						{/if}
+					{/if}
+				</div>
+
+				<!-- Water temp -->
+				<div>
+					<Eyebrow class="mb-2">WATER TEMP (OPTIONAL)</Eyebrow>
+					<div
+						class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-4 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+					>
+						<input
+							type="number"
+							bind:value={waterTempC}
+							step="1"
+							min="1"
+							max="100"
+							inputmode="numeric"
+							placeholder="0"
+							class="min-w-0 flex-1 font-mono text-[max(16px,calc(var(--dt-base)*16/17))] tracking-[-0.01em] text-ink placeholder:text-muted"
+						/>
+						<span class="font-mono text-[calc(var(--dt-base)*12/17)] text-muted">°C</span>
+					</div>
+				</div>
+
+				<!-- Brew time -->
+				<div>
+					<Eyebrow class="mb-2">BREW TIME</Eyebrow>
+					<div class="grid grid-cols-2 gap-3">
+						<div>
+							<div
+								class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								MIN
+							</div>
+							<input
+								type="number"
+								bind:value={brewMinutes}
+								step="1"
+								min="0"
+								inputmode="numeric"
+								placeholder="0"
+								class="min-h-14 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+							/>
+						</div>
+						<div>
+							<div
+								class="mb-2 font-mono text-eyebrow font-medium tracking-[0.14em] text-muted uppercase"
+							>
+								SEC
+							</div>
+							<input
+								type="number"
+								bind:value={brewSecondsPart}
+								step="1"
+								min="0"
+								max="59"
+								inputmode="numeric"
+								placeholder="0"
+								class="min-h-14 w-full rounded-input border border-hairline bg-surface px-4 py-2 font-mono text-2xl font-medium tracking-[-0.02em] text-ink transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+							/>
+						</div>
+					</div>
+					<div class="mt-2 flex flex-wrap gap-2">
+						{#each [150, 165, 180, 195, 210, 240] as s (s)}
+							<Chip onclick={() => applyTimeSeconds(s)}>
+								{Math.floor(s / 60)}:{(s % 60).toString().padStart(2, '0')}
+							</Chip>
+						{/each}
+					</div>
+				</div>
+
+				<!-- Rating -->
+				<div>
+					<Eyebrow class="mb-2">RATING (OPTIONAL)</Eyebrow>
+					<div class="flex items-center gap-4">
+						<StarRow value={rating ?? 0} size={28} oninput={(v) => (rating = v)} />
+						<span class="font-mono text-[calc(var(--dt-base)*15/17)] font-medium text-ink">
+							{rating != null ? `${rating.toFixed(1)} / 5` : '—'}
+						</span>
+						{#if rating != null}
+							<button
+								type="button"
+								onclick={() => (rating = null)}
+								class="hit-44-sq {FOCUS_RING} ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+								>Clear</button
+							>
+						{/if}
+					</div>
+				</div>
+
+				<!-- Balance -->
+				<div>
+					<Eyebrow class="mb-2">BALANCE (OPTIONAL)</Eyebrow>
+					<BalanceScale value={balance || undefined} oninput={(v) => (balance = v)} />
+					{#if balance}
 						<button
 							type="button"
-							onclick={() => (rating = null)}
-							class="hit-44-sq {FOCUS_RING} ml-auto text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
+							onclick={() => (balance = '')}
+							class="hit-44-sq {FOCUS_RING} mt-1 text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
 							>Clear</button
 						>
 					{/if}
 				</div>
-			</div>
 
-			<!-- Balance -->
-			<div>
-				<Eyebrow class="mb-2">BALANCE (OPTIONAL)</Eyebrow>
-				<BalanceScale value={balance || undefined} oninput={(v) => (balance = v)} />
-				{#if balance}
-					<button
-						type="button"
-						onclick={() => (balance = '')}
-						class="hit-44-sq {FOCUS_RING} mt-1 text-[calc(var(--dt-base)*11/17)] text-muted transition-colors hover:text-ink"
-						>Clear</button
-					>
-				{/if}
-			</div>
+				<!-- Notes -->
+				<div>
+					<Eyebrow class="mb-2">NOTES</Eyebrow>
+					<textarea
+						bind:value={notes}
+						rows="3"
+						placeholder="Stone fruit, jasmine on cool-down…"
+						class="w-full resize-none rounded-input border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
+					></textarea>
+				</div>
 
-			<!-- Notes -->
-			<div>
-				<Eyebrow class="mb-2">NOTES</Eyebrow>
-				<textarea
-					bind:value={notes}
-					rows="3"
-					placeholder="Stone fruit, jasmine on cool-down…"
-					class="w-full resize-none rounded-input border border-hairline bg-paper px-4 py-4 font-display text-[max(16px,calc(var(--dt-base)*16/17))] leading-[1.45] text-ink-70 italic transition outline-none placeholder:text-muted focus:border-copper focus:ring-2 focus:ring-copper/25"
-				></textarea>
-			</div>
+				<!-- Photo -->
+				<div>
+					<Eyebrow class="mb-2">PHOTO</Eyebrow>
+					<PhotoInput bind:photo label="photo" />
+				</div>
+			{/if}
 
-			<!-- Photo -->
-			<div>
-				<Eyebrow class="mb-2">PHOTO</Eyebrow>
-				<PhotoInput bind:photo label="photo" />
-			</div>
+			{#if error}
+				<div class="rounded-input border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
+					{error}
+				</div>
+			{/if}
+
+			<!-- Save button at bottom -->
+			<Button size="large" variant="prominent" full type="submit" disabled={submitting}
+				>{submitting ? 'Saving…' : quickMode ? 'Save shot' : 'Save brew'}</Button
+			>
+		</div>
+	</form>
+
+	<aside class="split-aside" aria-label="Bag history">
+		<div class="flex h-9 items-center">
+			<Eyebrow class="min-w-0 truncate"
+				>History{history ? ` · ${method === 'espresso' ? 'espresso' : 'pour-over'}` : ''}</Eyebrow
+			>
+		</div>
+		{#if selectedBag && history}
+			<h2
+				class="mt-4 mb-5 font-display text-[calc(var(--dt-base)*22/17)] leading-[1.15] font-medium tracking-[-0.01em] text-ink"
+			>
+				{selectedBag.name}
+			</h2>
+			<BagHistory {history} on="paper" />
+		{:else}
+			<p
+				class="mt-4 font-display text-[calc(var(--dt-base)*15/17)] leading-[1.45] text-muted italic"
+			>
+				Pick a coffee and its recent brews, sweet spot and next move show here.
+			</p>
 		{/if}
-
-		{#if error}
-			<div class="rounded-input border border-danger/20 bg-danger/8 p-3 text-sm text-danger">
-				{error}
-			</div>
-		{/if}
-
-		<!-- Save button at bottom -->
-		<Button size="large" variant="prominent" full type="submit" disabled={submitting}
-			>{submitting ? 'Saving…' : quickMode ? 'Save shot' : 'Save brew'}</Button
-		>
-	</div>
-</form>
+	</aside>
+</div>
 
 <!-- Outside the form: the sheet's Close button is not one of its controls. -->
 {#if selectedBag && history}

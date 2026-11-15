@@ -756,3 +756,60 @@
 :root[data-foldable] .max-w-2xl {
 	max-width: none;
 }
+
+/* iPhone Duo, unfolded (951×669pt, hinge down the middle): a page and a
+   reference pane side by side. Apple's guidance for the inner display is to use
+   the width for columns and keep an EVEN number of them, so the fold falls
+   between two rather than through one.
+
+   .split is a two-column grid: .split-main (the page's column) on the left,
+   .split-aside on the right. The boundary is 50% of the VIEWPORT — the fold —
+   not the middle of the inset content area: the status column takes 84pt off
+   the right half only, so the aside is the narrower pane (about 390pt of 475).
+   The body's own padding already keeps the grid inside every inset, so the
+   aside pays the right one without saying so.
+
+   The page scrolls as a document here (Buffy's panes are absolutely placed in a
+   fixed viewport; these cannot be), so the aside is STICKY with its own scroll:
+   it stays put while the form scrolls past, and a long history scrolls inside
+   it. Sticky rather than fixed on purpose — a fixed pane would need every inset
+   restated, and would jump if an ancestor ever animated a transform.
+
+   Keyed on data-foldable + width, never on open/closed: hinge status and the
+   window resize land a beat apart while folding, and a plain width query follows
+   every frame. 840px is the floor at which the right half still holds the 334pt
+   the app is checked at (Split View) after losing its 84pt — so the unfolded
+   landscape pose splits, while the turned pose (669pt), Split View and the outer
+   display stay one column, where the same history opens as a sheet. A hinge-less
+   wide screen (iPad, desktop) keeps the centred column and the sheet.
+
+   Each pane keeps 12pt clear of the fold on top of its own 20pt gutter: controls
+   do not belong in the curve when the device is part-folded.
+   UNLAYERED, like the rule above: .split-main is also .max-w-2xl. */
+.split-aside {
+	display: none;
+}
+@media (min-width: 840px) {
+	:root[data-foldable] .split {
+		display: grid;
+		grid-template-columns: calc(50vw - env(safe-area-inset-left, 0px)) minmax(0, 1fr);
+		align-items: start;
+	}
+	:root[data-foldable] .split-main {
+		padding-right: 12px;
+	}
+	:root[data-foldable] .split-aside {
+		display: block;
+		position: sticky;
+		top: env(safe-area-inset-top, 0px);
+		max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding: 8px 20px 20px 32px;
+	}
+	/* What the pane already shows has no button to open it. Hidden, not
+	   removed: the header row keeps its three slots and the title stays centred. */
+	:root[data-foldable] .split-hide {
+		visibility: hidden;
+	}
+}

@@ -33,6 +33,16 @@
   lets the column fill under it (unlayered — Tailwind's utilities layer beats any
   layered override). The attribute means "has a hinge", NOT "is open", and is
   never cleared: status and resize land a beat apart while folding.
+- **Unfolded, the brew form splits at the fold.** `.split` (layout.css) is a
+  two-column grid: `.split-main` (the form) up to 50vw — the fold, not the middle
+  of the inset area — and `.split-aside` (the bag's history, `BagHistory.svelte`)
+  from there to the right inset. The page scrolls as a document, so the aside is
+  `position: sticky` with its own scroll, not Buffy's absolute panes. Keyed on
+  `data-foldable` + `min-width: 840px`: the turned pose, Split View and the outer
+  display stay one column and reach the same history as a sheet (`Sheet.svelte`)
+  from the form's History button, which the split hides. Keep the column count
+  even and each pane 12pt clear of the fold; a feature must never exist in one
+  pose only.
 - Safe areas: left and right are handled SEPARATELY — the Duo's status column
   takes **84pt on the right** (+34pt bottom) on both displays, sometimes 82pt at
   the top instead on the outer one. `body` pads every side by its inset; anything

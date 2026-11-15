@@ -8,7 +8,10 @@
 	import GrindSweetSpot from './GrindSweetSpot.svelte';
 	import { extractionTone } from './tones';
 
-	let { history }: { history: BagHistory } = $props();
+	// `on` is what this sits on, and its cards take the other tone so they still
+	// read as cards: the sheet is a surface, the unfolded Duo's pane is the page.
+	let { history, on = 'surface' }: { history: BagHistory; on?: 'surface' | 'paper' } = $props();
+	const card = $derived(on === 'paper' ? 'bg-surface' : 'bg-paper');
 
 	const espresso = $derived(history.method === 'espresso');
 	const noun = $derived(espresso ? 'shot' : 'brew');
@@ -36,7 +39,7 @@
 
 		{#if history.rows.length === 0}
 			<p
-				class="rounded-card border border-hairline bg-paper px-4 py-4 font-display text-[calc(var(--dt-base)*14/17)] leading-[1.45] text-muted italic"
+				class="rounded-card border border-hairline {card} px-4 py-4 font-display text-[calc(var(--dt-base)*14/17)] leading-[1.45] text-muted italic"
 			>
 				{espresso ? 'No espresso shots' : 'No pour-overs'} on this bag yet. They will line up here as
 				you log them.
@@ -44,7 +47,7 @@
 		{:else}
 			<ol class="divide-y divide-hairline overflow-hidden rounded-card border border-hairline">
 				{#each history.rows as r (r.id)}
-					<li class="bg-paper px-4 py-3">
+					<li class="{card} px-4 py-3">
 						<div class="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
 							<span
 								class="font-mono text-[calc(var(--dt-base)*17/17)] font-medium tracking-[-0.01em] text-ink"

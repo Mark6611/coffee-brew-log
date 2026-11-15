@@ -128,11 +128,18 @@ const VIEWPORTS = [
 	{ name: 'desktop', width: 1280, height: 900, note: 'control: centred column' }
 ];
 
+// The brew form with a bag picked: the one page that splits on the unfolded Duo
+// (layout.css, .split) — the form left of the fold, the bag's history right.
+const SPLIT_ROUTE = `/brews/new?bagId=${BAG1}&method=espresso`;
+// Below this width a foldable stays one column and the history is a sheet.
+const SPLIT_MIN = 840;
+
 const ROUTES = [
 	'/',
 	'/brews',
 	`/brews/${BREW1}`,
 	'/brews/new',
+	SPLIT_ROUTE,
 	`/brews/${BREW1}/edit`,
 	'/bags',
 	`/bags/${BAG1}`,
@@ -172,8 +179,29 @@ const measure = () => {
 	const fields = [
 		...document.querySelectorAll('input:not([type=file]):not([type=hidden]), textarea, select')
 	].filter((f) => f.getClientRects().length > 0);
+	const main = document.querySelector('.split-main');
+	const aside = document.querySelector('.split-aside');
+	const ar = aside ? aside.getBoundingClientRect() : null;
+	const hist = [...document.querySelectorAll('button')].find(
+		(b) => b.textContent.trim() === 'History'
+	);
 	return {
 		vw: window.innerWidth,
+		vh: window.innerHeight,
+		scrollY: window.scrollY,
+		// null on every page but the brew form
+		split: main
+			? {
+					mainRight: main.getBoundingClientRect().right,
+					mainPadRight: px(getComputedStyle(main).paddingRight),
+					asideShown: !!aside && getComputedStyle(aside).display !== 'none',
+					aside: ar ? { left: ar.left, right: ar.right, top: ar.top, bottom: ar.bottom } : null,
+					asidePadLeft: aside ? px(getComputedStyle(aside).paddingLeft) : null,
+					asideScrolls: aside ? aside.scrollHeight > aside.clientHeight + 1 : null,
+					// present only once a bag is picked
+					historyButton: hist ? getComputedStyle(hist).visibility : null
+				}
+			: null,
 		foldable: 'foldable' in de.dataset,
 		docOverflow: de.scrollWidth - de.clientWidth,
 		bodyPad: { left: px(bs.paddingLeft), right: px(bs.paddingRight) },
@@ -185,6 +213,39 @@ const measure = () => {
 			: null
 	};
 };
+
+/** The two panes meet at the fold (50% of the viewport, not of the inset area),
+ *  each 12px clear of it on top of its own gutter, and the aside stays inside
+ *  every inset. Anywhere it should not split, the aside must be gone and the
+ *  History button — the way to the same content as a sheet — must be back. */
+function checkSplit(where, m, splits, inset) {
+	const s = m.split;
+	const near = (a, b) => Math.abs(a - b) <= 0.5;
+	if (!splits) {
+		if (s.asideShown) fail(where, 'history pane showing where the form should be one column');
+		if (s.mainPadRight !== 0) fail(where, `form keeps the fold gutter (${s.mainPadRight}px)`);
+		if (s.historyButton != null && s.historyButton !== 'visible')
+			fail(where, 'History button hidden with no pane to stand in for it');
+		return;
+	}
+	const fold = m.vw / 2;
+	if (!s.asideShown || !s.aside) return fail(where, 'no history pane on the unfolded Duo');
+	if (!near(s.mainRight, fold)) fail(where, `form ends at ${s.mainRight}, want the fold ${fold}`);
+	if (!near(s.aside.left, fold))
+		fail(where, `pane starts at ${s.aside.left}, want the fold ${fold}`);
+	if (!near(s.aside.right, m.vw - inset.right))
+		fail(where, `pane ends at ${s.aside.right}, want ${m.vw - inset.right} (the right inset)`);
+	if (s.mainPadRight !== 12) fail(where, `form is ${s.mainPadRight}px clear of the fold, want 12`);
+	if (s.asidePadLeft !== 32)
+		fail(where, `pane content is ${s.asidePadLeft}px from the fold, want 32 (20 + 12)`);
+	// Pinned: at the top inset however far the form has scrolled.
+	if (!near(s.aside.top, inset.top ?? 0))
+		fail(where, `pane top ${s.aside.top} at scroll ${m.scrollY}, want ${inset.top ?? 0}`);
+	if (s.aside.bottom > m.vh - (inset.bottom ?? 0) + 0.5)
+		fail(where, `pane bottom ${s.aside.bottom} runs into the bottom inset`);
+	if (s.historyButton != null && s.historyButton !== 'hidden')
+		fail(where, 'History button showing beside the pane it would duplicate');
+}
 
 /** `foldable` is what the CASE says the device is — never read back from the page,
  *  or a lost data-foldable would quietly turn "must fill" into "may centre". */
@@ -201,12 +262,15 @@ function check(where, m, foldable, inset = { left: 0, right: 0 }) {
 		);
 	if (m.colWidth == null) return fail(where, 'no .mx-auto.max-w-2xl column');
 	const room = m.vw - inset.left - inset.right;
-	const want = foldable ? room : Math.min(room, COLUMN_MAX);
+	// The brew form is the left HALF on the unfolded Duo, up to the fold.
+	const splits = m.split != null && foldable && m.vw >= SPLIT_MIN;
+	const want = splits ? m.vw / 2 - inset.left : foldable ? room : Math.min(room, COLUMN_MAX);
 	if (Math.abs(m.colWidth - want) > 0.5)
 		fail(
 			where,
-			`column ${m.colWidth}px, want ${want}px (${foldable ? 'fill (data-foldable)' : room <= COLUMN_MAX ? 'fill' : 'centre at max-w-2xl'})`
+			`column ${m.colWidth}px, want ${want}px (${splits ? 'left half, to the fold' : foldable ? 'fill (data-foldable)' : room <= COLUMN_MAX ? 'fill' : 'centre at max-w-2xl'})`
 		);
+	if (m.split) checkSplit(where, m, splits, inset);
 	if (m.fab) {
 		if (m.fab.left < inset.left) fail(where, `FAB left edge ${m.fab.left} inside the left inset`);
 		if (m.fab.rightGap < inset.right + 20 - 0.5)
@@ -318,11 +382,13 @@ try {
 	// ── Fold walk: the Duo resizes continuously; data-foldable stays put ─────
 	// The simulator produced closed → open → partially open → closed; partially
 	// open is the same 951×669 as open. Then the two UNMEASURED poses, then closed.
-	console.log('── fold walk on /brews (no reloads)');
-	{
+	// Walked twice: on /brews, and on the brew form, where the split has to
+	// appear and go again with the width alone — nothing may cache a pose.
+	for (const walkRoute of ['/brews', SPLIT_ROUTE]) {
+		console.log(`── fold walk on ${walkRoute} (no reloads)`);
 		const page = contexts[true];
 		await page.setViewportSize({ width: 466, height: 678 });
-		await page.goto(base + '/brews', { waitUntil: 'networkidle' });
+		await gotoRendered(page, walkRoute);
 		await page.evaluate(() => window.scrollTo(0, 300));
 		for (const [w, h, label] of [
 			[466, 678, 'closed'],
@@ -335,8 +401,14 @@ try {
 			await page.waitForTimeout(300);
 			const m = await page.evaluate(measure);
 			check(`fold→${label} ${w}×${h}`, m, true);
-			console.log(`   ${label.padEnd(13)} column=${m.colWidth}px overflow=${m.docOverflow}`);
-			await page.screenshot({ path: join(OUT, `fold-${label.replace(/\s+/g, '-')}.png`) });
+			console.log(
+				`   ${label.padEnd(13)} column=${m.colWidth}px overflow=${m.docOverflow}` +
+					(m.split ? ` pane=${m.split.asideShown ? 'shown' : 'hidden'}` : '')
+			);
+			const tag = walkRoute === '/brews' ? '' : 'form-';
+			await page.screenshot({
+				path: join(OUT, `fold-${tag}${label.replace(/\s+/g, '-')}.png`)
+			});
 		}
 	}
 
@@ -445,41 +517,70 @@ try {
 		await dlg.waitFor({ state: 'detached', timeout: 3000 });
 		console.log(`   ${c.name.padEnd(15)} sheet gaps L${gapL} R${gapR} B${Math.round(gapB)}`);
 
-		// The brew form's history sheet is the other fixed overlay, with the same
-		// 12px gutter plus each inset. It differs in two ways: it is capped to the
-		// page column and centred (so on a wide display its side gaps are equal,
-		// not 12), and its body scrolls — so its height must stop short of the top
-		// inset. The injected min-height makes the content tall enough to bind.
-		await gotoRendered(page, `/brews/new?bagId=${BAG1}&method=espresso`);
-		await page.getByRole('button', { name: 'History' }).click();
-		const hist = page.locator('[role="dialog"]');
-		await hist.waitFor({ state: 'visible', timeout: 3000 });
-		await page.addStyleTag({ content: '[role="dialog"] ol { min-height: 1400px; }' });
-		await page.waitForTimeout(300);
-		const h = await hist.boundingBox();
-		const hL = h.x - c.inset.left;
-		const hR = c.w - (h.x + h.width) - c.inset.right;
-		const hB = c.h - (h.y + h.height) - c.inset.bottom;
-		const hT = h.y - c.inset.top;
-		const capped = h.width > 648 - 0.5;
-		if (capped ? Math.abs(hL - hR) > 1 || hL < 11.5 : Math.abs(hL - 12) > 0.5)
-			fail(
-				`inset ${c.name} history`,
-				`left gap ${hL} inside the inset, want ${capped ? 'centred' : 12}`
+		await gotoRendered(page, SPLIT_ROUTE);
+		if (c.foldable && c.w >= SPLIT_MIN) {
+			// Unfolded Duo: no sheet — the history is the pane right of the fold,
+			// and it is the pane that pays the 84pt status column. Measured at the
+			// top and again with the form scrolled, where it must not have moved.
+			check(`inset ${c.name} split`, await page.evaluate(measure), true, c.inset);
+			await page.evaluate(() => window.scrollTo(0, 400));
+			await page.waitForTimeout(200);
+			const scrolled = await page.evaluate(measure);
+			if (scrolled.scrollY < 100) fail(`inset ${c.name} split`, 'form did not scroll');
+			check(`inset ${c.name} split, scrolled`, scrolled, true, c.inset);
+			// A history taller than the display scrolls inside the pane.
+			await page.addStyleTag({ content: '.split-aside ol { min-height: 1400px; }' });
+			await page.waitForTimeout(200);
+			const tall = await page.evaluate(measure);
+			check(`inset ${c.name} split, tall`, tall, true, c.inset);
+			if (!tall.split?.asideScrolls)
+				fail(`inset ${c.name} split, tall`, 'a tall history does not scroll inside the pane');
+			if (Math.abs(tall.split.aside.bottom - (c.h - c.inset.bottom)) > 0.5)
+				fail(
+					`inset ${c.name} split, tall`,
+					`pane bottom ${tall.split.aside.bottom}, want ${c.h - c.inset.bottom} when full`
+				);
+			await page.screenshot({ path: join(OUT, `inset-${c.name}--split.png`) });
+			const a = tall.split.aside;
+			console.log(
+				`   ${c.name.padEnd(15)} split: form to ${tall.split.mainRight}, pane ${a.left}–${a.right}, pinned at ${a.top}, bottom ${a.bottom}`
 			);
-		if (!capped && Math.abs(hR - 12) > 0.5)
-			fail(`inset ${c.name} history`, `right gap ${hR} inside the inset, want 12`);
-		if (Math.abs(hB - 12) > 0.5)
-			fail(`inset ${c.name} history`, `bottom gap ${hB} inside the inset, want 12`);
-		if (Math.abs(hT - 56) > 0.5)
-			fail(`inset ${c.name} history`, `top gap ${hT} below the inset, want 56 when full`);
-		await page.screenshot({ path: join(OUT, `inset-${c.name}--history.png`) });
-		await page.keyboard.press('Escape');
-		await hist.waitFor({ state: 'detached', timeout: 3000 });
-		console.log(
-			`   ${c.name.padEnd(15)} history gaps inside the insets L${hL} R${hR} B${hB} T${hT}` +
-				(capped ? ' (capped, centred)' : '')
-		);
+		} else {
+			// The brew form's history sheet is the other fixed overlay, with the same
+			// 12px gutter plus each inset. It differs in two ways: it is capped to the
+			// page column and centred (so on a wide display its side gaps are equal,
+			// not 12), and its body scrolls — so its height must stop short of the top
+			// inset. The injected min-height makes the content tall enough to bind.
+			await page.getByRole('button', { name: 'History' }).click();
+			const hist = page.locator('[role="dialog"]');
+			await hist.waitFor({ state: 'visible', timeout: 3000 });
+			await page.addStyleTag({ content: '[role="dialog"] ol { min-height: 1400px; }' });
+			await page.waitForTimeout(300);
+			const h = await hist.boundingBox();
+			const hL = h.x - c.inset.left;
+			const hR = c.w - (h.x + h.width) - c.inset.right;
+			const hB = c.h - (h.y + h.height) - c.inset.bottom;
+			const hT = h.y - c.inset.top;
+			const capped = h.width > 648 - 0.5;
+			if (capped ? Math.abs(hL - hR) > 1 || hL < 11.5 : Math.abs(hL - 12) > 0.5)
+				fail(
+					`inset ${c.name} history`,
+					`left gap ${hL} inside the inset, want ${capped ? 'centred' : 12}`
+				);
+			if (!capped && Math.abs(hR - 12) > 0.5)
+				fail(`inset ${c.name} history`, `right gap ${hR} inside the inset, want 12`);
+			if (Math.abs(hB - 12) > 0.5)
+				fail(`inset ${c.name} history`, `bottom gap ${hB} inside the inset, want 12`);
+			if (Math.abs(hT - 56) > 0.5)
+				fail(`inset ${c.name} history`, `top gap ${hT} below the inset, want 56 when full`);
+			await page.screenshot({ path: join(OUT, `inset-${c.name}--history.png`) });
+			await page.keyboard.press('Escape');
+			await hist.waitFor({ state: 'detached', timeout: 3000 });
+			console.log(
+				`   ${c.name.padEnd(15)} history gaps inside the insets L${hL} R${hR} B${hB} T${hT}` +
+					(capped ? ' (capped, centred)' : '')
+			);
+		}
 	}
 	insets = { top: 0, right: 0, bottom: 0, left: 0 };
 
