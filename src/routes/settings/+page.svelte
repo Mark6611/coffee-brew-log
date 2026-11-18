@@ -250,7 +250,12 @@
 			Data
 		</h1>
 		<p class="mt-2 font-display text-[calc(var(--dt-base)*15/17)] text-muted italic">
-			{#if isNative}
+			{#if isNative && cloudAvailable === false}
+				<!-- Known off, not merely still asking: the sync line stays up for the
+				     beat it takes iCloud to answer, so it never flickers for the many
+				     who have it on. Same length as the line it replaces — no reflow. -->
+				Your brews live on this device. iCloud is off, so they aren’t syncing. Back up regularly.
+			{:else if isNative}
 				Your brews live on this device, and sync through your own iCloud. Back up regularly.
 			{:else}
 				Your brews live in this browser. Back up regularly.

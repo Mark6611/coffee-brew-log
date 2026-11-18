@@ -346,6 +346,22 @@
 	const history = $derived(selectedBag ? bagHistory(selectedBag, method, allBrews, allBags) : null);
 	let historyOpen = $state(false);
 
+	// A sheet opened folded would stay up after unfolding: across the fold, over
+	// the pane that now shows the same history. The pane getting a box is the
+	// signal — the stylesheet's own split rule, so there is no second copy of its
+	// breakpoint here, and it fires on the frame the layout changes. Only watched
+	// while the sheet is open; in the split the button that opens it is hidden.
+	let paneEl = $state<HTMLElement>();
+	$effect(() => {
+		const pane = paneEl;
+		if (!historyOpen || !pane || typeof ResizeObserver === 'undefined') return;
+		const seen = new ResizeObserver(() => {
+			if (pane.getClientRects().length > 0) historyOpen = false;
+		});
+		seen.observe(pane);
+		return () => seen.disconnect();
+	});
+
 	// Carried-over strip content (quick mode): what repeats from the last shot.
 	const carriedTempC = $derived(
 		lastShot?.method === 'espresso' ? (lastShot.waterTempC ?? null) : null
@@ -1283,7 +1299,7 @@
 		</div>
 	</form>
 
-	<aside class="split-aside" aria-label="Bag history">
+	<aside bind:this={paneEl} class="split-aside" aria-label="Bag history">
 		<div class="flex h-9 items-center">
 			<Eyebrow class="min-w-0 truncate"
 				>History{history ? ` · ${method === 'espresso' ? 'espresso' : 'pour-over'}` : ''}</Eyebrow

@@ -436,6 +436,45 @@ try {
 		}
 	}
 
+	// ── A history sheet opened folded must not survive unfolding ────────────
+	// The sheet and the pane show the same thing. Opened on the outer display
+	// and left up, the sheet would sit across the fold over a dimmed pane, so
+	// the page closes it when the pane appears — and the scroll lock has to go
+	// with it, or the form is stuck. Folding again must not bring it back.
+	{
+		console.log('── history sheet across a fold');
+		const where = 'history sheet, opened folded then unfolded';
+		const page = contexts[true];
+		await page.setViewportSize({ width: 466, height: 678 });
+		await gotoRendered(page, SPLIT_ROUTE);
+		await page.getByRole('button', { name: 'History' }).click();
+		const sheet = page.locator('[role="dialog"]');
+		await sheet.waitFor({ state: 'visible', timeout: 3000 });
+		await page.setViewportSize({ width: 951, height: 669 });
+		const closed = await sheet.waitFor({ state: 'detached', timeout: 3000 }).then(
+			() => true,
+			() => false
+		);
+		if (!closed) {
+			fail(where, 'the sheet is still up, over the pane that shows the same history');
+			await page.keyboard.press('Escape');
+			await sheet.waitFor({ state: 'detached', timeout: 3000 }).catch(() => {});
+		}
+		const after = await page.evaluate(() => ({
+			locked: document.body.style.overflow === 'hidden',
+			pane: getComputedStyle(document.querySelector('.split-aside')).display !== 'none'
+		}));
+		if (!after.pane) fail(where, 'no history pane after unfolding');
+		if (after.locked) fail(where, 'the page is still scroll-locked after the sheet closed');
+		await page.setViewportSize({ width: 466, height: 678 });
+		await page.waitForTimeout(400);
+		const back = await sheet.count();
+		if (back) fail(where, 'the sheet came back on folding again');
+		console.log(
+			`   sheet ${closed ? 'closed' : 'STILL UP'} on unfolding, pane ${after.pane ? 'shown' : 'missing'}, scroll ${after.locked ? 'LOCKED' : 'free'}, folded again: ${back ? 'sheet back' : 'no sheet'}`
+		);
+	}
+
 	// ── Input floor at the smallest Dynamic Type size ───────────────────────
 	// On iOS, :root takes `font: -apple-system-body`, so 1rem IS the Dynamic Type
 	// size — 14px at xSmall. Chromium has no such font, so 1rem stays 16px and an
