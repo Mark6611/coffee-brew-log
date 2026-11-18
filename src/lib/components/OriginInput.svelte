@@ -49,7 +49,7 @@
 </script>
 
 <div
-	class="flex min-h-12 w-full items-center rounded-input border bg-paper transition-all duration-200 {resolved.length
+	class="field-wrapper flex min-h-12 w-full items-center rounded-input border bg-paper transition-all duration-200 {resolved.length
 		? 'border-copper ring-2 ring-copper/25'
 		: 'border-hairline focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25'}"
 >

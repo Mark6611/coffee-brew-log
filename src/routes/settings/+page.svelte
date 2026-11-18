@@ -353,10 +353,22 @@
 				<p
 					class="rounded-card border border-hairline bg-surface px-4 py-3 text-[calc(var(--dt-base)*13/17)] leading-[1.5] text-muted"
 				>
-					<span class="text-danger">This browser hasn’t granted persistent storage.</span>
-					{#if isNative}
+					<span class="text-danger"
+						>{isNative
+							? 'This app hasn’t been granted persistent storage.'
+							: 'This browser hasn’t granted persistent storage.'}</span
+					>
+					{#if isNative && cloudAvailable}
 						Your brews are also in your iCloud, but this device’s copy could be cleared if storage
 						runs low.
+					{:else if isNative && cloudAvailable === false}
+						<!-- iCloud off: do NOT claim a second copy. Anything logged since the
+						     last sync (or ever, on a device that never synced) is here only. -->
+						With iCloud off, what you log is saved only on this device, and it could be cleared if storage
+						runs low. Sign into iCloud in iOS Settings, or download a backup to be safe.
+					{:else if isNative}
+						<!-- Still asking iCloud — say only what is known. -->
+						This device’s copy could be cleared if storage runs low.
 					{:else}
 						Your brews live only in this browser, and it may clear them if storage runs low or you
 						don’t open the app for a while. Download a backup to be safe.

@@ -164,7 +164,7 @@
 	<div class="relative">
 		<!-- Idle / typing -->
 		<div
-			class="flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-3 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
+			class="field-wrapper flex min-h-12 items-center gap-2 rounded-input border border-hairline bg-paper px-3 py-2 transition focus-within:border-copper focus-within:ring-2 focus-within:ring-copper/25"
 		>
 			<svg
 				width="18"
