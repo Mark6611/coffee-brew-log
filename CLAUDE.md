@@ -60,6 +60,45 @@
   CSS **and JS** to the measured insets (Chromium reports them all as 0), and
   stands a 14px root in for xSmall Dynamic Type (Chromium's 1rem is always 16px).
 
+## Motion, haptics and native appearance
+
+- **A screen change moves the page with `left`, never a transform.** The document
+  scrolls, so the page wrapper in `+layout.svelte` (`[data-nav-stage]`) is as tall
+  as the page. A transform on it — or `translate`, `filter`, `will-change` — makes
+  it the containing block for every `position: fixed` element inside: the + buttons
+  on Brews and Bags, the edit bar, `Sheet`. For the length of the animation they
+  jump to the page's edges and double-count their insets. (Buffy translates its
+  container; Buffy's container is a fixed 100dvh box, so it can.) The rule and the
+  motion live in `src/lib/navMotion.ts`; `verify:duo` freezes the animation
+  mid-flight and fails if anything fixed has moved.
+- `body` carries `overflow-x: clip` for the same animation: the incoming page
+  starts 24px past the right edge, and without the clip the document can be
+  dragged sideways for that quarter second. Don't remove it as "unused".
+- **Direction comes from the route tree, not from history.** Nothing calls
+  `history.back()` — every "‹ Brews", Cancel and post-save return is a link or a
+  `goto()`, and the native shell has no back button or gesture. A move to a
+  shallower path arrives from the left, anything else from the right; a real
+  history step (the web's back button) keeps its own direction. A new route that
+  is conceptually "up" but not shallower needs a rule in `navDirection`.
+- Reduce Motion: no arrival animation at all (the `$lib/motion` rule).
+- **Haptics are one delegated listener** in the root layout: a light tick for
+  `[role="switch"]` and `[aria-pressed]` controls, native only
+  (`@capacitor/haptics`). A new toggle, segment or chip gets it by carrying one of
+  those attributes — no per-site haptic calls. Read-only scales are excluded by
+  their `aria-hidden`.
+- **Native UI follows the in-app theme through `AppearancePlugin.swift`.** The
+  keyboard, the date picker, the share sheet and the file picker are drawn by
+  UIKit, which only knows the device setting; the plugin overrides the window's
+  interface style with the theme PREFERENCE sent by `theme.svelte.ts` (`system`
+  clears it). The override also drives `prefers-color-scheme` inside the web view,
+  so never read that query while the preference is explicit — the theme store
+  only consults it in System mode, and its `change` listener is what brings the
+  app back when the override clears.
+- A new app-local Swift plugin needs BOTH `registerPluginInstance` in
+  `ViewController.capacitorDidLoad` and four hand-written entries in
+  `project.pbxproj` (build file, file reference, group, Sources phase). Capacitor's
+  own plugins are picked up by `cap sync` instead (`CapApp-SPM/Package.swift`).
+
 ## iOS 27 SDK: the scene lifecycle is mandatory
 
 - An app built with the iOS 27 SDK without a `UIApplicationSceneManifest` is
@@ -70,10 +109,10 @@
   CLI command exposes — it was run from `@capacitor/cli/dist/tasks`).
 - **The window comes from `Main.storyboard`, not from code.** The manifest names
   the storyboard, so UIKit builds the window — rooted at `ViewController`, where
-  the app-local plugins (CloudSync, Hinge) are registered — before
+  the app-local plugins (CloudSync, Hinge, Appearance) are registered — before
   `scene(_:willConnectTo:)` runs. Never adopt Capacitor's template body there: it
   builds a second window with a plain `CAPBridgeViewController()`, which silently
-  drops both plugins.
+  drops all of them.
 - Build for the simulator with `-destination 'generic/platform=iOS Simulator'`:
   `xcodebuild` lists no iOS 27.x simulator as a destination. Sign it ad-hoc
   (`CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=

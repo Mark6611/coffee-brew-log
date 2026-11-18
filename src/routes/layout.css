@@ -267,6 +267,14 @@
 		padding-bottom: env(safe-area-inset-bottom, 0);
 		padding-left: env(safe-area-inset-left, 0);
 		padding-right: env(safe-area-inset-right, 0);
+		/* A screen arriving from the right starts 24px past the edge for a quarter
+		   second ($lib/navMotion). Without this the document is 24px wider for
+		   that long, and a finger already on the glass can drag the page sideways.
+		   Set on body with html left at `visible`, it applies to the VIEWPORT (as
+		   hidden): body does not become a scroll container, so the document scroll
+		   and the sticky headers are untouched. iOS 15 has no `clip` and ignores
+		   the line, keeping the old behaviour. */
+		overflow-x: clip;
 	}
 
 	/* iOS zooms the page when a focused input's font-size is under 16px.

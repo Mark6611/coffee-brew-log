@@ -582,6 +582,139 @@ try {
 			);
 		}
 	}
+	// ── Arrival animation: fixed chrome must not move with the page ──────────
+	// A screen change eases the new page in from the side ($lib/navMotion). The
+	// page wrapper is as tall as the document, so if that motion is ever written
+	// as a transform (or anything else that makes the wrapper a containing block)
+	// every position:fixed element inside it — the + buttons, the edit bar, a
+	// sheet — jumps to the PAGE's edges for the length of the animation, and with
+	// insets it double-counts them. So: navigate in-app, freeze the animation
+	// 60ms in, and require each fixed element to be exactly where it ends up.
+	// Also: the page arrives from the right going deeper and from the left going
+	// back up — by link as well as by history, since the app's own back controls
+	// are links — and it cannot be dragged sideways while it is 24px off-screen.
+	console.log('── arrival animation (frozen mid-flight)');
+	const freezeArrival = () => {
+		const animate = Element.prototype.animate;
+		window.__nav = [];
+		Element.prototype.animate = function (...args) {
+			const a = animate.apply(this, args);
+			if (this.matches?.('[data-nav-stage]')) {
+				a.pause();
+				a.currentTime = 60;
+				window.__nav.push(a);
+			}
+			return a;
+		};
+	};
+	const snapArrival = () => {
+		const stage = document.querySelector('[data-nav-stage]');
+		const box = (el) => {
+			const r = el.getBoundingClientRect();
+			return [r.left, r.top, r.right, r.bottom].map((n) => Math.round(n * 10) / 10);
+		};
+		return {
+			frozen: window.__nav.length,
+			stageLeft: stage.getBoundingClientRect().left,
+			fixed: [...stage.querySelectorAll('*')]
+				.filter((el) => getComputedStyle(el).position === 'fixed')
+				.map((el) => ({
+					what: el.getAttribute('aria-label') ?? el.className.toString().slice(0, 24),
+					box: box(el)
+				}))
+		};
+	};
+	const ARRIVAL_CASES = [
+		{
+			name: 'phone',
+			w: 393,
+			h: 852,
+			foldable: false,
+			inset: { top: 0, right: 0, bottom: 0, left: 0 }
+		},
+		{
+			name: 'duo-outer',
+			w: 466,
+			h: 678,
+			foldable: true,
+			inset: { top: 0, right: 84, bottom: 34, left: 0 }
+		},
+		{
+			name: 'duo-outer-top',
+			w: 466,
+			h: 678,
+			foldable: true,
+			inset: { top: 82, right: 0, bottom: 34, left: 0 }
+		}
+	];
+	for (const c of ARRIVAL_CASES) {
+		insets = c.inset;
+		const page = contexts[c.foldable];
+		await page.setViewportSize({ width: c.w, height: c.h });
+		const arrive = async (label, act, wantDir, wantFixed) => {
+			const where = `arrival ${c.name} ${label}`;
+			await page.evaluate(() => (window.__nav = []));
+			await act();
+			await page
+				.waitForFunction(() => window.__nav.length > 0, null, { timeout: 5000 })
+				.catch(() => {});
+			await page.waitForTimeout(200); // IndexedDB answers and the list renders
+			const mid = await page.evaluate(snapArrival);
+			if (!mid.frozen) return fail(where, 'the arrival animation did not run');
+			await page.mouse.move(120, 300);
+			await page.mouse.wheel(60, 0);
+			await page.waitForTimeout(150);
+			const draggedTo = await page.evaluate(() => window.scrollX);
+			await page.evaluate(() => window.__nav.forEach((a) => a.finish()));
+			await page.waitForTimeout(100);
+			const end = await page.evaluate(snapArrival);
+			const travel = mid.stageLeft - end.stageLeft;
+			if (wantDir === 'forward' ? !(travel > 1) : !(travel < -1))
+				fail(
+					where,
+					`page is ${travel.toFixed(1)}px from rest mid-flight, want it coming ${wantDir}`
+				);
+			if (draggedTo !== 0) fail(where, `the page scrolled sideways to ${draggedTo} while arriving`);
+			if (end.fixed.length < wantFixed)
+				fail(
+					where,
+					`found ${end.fixed.length} fixed element(s), expected ${wantFixed} — nothing to check`
+				);
+			if (mid.fixed.length !== end.fixed.length)
+				fail(
+					where,
+					`fixed elements changed mid-flight (${mid.fixed.length} → ${end.fixed.length})`
+				);
+			else
+				mid.fixed.forEach((f, i) => {
+					const moved = f.box.some((n, k) => Math.abs(n - end.fixed[i].box[k]) > 0.5);
+					if (moved)
+						fail(
+							where,
+							`"${f.what}" is at [${f.box}] mid-flight but rests at [${end.fixed[i].box}]`
+						);
+				});
+			console.log(
+				`   ${c.name.padEnd(14)} ${label.padEnd(22)} ${travel > 0 ? '+' : ''}${travel.toFixed(1)}px mid-flight, ` +
+					`${end.fixed.length} fixed element(s) still`
+			);
+		};
+		await gotoRendered(page, '/');
+		await page.evaluate(freezeArrival);
+		await arrive('home → brews', () => page.click('a[href$="/brews"]'), 'forward', 1);
+		// "‹ Home" is a plain link — the only kind of back the native shell has.
+		await arrive('brews → home (link)', () => page.click('.header a'), 'back', 0);
+		await arrive('home → bags', () => page.click('a[href$="/bags"]'), 'forward', 1);
+		await arrive('bags → home (history)', () => page.goBack(), 'back', 0);
+		await gotoRendered(page, `/brews/${BREW1}`);
+		await page.evaluate(freezeArrival);
+		await arrive(
+			'detail → edit',
+			() => page.click(`a[href$="/brews/${BREW1}/edit"]`),
+			'forward',
+			1
+		);
+	}
 	insets = { top: 0, right: 0, bottom: 0, left: 0 };
 
 	// Reset seeded state (house rule).

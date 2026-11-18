@@ -14,6 +14,7 @@
 		C0FFEE0000000000000000B1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F1 /* ViewController.swift */; };
 		C0FFEE0000000000000000B2 /* CloudSyncPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F2 /* CloudSyncPlugin.swift */; };
 		C0FFEE0000000000000000B4 /* HingePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F7 /* HingePlugin.swift */; };
+		C0FFEE0000000000000000B5 /* AppearancePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F8 /* AppearancePlugin.swift */; };
 		C0FFEE0000000000000000B3 /* CloudSyncSafeContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = C0FFEE0000000000000000F3 /* CloudSyncSafeContainer.m */; };
 		504EC30D1FED79650016851F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30B1FED79650016851F /* Main.storyboard */; };
 		504EC30F1FED79650016851F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 504EC30E1FED79650016851F /* Assets.xcassets */; };
@@ -30,6 +31,7 @@
 		C0FFEE0000000000000000F1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F2 /* CloudSyncPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncPlugin.swift; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F7 /* HingePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HingePlugin.swift; sourceTree = "<group>"; };
+		C0FFEE0000000000000000F8 /* AppearancePlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePlugin.swift; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F3 /* CloudSyncSafeContainer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CloudSyncSafeContainer.m; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F4 /* CloudSyncSafeContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CloudSyncSafeContainer.h; sourceTree = "<group>"; };
 		C0FFEE0000000000000000F5 /* App-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "App-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				C0FFEE0000000000000000F1 /* ViewController.swift */,
 				C0FFEE0000000000000000F2 /* CloudSyncPlugin.swift */,
 				C0FFEE0000000000000000F7 /* HingePlugin.swift */,
+				C0FFEE0000000000000000F8 /* AppearancePlugin.swift */,
 				C0FFEE0000000000000000F4 /* CloudSyncSafeContainer.h */,
 				C0FFEE0000000000000000F3 /* CloudSyncSafeContainer.m */,
 				C0FFEE0000000000000000F5 /* App-Bridging-Header.h */,
@@ -180,6 +183,7 @@
 				C0FFEE0000000000000000B1 /* ViewController.swift in Sources */,
 				C0FFEE0000000000000000B2 /* CloudSyncPlugin.swift in Sources */,
 				C0FFEE0000000000000000B4 /* HingePlugin.swift in Sources */,
+				C0FFEE0000000000000000B5 /* AppearancePlugin.swift in Sources */,
 				C0FFEE0000000000000000B3 /* CloudSyncSafeContainer.m in Sources */,
 				EE24B1E5D1544CE0BB660B16 /* SceneDelegate.swift in Sources */,
 			);

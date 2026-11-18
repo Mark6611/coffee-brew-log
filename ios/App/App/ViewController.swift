@@ -8,5 +8,6 @@ class ViewController: CAPBridgeViewController {
 	override func capacitorDidLoad() {
 		bridge?.registerPluginInstance(CloudSyncPlugin())
 		bridge?.registerPluginInstance(HingePlugin())
+		bridge?.registerPluginInstance(AppearancePlugin())
 	}
 }

@@ -9,7 +9,7 @@
 // - localStorage must be read in the module initializer, not onMount, or the
 //   Settings segmented control renders the wrong segment for one tick.
 
-import { setupNativeChrome } from '$lib/native';
+import { setNativeAppearance, setupNativeChrome } from '$lib/native';
 
 export type ThemePref = 'system' | 'light' | 'dark';
 
@@ -31,6 +31,9 @@ function apply() {
 	document.documentElement.dataset.theme = eff;
 	// Keep the native status bar's text color in step with the theme.
 	void setupNativeChrome(eff);
+	// And everything else UIKit draws (keyboard, pickers, share sheet). This takes
+	// the PREFERENCE: 'system' must clear the override, not pin today's answer.
+	void setNativeAppearance(pref);
 }
 
 export const theme = {

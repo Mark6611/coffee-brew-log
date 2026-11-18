@@ -32,6 +32,25 @@ export async function hideSplash(): Promise<void> {
 	}
 }
 
+// Loaded once and kept, so only the first tick pays for the import.
+let hapticsModule: Promise<typeof import('@capacitor/haptics')> | null = null;
+
+/**
+ * A light haptic tick — what a native switch or segmented control gives when it
+ * changes. Best-effort and native-only: the web build stays silent (iOS Safari
+ * has no vibration API, and a buzzing Android PWA is not the intent).
+ */
+export async function hapticTick(): Promise<void> {
+	if (!isNative) return;
+	try {
+		hapticsModule ??= import('@capacitor/haptics');
+		const { Haptics, ImpactStyle } = await hapticsModule;
+		await Haptics.impact({ style: ImpactStyle.Light });
+	} catch {
+		hapticsModule = null; // plugin absent or the load failed — try again next time
+	}
+}
+
 // ─── iCloud sync bridge (CloudSyncPlugin.swift, registered in ViewController) ──
 // Ported from sibling Buffy: the native side moves opaque {id, updatedAt, json}
 // records in/out of CloudKit's private database; all merge logic lives in JS
@@ -103,5 +122,35 @@ export async function watchHinge(onChange: (state: HingeState) => void): Promise
 		if (events === before) onChange(parseHingeState(state));
 	} catch {
 		/* native shell without the plugin: width-only layout, as before */
+	}
+}
+
+// ─── Native appearance (AppearancePlugin.swift, registered in ViewController) ──
+// The in-app theme has three settings; iOS only knows the system one. Without
+// this, choosing Dark in the app on a Light phone leaves everything UIKit draws
+// — the keyboard, the date and time pickers, the share sheet and file picker —
+// in Light over a dark app. `color-scheme` in layout.css covers what the web
+// engine draws; this covers the rest by overriding the window's interface style.
+interface AppearanceBridge {
+	setStyle(opts: { style: 'light' | 'dark' | 'system' }): Promise<void>;
+}
+const Appearance = registerPlugin<AppearanceBridge>('Appearance');
+
+/**
+ * Make native UI follow the in-app theme PREFERENCE (not the effective theme):
+ * 'system' clears the override so iOS goes back to following the device live.
+ *
+ * Side effect to know about: the override also drives `prefers-color-scheme`
+ * inside the web view. That is harmless while the preference is explicit (the
+ * theme store never consults it then) and on switching back to System the query
+ * corrects itself a moment after the override clears — the store's own
+ * matchMedia listener then re-applies.
+ */
+export async function setNativeAppearance(pref: 'light' | 'dark' | 'system'): Promise<void> {
+	if (!isNative) return;
+	try {
+		await Appearance.setStyle({ style: pref });
+	} catch {
+		/* native shell without the plugin: native UI follows the system, as before */
 	}
 }

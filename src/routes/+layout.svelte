@@ -6,11 +6,12 @@
 	import './layout.css';
 
 	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import { motion } from '$lib/motion.svelte';
+	import { afterNavigate } from '$app/navigation';
+	import { rm } from '$lib/motion.svelte';
 	import { page } from '$app/state';
-	import { hideSplash, isNative, watchHinge } from '$lib/native';
+	import { hapticTick, hideSplash, isNative, watchHinge } from '$lib/native';
 	import { applyHingeState } from '$lib/hinge';
+	import { navDirection, navMotion, shouldAnimateNav, wantsLightHaptic } from '$lib/navMotion';
 	import { theme } from '$lib/theme.svelte';
 	import { storage } from '$lib/storage.svelte';
 	import { runCloudSync } from '$lib/cloudSync';
@@ -18,6 +19,23 @@
 	import PwaUpdatePrompt from '$lib/components/PwaUpdatePrompt.svelte';
 
 	let { children } = $props();
+
+	// The incoming screen eases in from the direction of travel: from the right
+	// going deeper, from the left going back up ($lib/navMotion has the rule, the
+	// motion, and why it is `left`, not a transform). afterNavigate runs once the new page is
+	// in the DOM and before it paints, so the screen is live from its first frame.
+	let pageEl = $state<HTMLDivElement>();
+	afterNavigate((navigation) => {
+		if (navigation.type === 'enter') return; // first paint: the splash fade owns it
+		const from = navigation.from?.url.pathname;
+		const to = navigation.to?.url.pathname;
+		if (!shouldAnimateNav(from, to)) return;
+		const delta = navigation.type === 'popstate' ? navigation.delta : undefined;
+		const move = navMotion(navDirection(navigation.type, delta, from, to), rm());
+		if (move && typeof pageEl?.animate === 'function') {
+			pageEl.animate(move.keyframes, move.options);
+		}
+	});
 
 	onMount(() => {
 		// Applies the stored preference and starts following the OS in System
@@ -38,17 +56,24 @@
 		// Native: sync with iCloud on launch and every return to the foreground
 		// (visibilitychange covers app-switch in the WKWebView — no extra plugin).
 		let onVisible: (() => void) | null = null;
+		// Native: a light tick for switches, segments and chips — one delegated
+		// listener instead of a haptic call at every call site.
+		const onTap = (e: MouseEvent) => {
+			if (wantsLightHaptic(e.target)) void hapticTick();
+		};
 		if (isNative) {
 			void runCloudSync();
 			onVisible = () => {
 				if (document.visibilityState === 'visible') void runCloudSync();
 			};
 			document.addEventListener('visibilitychange', onVisible);
+			document.addEventListener('click', onTap);
 		}
 
 		return () => {
 			stopTheme();
 			if (onVisible) document.removeEventListener('visibilitychange', onVisible);
+			document.removeEventListener('click', onTap);
 		};
 	});
 </script>
@@ -56,8 +81,12 @@
 <PwaUpdatePrompt />
 <ConfirmSheet />
 
+<!-- Keyed on the pathname so every screen change builds a fresh page (two brews
+     share one route, and its state must not carry over). `relative` is what the
+     arrival animation's `left` offset moves — see afterNavigate above.
+     data-nav-stage is how `verify:duo` finds this element. -->
 {#key page.url.pathname}
-	<div in:fade={motion({ duration: 120 })}>
+	<div bind:this={pageEl} class="relative" data-nav-stage>
 		{@render children()}
 	</div>
 {/key}
