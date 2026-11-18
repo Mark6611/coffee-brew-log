@@ -503,9 +503,10 @@
 	<title>New brew</title>
 </svelte:head>
 
-<!-- .split: on the unfolded iPhone Duo the form takes the left half and the bag's
-     history the right (layout.css). Everywhere else it is this one column, and
-     the same history opens as a sheet from the History button. -->
+<!-- .split: on the unfolded iPhone Duo the form takes the RIGHT half — the one
+     you touch — and the bag's history the left (layout.css swaps them; the form
+     stays first in source order). Everywhere else it is this one column, and the
+     same history opens as a sheet from the History button. -->
 <div class="split">
 	<form onsubmit={handleSubmit} class="split-main mx-auto max-w-2xl pb-20">
 		<!-- Header row -->

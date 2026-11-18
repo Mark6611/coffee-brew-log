@@ -9,6 +9,11 @@
   animates between segments with a gentle spring overshoot, rather than the
   active state hard-swapping between two buttons. Palette stays the app's own
   (paper track, surface thumb); only the motion + structure follow iOS 27.
+
+  The segments are self-stretch, not h-full: the track only has a MIN height, so
+  a percentage height has nothing to resolve against and the buttons collapsed
+  to the height of their text at the top of the track — the label sat 8–10px
+  above the centre of the thumb. Stretched, they are as tall as the thumb.
 -->
 <div class="relative flex min-h-12 rounded-input border border-hairline bg-paper p-1">
 	<!-- sliding thumb: width = one segment; translates to the selected index -->
@@ -20,7 +25,7 @@
 		type="button"
 		onclick={() => (value = 'espresso')}
 		aria-pressed={value === 'espresso'}
-		class="hit-44 {FOCUS_RING_INSET} relative z-10 h-full flex-1 text-[calc(var(--dt-base)*14.5/17)] transition-colors duration-200 {value ===
+		class="hit-44 {FOCUS_RING_INSET} relative z-10 flex-1 self-stretch text-[calc(var(--dt-base)*14.5/17)] transition-colors duration-200 {value ===
 		'espresso'
 			? 'font-semibold text-ink'
 			: 'font-medium text-muted'}">Espresso</button
@@ -29,7 +34,7 @@
 		type="button"
 		onclick={() => (value = 'pour-over')}
 		aria-pressed={value === 'pour-over'}
-		class="hit-44 {FOCUS_RING_INSET} relative z-10 h-full flex-1 text-[calc(var(--dt-base)*14.5/17)] transition-colors duration-200 {value ===
+		class="hit-44 {FOCUS_RING_INSET} relative z-10 flex-1 self-stretch text-[calc(var(--dt-base)*14.5/17)] transition-colors duration-200 {value ===
 		'pour-over'
 			? 'font-semibold text-ink'
 			: 'font-medium text-muted'}">Pour-over</button

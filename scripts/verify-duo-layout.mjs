@@ -129,10 +129,14 @@ const VIEWPORTS = [
 ];
 
 // The brew form with a bag picked: the one page that splits on the unfolded Duo
-// (layout.css, .split) — the form left of the fold, the bag's history right.
+// (layout.css, .split) — the form RIGHT of the fold (the half you touch, under
+// the right thumb), the bag's history left.
 const SPLIT_ROUTE = `/brews/new?bagId=${BAG1}&method=espresso`;
 // Below this width a foldable stays one column and the history is a sheet.
-const SPLIT_MIN = 840;
+const SPLIT_MIN = 860;
+// The narrowest box the form is checked in elsewhere (Split View, below). The
+// form's half loses the status column and the fold gutter, and must keep this.
+const FORM_MIN = 334;
 
 const ROUTES = [
 	'/',
@@ -192,11 +196,14 @@ const measure = () => {
 		// null on every page but the brew form
 		split: main
 			? {
+					mainLeft: main.getBoundingClientRect().left,
 					mainRight: main.getBoundingClientRect().right,
+					mainPadLeft: px(getComputedStyle(main).paddingLeft),
 					mainPadRight: px(getComputedStyle(main).paddingRight),
 					asideShown: !!aside && getComputedStyle(aside).display !== 'none',
 					aside: ar ? { left: ar.left, right: ar.right, top: ar.top, bottom: ar.bottom } : null,
 					asidePadLeft: aside ? px(getComputedStyle(aside).paddingLeft) : null,
+					asidePadRight: aside ? px(getComputedStyle(aside).paddingRight) : null,
 					asideScrolls: aside ? aside.scrollHeight > aside.clientHeight + 1 : null,
 					// present only once a bag is picked
 					historyButton: hist ? getComputedStyle(hist).visibility : null
@@ -214,30 +221,46 @@ const measure = () => {
 	};
 };
 
-/** The two panes meet at the fold (50% of the viewport, not of the inset area),
- *  each 12px clear of it on top of its own gutter, and the aside stays inside
- *  every inset. Anywhere it should not split, the aside must be gone and the
- *  History button — the way to the same content as a sheet — must be back. */
+/** The two panes meet at the fold (50% of the viewport, not of the inset area):
+ *  the form on the RIGHT, the history pane on the left, each 12px clear of the
+ *  fold on top of its own gutter and both inside every inset. Anywhere it should
+ *  not split, the aside must be gone and the History button — the way to the
+ *  same content as a sheet — must be back. */
 function checkSplit(where, m, splits, inset) {
 	const s = m.split;
 	const near = (a, b) => Math.abs(a - b) <= 0.5;
 	if (!splits) {
 		if (s.asideShown) fail(where, 'history pane showing where the form should be one column');
-		if (s.mainPadRight !== 0) fail(where, `form keeps the fold gutter (${s.mainPadRight}px)`);
+		if (s.mainPadLeft !== 0 || s.mainPadRight !== 0)
+			fail(where, `form keeps the fold gutter (${s.mainPadLeft}/${s.mainPadRight}px)`);
 		if (s.historyButton != null && s.historyButton !== 'visible')
 			fail(where, 'History button hidden with no pane to stand in for it');
 		return;
 	}
 	const fold = m.vw / 2;
 	if (!s.asideShown || !s.aside) return fail(where, 'no history pane on the unfolded Duo');
-	if (!near(s.mainRight, fold)) fail(where, `form ends at ${s.mainRight}, want the fold ${fold}`);
-	if (!near(s.aside.left, fold))
-		fail(where, `pane starts at ${s.aside.left}, want the fold ${fold}`);
-	if (!near(s.aside.right, m.vw - inset.right))
-		fail(where, `pane ends at ${s.aside.right}, want ${m.vw - inset.right} (the right inset)`);
-	if (s.mainPadRight !== 12) fail(where, `form is ${s.mainPadRight}px clear of the fold, want 12`);
-	if (s.asidePadLeft !== 32)
-		fail(where, `pane content is ${s.asidePadLeft}px from the fold, want 32 (20 + 12)`);
+	// the form is the RIGHT half, under the status column; the pane is the left
+	if (!near(s.mainLeft, fold)) fail(where, `form starts at ${s.mainLeft}, want the fold ${fold}`);
+	if (!near(s.mainRight, m.vw - inset.right))
+		fail(where, `form ends at ${s.mainRight}, want ${m.vw - inset.right} (the right inset)`);
+	if (!near(s.aside.left, inset.left))
+		fail(where, `pane starts at ${s.aside.left}, want ${inset.left} (the left inset)`);
+	if (!near(s.aside.right, fold))
+		fail(where, `pane ends at ${s.aside.right}, want the fold ${fold}`);
+	if (s.mainPadLeft !== 12 || s.mainPadRight !== 0)
+		fail(
+			where,
+			`form padding ${s.mainPadLeft}/${s.mainPadRight}px, want 12/0 (clear of the fold only)`
+		);
+	if (s.asidePadRight !== 32 || s.asidePadLeft !== 20)
+		fail(
+			where,
+			`pane padding ${s.asidePadLeft}/${s.asidePadRight}px, want 20/32 (its gutter; 20 + 12 at the fold)`
+		);
+	// what is left of the right half for the form — the reason for the 860px floor
+	const room = s.mainRight - s.mainLeft - s.mainPadLeft;
+	if (room < FORM_MIN - 0.5)
+		fail(where, `the form has ${room}px beside the pane, below the ${FORM_MIN}px it is checked at`);
 	// Pinned: at the top inset however far the form has scrolled.
 	if (!near(s.aside.top, inset.top ?? 0))
 		fail(where, `pane top ${s.aside.top} at scroll ${m.scrollY}, want ${inset.top ?? 0}`);
@@ -262,13 +285,14 @@ function check(where, m, foldable, inset = { left: 0, right: 0 }) {
 		);
 	if (m.colWidth == null) return fail(where, 'no .mx-auto.max-w-2xl column');
 	const room = m.vw - inset.left - inset.right;
-	// The brew form is the left HALF on the unfolded Duo, up to the fold.
+	// The brew form is the right HALF on the unfolded Duo: from the fold to the
+	// right inset.
 	const splits = m.split != null && foldable && m.vw >= SPLIT_MIN;
-	const want = splits ? m.vw / 2 - inset.left : foldable ? room : Math.min(room, COLUMN_MAX);
+	const want = splits ? m.vw / 2 - inset.right : foldable ? room : Math.min(room, COLUMN_MAX);
 	if (Math.abs(m.colWidth - want) > 0.5)
 		fail(
 			where,
-			`column ${m.colWidth}px, want ${want}px (${splits ? 'left half, to the fold' : foldable ? 'fill (data-foldable)' : room <= COLUMN_MAX ? 'fill' : 'centre at max-w-2xl'})`
+			`column ${m.colWidth}px, want ${want}px (${splits ? 'right half, from the fold' : foldable ? 'fill (data-foldable)' : room <= COLUMN_MAX ? 'fill' : 'centre at max-w-2xl'})`
 		);
 	if (m.split) checkSplit(where, m, splits, inset);
 	if (m.fab) {
@@ -468,6 +492,23 @@ try {
 			foldable: true,
 			inset: { top: 0, right: 84, bottom: 34, left: 0 }
 		},
+		// the split's floor, with the Duo's measured insets: the narrowest width at
+		// which the form still has its 334pt beside the status column…
+		{
+			name: 'duo-split-floor',
+			w: 860,
+			h: 669,
+			foldable: true,
+			inset: { top: 0, right: 84, bottom: 34, left: 0 }
+		},
+		// …and one point under it, where there is one column and the sheet again
+		{
+			name: 'duo-under-floor',
+			w: 859,
+			h: 669,
+			foldable: true,
+			inset: { top: 0, right: 84, bottom: 34, left: 0 }
+		},
 		// control: the same inset with no hinge still centres, inside the inset
 		{
 			name: 'wide-no-hinge',
@@ -519,10 +560,13 @@ try {
 
 		await gotoRendered(page, SPLIT_ROUTE);
 		if (c.foldable && c.w >= SPLIT_MIN) {
-			// Unfolded Duo: no sheet — the history is the pane right of the fold,
-			// and it is the pane that pays the 84pt status column. Measured at the
-			// top and again with the form scrolled, where it must not have moved.
+			// Unfolded Duo: no sheet — the history is the pane left of the fold, and
+			// the form, right of it, is the one that pays the 84pt status column.
+			// Measured at the top and again with the form scrolled, where the pane
+			// must not have moved.
 			check(`inset ${c.name} split`, await page.evaluate(measure), true, c.inset);
+			// The picture of the layout as it is used; the "tall" one below is a stress case.
+			await page.screenshot({ path: join(OUT, `inset-${c.name}--split.png`) });
 			await page.evaluate(() => window.scrollTo(0, 400));
 			await page.waitForTimeout(200);
 			const scrolled = await page.evaluate(measure);
@@ -540,10 +584,10 @@ try {
 					`inset ${c.name} split, tall`,
 					`pane bottom ${tall.split.aside.bottom}, want ${c.h - c.inset.bottom} when full`
 				);
-			await page.screenshot({ path: join(OUT, `inset-${c.name}--split.png`) });
+			await page.screenshot({ path: join(OUT, `inset-${c.name}--split-tall.png`) });
 			const a = tall.split.aside;
 			console.log(
-				`   ${c.name.padEnd(15)} split: form to ${tall.split.mainRight}, pane ${a.left}–${a.right}, pinned at ${a.top}, bottom ${a.bottom}`
+				`   ${c.name.padEnd(15)} split: pane ${a.left}–${a.right}, form ${tall.split.mainLeft}–${tall.split.mainRight}, pane pinned at ${a.top}, bottom ${a.bottom}`
 			);
 		} else {
 			// The brew form's history sheet is the other fixed overlay, with the same
@@ -551,6 +595,16 @@ try {
 			// page column and centred (so on a wide display its side gaps are equal,
 			// not 12), and its body scrolls — so its height must stop short of the top
 			// inset. The injected min-height makes the content tall enough to bind.
+			// First the form itself: one column, no pane, and the History button
+			// back — measured, so a split that shows up under its floor is a named
+			// failure here and not a click that times out on a hidden button.
+			const form = await page.evaluate(measure);
+			check(`inset ${c.name} form`, form, c.foldable, c.inset);
+			if (form.split?.historyButton !== 'visible') {
+				if (form.split?.historyButton == null)
+					fail(`inset ${c.name} form`, 'no History button on the brew form with a bag picked');
+				continue;
+			}
 			await page.getByRole('button', { name: 'History' }).click();
 			const hist = page.locator('[role="dialog"]');
 			await hist.waitFor({ state: 'visible', timeout: 3000 });

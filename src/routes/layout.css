@@ -770,12 +770,18 @@
    the width for columns and keep an EVEN number of them, so the fold falls
    between two rather than through one.
 
-   .split is a two-column grid: .split-main (the page's column) on the left,
-   .split-aside on the right. The boundary is 50% of the VIEWPORT — the fold —
-   not the middle of the inset content area: the status column takes 84pt off
-   the right half only, so the aside is the narrower pane (about 390pt of 475).
-   The body's own padding already keeps the grid inside every inset, so the
-   aside pays the right one without saying so.
+   .split is a two-column grid: .split-main (the page's column) is the RIGHT
+   half and .split-aside the left. The form is the half you touch, so it sits
+   under the right thumb, and the pane you only read sits on the left — the
+   user's call, made for Buffy first (this app's first build of the split had
+   them the other way round). Source order is unchanged: the form still comes
+   first for VoiceOver and the keyboard, and only the grid placement swaps them.
+
+   The boundary is 50% of the VIEWPORT — the fold — not the middle of the inset
+   content area: the status column takes 84pt off the right half only, so the
+   form is the narrower pane (about 380pt of 475 — within a few points of its
+   column on the folded outer display). The body's own padding already keeps
+   the grid inside every inset, so the form pays the right one without saying so.
 
    The page scrolls as a document here (Buffy's panes are absolutely placed in a
    fixed viewport; these cannot be), so the aside is STICKY with its own scroll:
@@ -785,11 +791,12 @@
 
    Keyed on data-foldable + width, never on open/closed: hinge status and the
    window resize land a beat apart while folding, and a plain width query follows
-   every frame. 840px is the floor at which the right half still holds the 334pt
-   the app is checked at (Split View) after losing its 84pt — so the unfolded
-   landscape pose splits, while the turned pose (669pt), Split View and the outer
-   display stay one column, where the same history opens as a sheet. A hinge-less
-   wide screen (iPad, desktop) keeps the centred column and the sheet.
+   every frame. 860px is the floor at which the form still holds the 334pt the
+   app is checked at (Split View) after its half loses the 84pt status column
+   and the 12pt gutter (430 − 84 − 12) — so the unfolded landscape pose splits,
+   while the turned pose (669pt), Split View and the outer display stay one
+   column, where the same history opens as a sheet. A hinge-less wide screen
+   (iPad, desktop) keeps the centred column and the sheet.
 
    Each pane keeps 12pt clear of the fold on top of its own 20pt gutter: controls
    do not belong in the curve when the device is part-folded.
@@ -797,23 +804,30 @@
 .split-aside {
 	display: none;
 }
-@media (min-width: 840px) {
+@media (min-width: 860px) {
+	/* Column 1 ends at the fold (the body has already paid the left inset);
+	   column 2 runs from there to the right inset. */
 	:root[data-foldable] .split {
 		display: grid;
 		grid-template-columns: calc(50vw - env(safe-area-inset-left, 0px)) minmax(0, 1fr);
 		align-items: start;
 	}
+	/* margin-inline: the form is also .mx-auto, and a grid item with auto side
+	   margins is sized to its content instead of stretched to its column. */
 	:root[data-foldable] .split-main {
-		padding-right: 12px;
+		grid-area: 1 / 2;
+		margin-inline: 0;
+		padding-left: 12px;
 	}
 	:root[data-foldable] .split-aside {
+		grid-area: 1 / 1;
 		display: block;
 		position: sticky;
 		top: env(safe-area-inset-top, 0px);
 		max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
 		overflow-y: auto;
 		overscroll-behavior: contain;
-		padding: 8px 20px 20px 32px;
+		padding: 8px 32px 20px 20px;
 	}
 	/* What the pane already shows has no button to open it. Hidden, not
 	   removed: the header row keeps its three slots and the title stays centred. */
