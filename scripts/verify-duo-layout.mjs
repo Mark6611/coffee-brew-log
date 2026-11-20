@@ -807,6 +807,32 @@ try {
 			'forward',
 			1
 		);
+		// The new-bag form is a sub-task of the brew form: entered forward, and
+		// left BACK by its own Cancel link although the two screens sit at the
+		// same depth. (By depth alone the return arrived from the right, as if
+		// going deeper.) The way in is the form's coffee picker, a goto(); a
+		// planted link stands in for it — the same client-side navigation.
+		await gotoRendered(page, '/brews/new');
+		await page.evaluate(freezeArrival);
+		await arrive(
+			'new brew → new bag',
+			() =>
+				page.evaluate(() => {
+					const a = document.createElement('a');
+					a.href = '/bags/new?returnTo=%2Fbrews%2Fnew';
+					document.body.append(a);
+					a.click();
+					a.remove();
+				}),
+			'forward',
+			0
+		);
+		await arrive(
+			'new bag → new brew (Cancel)',
+			() => page.click('form a[href*="/brews/new"]'),
+			'back',
+			0
+		);
 	}
 	insets = { top: 0, right: 0, bottom: 0, left: 0 };
 

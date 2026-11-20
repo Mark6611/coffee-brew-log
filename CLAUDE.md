@@ -82,10 +82,14 @@
   dragged sideways for that quarter second. Don't remove it as "unused".
 - **Direction comes from the route tree, not from history.** Nothing calls
   `history.back()` — every "‹ Brews", Cancel and post-save return is a link or a
-  `goto()`, and the native shell has no back button or gesture. A move to a
-  shallower path arrives from the left, anything else from the right; a real
-  history step (the web's back button) keeps its own direction. A new route that
-  is conceptually "up" but not shallower needs a rule in `navDirection`.
+  `goto()`, and the native shell has no back button or gesture. A move to an
+  ANCESTOR of the current screen arrives from the left, anything else from the
+  right (a shallower screen in another branch — a bag's "See all →" to Brews — is
+  onward, not up); a real history step (the web's back button) keeps its own
+  direction. Two kinds of screen do not sit where the tree says, and each is a
+  named table in `navMotion.ts`: `PARENT` (Privacy hangs off Settings) and
+  `SUBTASKS` (the new-bag form is entered from a brew form and always left by
+  returning to it). A new route like either needs an entry there and a test.
 - Reduce Motion: no arrival animation at all (the `$lib/motion` rule).
 - **Haptics are one delegated listener** in the root layout: a light tick for
   `[role="switch"]` and `[aria-pressed]` controls, native only

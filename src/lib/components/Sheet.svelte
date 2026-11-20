@@ -8,6 +8,7 @@
 	import { motion } from '$lib/motion.svelte';
 	import Button from './Button.svelte';
 	import Eyebrow from './Eyebrow.svelte';
+	import { FOCUS_RING_INSET } from './focus';
 	import { lockScroll, trapFocus } from './modal';
 
 	let {
@@ -97,7 +98,16 @@
 				</svg>
 			</Button>
 		</div>
-		<div class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-5">
+		<!-- Focusable so a keyboard can scroll it: Close was the only stop in the
+		     sheet, the page behind is locked, and arrow / Page / Space keys never
+		     reached this scroller. The focus trap picks it up as the last stop. -->
+		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+		<div
+			tabindex="0"
+			role="region"
+			aria-label={title}
+			class="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pb-5 {FOCUS_RING_INSET}"
+		>
 			{@render children()}
 		</div>
 	</div>

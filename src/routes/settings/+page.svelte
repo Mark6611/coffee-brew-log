@@ -70,19 +70,33 @@
 		loading = false;
 	}
 
+	// Asked on arrival AND whenever the app comes back to the front or a sync
+	// lands. This screen tells someone with iCloud off to sign in under iOS
+	// Settings; they come straight back here, and a single read at mount left
+	// "iCloud is off" on screen — and Sync now disabled — after they had.
+	function refreshCloud() {
+		if (!isNative) return;
+		cloudLastSyncAt = localStorage.getItem(LAST_CLOUD_SYNC_KEY);
+		void cloudSyncIsAvailable().then((a) => (cloudAvailable = a));
+	}
+
 	onMount(() => {
 		loadCounts();
-		if (isNative) {
-			cloudLastSyncAt = localStorage.getItem(LAST_CLOUD_SYNC_KEY);
-			void cloudSyncIsAvailable().then((a) => (cloudAvailable = a));
-		}
+		refreshCloud();
 		// iCloud is the only sync rail now; it dispatches the same event.
 		const onSynced = () => {
-			if (isNative) cloudLastSyncAt = localStorage.getItem(LAST_CLOUD_SYNC_KEY);
+			refreshCloud();
 			loadCounts();
 		};
+		const onVisible = () => {
+			if (document.visibilityState === 'visible') refreshCloud();
+		};
 		window.addEventListener('brewlog:synced', onSynced);
-		return () => window.removeEventListener('brewlog:synced', onSynced);
+		document.addEventListener('visibilitychange', onVisible);
+		return () => {
+			window.removeEventListener('brewlog:synced', onSynced);
+			document.removeEventListener('visibilitychange', onVisible);
+		};
 	});
 
 	async function handleExport() {

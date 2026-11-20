@@ -6,9 +6,32 @@
 
 export type NavDirection = 'forward' | 'back';
 
-/** How deep a path sits in the app: `/` is 0, `/brews` 1, `/brews/<id>/edit` 3. */
-function depth(path: string): number {
-	return path.split('/').filter(Boolean).length;
+/** `/brews/` and `/brews` are the same screen; `/` stays `/`. */
+function norm(path: string): string {
+	return path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path;
+}
+
+/** Screens whose parent is not the path one segment up. Privacy is opened from
+ *  Settings and its "‹" goes back there, but it lives at the top level. */
+const PARENT: Record<string, string> = { '/privacy': '/settings' };
+
+/** Screens entered from the middle of another task and always left by going
+ *  back to it. The new-bag form is opened from the brew forms' coffee picker (and
+ *  from the bag list); Cancel and Save both return to wherever it was opened
+ *  from, which is neither above it nor below it in the tree. */
+const SUBTASKS = new Set(['/bags/new']);
+
+/** The screen "‹" leads to: one segment up, unless PARENT says otherwise. */
+function parentOf(path: string): string | null {
+	if (path === '/') return null;
+	if (PARENT[path]) return PARENT[path];
+	const up = path.slice(0, path.lastIndexOf('/'));
+	return up === '' ? '/' : up;
+}
+
+function isAncestor(candidate: string, of: string): boolean {
+	for (let p = parentOf(of); p != null; p = parentOf(p)) if (p === candidate) return true;
+	return false;
 }
 
 /**
@@ -19,8 +42,12 @@ function depth(path: string): number {
  * a save or a delete is a plain link or a goto(), and the native shell has no
  * back button or back gesture at all — so by history alone every one of them
  * would arrive from the right, as if going deeper. The route tree is the real
- * hierarchy (home › a list › an item › its edit form), so a move to a SHALLOWER
- * path is "back" and anything else is "forward".
+ * hierarchy (home › a list › an item › its edit form), so a move to an ANCESTOR
+ * of the current screen is "back" and anything else is "forward".
+ *
+ * Ancestor, not merely shallower: a bag's "See all →" leads to the brew list,
+ * which is shallower but in another branch — that is a move onward, not up. Two
+ * kinds of screen do not sit where the tree says: see PARENT and SUBTASKS.
  *
  * A genuine history step (the browser's own buttons, on the web) keeps the
  * direction it actually took. `delta` is SvelteKit's navigation.delta, which is
@@ -34,7 +61,11 @@ export function navDirection(
 ): NavDirection {
 	if (type === 'popstate') return (delta ?? 0) < 0 ? 'back' : 'forward';
 	if (fromPath == null || toPath == null) return 'forward';
-	return depth(toPath) < depth(fromPath) ? 'back' : 'forward';
+	const from = norm(fromPath);
+	const to = norm(toPath);
+	if (SUBTASKS.has(to)) return 'forward';
+	if (SUBTASKS.has(from)) return 'back';
+	return isAncestor(to, from) ? 'back' : 'forward';
 }
 
 /**

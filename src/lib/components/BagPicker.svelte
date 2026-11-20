@@ -181,6 +181,11 @@
 				<path d="M3.2 5h11.6v9.2c0 1.2-1 2.1-2.1 2.1H5.3c-1.2 0-2.1-1-2.1-2.1V5z" />
 				<rect x="6.7" y="9" width="4.6" height="3.4" rx="0.4" />
 			</svg>
+			<!-- -my-2 self-stretch py-2: the input takes the wrapper's vertical
+			     padding as its own, so the whole height of the field is the input.
+			     .field-wrapper strips the forms plugin's padding with its border;
+			     without this the input is one line of text (21pt) in a 48pt field
+			     and a tap near the top or bottom edge lands on the wrapper. -->
 			<input
 				bind:this={inputEl}
 				bind:value={query}
@@ -188,7 +193,7 @@
 				onblur={() => setTimeout(() => (isOpen = false), 150)}
 				onkeydown={handleKeydown}
 				placeholder="Search or add a coffee…"
-				class="min-w-0 flex-1 bg-transparent text-ink outline-none placeholder:text-muted"
+				class="-my-2 min-w-0 flex-1 self-stretch bg-transparent py-2 text-ink outline-none placeholder:text-muted"
 				role="combobox"
 				aria-expanded={isOpen}
 				aria-controls="bag-listbox"

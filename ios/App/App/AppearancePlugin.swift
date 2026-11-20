@@ -34,15 +34,16 @@ public class AppearancePlugin: CAPPlugin, CAPBridgedPlugin {
 				call.reject("No view controller")
 				return
 			}
-			// The WINDOW, not the view controller: presented controllers (share
-			// sheet, file picker, picker popovers) take their traits from it.
-			if let window = controller.view.window {
-				window.overrideUserInterfaceStyle = style
-			} else {
-				// Not in a window yet — cover the web view itself; a later call
-				// (every theme change re-sends) reaches the window.
-				controller.overrideUserInterfaceStyle = style
-			}
+			// Both levels, always, so they can never disagree. The WINDOW is
+			// what presented controllers (share sheet, file picker, picker
+			// popovers) take their traits from. The view CONTROLLER covers the
+			// web view — and with it the keyboard and prefers-color-scheme —
+			// while it is out of a window (behind a full-screen camera, when
+			// the page reloads there) and goes with it to any other window.
+			// Writing only whichever existed left an override on the controller
+			// that a later "system" never cleared.
+			controller.overrideUserInterfaceStyle = style
+			controller.view.window?.overrideUserInterfaceStyle = style
 			call.resolve()
 		}
 	}

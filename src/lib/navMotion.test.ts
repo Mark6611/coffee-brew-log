@@ -30,8 +30,35 @@ describe('navDirection', () => {
 		expect(navDirection('goto', undefined, '/brews/new', ID)).toBe('forward');
 	});
 
+	// "Up" means an ancestor, not merely a shorter path.
+	it('treats a shallower screen in another branch as onward, not up', () => {
+		const BAG = '/bags/11111111-1111-4111-8111-111111111111';
+		expect(navDirection('link', undefined, BAG, '/brews')).toBe('forward'); // "See all →"
+		expect(navDirection('link', undefined, BAG, '/bags')).toBe('back');
+		expect(navDirection('link', undefined, ID, BAG)).toBe('forward');
+	});
+
+	// The new-bag form is opened from the middle of a brew form and returns there.
+	it('enters the new-bag form forward and leaves it back, wherever it was opened from', () => {
+		expect(navDirection('goto', undefined, `${ID}/edit`, '/bags/new')).toBe('forward'); // shallower
+		expect(navDirection('link', undefined, '/bags', '/bags/new')).toBe('forward');
+		expect(navDirection('link', undefined, '/bags/new', '/brews/new')).toBe('back'); // Cancel
+		expect(navDirection('goto', undefined, '/bags/new', '/brews/new')).toBe('back'); // saved
+		expect(navDirection('goto', undefined, '/bags/new', `${ID}/edit`)).toBe('back'); // deeper
+		expect(navDirection('link', undefined, '/bags/new', '/bags')).toBe('back');
+	});
+
+	// Privacy sits at the top level but hangs off Settings.
+	it('goes back from Privacy to Settings, and on up to home', () => {
+		expect(navDirection('link', undefined, '/settings', '/privacy')).toBe('forward');
+		expect(navDirection('link', undefined, '/privacy', '/settings')).toBe('back');
+		expect(navDirection('link', undefined, '/privacy', '/')).toBe('back');
+		expect(navDirection('link', undefined, '/settings', '/')).toBe('back');
+	});
+
 	it('ignores a trailing slash and copes with an unknown origin', () => {
 		expect(navDirection('link', undefined, '/brews/', '/')).toBe('back');
+		expect(navDirection('link', undefined, '/bags/new/', '/brews/new/')).toBe('back');
 		expect(navDirection('link', undefined, null, '/brews')).toBe('forward');
 		expect(navDirection('link', undefined, '/brews', null)).toBe('forward');
 	});
