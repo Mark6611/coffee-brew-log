@@ -55,6 +55,17 @@
   `position: fixed` (the FABs, ConfirmSheet, Sheet) sits outside that padding and
   must add its own. Any new edge-anchored overlay needs the same, and a check in
   `verify:duo` beside the two sheets'.
+- **The bag picker fits its list to the VISIBLE viewport, in JS.** No CSS unit
+  follows the keyboard, so `fit()` in `BagPicker.svelte` gives the list what
+  `visualViewport` leaves below the field (up to four and a half rows) and, when
+  that is short, moves the page up — once per keyboard height, to an absolute
+  target. A new brew is too short a page to scroll that far, so while the list is
+  open the picker borrows room below the page (an invisible spacer at its root)
+  and walks the page back before handing it over; drop either half and the last
+  bag sits under the keyboard, or the page jumps on picking. The list is every
+  bag in use, ordered by `bagsByRecentUse` (last brew, or the day it was added),
+  not by `createdAt`. `verify:duo` pins all of it with a stand-in
+  `visualViewport`; what WebKit does under a real keyboard is an on-device check.
 - The input focus-zoom floor's band stops at 600px, so the Duo's inner poses get
   it only through `data-foldable` — keep both rules in step (layout.css).
 - Never cache `innerWidth` or branch on orientation: folding resizes the window

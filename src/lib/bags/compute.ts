@@ -23,6 +23,28 @@ export function bagConsumption(bag: Bag, brews: Brew[]): BagConsumption {
 	return { used, remaining, percentUsed, brewCount: linked.length, lastBrewedAt };
 }
 
+/** Bags in the order you reach for them: the one brewed from most recently
+ *  first. A bag also counts as used the day it was added, so one bought today
+ *  sits above the bag last brewed yesterday instead of sinking below every bag
+ *  that has a brew. Ties keep the order they arrived in. Worked out at read
+ *  time from the brews — nothing stores a "last used" date. */
+export function bagsByRecentUse(bags: Bag[], brews: Brew[]): Bag[] {
+	const lastBrew = new Map<string, number>();
+	for (const b of brews) {
+		if (!b.bagId) continue;
+		// Compared as instants, not strings: "…08:00:00Z" sorts AFTER
+		// "…08:00:00.500Z" as text, and both shapes pass the schema.
+		const at = Date.parse(b.brewedAt);
+		if (at > (lastBrew.get(b.bagId) ?? -Infinity)) lastBrew.set(b.bagId, at);
+	}
+	const usedAt = (bag: Bag) =>
+		Math.max(lastBrew.get(bag.id) ?? -Infinity, Date.parse(bag.createdAt) || 0);
+	return bags
+		.map((bag) => ({ bag, at: usedAt(bag) }))
+		.sort((a, b) => b.at - a.at)
+		.map((x) => x.bag);
+}
+
 export function formatRoastedAt(iso: string | undefined, now: Date = new Date()): string {
 	// Derive the day count from daysSinceRoast (floor) so this label, freshnessLabel,
 	// and freshnessStale all agree — rounding here made the list read "22 days ago"

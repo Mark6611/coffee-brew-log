@@ -475,6 +475,290 @@ try {
 		);
 	}
 
+	// ── The bag picker with a shelf of bags ─────────────────────────────────
+	// The list under the coffee field holds every bag in use, the one last
+	// brewed from on top, and scrolls. Under a keyboard it must still end above
+	// the keyboard, with the last bag and "Add a new bag" in reach — the new-brew
+	// page is too short to scroll that far by itself, so the picker borrows room
+	// below it and has to hand it back. Chromium has no on-screen keyboard: a
+	// stand-in visualViewport shrinks instead (the heights are stand-ins too).
+	// That pins the picker's arithmetic, NOT what WebKit does while a real
+	// keyboard animates in — that part is an on-device check.
+	{
+		console.log('── bag picker: every bag, recent first, clear of a keyboard');
+		const r1 = (n) => Math.round(n * 10) / 10;
+		// name, added (hours ago), last brewed (hours ago), extra
+		const SHELF = [
+			['Worka Sakaro', 960, 2],
+			['La Esperanza', 720, 26],
+			['Gedeb Natural', 600, 216],
+			['El Diamante', 480, 72],
+			['Hayes Valley', 360, null],
+			['Bourbon Barrel Blend', 290, 288],
+			['Kayon Mountain', 240, 50],
+			['Finca Deborah', 190, 144],
+			['Halo Beriti', 120, 119],
+			['Santa Felisa', 40, null],
+			['Chelbesa', 12, null],
+			['Old Decaf', 1000, 1, { archived: true }]
+		];
+		const ORDER = [
+			'Worka Sakaro',
+			'Chelbesa',
+			'La Esperanza',
+			'Santa Felisa',
+			'Kayon Mountain',
+			'El Diamante',
+			'Halo Beriti',
+			'Finca Deborah',
+			'Gedeb Natural',
+			'Bourbon Barrel Blend',
+			'Hayes Valley'
+		];
+		const PICKER_CASES = [
+			{
+				name: 'iphone',
+				w: 393,
+				h: 852,
+				keyboard: 336,
+				inset: { top: 59, right: 0, bottom: 34, left: 0 }
+			},
+			{
+				name: 'duo-outer-top',
+				w: 466,
+				h: 678,
+				keyboard: 300,
+				foldable: true,
+				inset: { top: 82, right: 0, bottom: 34, left: 0 }
+			},
+			{
+				name: 'duo-inner',
+				w: 951,
+				h: 669,
+				keyboard: 320,
+				foldable: true,
+				inset: { top: 0, right: 84, bottom: 34, left: 0 }
+			}
+		];
+		const fakeKeyboard = () => {
+			let k = 0;
+			const t = new EventTarget();
+			for (const [key, get] of Object.entries({
+				offsetTop: () => 0,
+				offsetLeft: () => 0,
+				pageTop: () => scrollY,
+				pageLeft: () => 0,
+				scale: () => 1,
+				width: () => innerWidth,
+				height: () => innerHeight - k
+			}))
+				Object.defineProperty(t, key, { get });
+			Object.defineProperty(window, 'visualViewport', { configurable: true, get: () => t });
+			window.__keyboard = (h) => {
+				k = h;
+				t.dispatchEvent(new Event('resize'));
+			};
+		};
+		const state = () => {
+			const box = document.getElementById('bag-listbox');
+			if (!box) return null;
+			const opts = [...box.querySelectorAll('[role="option"]')];
+			const rows = opts.slice(0, -1);
+			const list = rows[0]?.parentElement;
+			const last = rows.at(-1)?.getBoundingClientRect();
+			const vv = window.visualViewport;
+			return {
+				names: rows.map((o) => o.querySelector('.font-display')?.textContent.trim()),
+				scrolls: list ? list.scrollHeight > list.clientHeight + 1 : false,
+				listHeight: list?.clientHeight ?? 0,
+				rowHeight: rows[0]?.offsetHeight ?? 0,
+				content: list?.scrollHeight ?? 0,
+				boxTop: box.getBoundingClientRect().top,
+				boxHeight: box.offsetHeight,
+				fieldBottom: document
+					.querySelector('input[role="combobox"]')
+					.parentElement.getBoundingClientRect().bottom,
+				boxBottom: box.getBoundingClientRect().bottom,
+				addBottom: opts.at(-1).getBoundingClientRect().bottom,
+				fieldTop: document
+					.querySelector('input[role="combobox"]')
+					.parentElement.getBoundingClientRect().top,
+				visibleBottom: vv.offsetTop + vv.height,
+				last: last && {
+					x: last.left + last.width / 2,
+					y: last.top + last.height / 2,
+					bottom: last.bottom
+				}
+			};
+		};
+		for (const c of PICKER_CASES) {
+			const where = `picker ${c.name}`;
+			insets = c.inset;
+			const ctx = await browser.newContext({
+				viewport: { width: c.w, height: c.h },
+				colorScheme: 'light',
+				serviceWorkers: 'block',
+				hasTouch: true
+			});
+			await ctx.addInitScript(fakeKeyboard);
+			if (c.foldable) await ctx.addInitScript(markFoldable);
+			const page = await ctx.newPage();
+			page.on('pageerror', (e) => fail(`pageerror (${where})`, e.message));
+			await page.goto(base + '/', { waitUntil: 'networkidle' });
+			await page.evaluate(async (SHELF) => {
+				const db = await new Promise((res, rej) => {
+					const req = indexedDB.open('CoffeeBrewLog');
+					req.onsuccess = () => res(req.result);
+					req.onerror = () => rej(req.error);
+				});
+				const iso = (h) => new Date(Date.now() - h * 3_600_000).toISOString();
+				const bags = SHELF.map(([name, added, , extra]) => ({
+					id: crypto.randomUUID(),
+					name,
+					roaster: 'Sey Coffee',
+					origin: 'Ethiopia',
+					process: 'washed',
+					weightGrams: 250,
+					roastedAt: iso(added + 48).slice(0, 10),
+					createdAt: iso(added),
+					...extra
+				}));
+				const brews = SHELF.flatMap(([name, , last], i) =>
+					last == null
+						? []
+						: [
+								{
+									id: crypto.randomUUID(),
+									method: 'espresso',
+									coffeeName: name,
+									bagId: bags[i].id,
+									doseGrams: 18,
+									yieldGrams: 36,
+									brewTimeSeconds: 28,
+									grindSetting: '2.5',
+									notes: '',
+									brewedAt: iso(last),
+									createdAt: iso(last),
+									updatedAt: iso(last)
+								}
+							]
+				);
+				await new Promise((res, rej) => {
+					const tx = db.transaction(['bags', 'brews'], 'readwrite');
+					tx.objectStore('bags').clear();
+					tx.objectStore('brews').clear();
+					for (const b of bags) tx.objectStore('bags').put(b);
+					for (const b of brews) tx.objectStore('brews').put(b);
+					tx.oncomplete = () => res();
+					tx.onerror = () => rej(tx.error);
+				});
+				db.close();
+			}, SHELF);
+			await gotoRendered(page, '/brews/new');
+			await page.locator('input[role="combobox"]').tap();
+			await page.waitForSelector('#bag-listbox', { timeout: 3000 }).catch(() => {});
+			await page.waitForTimeout(600);
+			const open = await page.evaluate(state);
+			if (!open) {
+				fail(where, 'tapping the coffee field did not open the list');
+				await ctx.close();
+				continue;
+			}
+			if (open.names.join('|') !== ORDER.join('|'))
+				fail(
+					where,
+					`lists ${open.names.length} bags [${open.names.join(', ')}], want all ${ORDER.length} in use, last used first`
+				);
+			if (!open.scrolls) fail(where, 'the list does not scroll');
+			if (open.addBottom > c.h - c.inset.bottom + 0.5)
+				fail(where, `"Add a new bag" ends at ${r1(open.addBottom)}, inside the bottom inset`);
+
+			await page.evaluate((k) => window.__keyboard(k), c.keyboard);
+			await page.waitForTimeout(900);
+			const up = await page.evaluate(state);
+			if (up.boxBottom > up.visibleBottom + 0.5)
+				fail(
+					where,
+					`with a keyboard up the list ends at ${r1(up.boxBottom)}, ${r1(up.boxBottom - up.visibleBottom)}px under it`
+				);
+			if (up.fieldTop < c.inset.top + 36 - 0.5)
+				fail(where, `the field was pushed to ${r1(up.fieldTop)}, its label under the top inset`);
+			// Ending above the keyboard is not enough: a list squeezed to one row
+			// does that too. With the field as high as it may go — under its label,
+			// under the top inset — this many rows fit, and that many must show.
+			// (It is the borrowed room that lets the page rise that far.)
+			const fits = Math.min(
+				up.rowHeight * 4.5,
+				up.content,
+				up.visibleBottom -
+					8 -
+					(c.inset.top + 36 + (up.fieldBottom - up.fieldTop)) -
+					(up.boxTop - up.fieldBottom) -
+					(up.boxHeight - up.listHeight)
+			);
+			if (up.listHeight < fits - 1)
+				fail(
+					where,
+					`with a keyboard up the list shows ${r1(up.listHeight / up.rowHeight)} rows where ${r1(fits / up.rowHeight)} fit — the page did not rise far enough`
+				);
+			await page.evaluate((k) => {
+				const d = document.createElement('div');
+				d.id = '__keyboard';
+				d.textContent = 'keyboard (stand-in)';
+				d.style.cssText = `position:fixed;left:0;right:0;bottom:0;height:${k}px;z-index:99999;pointer-events:none;background:rgba(58,58,60,.93);color:#fff;font:600 13px sans-serif;display:grid;place-items:center`;
+				document.body.append(d);
+			}, c.keyboard);
+			await page.screenshot({ path: join(OUT, `picker-${c.name}--keyboard.png`) });
+
+			// the far end of the list: in reach, and a tap on it picks that bag
+			await page.evaluate(() => {
+				document.querySelector('#bag-listbox [role="option"]').parentElement.scrollTop = 1e6;
+			});
+			await page.waitForTimeout(150);
+			const far = await page.evaluate(state);
+			let picked = null;
+			if (far.last.bottom > far.visibleBottom + 0.5)
+				fail(where, 'the last bag cannot be scrolled clear of the keyboard');
+			else {
+				await page.touchscreen.tap(far.last.x, far.last.y);
+				await page.waitForTimeout(50);
+				await page.evaluate(() => {
+					window.__keyboard(0);
+					document.getElementById('__keyboard')?.remove();
+				});
+				await page.waitForTimeout(1300);
+				picked = await page.evaluate(
+					() =>
+						document
+							.querySelector('button[aria-label="Clear selection"]')
+							?.parentElement.querySelector('.font-display')
+							?.textContent.trim() ?? null
+				);
+				if (picked !== ORDER.at(-1))
+					fail(where, `tapping the last bag picked ${picked ?? 'nothing'}, want ${ORDER.at(-1)}`);
+				// the room borrowed below the page goes back, and the page with it
+				const rest = await page.evaluate(() => ({
+					borrowed:
+						document.documentElement.scrollHeight -
+						(document.body.getBoundingClientRect().bottom + scrollY),
+					past: scrollY - (document.documentElement.scrollHeight - innerHeight)
+				}));
+				if (rest.borrowed > 1)
+					fail(
+						where,
+						`the page is still ${r1(rest.borrowed)}px longer than its content after picking`
+					);
+				if (rest.past > 1)
+					fail(where, `the page rests ${r1(rest.past)}px past its end after picking`);
+			}
+			console.log(
+				`   ${c.name}: ${open.names.length} bags, first ${open.names[0]}; keyboard ${c.keyboard} → ${r1(up.listHeight / up.rowHeight)} rows show, ending ${r1(up.visibleBottom - up.boxBottom)}px above it, field at ${r1(up.fieldTop)}; picked ${picked ?? '—'}`
+			);
+			await ctx.close();
+		}
+		insets = { top: 0, right: 0, bottom: 0, left: 0 };
+	}
+
 	// ── Input floor at the smallest Dynamic Type size ───────────────────────
 	// On iOS, :root takes `font: -apple-system-body`, so 1rem IS the Dynamic Type
 	// size — 14px at xSmall. Chromium has no such font, so 1rem stays 16px and an

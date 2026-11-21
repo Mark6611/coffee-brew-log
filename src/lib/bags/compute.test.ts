@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
 	bagConsumption,
+	bagsByRecentUse,
 	daysSinceRoast,
 	freshnessTone,
 	freshnessLabel,
@@ -38,6 +39,64 @@ describe('bagConsumption', () => {
 		expect(c.remaining).toBe(250);
 		expect(c.brewCount).toBe(0);
 		expect(c.lastBrewedAt).toBeNull();
+	});
+});
+
+describe('bagsByRecentUse', () => {
+	const names = (bags: { name: string }[]) => bags.map((b) => b.name);
+
+	it('puts the bag brewed from most recently first, whenever it was added', () => {
+		const old = bag({ name: 'old', createdAt: '2026-03-01T08:00:00.000Z' });
+		const mid = bag({ name: 'mid', createdAt: '2026-04-01T08:00:00.000Z' });
+		const fresh = bag({ name: 'fresh', createdAt: '2026-04-20T08:00:00.000Z' });
+		const brews = [
+			espresso({ bagId: fresh.id, brewedAt: '2026-04-21T08:00:00.000Z' }),
+			espresso({ bagId: mid.id, brewedAt: '2026-04-25T08:00:00.000Z' }),
+			espresso({ bagId: old.id, brewedAt: '2026-04-22T08:00:00.000Z' }),
+			pourOver({ bagId: old.id, brewedAt: '2026-05-02T08:00:00.000Z' })
+		];
+		expect(names(bagsByRecentUse([fresh, mid, old], brews))).toEqual(['old', 'mid', 'fresh']);
+	});
+
+	it('counts a bag as used the day it was added', () => {
+		const brewedYesterday = bag({ name: 'yesterday', createdAt: '2026-03-01T08:00:00.000Z' });
+		const boughtToday = bag({ name: 'today', createdAt: '2026-05-02T07:00:00.000Z' });
+		const neverOpened = bag({ name: 'shelf', createdAt: '2026-04-01T08:00:00.000Z' });
+		const brews = [espresso({ bagId: brewedYesterday.id, brewedAt: '2026-05-01T08:00:00.000Z' })];
+		expect(names(bagsByRecentUse([neverOpened, brewedYesterday, boughtToday], brews))).toEqual([
+			'today',
+			'yesterday',
+			'shelf'
+		]);
+	});
+
+	it('ignores brews with no bag, and brews of a bag that is not in the list', () => {
+		const a = bag({ name: 'a', createdAt: '2026-04-02T08:00:00.000Z' });
+		const b = bag({ name: 'b', createdAt: '2026-04-01T08:00:00.000Z' });
+		const brews = [
+			espresso({ brewedAt: '2026-05-09T08:00:00.000Z' }),
+			espresso({ bagId: 'gone', brewedAt: '2026-05-09T08:00:00.000Z' })
+		];
+		expect(names(bagsByRecentUse([a, b], brews))).toEqual(['a', 'b']);
+	});
+
+	it('compares instants, not text: a timestamp without milliseconds is not later', () => {
+		const whole = bag({ name: 'whole', createdAt: '2026-03-01T08:00:00.000Z' });
+		const half = bag({ name: 'half', createdAt: '2026-03-01T08:00:00.000Z' });
+		const brews = [
+			espresso({ bagId: whole.id, brewedAt: '2026-05-02T08:00:00Z' }),
+			espresso({ bagId: half.id, brewedAt: '2026-05-02T08:00:00.500Z' })
+		];
+		expect(names(bagsByRecentUse([whole, half], brews))).toEqual(['half', 'whole']);
+	});
+
+	it('keeps the incoming order on a tie, and leaves the list it was given alone', () => {
+		const first = bag({ name: 'first' });
+		const second = bag({ name: 'second' });
+		const given = [first, second];
+		expect(names(bagsByRecentUse(given, []))).toEqual(['first', 'second']);
+		expect(bagsByRecentUse(given, [])).not.toBe(given);
+		expect(names(given)).toEqual(['first', 'second']);
 	});
 });
 
