@@ -55,17 +55,25 @@
   `position: fixed` (the FABs, ConfirmSheet, Sheet) sits outside that padding and
   must add its own. Any new edge-anchored overlay needs the same, and a check in
   `verify:duo` beside the two sheets'.
-- **The bag picker fits its list to the VISIBLE viewport, in JS.** No CSS unit
-  follows the keyboard, so `fit()` in `BagPicker.svelte` gives the list what
-  `visualViewport` leaves below the field (up to four and a half rows) and, when
-  that is short, moves the page up — once per keyboard height, to an absolute
-  target. A new brew is too short a page to scroll that far, so while the list is
-  open the picker borrows room below the page (an invisible spacer at its root)
-  and walks the page back before handing it over; drop either half and the last
-  bag sits under the keyboard, or the page jumps on picking. The list is every
-  bag in use, ordered by `bagsByRecentUse` (last brew, or the day it was added),
-  not by `createdAt`. `verify:duo` pins all of it with a stand-in
-  `visualViewport`; what WebKit does under a real keyboard is an on-device check.
+- **The bag picker fits its list to the VISIBLE viewport, in JS — in PAGE
+  coordinates.** No CSS unit follows the keyboard, so `fit()` in
+  `BagPicker.svelte` gives the list what `visualViewport` leaves below the field
+  (up to four and a half rows) and, when that is short, moves the page up to an
+  absolute target — when the list opens, the keyboard changes or the rows do,
+  never in answer to a scroll. Never add `visualViewport.offsetTop` to a client
+  rect: under a keyboard WebKit on iOS measures rects from the visual viewport
+  AND reports that viewport as offset (measured in Safari on iOS 26.5:
+  `pageTop` = `scrollY`, `offsetTop` grows with the scroll up to the keyboard's
+  height), so the sum counts the scroll twice. Build 21 did: the list ran under
+  the keyboard, and a deleted search left one row. `rect + scrollY` and
+  `pageTop` mean the same thing in both engines. A new brew is too short a page
+  to scroll that far, so while the list is open the picker borrows room below
+  the page (an invisible spacer at its root) and walks the page back before
+  handing it over. The list is every bag in use, ordered by `bagsByRecentUse`
+  (last brew, or the day it was added), not by `createdAt`. `verify:duo` pins
+  all of it with a stand-in `visualViewport` that reports those measured
+  numbers; a real keyboard is checked in the Simulator's Safari against the dev
+  server (`open_url http://localhost:5179/…` — no Xcode build needed).
 - The input focus-zoom floor's band stops at 600px, so the Duo's inner poses get
   it only through `data-foldable` — keep both rules in step (layout.css).
 - Never cache `innerWidth` or branch on orientation: folding resizes the window

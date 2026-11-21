@@ -75,36 +75,45 @@
 	// height is what the VISIBLE viewport has left below the field — the visual
 	// viewport is the one a keyboard shrinks, and no CSS unit follows it — up to
 	// four and a half rows (the half row is what says it scrolls). When that is
-	// short the page moves up, once per keyboard, until the field sits under its
-	// label at the top: the last bag and "Add a new bag" are never left under
-	// the keyboard.
+	// short the page moves up until the field sits under its label at the top:
+	// the last bag and "Add a new bag" are never left under the keyboard.
 	const ROWS_SHOWN = 4.5;
 	const LABEL_ABOVE = 36; // the COFFEE eyebrow stays in sight above the field
 	const CLEAR = 8;
 	let listMax = $state<number | null>(null);
-	let movedFor = -1; // the visible height the page was last moved for
-	// A new brew is a short page, and a page cannot scroll past its own end —
-	// though under a keyboard a finger can. This stands in for that: while the
-	// list is open the page ends a keyboard's height below it, so the move above
-	// has somewhere to go. Sized by hand in fit(); it must outlive the list by
-	// the length of the scroll back (see the effect below).
+	// A new brew is a short page, and a page cannot scroll past its own end.
+	// While the list is open this lends it the length the move below needs; it
+	// must outlive the list by the length of the scroll back (the effect below).
 	let roomEl: HTMLDivElement | undefined = $state();
 	let keepRoom: (() => void) | undefined; // calls off a hand-back still pending
 
-	function fit() {
+	// `move` — may the page be moved to make room? Yes when the list opens, the
+	// keyboard changes or the rows do: a search deleted wants its rows back
+	// wherever the page has drifted since. Never in answer to a scroll, which is
+	// the page being moved by a finger (or by the keyboard arriving).
+	function fit(move: boolean) {
 		const field = fieldEl;
 		const box = listboxEl;
 		const list = listEl;
 		if (!field || !box || !list) return;
+		// Everything in PAGE coordinates. Client rects are no common ground: under
+		// a keyboard, WebKit on iOS measures them from the visual viewport AND
+		// reports that viewport as offset from the layout one, where Chromium
+		// measures from the layout viewport. Add offsetTop to a rect and iOS has
+		// counted the scroll twice — it found 300pt of room where there were 64.
+		// (Measured in Safari on iOS 26.5.) Both engines agree that a rect plus
+		// scrollY is a place on the page, and that pageTop is where the visible
+		// part of it starts.
 		const vv = window.visualViewport;
-		const visibleTop = vv?.offsetTop ?? 0;
+		const scrollY = window.scrollY;
+		const visibleTop = vv?.pageTop ?? scrollY;
 		const visibleHeight = vv?.height ?? window.innerHeight;
-		const covered = Math.max(0, window.innerHeight - visibleTop - visibleHeight);
+		const keyboardUp = visibleHeight < window.innerHeight - 1;
 		// body pads each side by its safe-area inset (layout.css); under a
 		// keyboard the bottom one is already covered.
 		const pad = getComputedStyle(document.body);
 		const insetTop = parseFloat(pad.paddingTop) || 0;
-		const insetBottom = covered > 1 ? 0 : parseFloat(pad.paddingBottom) || 0;
+		const insetBottom = keyboardUp ? 0 : parseFloat(pad.paddingBottom) || 0;
 
 		const at = field.getBoundingClientRect();
 		const row = (list.firstElementChild as HTMLElement | null)?.offsetHeight ?? 0;
@@ -113,24 +122,23 @@
 		// everything in the box that is not the list: heading, the add row, hints
 		const chrome = box.offsetHeight - list.offsetHeight;
 		const gap = box.getBoundingClientRect().top - at.bottom;
-		let room = visibleTop + visibleHeight - insetBottom - CLEAR - at.bottom - gap - chrome;
+		let room =
+			visibleTop + visibleHeight - insetBottom - CLEAR - (at.bottom + scrollY) - gap - chrome;
 
-		if (room < want) {
-			const reach = gap + chrome + want + CLEAR + covered + insetBottom;
-			if (roomEl && reach > roomEl.offsetHeight) roomEl.style.height = `${reach}px`;
-			if (visibleHeight !== movedFor) {
-				const rise = at.top - (visibleTop + insetTop + LABEL_ABOVE);
-				const by = Math.min(want - room, rise);
-				if (by > 0.5) {
-					// To a place, not by an amount: the keyboard can land while the
-					// first move is still under way, and a second relative scroll
-					// is added to wherever the engine was heading, not to here.
-					window.scrollTo({ top: window.scrollY + by, behavior: rm() ? 'auto' : 'smooth' });
-					room += by;
-				}
+		if (move && room < want) {
+			const rise = at.top + scrollY - (visibleTop + insetTop + LABEL_ABOVE);
+			const by = Math.min(want - room, rise);
+			if (by > 0.5) {
+				// The page must reach a full screen below where it will come to rest.
+				const reach = by + window.innerHeight - at.bottom;
+				if (roomEl && reach > roomEl.offsetHeight) roomEl.style.height = `${reach}px`;
+				// To a place, not by an amount: the keyboard can land while an
+				// earlier move is still under way, and a relative scroll is added
+				// to wherever the engine was heading, not to here.
+				window.scrollTo({ top: scrollY + by, behavior: rm() ? 'auto' : 'smooth' });
+				room += by;
 			}
 		}
-		movedFor = visibleHeight;
 		// Never less than a row, however little is left: a list of nothing
 		// cannot be scrolled to the bag that is wanted.
 		listMax = Math.max(Math.min(content, row), Math.min(want, room));
@@ -145,18 +153,18 @@
 		// Measure once it has stopped rather than resizing the list all the way.
 		const settled = () => {
 			clearTimeout(timer);
-			timer = setTimeout(fit, 120);
+			timer = setTimeout(() => fit(false), 120);
 		};
-		viewport.addEventListener('resize', fit);
+		const resized = () => fit(true);
+		viewport.addEventListener('resize', resized);
 		viewport.addEventListener('scroll', settled);
 		window.addEventListener('scroll', settled, { passive: true });
 		return () => {
 			clearTimeout(timer);
-			viewport.removeEventListener('resize', fit);
+			viewport.removeEventListener('resize', resized);
 			viewport.removeEventListener('scroll', settled);
 			window.removeEventListener('scroll', settled);
 			listMax = null;
-			movedFor = -1;
 			// Hand the borrowed room back. If the page now rests past its real
 			// end, walk it there first — dropping the room under it is a jump —
 			// and let go when it arrives (or after a second, if a finger took
@@ -192,7 +200,7 @@
 	// On opening, and again whenever typing changes how many rows there are.
 	$effect(() => {
 		void filtered.length;
-		if (isOpen) fit();
+		if (isOpen) fit(true);
 	});
 
 	// The highlight follows a mouse that has MOVED. Both engines also report a
@@ -367,6 +375,9 @@
 					onblur={() => setTimeout(() => (isOpen = false), 150)}
 					onkeydown={handleKeydown}
 					placeholder="Search or add a coffee…"
+					autocapitalize="words"
+					autocorrect="off"
+					spellcheck="false"
 					class="-my-2 min-w-0 flex-1 self-stretch bg-transparent py-2 text-ink outline-none placeholder:text-muted"
 					role="combobox"
 					aria-expanded={isOpen}

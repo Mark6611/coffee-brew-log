@@ -481,9 +481,14 @@ try {
 	// the keyboard, with the last bag and "Add a new bag" in reach — the new-brew
 	// page is too short to scroll that far by itself, so the picker borrows room
 	// below it and has to hand it back. Chromium has no on-screen keyboard: a
-	// stand-in visualViewport shrinks instead (the heights are stand-ins too).
-	// That pins the picker's arithmetic, NOT what WebKit does while a real
-	// keyboard animates in — that part is an on-device check.
+	// stand-in visualViewport shrinks instead (the heights are stand-ins too),
+	// and it reports what Safari on iOS 26.5 was MEASURED to report under a real
+	// keyboard: pageTop is the scroll position, and offsetTop is not 0 — it
+	// grows with the scroll, up to the keyboard's height. The first picker
+	// passed here against a stand-in that said 0, then on a phone counted the
+	// scroll twice: the list ran under the keyboard, and a deleted search left
+	// one row. What WebKit does while a real keyboard animates in is still an
+	// on-device check; the numbers it settles on are no longer a guess.
 	{
 		console.log('── bag picker: every bag, recent first, clear of a keyboard');
 		const r1 = (n) => Math.round(n * 10) / 10;
@@ -544,7 +549,7 @@ try {
 			let k = 0;
 			const t = new EventTarget();
 			for (const [key, get] of Object.entries({
-				offsetTop: () => 0,
+				offsetTop: () => Math.min(scrollY, k),
 				offsetLeft: () => 0,
 				pageTop: () => scrollY,
 				pageLeft: () => 0,
@@ -583,7 +588,7 @@ try {
 				fieldTop: document
 					.querySelector('input[role="combobox"]')
 					.parentElement.getBoundingClientRect().top,
-				visibleBottom: vv.offsetTop + vv.height,
+				visibleBottom: vv.pageTop - scrollY + vv.height,
 				last: last && {
 					x: last.left + last.width / 2,
 					y: last.top + last.height / 2,
@@ -709,6 +714,36 @@ try {
 				document.body.append(d);
 			}, c.keyboard);
 			await page.screenshot({ path: join(OUT, `picker-${c.name}--keyboard.png`) });
+
+			// A search typed, the page moved while the list is one row long, the
+			// search deleted: every bag is back, and so are its rows — the page
+			// goes back up for them. (The report from a phone: "one bag is still
+			// there after I delete the search".)
+			await page.keyboard.type('ged', { delay: 40 });
+			await page.waitForTimeout(400);
+			const narrowed = await page.evaluate(state);
+			if (narrowed.names.join('|') !== 'Gedeb Natural')
+				fail(where, `typing "ged" lists [${narrowed.names.join(', ')}], want Gedeb Natural alone`);
+			await page.evaluate(() => window.scrollBy(0, -150));
+			await page.waitForTimeout(400);
+			for (let i = 0; i < 3; i++) await page.keyboard.press('Backspace', { delay: 40 });
+			await page.waitForTimeout(900);
+			const cleared = await page.evaluate(state);
+			if (cleared.names.length !== ORDER.length)
+				fail(
+					where,
+					`the search deleted, ${cleared.names.length} bags are listed, want ${ORDER.length}`
+				);
+			if (cleared.listHeight < fits - 1)
+				fail(
+					where,
+					`the search deleted, the list shows ${r1(cleared.listHeight / cleared.rowHeight)} rows where ${r1(fits / cleared.rowHeight)} fit`
+				);
+			if (cleared.boxBottom > cleared.visibleBottom + 0.5)
+				fail(
+					where,
+					`the search deleted, the list ends ${r1(cleared.boxBottom - cleared.visibleBottom)}px under the keyboard`
+				);
 
 			// the far end of the list: in reach, and a tap on it picks that bag
 			await page.evaluate(() => {
